@@ -29,15 +29,15 @@ const FIELD_BY_STEP: Record<QuizStep, string> = {
 
 const HERO_BY_STEP: Record<QuizStep, { url: string; alt: string }> = {
   date: {
-    url: "https://images.unsplash.com/photo-1520857014576-2c4f4c972b57?auto=format&fit=crop&w=1800&q=80",
+    url: "date-mariage.jpg",
     alt: "Décoration de mariage",
   },
   location: {
-    url: "https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?auto=format&fit=crop&w=1800&q=80",
+    url: "ville-mariage.jpg",
     alt: "Destination et voyage",
   },
   guests: {
-    url: "https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?auto=format&fit=crop&w=1800&q=80",
+    url: "invite-mariage.jpg",
     alt: "Invités lors d'un mariage",
   },
   budget: {
@@ -45,15 +45,15 @@ const HERO_BY_STEP: Record<QuizStep, { url: string; alt: string }> = {
     alt: "Budget et planification",
   },
   style: {
-    url: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1800&q=80",
+    url: "thème-mariage.jpg",
     alt: "Inspiration de mariage",
   },
   stress: {
-    url: "https://images.unsplash.com/photo-1520962917960-0ac1f0913ca4?auto=format&fit=crop&w=1800&q=80",
+    url: "stress-mariage.jpg",
     alt: "Moment calme",
   },
   priority: {
-    url: "https://images.unsplash.com/photo-1523293836415-74e8f16cfa2a?auto=format&fit=crop&w=1800&q=80",
+    url: "priorité-mariage.jpg",
     alt: "Décision et organisation",
   },
 };

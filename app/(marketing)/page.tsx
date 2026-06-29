@@ -1,14 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   ArrowRight,
   Brain,
   ClipboardList,
+  HeartHandshake,
   Mail,
+  Menu,
   Target,
   Sparkles,
   ShieldCheck,
+  X,
 } from "lucide-react";
 
 const TRUST_LOGOS = [
@@ -24,31 +30,91 @@ export default function LandingPage() {
   const score = 82;
   const circumference = 220;
   const offset = circumference - (score / 100) * circumference;
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const navLinks = [
+    { href: "#how", label: "Comment ça marche" },
+    { href: "#trust", label: "Ils nous font confiance" },
+    { href: "#start", label: "Commencer" },
+  ];
 
   return (
-    <main className="min-h-[100dvh] bg-background text-text-primary">
+    <main className="min-h-[100dvh] bg-background text-text-primary overflow-x-hidden">
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-serif text-xl font-semibold tracking-tight">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
             Wedding<span className="text-primary">AI</span> Builder
-          </div>
-          <nav className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
-            <a href="#how" className="hover:text-text-primary transition">Comment ça marche</a>
-            <a href="#trust" className="hover:text-text-primary transition">Ils nous font confiance</a>
-            <a href="#start" className="hover:text-text-primary transition">Commencer</a>
-          </nav>
-          <Link href="/quiz" className="hidden sm:block">
-            <Button variant="primary" iconRight={<ArrowRight size={18} />}>
-              Commencer
-            </Button>
           </Link>
+          <nav className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
+            {navLinks.map((link) => (
+              <a key={link.href} href={link.href} className="hover:text-text-primary transition">
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          <div className="flex items-center gap-3">
+            <Link href="/quiz" className="hidden sm:block">
+              <Button variant="primary" iconRight={<ArrowRight size={18} />}>
+                Commencer
+              </Button>
+            </Link>
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="md:hidden p-2 rounded-xl hover:bg-black/5 transition"
+              aria-label="Ouvrir le menu"
+            >
+              <Menu size={24} className="text-text-primary" />
+            </button>
+          </div>
         </div>
       </header>
 
-      <section className="relative pt-28 pb-14 px-6 overflow-hidden" id="home">
+      {menuOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden"
+            onClick={() => setMenuOpen(false)}
+          />
+          <div className="fixed top-0 left-0 bottom-0 z-50 w-[80%] max-w-[300px] bg-white shadow-2xl p-6 md:hidden flex flex-col">
+            <div className="flex items-center justify-between mb-8">
+              <div className="font-serif text-lg font-semibold tracking-tight">
+                Wedding<span className="text-primary">AI</span> Builder
+              </div>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="p-2 rounded-xl hover:bg-black/5 transition"
+                aria-label="Fermer le menu"
+              >
+                <X size={24} className="text-text-primary" />
+              </button>
+            </div>
+            <nav className="flex flex-col gap-4">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-lg font-medium text-text-primary py-2 border-b border-black/10"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+            <div className="mt-auto pt-6">
+              <Link href="/quiz" onClick={() => setMenuOpen(false)}>
+                <Button variant="primary" className="w-full" iconRight={<ArrowRight size={18} />}>
+                  Commencer
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
+
+      <section className="relative pt-24 sm:pt-28 pb-12 sm:pb-14 px-4 sm:px-6 overflow-hidden" id="home">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 right-[-140px] h-[520px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute bottom-[-160px] left-[-160px] h-[520px] w-[520px] rounded-full bg-success/10 blur-3xl" />
+          <div className="absolute -top-24 right-[-140px] h-[360px] w-[360px] sm:h-[520px] sm:w-[520px] rounded-full bg-primary/10 blur-3xl" />
+          <div className="absolute bottom-[-160px] left-[-160px] h-[360px] w-[360px] sm:h-[520px] sm:w-[520px] rounded-full bg-success/10 blur-3xl" />
           <div
             className="absolute inset-0 opacity-[0.08]"
             style={{
@@ -63,12 +129,13 @@ export default function LandingPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="font-serif text-[clamp(2.6rem,5vw,4.1rem)] font-bold leading-[1.05] tracking-tight mb-5">
-                Planifiez votre mariage <span className="text-primary italic">parfait</span> en quelques minutes
+                Votre mariage <span className="text-primary italic">prêt</span> en 5 minutes, avec les bons pros
               </h1>
 
               <p className="text-text-secondary text-lg leading-relaxed mb-8 max-w-xl">
-                Répondez à 5 questions simples. Notre IA génère instantanément un plan complet personnalisé — budget,
-                planning, concept et analyse des risques.
+                Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère
+                un plan complet et vous propose automatiquement les prestataires qui correspondent. Fini les recherches
+                interminables.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
@@ -117,10 +184,10 @@ export default function LandingPage() {
                   <div className="text-xs text-text-secondary font-medium">Aperçu</div>
                 </div>
 
-                <div className="p-6">
-                  <div className="flex items-center gap-5 mb-6">
-                    <div className="relative h-[92px] w-[92px] shrink-0">
-                      <svg viewBox="0 0 90 90" width="92" height="92" className="-rotate-90">
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-center gap-4 sm:gap-5 mb-6">
+                    <div className="relative h-[80px] w-[80px] sm:h-[92px] sm:w-[92px] shrink-0">
+                      <svg viewBox="0 0 90 90" className="h-full w-full -rotate-90">
                         <circle cx="45" cy="45" r="35" strokeWidth="6" className="stroke-black/10 fill-none" />
                         <circle
                           cx="45"
@@ -134,28 +201,28 @@ export default function LandingPage() {
                         />
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <div className="font-serif text-2xl font-bold leading-none">{score}</div>
+                        <div className="font-serif text-xl sm:text-2xl font-bold leading-none">{score}</div>
                         <div className="text-[10px] uppercase tracking-[0.14em] text-text-secondary">/100</div>
                       </div>
                     </div>
 
-                    <div className="flex-1 space-y-3">
+                    <div className="flex-1 min-w-0 space-y-3">
                       {[
                         { label: "Budget", pct: 88 },
                         { label: "Planning", pct: 74 },
                         { label: "Prestataires", pct: 61 },
                         { label: "Risques", pct: 92 },
                       ].map((row) => (
-                        <div key={row.label} className="flex items-center justify-between gap-4">
-                          <div className="text-sm text-text-secondary w-24">{row.label}</div>
-                          <div className="flex items-center gap-3">
-                            <div className="h-1.5 w-24 rounded-full bg-black/10 overflow-hidden">
+                        <div key={row.label} className="flex items-center justify-between gap-3">
+                          <div className="text-sm text-text-secondary w-20 sm:w-24 shrink-0">{row.label}</div>
+                          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                            <div className="h-1.5 flex-1 min-w-0 rounded-full bg-black/10 overflow-hidden">
                               <div
                                 className="h-full rounded-full bg-gradient-to-r from-primary to-success"
                                 style={{ width: `${row.pct}%` }}
                               />
                             </div>
-                            <div className="text-xs font-semibold text-primary w-10 text-right">{row.pct}%</div>
+                            <div className="text-xs font-semibold text-primary w-8 sm:w-10 text-right shrink-0">{row.pct}%</div>
                           </div>
                         </div>
                       ))}
@@ -179,12 +246,12 @@ export default function LandingPage() {
                     ))}
                   </div>
 
-                  <div className="mt-5 rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 flex items-center justify-between">
+                  <div className="mt-5 rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 flex items-center justify-between gap-3">
                     <div className="text-sm text-primary inline-flex items-center gap-2">
-                      <ShieldCheck size={18} />
-                      Plan complet disponible après inscription
+                      <ShieldCheck size={18} className="shrink-0" />
+                      <span className="leading-tight">Plan complet disponible après inscription</span>
                     </div>
-                    <ArrowRight size={18} className="text-primary" />
+                    <ArrowRight size={18} className="text-primary shrink-0" />
                   </div>
                 </div>
               </div>
@@ -194,12 +261,12 @@ export default function LandingPage() {
       </section>
 
       <section id="trust" className="border-y border-black/10 bg-surface">
-        <div className="max-w-6xl mx-auto px-6 py-10">
-          <div className="flex items-center justify-between gap-6 mb-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <div className="font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
               Ils nous font confiance
             </div>
-            <div className="text-sm text-text-secondary hidden sm:block">Des marques et pros de l’événementiel</div>
+            <div className="text-sm text-text-secondary">Des marques et pros de l’événementiel</div>
           </div>
 
           <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white">
@@ -220,21 +287,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="how" className="px-6 py-16">
+      <section id="how" className="px-4 sm:px-6 py-12 sm:py-16">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 sm:mb-10">
             <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Comment ça marche</div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-text-primary">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-text-primary">
               De l’idée au plan complet
-              <br />
-              en 3 minutes
+              <br className="hidden sm:block" />
+              en 5 minutes
             </h2>
-            <p className="mt-4 text-text-secondary max-w-xl mx-auto">
-              Pas de tableurs, pas de stress. Juste vos réponses, et l’IA fait le reste.
+            <p className="mt-4 text-text-secondary max-w-xl mx-auto text-sm sm:text-base">
+              Pas de tableurs, pas de stress. Vous répondez, l’IA analyse, et vous obtenez un plan clair plus une sélection de pros adaptés à votre budget.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-[1.25fr_0.75fr] gap-8 items-start">
+          <div className="grid md:grid-cols-[1.25fr_0.75fr] gap-6 sm:gap-8 items-start">
             <div className="grid sm:grid-cols-2 gap-4">
               {[
                 {
@@ -244,8 +311,8 @@ export default function LandingPage() {
                 },
                 {
                   icon: Brain,
-                  title: "On structure votre plan",
-                  desc: "Un plan clair avec priorités, tâches et recommandations actionnables.",
+                  title: "L’IA analyse votre situation",
+                  desc: "Budget, contraintes, priorités et risques passés au crible pour un plan cohérent.",
                 },
                 {
                   icon: Target,
@@ -253,9 +320,9 @@ export default function LandingPage() {
                   desc: "Répartition réaliste et planning mensuel jusqu’au Jour J.",
                 },
                 {
-                  icon: Mail,
-                  title: "Vous recevez le résultat",
-                  desc: "Par email/WhatsApp pour pouvoir le retrouver et le partager.",
+                  icon: HeartHandshake,
+                  title: "Matching prestataires",
+                  desc: "On vous suggère automatiquement les pros qui correspondent à votre budget et votre style. Pas de recherche, pas de négociation inutile.",
                 },
               ].map((s) => (
                 <div key={s.title} className="rounded-2xl border border-black/10 bg-white p-6">
@@ -274,7 +341,7 @@ export default function LandingPage() {
 
             <div className="rounded-2xl border border-black/10 bg-surface p-6">
               <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium">Inclus</div>
-              <div className="font-serif text-xl font-semibold mt-2 mb-4">Un plan complet</div>
+              <div className="font-serif text-xl font-semibold mt-2 mb-4">Un plan complet + des pros</div>
               <ul className="space-y-3 text-sm text-text-secondary">
                 <li className="flex items-center justify-between gap-4">
                   <span>Budget détaillé</span>
@@ -285,8 +352,8 @@ export default function LandingPage() {
                   <span className="text-text-primary font-semibold">mensuelle</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
-                  <span>Concept & ambiance</span>
-                  <span className="text-text-primary font-semibold">cohérents</span>
+                  <span>Matching prestataires</span>
+                  <span className="text-text-primary font-semibold">selon budget</span>
                 </li>
                 <li className="flex items-center justify-between gap-4">
                   <span>Score de risque</span>
@@ -309,8 +376,33 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="px-6 pb-10">
-        <div className="max-w-6xl mx-auto border-t border-black/10 pt-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-text-secondary">
+      <section id="start" className="px-4 sm:px-6 py-12 sm:py-16 bg-primary/5 border-y border-black/10">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Matching intelligent</div>
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-text-primary">
+            Fini les heures à chercher le bon prestataire
+          </h2>
+          <p className="mt-4 text-text-secondary max-w-2xl mx-auto text-sm sm:text-base">
+            Après analyse complète de votre budget, style et date, notre IA vous propose automatiquement les pros qui
+            correspondent. Plus de devis hors budget, plus de recherches interminables. Votre mariage est prêt à être
+            célébré en quelques minutes.
+          </p>
+          <div className="mt-8">
+            <Link
+              href="/quiz"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-5 sm:px-6 py-3 text-white font-semibold text-sm sm:text-base"
+            >
+              <span className="inline-flex items-center gap-2">
+                Créer mon plan en 5 minutes
+                <ArrowRight size={18} />
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="px-4 sm:px-6 pb-8 sm:pb-10">
+        <div className="max-w-6xl mx-auto border-t border-black/10 pt-6 sm:pt-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-text-secondary">
           <div className="font-serif text-base text-text-primary font-semibold">WeddingAI Builder</div>
           <div className="flex flex-wrap gap-4">
             <a href="#" className="hover:text-text-primary transition">Confidentialité</a>

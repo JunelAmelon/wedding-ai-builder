@@ -264,7 +264,7 @@ export default function ResultPage() {
                       avec votre budget
                     </div>
                     <p className="text-text-secondary mt-3 leading-relaxed">
-                      On vous met en relation avec des prestataires adaptés à votre budget, votre style et votre date.
+                      On vous met en relation avec des prestataires adaptés à votre budget exact ( vous ne perdez plus le temps à chercher le bon ), votre style et votre date.
                     </p>
                   </div>
                   <div className="h-14 w-14 rounded-2xl bg-white border border-black/10 flex items-center justify-center">
@@ -299,7 +299,7 @@ export default function ResultPage() {
                     }}
                     iconRight={<ArrowRight size={18} />}
                   >
-                    Trouver des prestataires disponibles (service payant)
+                    Trouver des prestataires disponibles
                   </Button>
                   <div className="text-xs text-text-secondary mt-2">
                     Tarif affiché avant validation. Aucun engagement sans confirmation.
