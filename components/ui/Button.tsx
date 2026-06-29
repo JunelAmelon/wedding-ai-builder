@@ -28,7 +28,7 @@ export function Button({
     <button
       className={cn(
         "relative inline-flex w-full sm:w-auto items-center justify-center gap-2",
-        "h-12 rounded-full px-5 sm:px-6 text-[15px] font-semibold",
+        "h-auto min-h-12 rounded-full px-5 sm:px-6 py-3 text-[15px] font-semibold",
         "transition duration-200",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
         "disabled:opacity-60 disabled:cursor-not-allowed",
@@ -42,7 +42,7 @@ export function Button({
       {...props}
     >
       {iconLeft && <span className={cn("shrink-0", loading && "opacity-0")}>{iconLeft}</span>}
-      <span className={cn("whitespace-nowrap", loading && "opacity-0")}>{children}</span>
+      <span className={cn("whitespace-normal sm:whitespace-nowrap text-center leading-tight", loading && "opacity-0")}>{children}</span>
       {iconRight && <span className={cn("shrink-0", loading && "opacity-0")}>{iconRight}</span>}
 
       {loading && (

@@ -88,10 +88,10 @@ export default function ResultPage() {
 
   const riskLabel =
     aiOutput.riskScore >= 80
-      ? "Très bon niveau de maîtrise"
+      ? "Attention : plusieurs points à sécuriser"
       : aiOutput.riskScore >= 60
         ? "Bon niveau, quelques points à sécuriser"
-        : "Attention : plusieurs points à sécuriser";
+        : "Très bon niveau de maîtrise";
 
   const sortedMilestones = aiOutput.timeline.milestones
     .slice()
