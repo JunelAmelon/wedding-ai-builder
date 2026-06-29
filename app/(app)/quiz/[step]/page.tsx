@@ -64,14 +64,31 @@ export default function QuizStepPage() {
   const step = params.step as QuizStep;
   const stepIndex = QUIZ_STEPS.indexOf(step);
 
-  const { sessionId, setSession, setAnswer, setStartedAt, startedAt } = useQuizStore();
+  const { sessionId, setSession, setAnswer, setStartedAt, startedAt, reset } = useQuizStore();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function ensureSession() {
-      if (!sessionId) {
-        try {
+      let needsCreate = !sessionId;
+      try {
+        // Si une session est stockée, vérifier que le backend n'a pas changé
+        if (sessionId) {
+          try {
+            const backendRes = await fetch("/api/quiz/backend", { method: "GET" });
+            const backendData = await backendRes.json().catch(() => ({}));
+            const currentBackend = backendData.backend ?? "local";
+            const storedBackend = useQuizStore.getState().backend;
+            if (storedBackend && storedBackend !== currentBackend) {
+              reset();
+              needsCreate = true;
+            }
+          } catch {
+            // Si le endpoint est indisponible, on continue avec la session existante
+          }
+        }
+
+        if (needsCreate) {
           const res = await fetch("/api/quiz/start", { method: "POST" });
           const data = await res.json();
           if (!res.ok) {
@@ -80,15 +97,16 @@ export default function QuizStepPage() {
           setSession(data.sessionId, data.backend ?? "local");
           setStartedAt(Date.now());
           track("quiz_started", { sessionId: data.sessionId });
-        } catch (err) {
-          const message = err instanceof Error ? err.message : "Impossible de démarrer le quiz";
-          setError(message);
         }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Impossible de démarrer le quiz";
+        setError(message);
+      } finally {
+        setReady(true);
       }
-      setReady(true);
     }
     ensureSession();
-  }, [sessionId, setSession, setStartedAt]);
+  }, [sessionId, setSession, setStartedAt, reset]);
 
   if (stepIndex === -1) {
     router.replace("/quiz/date");
