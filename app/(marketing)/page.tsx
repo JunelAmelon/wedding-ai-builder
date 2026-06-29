@@ -306,18 +306,6 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-
-          <div className="mt-10 flex justify-center" id="start">
-            <Link
-              href="/quiz"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3 text-white font-semibold shadow-sm hover:shadow-md transition"
-            >
-              <span className="inline-flex items-center gap-2">
-                Commencer maintenant
-                <ArrowRight size={18} />
-              </span>
-            </Link>
-          </div>
         </div>
       </section>
 

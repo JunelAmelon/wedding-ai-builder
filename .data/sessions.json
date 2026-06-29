@@ -2,27 +2,27 @@
   "F90dx4c8ccQp": {
     "id": "F90dx4c8ccQp",
     "createdAt": "2026-06-29T09:11:58.613Z",
-    "updatedAt": "2026-06-29T12:13:05.354Z",
+    "updatedAt": "2026-06-29T12:25:08.764Z",
     "status": "completed",
     "quizAnswers": {
-      "weddingDate": "2026-06-27",
+      "weddingDate": "2026-06-26",
       "location": {
-        "city": "CCC",
-        "country": " BC DBCD"
+        "city": "cotonou",
+        "country": "Benin"
       },
-      "guestCount": 677,
+      "guestCount": 500,
       "budget": {
         "amount": 12000,
         "currency": "EUR"
       },
       "style": "boheme",
       "stressLevel": 5,
-      "mainPriority": "deco"
+      "mainPriority": "invites"
     },
     "aiOutput": {
       "blueprint": {
-        "concept": "Bohème à Paris",
-        "storytelling": "Un mariage bohème pensé pour 196 invités, où chaque détail raconte votre histoire. L'ambiance générale privilégie la chaleur et l'authenticité.",
+        "concept": "Bohème à cotonou",
+        "storytelling": "Un mariage bohème pensé pour 500 invités, où chaque détail raconte votre histoire. L'ambiance générale privilégie la chaleur et l'authenticité.",
         "ambiance": [
           "chaleureux",
           "authentique",
@@ -49,15 +49,15 @@
         ]
       },
       "budgetBreakdown": {
-        "totalBudget": 89994,
+        "totalBudget": 12000,
         "currency": "EUR",
         "breakdown": {
-          "venue": 31498,
-          "catering": 22499,
-          "photography": 10799,
-          "music": 7200,
-          "decoration": 8999,
-          "contingency": 8999
+          "venue": 4200,
+          "catering": 3000,
+          "photography": 1440,
+          "music": 960,
+          "decoration": 1200,
+          "contingency": 1200
         },
         "percentages": {
           "venue": 35,
@@ -146,16 +146,16 @@
         ],
         "budgetInconsistencies": [],
         "organizationalRisks": [
-          "Surveiller les délais de confirmation des prestataires clés."
+          "Le budget par invité est en dessous des standards du marché local."
         ],
-        "riskScore": 35,
+        "riskScore": 50,
         "scoreJustification": "Score calculé à partir du budget par invité, du niveau de stress déclaré (5/10) et du délai disponible avant le jour J."
       },
-      "riskScore": 35,
-      "generatedAt": "2026-06-29T11:35:11.252Z",
+      "riskScore": 50,
+      "generatedAt": "2026-06-29T12:24:56.285Z",
       "model": "claude-sonnet-4-6",
-      "cacheHit": true
+      "cacheHit": false
     },
-    "leadId": "LVoZ_JLdyWyU"
+    "leadId": "wLhTWMfxTeZR"
   }
 }
