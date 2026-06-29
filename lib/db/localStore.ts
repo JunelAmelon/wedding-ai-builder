@@ -1,13 +1,23 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-const DATA_DIR =
-  process.env.VERCEL === "1" || process.env.NODE_ENV === "production"
-    ? path.join("/tmp", ".data")
-    : path.join(process.cwd(), ".data");
+const isProductionServerless =
+  process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
+
+const DATA_DIR = isProductionServerless
+  ? path.join("/tmp", ".data")
+  : path.join(process.cwd(), ".data");
 
 async function ensureDataDir() {
   await fs.mkdir(DATA_DIR, { recursive: true });
+}
+
+function guardProductionStore() {
+  if (isProductionServerless) {
+    throw new Error(
+      "Local file store cannot be used in production/serverless environments because the filesystem is ephemeral and not shared across requests. Set USE_LOCAL_DB=false and configure Firebase Admin credentials in your environment."
+    );
+  }
 }
 
 function filePathFor(collection: string): string {
@@ -36,12 +46,14 @@ export const localStore = {
   },
 
   async set<T>(collection: string, id: string, value: T): Promise<void> {
+    guardProductionStore();
     const data = await readCollection<T>(collection);
     data[id] = value;
     await writeCollection(collection, data);
   },
 
   async update<T extends object>(collection: string, id: string, partial: Partial<T>): Promise<T> {
+    guardProductionStore();
     const data = await readCollection<T>(collection);
     const existing = data[id];
     if (!existing) throw new Error(`Document ${id} introuvable dans ${collection}`);
