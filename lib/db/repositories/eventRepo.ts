@@ -1,17 +1,8 @@
 import { nanoid } from "nanoid";
 import { localStore } from "@/lib/db/localStore";
+import { useLocal } from "./utils";
 
 const COLLECTION = "events";
-
-function normalizeEnvBool(value: string | undefined): boolean {
-  if (!value) return true;
-  const cleaned = value.trim().replace(/^["']|["']$/g, "");
-  return cleaned.toLowerCase() !== "false";
-}
-
-function useLocal(): boolean {
-  return normalizeEnvBool(process.env.USE_LOCAL_DB);
-}
 
 async function getFirestoreCol() {
   const { getDb } = await import("@/lib/db/firebase");

@@ -1,22 +1,11 @@
 import { nanoid } from "nanoid";
 import type { WeddingSession, QuizAnswers, AIOutput } from "@/types/domain";
 import { localStore } from "@/lib/db/localStore";
+import { useLocal, getStoreBackend } from "./utils";
 
 const COLLECTION = "sessions";
 
-function normalizeEnvBool(value: string | undefined): boolean {
-  if (!value) return true;
-  const cleaned = value.trim().replace(/^["']|["']$/g, "");
-  return cleaned.toLowerCase() !== "false";
-}
-
-function useLocal(): boolean {
-  return normalizeEnvBool(process.env.USE_LOCAL_DB);
-}
-
-export function getStoreBackend(): "local" | "firebase" {
-  return useLocal() ? "local" : "firebase";
-}
+export { getStoreBackend };
 
 async function getFirestoreCol() {
   const { getDb } = await import("@/lib/db/firebase");
