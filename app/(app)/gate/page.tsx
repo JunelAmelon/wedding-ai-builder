@@ -18,7 +18,7 @@ const LOADING_MESSAGES = [
 function GatePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { sessionId, setSessionId } = useQuizStore();
+  const { sessionId, setSession, reset } = useQuizStore();
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -35,11 +35,11 @@ function GatePageInner() {
   useEffect(() => {
     const qsSessionId = searchParams.get("sessionId");
     if (!sessionId && qsSessionId) {
-      setSessionId(qsSessionId);
+      setSession(qsSessionId, "firebase");
       return;
     }
     if (!sessionId && !qsSessionId) router.replace("/quiz/date");
-  }, [sessionId, router, searchParams, setSessionId]);
+  }, [sessionId, router, searchParams, setSession]);
 
   async function handleSubmit() {
     if (!sessionId || !email) return;
@@ -57,14 +57,26 @@ function GatePageInner() {
           source: "gate",
         }),
       });
-      if (!res.ok) throw new Error("Échec de la capture");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 404 && data.sessionId) {
+          throw new Error(`Session introuvable (backend: ${data.backend ?? "?"}). La session a probablement été créée avec un autre stockage.`);
+        }
+        throw new Error("Échec de la capture");
+      }
       track("email_captured", { sessionId, source: "gate" });
       if (whatsapp) track("whatsapp_submitted", { sessionId });
       router.push(`/result/${sessionId}`);
-    } catch {
-      setError("Une erreur est survenue, réessayez.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Une erreur est survenue, réessayez.";
+      setError(message);
       setSubmitting(false);
     }
+  }
+
+  function handleRestart() {
+    reset();
+    router.replace("/quiz/date");
   }
 
   return (
@@ -106,11 +118,21 @@ function GatePageInner() {
           </div>
         </div>
 
-        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+        {error && (
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 mb-4 text-sm text-red-700">
+            <p>{error}</p>
+            <button
+              onClick={handleRestart}
+              className="mt-3 inline-flex items-center justify-center rounded-full bg-red-600 px-4 py-2 text-white font-medium text-xs hover:bg-red-700 transition"
+            >
+              Recommencer le quiz
+            </button>
+          </div>
+        )}
 
         <Button
           onClick={handleSubmit}
-          disabled={!email}
+          disabled={!email || !!error}
           loading={submitting}
           className="w-full"
           variant="primary"

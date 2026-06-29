@@ -1,14 +1,14 @@
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 
-let client: Anthropic | null = null;
+let client: OpenAI | null = null;
 
-function getClient(): Anthropic {
+function getClient(): OpenAI {
   if (!client) {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error("ANTHROPIC_API_KEY manquante dans l'environnement");
+      throw new Error("OPENAI_API_KEY manquante dans l'environnement");
     }
-    client = new Anthropic({ apiKey });
+    client = new OpenAI({ apiKey });
   }
   return client;
 }
@@ -24,24 +24,26 @@ export async function callAI({
   system,
   user,
   temperature = 0.4,
-  maxTokens = 1500,
+  maxTokens = 2500,
 }: CallAIOptions): Promise<string> {
-  const anthropic = getClient();
-  const model = process.env.AI_MODEL || "claude-sonnet-4-6";
+  const openai = getClient();
+  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
-  const response = await anthropic.messages.create({
+  const response = await openai.chat.completions.create({
     model,
     max_tokens: maxTokens,
     temperature,
-    system,
-    messages: [{ role: "user", content: user }],
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ],
   });
 
-  const textBlock = response.content.find((b) => b.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
+  const text = response.choices[0]?.message?.content;
+  if (!text) {
     throw new Error("Réponse IA sans contenu texte exploitable");
   }
-  return textBlock.text;
+  return text;
 }
 
 export function parseAIJson<T = unknown>(raw: string): T {

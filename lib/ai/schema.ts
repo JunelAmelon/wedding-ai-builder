@@ -83,4 +83,5 @@ export const RiskEngineSchema = z.object({
   organizationalRisks: z.array(z.string().min(1)).min(1).max(4),
   riskScore: z.number().finite().min(0).max(100),
   scoreJustification: z.string().min(1),
+  generalAdvice: z.string().min(1),
 });

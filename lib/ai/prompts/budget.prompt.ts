@@ -22,7 +22,16 @@ Contraintes STRICTES :
 
 export function buildBudgetUserPrompt(answers: QuizAnswers): string {
   return `Budget total : ${answers.budget?.amount} ${answers.budget?.currency}
-Localisation : ${answers.location?.city}, ${answers.location?.country} (ajuste les ratios selon le coût de vie local)
+Localisation : ${answers.location?.city}, ${answers.location?.country} (ajuste les ratios selon le coût de vie local et le marché du mariage local)
 Nombre d'invités : ${answers.guestCount}
-Style : ${answers.style}`;
+Budget par invité : ${Math.round((answers.budget?.amount ?? 0) / Math.max(answers.guestCount ?? 1, 1))} ${answers.budget?.currency}
+Style : ${answers.style}
+Priorité principale : ${answers.mainPriority}
+Niveau de stress : ${answers.stressLevel}
+
+Conseils pour la répartition :
+- Le lieu de réception et le traiteur sont généralement les deux plus gros postes dans un mariage en France/Europe.
+- Le poste "imprévus" doit être conservé entre 8% et 12% du total pour absorber les dépassements courants (taxes, extras, transport).
+- Ajuste les montants selon le coût de la vie à la localisation (Paris, Côte d'Azur et grandes villes ont des tarifs plus élevés).
+- Le nombre d'invités impacte principalement le traiteur et les boissons.`;
 }

@@ -163,13 +163,24 @@ export function fallbackRiskEngine(
 
   score = Math.min(score, 95);
 
+  const city = answers.location?.city ?? "votre destination";
+  const country = answers.location?.country ?? "";
+  const budget = answers.budget?.amount ?? 0;
+  const currency = answers.budget?.currency ?? "EUR";
+
+  const generalAdvice =
+    perGuest < 120
+      ? `Avec un budget de ${budget} ${currency} pour ${answers.guestCount ?? "vos"} invités à ${city}${country ? `, ${country}` : ""}, soit environ ${Math.round(perGuest)} ${currency} par invité, privilégiez un lieu modulable et un traiteur avec formule simple. Réservez le lieu et la restauration en priorité, car ce sont les deux postes les plus critiques. Si le délai est court, acceptez de faire des arbitrages rapides (fleurs plus simples, musique playlist + DJ) plutôt que de chercher à tout négocier en parallèle.`
+      : `Avec un budget de ${budget} ${currency} pour ${answers.guestCount ?? "vos"} invités à ${city}${country ? `, ${country}` : ""}, vous disposez d'une enveloppe confortable. Concentrez-vous sur la qualité des prestations clés : lieu, traiteur et photo/vidéo. Anticipez les délais de réservation et prévoyez un point de synchronisation avec vos prestataires 6 à 8 semaines avant le jour J. Le niveau de stress déclaré indique qu'il faut déléguer et organiser les tâches par phases. Surveillez les extras qui peuvent rapidement faire dépasser la provision imprévus.`;
+
   return {
     criticalErrors,
     budgetInconsistencies: inconsistencies,
     organizationalRisks: risks,
     riskScore: score,
-    scoreJustification: `Score calculé à partir du budget par invité, du niveau de stress déclaré (${ 
+    scoreJustification: `Score calculé à partir du budget par invité, du niveau de stress déclaré (${
       answers.stressLevel ?? "?"
     }/10) et du délai disponible avant le jour J.`,
+    generalAdvice,
   };
 }

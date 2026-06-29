@@ -3,8 +3,14 @@ import { localStore } from "@/lib/db/localStore";
 
 const COLLECTION = "events";
 
+function normalizeEnvBool(value: string | undefined): boolean {
+  if (!value) return true;
+  const cleaned = value.trim().replace(/^["']|["']$/g, "");
+  return cleaned.toLowerCase() !== "false";
+}
+
 function useLocal(): boolean {
-  return process.env.USE_LOCAL_DB !== "false";
+  return normalizeEnvBool(process.env.USE_LOCAL_DB);
 }
 
 async function getFirestoreCol() {

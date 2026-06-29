@@ -30,7 +30,7 @@ async function generateBlock<T>({
   schema: z.ZodSchema<T>;
   fallback: () => T;
 }): Promise<{ data: T; usedFallback: boolean }> {
-  const hasApiKey = !!process.env.ANTHROPIC_API_KEY;
+  const hasApiKey = !!process.env.OPENAI_API_KEY;
 
   if (!hasApiKey) {
     return { data: fallback(), usedFallback: true };
@@ -93,7 +93,7 @@ export async function generateWeddingPlan(answers: QuizAnswers, sessionId: strin
     riskEngine,
     riskScore: riskEngine.riskScore,
     generatedAt: new Date().toISOString(),
-    model: process.env.AI_MODEL || "claude-sonnet-4-6",
+    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
     cacheHit: false,
   };
 

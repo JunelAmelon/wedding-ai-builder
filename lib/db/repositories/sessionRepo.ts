@@ -4,8 +4,18 @@ import { localStore } from "@/lib/db/localStore";
 
 const COLLECTION = "sessions";
 
+function normalizeEnvBool(value: string | undefined): boolean {
+  if (!value) return true;
+  const cleaned = value.trim().replace(/^["']|["']$/g, "");
+  return cleaned.toLowerCase() !== "false";
+}
+
 function useLocal(): boolean {
-  return process.env.USE_LOCAL_DB !== "false";
+  return normalizeEnvBool(process.env.USE_LOCAL_DB);
+}
+
+export function getStoreBackend(): "local" | "firebase" {
+  return useLocal() ? "local" : "firebase";
 }
 
 async function getFirestoreCol() {
@@ -36,10 +46,17 @@ export const sessionRepo = {
 
   async get(id: string): Promise<WeddingSession | null> {
     if (useLocal()) {
-      return localStore.get<WeddingSession>(COLLECTION, id);
+      const session = await localStore.get<WeddingSession>(COLLECTION, id);
+      if (!session) {
+        console.warn(`[sessionRepo] Session ${id} introuvable dans le store local`);
+      }
+      return session;
     }
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
+    if (!doc.exists) {
+      console.warn(`[sessionRepo] Session ${id} introuvable dans Firestore (collection: ${COLLECTION})`);
+    }
     return doc.exists ? (doc.data() as WeddingSession) : null;
   },
 

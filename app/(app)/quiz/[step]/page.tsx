@@ -64,7 +64,7 @@ export default function QuizStepPage() {
   const step = params.step as QuizStep;
   const stepIndex = QUIZ_STEPS.indexOf(step);
 
-  const { sessionId, setSessionId, setAnswer, setStartedAt, startedAt } = useQuizStore();
+  const { sessionId, setSession, setAnswer, setStartedAt, startedAt } = useQuizStore();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,7 +77,7 @@ export default function QuizStepPage() {
           if (!res.ok) {
             throw new Error(data.error || "Erreur de démarrage du quiz");
           }
-          setSessionId(data.sessionId);
+          setSession(data.sessionId, data.backend ?? "local");
           setStartedAt(Date.now());
           track("quiz_started", { sessionId: data.sessionId });
         } catch (err) {
@@ -88,7 +88,7 @@ export default function QuizStepPage() {
       setReady(true);
     }
     ensureSession();
-  }, [sessionId, setSessionId, setStartedAt]);
+  }, [sessionId, setSession, setStartedAt]);
 
   if (stepIndex === -1) {
     router.replace("/quiz/date");

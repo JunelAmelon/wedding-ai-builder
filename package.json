@@ -10,7 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
     "clsx": "^2.1.1",
     "firebase-admin": "^12.5.0",
     "framer-motion": "^11.3.21",
@@ -18,14 +17,15 @@
     "lucide-react": "^0.451.0",
     "nanoid": "^5.0.7",
     "next": "^14.2.5",
+    "openai": "^6.45.0",
     "posthog-js": "^1.170.1",
     "posthog-node": "^4.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "resend": "^3.5.0",
     "tailwind-merge": "^2.5.2",
-    "zustand": "^4.5.5",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",

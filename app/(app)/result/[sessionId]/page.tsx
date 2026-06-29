@@ -74,6 +74,15 @@ export default function ResultPage() {
     contingency: "Imprévus",
   };
 
+  const BUDGET_COLORS: Record<string, string> = {
+    venue: "#4f46e5",
+    catering: "#0ea5e9",
+    photography: "#10b981",
+    music: "#f59e0b",
+    decoration: "#ec4899",
+    contingency: "#64748b",
+  };
+
   const breakdownRows = Object.entries(aiOutput.budgetBreakdown.breakdown).map(([k, v]) => [k, Number(v) || 0] as const);
   const percentRows = Object.entries(aiOutput.budgetBreakdown.percentages).map(([k, v]) => [k, Number(v) || 0] as const);
 
@@ -83,13 +92,6 @@ export default function ResultPage() {
       : aiOutput.riskScore >= 60
         ? "Bon niveau, quelques points à sécuriser"
         : "Attention : plusieurs points à sécuriser";
-
-  const topBudget = breakdownRows
-    .slice()
-    .sort((a, b) => Number(b[1]) - Number(a[1]))
-    .slice(0, 6);
-
-  const maxBudget = Math.max(...topBudget.map(([, v]) => Number(v) || 0), 1);
 
   const sortedMilestones = aiOutput.timeline.milestones
     .slice()
@@ -403,59 +405,64 @@ export default function ResultPage() {
             <div>
               <div className="rounded-[32px] border border-black/10 bg-white shadow-[0_30px_90px_rgba(11,15,26,0.08)] overflow-hidden">
                 <div className="p-7">
-                  <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Postes principaux</div>
-                  <div className="mt-5 space-y-4">
-                    {topBudget.map(([k, v]) => {
-                      const amount = Number(v) || 0;
-                      const widthPct = Math.max(6, Math.round((amount / maxBudget) * 100));
-                      const label = BUDGET_LABELS[k] ?? k;
-                      return (
-                        <div key={k} className="relative">
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="font-semibold text-text-primary">{label}</div>
-                            <div className="text-sm text-text-secondary">
-                              {amount} {aiOutput.budgetBreakdown.currency}
-                            </div>
-                          </div>
-                          <div className="mt-2 h-2.5 rounded-full bg-black/10 overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-primary to-success"
-                              style={{ width: `${widthPct}%` }}
+                  <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Répartition en pourcentages</div>
+                  <div className="mt-6 flex flex-col sm:flex-row items-center gap-8">
+                    <svg viewBox="0 0 200 200" className="w-56 h-56 shrink-0">
+                      {(() => {
+                        const sorted = percentRows.slice().sort((a, b) => b[1] - a[1]);
+                        let cumulative = 0;
+                        return sorted.map(([k, v]) => {
+                          const pct = Math.max(0, Math.min(100, v));
+                          const angle = (pct / 100) * 360;
+                          const start = (cumulative / 100) * 2 * Math.PI - Math.PI / 2;
+                          const end = ((cumulative + pct) / 100) * 2 * Math.PI - Math.PI / 2;
+                          cumulative += pct;
+                          const large = angle > 180 ? 1 : 0;
+                          const x1 = 100 + 80 * Math.cos(start);
+                          const y1 = 100 + 80 * Math.sin(start);
+                          const x2 = 100 + 80 * Math.cos(end);
+                          const y2 = 100 + 80 * Math.sin(end);
+                          return (
+                            <path
+                              key={k}
+                              d={`M 100 100 L ${x1} ${y1} A 80 80 0 ${large} 1 ${x2} ${y2} Z`}
+                              fill={BUDGET_COLORS[k] ?? "#94a3b8"}
+                              stroke="white"
+                              strokeWidth={2}
                             />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                          );
+                        });
+                      })()}
+                    </svg>
 
-                  <div className="mt-9 grid sm:grid-cols-2 gap-4">
-                    <div className="rounded-3xl border border-black/10 bg-surface p-5">
-                      <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Pourcentages</div>
-                      <div className="space-y-2 text-sm">
+                    <div className="flex-1 w-full">
+                      <div className="space-y-3">
                         {percentRows
                           .slice()
                           .sort((a, b) => b[1] - a[1])
                           .map(([k, v]) => (
-                            <div key={k} className="flex items-center justify-between gap-4">
-                              <span className="text-text-secondary">{BUDGET_LABELS[k] ?? k}</span>
+                            <div key={k} className="flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className="h-3 w-3 rounded-full"
+                                  style={{ backgroundColor: BUDGET_COLORS[k] ?? "#94a3b8" }}
+                                />
+                                <span className="text-sm text-text-secondary">{BUDGET_LABELS[k] ?? k}</span>
+                              </div>
                               <span className="font-semibold text-text-primary">{Math.round(v)}%</span>
                             </div>
                           ))}
                       </div>
                     </div>
+                  </div>
 
-                    <div className="rounded-3xl border border-black/10 bg-surface p-5">
-                      <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Linéaire</div>
-                      <div className="h-3 rounded-full bg-black/10 overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-primary via-success to-cta-secondary"
-                          style={{ width: "100%" }}
-                        />
-                      </div>
-                      <div className="mt-4 text-sm text-text-secondary leading-relaxed">
-                        Une vision simple et moderne : vos postes sont reliés par une lecture linéaire, sans surcharger.
-                      </div>
-                    </div>
+                  <div className="mt-7 rounded-3xl border border-black/10 bg-surface p-5">
+                    <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-2">Vue d'ensemble</div>
+                    <p className="text-sm text-text-secondary leading-relaxed">
+                      Le budget total est réparti sur les postes essentiels d'un mariage. Le lieu et la restauration
+                      absorbent généralement la plus grande part. La provision Imprévus (8-12%) est incluse pour
+                      absorber les dépassements classiques.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -552,13 +559,20 @@ export default function ResultPage() {
                 </div>
               </div>
 
-              <div className="mt-10 grid lg:grid-cols-3 gap-4">
+              {aiOutput.riskEngine.generalAdvice && (
+                <div className="mt-8 rounded-3xl border border-black/10 bg-surface p-6">
+                  <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Recommandation personnalisée</div>
+                  <p className="text-sm text-text-primary leading-relaxed">{aiOutput.riskEngine.generalAdvice}</p>
+                </div>
+              )}
+
+              <div className="mt-6 grid lg:grid-cols-3 gap-4">
                 <div className="rounded-3xl border border-black/10 bg-surface p-6">
                   <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Erreurs critiques</div>
                   {aiOutput.riskEngine.criticalErrors.length ? (
-                    <div className="space-y-2">
-                      {aiOutput.riskEngine.criticalErrors.map((e) => (
-                        <div key={e} className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-text-secondary">
+                    <div className="space-y-3">
+                      {aiOutput.riskEngine.criticalErrors.map((e, i) => (
+                        <div key={i} className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-text-secondary leading-relaxed">
                           {e}
                         </div>
                       ))}
@@ -571,9 +585,9 @@ export default function ResultPage() {
                 <div className="rounded-3xl border border-black/10 bg-surface p-6">
                   <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Incohérences budget</div>
                   {aiOutput.riskEngine.budgetInconsistencies.length ? (
-                    <div className="space-y-2">
-                      {aiOutput.riskEngine.budgetInconsistencies.map((e) => (
-                        <div key={e} className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-text-secondary">
+                    <div className="space-y-3">
+                      {aiOutput.riskEngine.budgetInconsistencies.map((e, i) => (
+                        <div key={i} className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-text-secondary leading-relaxed">
                           {e}
                         </div>
                       ))}
@@ -586,9 +600,9 @@ export default function ResultPage() {
                 <div className="rounded-3xl border border-black/10 bg-surface p-6">
                   <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Risques organisationnels</div>
                   {aiOutput.riskEngine.organizationalRisks.length ? (
-                    <div className="space-y-2">
-                      {aiOutput.riskEngine.organizationalRisks.map((e) => (
-                        <div key={e} className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-text-secondary">
+                    <div className="space-y-3">
+                      {aiOutput.riskEngine.organizationalRisks.map((e, i) => (
+                        <div key={i} className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-text-secondary leading-relaxed">
                           {e}
                         </div>
                       ))}

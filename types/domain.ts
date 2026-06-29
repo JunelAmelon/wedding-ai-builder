@@ -113,6 +113,7 @@ export interface RiskEngineOutput {
   organizationalRisks: string[];
   riskScore: number;
   scoreJustification: string;
+  generalAdvice: string;
 }
 
 export interface AIOutput {
