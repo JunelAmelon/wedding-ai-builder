@@ -1,7 +1,10 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-const DATA_DIR = path.join(process.cwd(), ".data");
+const DATA_DIR =
+  process.env.VERCEL === "1" || process.env.NODE_ENV === "production"
+    ? path.join("/tmp", ".data")
+    : path.join(process.cwd(), ".data");
 
 async function ensureDataDir() {
   await fs.mkdir(DATA_DIR, { recursive: true });

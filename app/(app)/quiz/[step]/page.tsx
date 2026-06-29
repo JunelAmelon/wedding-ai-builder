@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { TriangleAlert } from "lucide-react";
 import { ProgressBar } from "@/components/feedback/ProgressBar";
 import { useQuizStore, QUIZ_STEPS } from "@/lib/store/quizStore";
 import { QuestionDate } from "@/components/quiz/QuestionDate";
@@ -65,15 +66,24 @@ export default function QuizStepPage() {
 
   const { sessionId, setSessionId, setAnswer, setStartedAt, startedAt } = useQuizStore();
   const [ready, setReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function ensureSession() {
       if (!sessionId) {
-        const res = await fetch("/api/quiz/start", { method: "POST" });
-        const data = await res.json();
-        setSessionId(data.sessionId);
-        setStartedAt(Date.now());
-        track("quiz_started", { sessionId: data.sessionId });
+        try {
+          const res = await fetch("/api/quiz/start", { method: "POST" });
+          const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.error || "Erreur de démarrage du quiz");
+          }
+          setSessionId(data.sessionId);
+          setStartedAt(Date.now());
+          track("quiz_started", { sessionId: data.sessionId });
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Impossible de démarrer le quiz";
+          setError(message);
+        }
       }
       setReady(true);
     }
@@ -117,6 +127,26 @@ export default function QuizStepPage() {
 
   if (!ready) {
     return <div className="min-h-[100dvh] bg-background" />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-[100dvh] bg-background flex items-center justify-center px-6">
+        <div className="max-w-md w-full rounded-3xl border border-black/10 bg-white p-8 shadow-[0_30px_80px_rgba(11,15,26,0.08)] text-center">
+          <div className="mx-auto h-16 w-16 rounded-2xl bg-warning/15 border border-warning/25 flex items-center justify-center mb-6">
+            <TriangleAlert className="text-warning" size={32} />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-text-primary">Le quiz ne peut pas démarrer</h1>
+          <p className="text-text-secondary mt-3">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-white font-semibold"
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const hero = HERO_BY_STEP[step] ?? HERO_BY_STEP.date;

@@ -11,21 +11,26 @@ const CtaSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const parsed = CtaSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Payload invalide" }, { status: 400 });
+  try {
+    const body = await req.json();
+    const parsed = CtaSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Payload invalide" }, { status: 400 });
+    }
+
+    const { sessionId, ctaLabel } = parsed.data;
+
+    await eventRepo.log(sessionId, "cta_clicked", { ctaLabel });
+    trackServer(sessionId, "cta_clicked", { ctaLabel });
+
+    const session = await sessionRepo.get(sessionId);
+    if (session?.leadId) {
+      await leadRepo.addCtaClick(session.leadId, ctaLabel);
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Une erreur est survenue";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const { sessionId, ctaLabel } = parsed.data;
-
-  await eventRepo.log(sessionId, "cta_clicked", { ctaLabel });
-  trackServer(sessionId, "cta_clicked", { ctaLabel });
-
-  const session = await sessionRepo.get(sessionId);
-  if (session?.leadId) {
-    await leadRepo.addCtaClick(session.leadId, ctaLabel);
-  }
-
-  return NextResponse.json({ ok: true });
 }

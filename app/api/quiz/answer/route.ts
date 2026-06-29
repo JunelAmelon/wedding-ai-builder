@@ -22,24 +22,29 @@ const FIELD_BY_STEP: Record<string, string> = {
 };
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  const parsed = AnswerSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Payload invalide", details: parsed.error.flatten() }, { status: 400 });
+  try {
+    const body = await req.json();
+    const parsed = AnswerSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Payload invalide", details: parsed.error.flatten() }, { status: 400 });
+    }
+
+    const { sessionId, step, value } = parsed.data;
+    const field = FIELD_BY_STEP[step];
+
+    const session = await sessionRepo.get(sessionId);
+    if (!session) {
+      return NextResponse.json({ error: "Session introuvable" }, { status: 404 });
+    }
+
+    const updated = await sessionRepo.updateAnswers(sessionId, { [field]: value } as never);
+
+    await eventRepo.log(sessionId, "quiz_step_completed", { step, stepName: step });
+    trackServer(sessionId, "quiz_step_completed", { step });
+
+    return NextResponse.json({ session: updated });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Une erreur est survenue";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const { sessionId, step, value } = parsed.data;
-  const field = FIELD_BY_STEP[step];
-
-  const session = await sessionRepo.get(sessionId);
-  if (!session) {
-    return NextResponse.json({ error: "Session introuvable" }, { status: 404 });
-  }
-
-  const updated = await sessionRepo.updateAnswers(sessionId, { [field]: value } as never);
-
-  await eventRepo.log(sessionId, "quiz_step_completed", { step, stepName: step });
-  trackServer(sessionId, "quiz_step_completed", { step });
-
-  return NextResponse.json({ session: updated });
 }
