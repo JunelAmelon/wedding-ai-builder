@@ -4,11 +4,21 @@ function normalizeEnvBool(value: string | undefined): boolean {
   return cleaned.toLowerCase() !== "false";
 }
 
+function isValidCredential(value: string | undefined): boolean {
+  if (!value) return false;
+  const trimmed = value.trim();
+  if (trimmed.length === 0) return false;
+  if (trimmed.toLowerCase() === "undefined") return false;
+  if (trimmed.startsWith("your-")) return false;
+  if (trimmed.startsWith("firebase-adminsdk-" + "x".repeat(5))) return false;
+  return true;
+}
+
 function isFirebaseConfigured(): boolean {
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const privateKey = process.env.FIREBASE_PRIVATE_KEY;
-  return !!(projectId && clientEmail && privateKey);
+  return isValidCredential(projectId) && isValidCredential(clientEmail) && isValidCredential(privateKey);
 }
 
 export function useLocal(): boolean {

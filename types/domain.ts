@@ -58,6 +58,36 @@ export interface Lead {
   consentMarketing: boolean;
 }
 
+export interface VendorApplication {
+  id: string;
+  createdAt: string;
+  status: "pending" | "approved" | "rejected";
+  companyName: string;
+  siret: string;
+  email: string;
+  phone: string;
+  website: string | null;
+  address: {
+    street: string;
+    city: string;
+    zipCode: string;
+    country: string;
+  };
+  serviceCategory: string;
+  otherCategory: string | null;
+  yearsOfExperience: number;
+  trainingDate: string | null;
+  trainingDescription: string | null;
+  documents: { url: string; publicId: string; filename: string }[];
+  description: string;
+  contactName: string;
+  contactRole: string;
+  acceptedTerms: boolean;
+  reviewedAt: string | null;
+  reviewedBy: string | null;
+  notes: string | null;
+}
+
 export interface ShareRecord {
   slug: string;
   sessionId: string;

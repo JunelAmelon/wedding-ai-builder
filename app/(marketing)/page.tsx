@@ -35,6 +35,7 @@ export default function LandingPage() {
   const navLinks = [
     { href: "#how", label: "Comment ça marche" },
     { href: "#trust", label: "Ils nous font confiance" },
+    { href: "/prestataires", label: "Prestataires" },
     { href: "#start", label: "Commencer" },
   ];
 

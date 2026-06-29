@@ -53,6 +53,15 @@ export const leadRepo = {
     return snap.empty ? null : (snap.docs[0].data() as Lead);
   },
 
+  async list(): Promise<Lead[]> {
+    if (useLocal()) {
+      return localStore.all<Lead>(COLLECTION);
+    }
+    const col = await getFirestoreCol();
+    const snap = await col.orderBy("capturedAt", "desc").get();
+    return snap.docs.map((d) => d.data() as Lead);
+  },
+
   async addCtaClick(id: string, ctaLabel: string): Promise<void> {
     if (useLocal()) {
       const lead = await localStore.get<Lead>(COLLECTION, id);
