@@ -2,19 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { Header } from "@/components/layout/Header";
 import {
   ArrowRight,
   Brain,
   ClipboardList,
   HeartHandshake,
   Mail,
-  Menu,
   Target,
   Sparkles,
   ShieldCheck,
-  X,
 } from "lucide-react";
 
 const TRUST_LOGOS = [
@@ -30,87 +28,10 @@ export default function LandingPage() {
   const score = 82;
   const circumference = 220;
   const offset = circumference - (score / 100) * circumference;
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const navLinks = [
-    { href: "#how", label: "Comment ça marche" },
-    { href: "#trust", label: "Ils nous font confiance" },
-    { href: "/prestataires", label: "Prestataires" },
-    { href: "#start", label: "Commencer" },
-  ];
 
   return (
     <main className="min-h-[100dvh] bg-background text-text-primary overflow-x-hidden">
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
-            Wedding<span className="text-primary">AI</span> Builder
-          </Link>
-          <nav className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
-            {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="hover:text-text-primary transition">
-                {link.label}
-              </a>
-            ))}
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link href="/quiz" className="hidden sm:block">
-              <Button variant="primary" iconRight={<ArrowRight size={18} />}>
-                Commencer
-              </Button>
-            </Link>
-            <button
-              onClick={() => setMenuOpen(true)}
-              className="md:hidden p-2 rounded-xl hover:bg-black/5 transition"
-              aria-label="Ouvrir le menu"
-            >
-              <Menu size={24} className="text-text-primary" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {menuOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden"
-            onClick={() => setMenuOpen(false)}
-          />
-          <div className="fixed top-0 left-0 bottom-0 z-50 w-[80%] max-w-[300px] bg-white shadow-2xl p-6 md:hidden flex flex-col">
-            <div className="flex items-center justify-between mb-8">
-              <div className="font-serif text-lg font-semibold tracking-tight">
-                Wedding<span className="text-primary">AI</span> Builder
-              </div>
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="p-2 rounded-xl hover:bg-black/5 transition"
-                aria-label="Fermer le menu"
-              >
-                <X size={24} className="text-text-primary" />
-              </button>
-            </div>
-            <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-lg font-medium text-text-primary py-2 border-b border-black/10"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-            <div className="mt-auto pt-6">
-              <Link href="/quiz" onClick={() => setMenuOpen(false)}>
-                <Button variant="primary" className="w-full" iconRight={<ArrowRight size={18} />}>
-                  Commencer
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </>
-      )}
+      <Header />
 
       <section className="relative pt-24 sm:pt-28 pb-12 sm:pb-14 px-4 sm:px-6 overflow-hidden" id="home">
         <div className="pointer-events-none absolute inset-0">

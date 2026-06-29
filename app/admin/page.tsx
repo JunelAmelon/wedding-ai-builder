@@ -173,7 +173,7 @@ export default function AdminPage() {
                 activeTab === "vendors" ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary"
               }`}
             >
-              <Briefcase size={16} /> Prestataires ({vendors.length})
+              <Briefcase size={16} /> Professionnels ({vendors.length})
             </button>
           </div>
 
@@ -256,7 +256,7 @@ export default function AdminPage() {
                 </div>
               </div>
             ))}
-            {filteredVendors.length === 0 && <p className="p-6 text-center text-text-secondary rounded-2xl border border-black/10 bg-white">Aucune candidature prestataire.</p>}
+            {filteredVendors.length === 0 && <p className="p-6 text-center text-text-secondary rounded-2xl border border-black/10 bg-white">Aucune candidature professionnelle.</p>}
           </div>
         )}
       </div>
@@ -277,8 +277,16 @@ export default function AdminPage() {
                   <p className="font-medium text-text-primary">{selectedVendor.siret}</p>
                 </div>
                 <div>
+                  <span className="text-text-secondary">Marque</span>
+                  <p className="font-medium text-text-primary">{selectedVendor.brandName || "—"}</p>
+                </div>
+                <div>
                   <span className="text-text-secondary">Catégorie</span>
                   <p className="font-medium text-text-primary">{selectedVendor.serviceCategory}</p>
+                </div>
+                <div>
+                  <span className="text-text-secondary">Gamme</span>
+                  <p className="font-medium text-text-primary capitalize">{selectedVendor.tier}</p>
                 </div>
                 <div>
                   <span className="text-text-secondary">Expérience</span>
@@ -287,6 +295,17 @@ export default function AdminPage() {
                 <div>
                   <span className="text-text-secondary">Formation</span>
                   <p className="font-medium text-text-primary">{selectedVendor.trainingDate ? new Date(selectedVendor.trainingDate).toLocaleDateString("fr-FR") : "—"}</p>
+                </div>
+                <div>
+                  <span className="text-text-secondary">Tarifs</span>
+                  <p className="font-medium text-text-primary">{selectedVendor.priceRange.min} - {selectedVendor.priceRange.max} {selectedVendor.priceRange.currency}</p>
+                </div>
+                <div>
+                  <span className="text-text-secondary">Zone</span>
+                  <p className="font-medium text-text-primary">
+                    {selectedVendor.serviceArea.regions.join(", ") || selectedVendor.serviceArea.cities.join(", ")}
+                    {selectedVendor.serviceArea.radius ? ` (${selectedVendor.serviceArea.radius} km)` : ""}
+                  </p>
                 </div>
                 <div className="sm:col-span-2">
                   <span className="text-text-secondary">Adresse</span>
@@ -300,12 +319,56 @@ export default function AdminPage() {
                   <span className="text-text-secondary">Description</span>
                   <p className="text-text-primary mt-1">{selectedVendor.description}</p>
                 </div>
+                <div className="sm:col-span-2">
+                  <span className="text-text-secondary">Styles</span>
+                  <p className="text-text-primary mt-1">{selectedVendor.styles.join(", ") || "—"}</p>
+                </div>
+                {selectedVendor.pricingDetails && (
+                  <div className="sm:col-span-2">
+                    <span className="text-text-secondary">Détails tarifaires</span>
+                    <p className="text-text-primary mt-1">{selectedVendor.pricingDetails}</p>
+                  </div>
+                )}
                 {selectedVendor.trainingDescription && (
                   <div className="sm:col-span-2">
                     <span className="text-text-secondary">Détail formation</span>
                     <p className="text-text-primary mt-1">{selectedVendor.trainingDescription}</p>
                   </div>
                 )}
+                {selectedVendor.serviceArea.travelPolicy && (
+                  <div className="sm:col-span-2">
+                    <span className="text-text-secondary">Déplacements</span>
+                    <p className="text-text-primary mt-1">{selectedVendor.serviceArea.travelPolicy}</p>
+                  </div>
+                )}
+                {selectedVendor.availability.noticePeriod && (
+                  <div>
+                    <span className="text-text-secondary">Préavis</span>
+                    <p className="font-medium text-text-primary">{selectedVendor.availability.noticePeriod}</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <span className="text-text-secondary text-sm">Portfolio ({selectedVendor.portfolio.images.length})</span>
+                <div className="mt-2 grid gap-2">
+                  {selectedVendor.portfolio.images.map((img) => (
+                    <a
+                      key={img.publicId}
+                      href={img.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-between rounded-xl border border-black/10 bg-surface p-3 hover:border-primary/50 transition"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <FileText size={18} className="text-primary shrink-0" />
+                        <span className="text-sm text-text-primary truncate">{img.filename}</span>
+                      </div>
+                      <ExternalLink size={16} className="text-text-secondary shrink-0" />
+                    </a>
+                  ))}
+                  {selectedVendor.portfolio.images.length === 0 && <p className="text-sm text-text-secondary">Aucune image.</p>}
+                </div>
               </div>
 
               <div>

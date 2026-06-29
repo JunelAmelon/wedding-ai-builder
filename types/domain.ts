@@ -64,6 +64,7 @@ export interface VendorApplication {
   status: "pending" | "approved" | "rejected";
   companyName: string;
   siret: string;
+  brandName: string | null;
   email: string;
   phone: string;
   website: string | null;
@@ -78,10 +79,35 @@ export interface VendorApplication {
   yearsOfExperience: number;
   trainingDate: string | null;
   trainingDescription: string | null;
-  documents: { url: string; publicId: string; filename: string }[];
   description: string;
+  styles: string[];
   contactName: string;
   contactRole: string;
+  priceRange: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  pricingDetails: string | null;
+  serviceArea: {
+    regions: string[];
+    cities: string[];
+    radius: number | null;
+    travelPolicy: string | null;
+  };
+  availability: {
+    noticePeriod: string | null;
+    peakSeasons: string[];
+    unavailableDates: string[];
+  };
+  portfolio: {
+    images: { url: string; publicId: string; filename: string }[];
+    website: string | null;
+    instagram: string | null;
+    videos: string[];
+  };
+  tier: "economique" | "standard" | "premium" | "luxe";
+  documents: { url: string; publicId: string; filename: string }[];
   acceptedTerms: boolean;
   reviewedAt: string | null;
   reviewedBy: string | null;
