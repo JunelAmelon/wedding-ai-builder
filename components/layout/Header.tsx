@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { ArrowRight, Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
-  { href: "#how", label: "Comment ça marche" },
-  { href: "#trust", label: "Ils nous font confiance" },
+  { href: "/#how", label: "Comment ça marche" },
+  { href: "/#trust", label: "Ils nous font confiance" },
   { href: "/prestataires", label: "Professionnels" },
-  { href: "#start", label: "Commencer" },
+  { href: "/#start", label: "Commencer" },
 ];
 
 interface HeaderProps {
@@ -29,9 +29,9 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
             {NAV_LINKS.map((link) => (
-              <a key={link.href} href={link.href} className="hover:text-text-primary transition">
+              <Link key={link.href} href={link.href} className="hover:text-text-primary transition">
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
           <div className="flex items-center gap-3">
@@ -72,14 +72,14 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
             </div>
             <nav className="flex flex-col gap-4">
               {NAV_LINKS.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
                   className="text-lg font-medium text-text-primary py-2 border-b border-black/10"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </nav>
             <div className="mt-auto pt-6">
