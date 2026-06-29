@@ -1,0 +1,161 @@
+{
+  "F90dx4c8ccQp": {
+    "id": "F90dx4c8ccQp",
+    "createdAt": "2026-06-29T09:11:58.613Z",
+    "updatedAt": "2026-06-29T12:13:05.354Z",
+    "status": "completed",
+    "quizAnswers": {
+      "weddingDate": "2026-06-27",
+      "location": {
+        "city": "CCC",
+        "country": " BC DBCD"
+      },
+      "guestCount": 677,
+      "budget": {
+        "amount": 12000,
+        "currency": "EUR"
+      },
+      "style": "boheme",
+      "stressLevel": 5,
+      "mainPriority": "deco"
+    },
+    "aiOutput": {
+      "blueprint": {
+        "concept": "Bohème à Paris",
+        "storytelling": "Un mariage bohème pensé pour 196 invités, où chaque détail raconte votre histoire. L'ambiance générale privilégie la chaleur et l'authenticité.",
+        "ambiance": [
+          "chaleureux",
+          "authentique",
+          "raffiné",
+          "mémorable"
+        ],
+        "colorPalette": [
+          {
+            "name": "Ivoire",
+            "hex": "#F5F1EB"
+          },
+          {
+            "name": "Bordeaux profond",
+            "hex": "#7C2D3A"
+          },
+          {
+            "name": "Or doux",
+            "hex": "#C9A35C"
+          },
+          {
+            "name": "Vert sauge",
+            "hex": "#8A9A7E"
+          }
+        ]
+      },
+      "budgetBreakdown": {
+        "totalBudget": 89994,
+        "currency": "EUR",
+        "breakdown": {
+          "venue": 31498,
+          "catering": 22499,
+          "photography": 10799,
+          "music": 7200,
+          "decoration": 8999,
+          "contingency": 8999
+        },
+        "percentages": {
+          "venue": 35,
+          "catering": 25,
+          "photography": 12,
+          "music": 8,
+          "decoration": 10,
+          "contingency": 10
+        }
+      },
+      "timeline": {
+        "milestones": [
+          {
+            "monthsBeforeWedding": 12,
+            "title": "Poser les fondations",
+            "tasks": [
+              "Fixer la date définitive",
+              "Définir le budget global",
+              "Réserver le lieu de réception."
+            ]
+          },
+          {
+            "monthsBeforeWedding": 9,
+            "title": "Sécuriser les prestataires clés",
+            "tasks": [
+              "Réserver le traiteur",
+              "Choisir le photographe",
+              "Contacter les musiciens/DJ"
+            ]
+          },
+          {
+            "monthsBeforeWedding": 6,
+            "title": "Construire l'expérience invités",
+            "tasks": [
+              "Envoyer les save-the-date",
+              "Définir le style de décoration",
+              "Choisir la tenue"
+            ]
+          },
+          {
+            "monthsBeforeWedding": 4,
+            "title": "Affiner les détails",
+            "tasks": [
+              "Goûter le menu",
+              "Finaliser la liste d'invités",
+              "Réserver l'hébergement"
+            ]
+          },
+          {
+            "monthsBeforeWedding": 2,
+            "title": "Derniers réglages",
+            "tasks": [
+              "Envoyer les invitations officielles",
+              "Confirmer le timing avec chaque prestataire"
+            ]
+          },
+          {
+            "monthsBeforeWedding": 1,
+            "title": "Finalisation",
+            "tasks": [
+              "Confirmer le nombre final d'invités.",
+              "Préparer le plan de table"
+            ]
+          },
+          {
+            "monthsBeforeWedding": 0.25,
+            "title": "Dernière semaine",
+            "tasks": [
+              "Briefer les prestataires",
+              "Préparer une trousse d'urgence du jour J"
+            ]
+          },
+          {
+            "monthsBeforeWedding": 0,
+            "title": "Le grand jour",
+            "tasks": [
+              "Profiter du moment",
+              "Désigner un proche référent logistique"
+            ]
+          }
+        ]
+      },
+      "riskEngine": {
+        "criticalErrors": [
+          "Délai très court avant le mariage pour confirmer tous les prestataires."
+        ],
+        "budgetInconsistencies": [],
+        "organizationalRisks": [
+          "Surveiller les délais de confirmation des prestataires clés."
+        ],
+        "riskScore": 35,
+        "scoreJustification": "Score calculé à partir du budget par invité, du niveau de stress déclaré (5/10) et du délai disponible avant le jour J."
+      },
+      "riskScore": 35,
+      "generatedAt": "2026-06-29T11:35:11.252Z",
+      "model": "claude-sonnet-4-6",
+      "cacheHit": true
+    },
+    "leadId": "LVoZ_JLdyWyU"
+  }
+}

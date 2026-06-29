@@ -1,0 +1,56 @@
+{
+  "9a1-DNe3IeWR": {
+    "id": "9a1-DNe3IeWR",
+    "sessionId": "F90dx4c8ccQp",
+    "email": "junelamelon92@gmail.com",
+    "whatsapp": "+22953843901",
+    "capturedAt": "2026-06-29T09:13:36.262Z",
+    "source": "gate",
+    "ctaClicked": [
+      "providers"
+    ],
+    "consentMarketing": true
+  },
+  "9wOMIDnjMfro": {
+    "id": "9wOMIDnjMfro",
+    "sessionId": "F90dx4c8ccQp",
+    "email": "junelamelon92@gmail.com",
+    "whatsapp": "+22953843901",
+    "capturedAt": "2026-06-29T09:23:10.111Z",
+    "source": "gate",
+    "ctaClicked": [
+      "providers"
+    ],
+    "consentMarketing": true
+  },
+  "HTMoq97y_sHR": {
+    "id": "HTMoq97y_sHR",
+    "sessionId": "F90dx4c8ccQp",
+    "email": "junelamelon92@gmail.com",
+    "whatsapp": "+22953843901",
+    "capturedAt": "2026-06-29T11:04:11.264Z",
+    "source": "gate",
+    "ctaClicked": [],
+    "consentMarketing": true
+  },
+  "Non--lG1dqc7": {
+    "id": "Non--lG1dqc7",
+    "sessionId": "F90dx4c8ccQp",
+    "email": "junelamelon92@gmail.com",
+    "whatsapp": "53843902",
+    "capturedAt": "2026-06-29T11:21:30.161Z",
+    "source": "gate",
+    "ctaClicked": [],
+    "consentMarketing": true
+  },
+  "LVoZ_JLdyWyU": {
+    "id": "LVoZ_JLdyWyU",
+    "sessionId": "F90dx4c8ccQp",
+    "email": "junelamelon92@gmail.com",
+    "whatsapp": "53843901",
+    "capturedAt": "2026-06-29T11:36:03.280Z",
+    "source": "gate",
+    "ctaClicked": [],
+    "consentMarketing": true
+  }
+}

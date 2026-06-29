@@ -1,0 +1,768 @@
+{
+  "1Qqa1-Ik2p89": {
+    "id": "1Qqa1-Ik2p89",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_started",
+    "properties": {},
+    "timestamp": "2026-06-29T09:11:58.619Z"
+  },
+  "HAMIFewNjm21": {
+    "id": "HAMIFewNjm21",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "date",
+      "stepName": "date"
+    },
+    "timestamp": "2026-06-29T09:12:08.918Z"
+  },
+  "9I2H3JuX0YLP": {
+    "id": "9I2H3JuX0YLP",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "location",
+      "stepName": "location"
+    },
+    "timestamp": "2026-06-29T09:12:22.108Z"
+  },
+  "Gked0H5kqy4H": {
+    "id": "Gked0H5kqy4H",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "guests",
+      "stepName": "guests"
+    },
+    "timestamp": "2026-06-29T09:12:27.923Z"
+  },
+  "DRnkSYc36HzY": {
+    "id": "DRnkSYc36HzY",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "budget",
+      "stepName": "budget"
+    },
+    "timestamp": "2026-06-29T09:12:34.972Z"
+  },
+  "GgmPeTOhkRX4": {
+    "id": "GgmPeTOhkRX4",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "style",
+      "stepName": "style"
+    },
+    "timestamp": "2026-06-29T09:12:45.237Z"
+  },
+  "Vj7P8NclrfyT": {
+    "id": "Vj7P8NclrfyT",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "stress",
+      "stepName": "stress"
+    },
+    "timestamp": "2026-06-29T09:12:52.041Z"
+  },
+  "y4TKHnYxg9vw": {
+    "id": "y4TKHnYxg9vw",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "priority",
+      "stepName": "priority"
+    },
+    "timestamp": "2026-06-29T09:13:08.512Z"
+  },
+  "sqTKa-IThm3U": {
+    "id": "sqTKa-IThm3U",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_completed",
+    "properties": {
+      "durationSeconds": 70
+    },
+    "timestamp": "2026-06-29T09:13:12.942Z"
+  },
+  "YXVdVQbfnTD7": {
+    "id": "YXVdVQbfnTD7",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "email_captured",
+    "properties": {
+      "source": "gate"
+    },
+    "timestamp": "2026-06-29T09:13:36.269Z"
+  },
+  "QIBHE8uSih4w": {
+    "id": "QIBHE8uSih4w",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "whatsapp_submitted",
+    "properties": {},
+    "timestamp": "2026-06-29T09:13:36.274Z"
+  },
+  "1qJ0rlX7GDLA": {
+    "id": "1qJ0rlX7GDLA",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 50
+    },
+    "timestamp": "2026-06-29T09:13:43.769Z"
+  },
+  "S2TWlAF6EQAV": {
+    "id": "S2TWlAF6EQAV",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 50
+    },
+    "timestamp": "2026-06-29T09:13:43.944Z"
+  },
+  "xfvsanZq0r6O": {
+    "id": "xfvsanZq0r6O",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "cta_clicked",
+    "properties": {
+      "ctaLabel": "providers"
+    },
+    "timestamp": "2026-06-29T09:13:55.857Z"
+  },
+  "9DxaVuEwqmIg": {
+    "id": "9DxaVuEwqmIg",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "cta_clicked",
+    "properties": {
+      "ctaLabel": "providers"
+    },
+    "timestamp": "2026-06-29T09:13:59.690Z"
+  },
+  "sLpAUMP1BkCN": {
+    "id": "sLpAUMP1BkCN",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "date",
+      "stepName": "date"
+    },
+    "timestamp": "2026-06-29T09:22:08.927Z"
+  },
+  "7Effok9Pw4ez": {
+    "id": "7Effok9Pw4ez",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "location",
+      "stepName": "location"
+    },
+    "timestamp": "2026-06-29T09:22:17.658Z"
+  },
+  "bnOgQ4PymWzg": {
+    "id": "bnOgQ4PymWzg",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "guests",
+      "stepName": "guests"
+    },
+    "timestamp": "2026-06-29T09:22:24.480Z"
+  },
+  "s-AUgTb1op--": {
+    "id": "s-AUgTb1op--",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "budget",
+      "stepName": "budget"
+    },
+    "timestamp": "2026-06-29T09:22:30.185Z"
+  },
+  "aNcHKqSc0kZC": {
+    "id": "aNcHKqSc0kZC",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "style",
+      "stepName": "style"
+    },
+    "timestamp": "2026-06-29T09:22:35.524Z"
+  },
+  "It1MpR7dE2OC": {
+    "id": "It1MpR7dE2OC",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "stress",
+      "stepName": "stress"
+    },
+    "timestamp": "2026-06-29T09:22:40.516Z"
+  },
+  "y8f7FlTSPtEY": {
+    "id": "y8f7FlTSPtEY",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "priority",
+      "stepName": "priority"
+    },
+    "timestamp": "2026-06-29T09:22:48.078Z"
+  },
+  "Ms85PtHBbuVM": {
+    "id": "Ms85PtHBbuVM",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_completed",
+    "properties": {
+      "durationSeconds": 649
+    },
+    "timestamp": "2026-06-29T09:22:51.907Z"
+  },
+  "B5UtKVQYHdG-": {
+    "id": "B5UtKVQYHdG-",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_completed",
+    "properties": {
+      "durationSeconds": 653
+    },
+    "timestamp": "2026-06-29T09:22:51.990Z"
+  },
+  "So0FQuXmRrFO": {
+    "id": "So0FQuXmRrFO",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "email_captured",
+    "properties": {
+      "source": "gate"
+    },
+    "timestamp": "2026-06-29T09:23:10.121Z"
+  },
+  "sY3GJ8A6db38": {
+    "id": "sY3GJ8A6db38",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "whatsapp_submitted",
+    "properties": {},
+    "timestamp": "2026-06-29T09:23:10.125Z"
+  },
+  "HdOyHgE6omgm": {
+    "id": "HdOyHgE6omgm",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 50
+    },
+    "timestamp": "2026-06-29T09:23:15.401Z"
+  },
+  "6A7Uf5rZ3BhP": {
+    "id": "6A7Uf5rZ3BhP",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 50
+    },
+    "timestamp": "2026-06-29T09:23:15.462Z"
+  },
+  "Vh8xCiQ6dLWm": {
+    "id": "Vh8xCiQ6dLWm",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "cta_clicked",
+    "properties": {
+      "ctaLabel": "providers"
+    },
+    "timestamp": "2026-06-29T09:24:10.497Z"
+  },
+  "QmY_D8maRUyw": {
+    "id": "QmY_D8maRUyw",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "date",
+      "stepName": "date"
+    },
+    "timestamp": "2026-06-29T11:03:11.262Z"
+  },
+  "gDwiqvONn0dx": {
+    "id": "gDwiqvONn0dx",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "location",
+      "stepName": "location"
+    },
+    "timestamp": "2026-06-29T11:03:24.989Z"
+  },
+  "GOtQ64v36iQP": {
+    "id": "GOtQ64v36iQP",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "guests",
+      "stepName": "guests"
+    },
+    "timestamp": "2026-06-29T11:03:30.099Z"
+  },
+  "MCd67TEo6u70": {
+    "id": "MCd67TEo6u70",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "budget",
+      "stepName": "budget"
+    },
+    "timestamp": "2026-06-29T11:03:40.659Z"
+  },
+  "y2U3VF02G-9h": {
+    "id": "y2U3VF02G-9h",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "style",
+      "stepName": "style"
+    },
+    "timestamp": "2026-06-29T11:03:44.536Z"
+  },
+  "Yr98s36f2mRx": {
+    "id": "Yr98s36f2mRx",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "stress",
+      "stepName": "stress"
+    },
+    "timestamp": "2026-06-29T11:03:47.980Z"
+  },
+  "e53MSxMMzrxr": {
+    "id": "e53MSxMMzrxr",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "priority",
+      "stepName": "priority"
+    },
+    "timestamp": "2026-06-29T11:03:51.757Z"
+  },
+  "yRKDsvhSUKUA": {
+    "id": "yRKDsvhSUKUA",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_completed",
+    "properties": {
+      "durationSeconds": 6713
+    },
+    "timestamp": "2026-06-29T11:03:56.592Z"
+  },
+  "DYl55flbb62Q": {
+    "id": "DYl55flbb62Q",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "email_captured",
+    "properties": {
+      "source": "gate"
+    },
+    "timestamp": "2026-06-29T11:04:11.275Z"
+  },
+  "DWivcJfVjWZH": {
+    "id": "DWivcJfVjWZH",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "whatsapp_submitted",
+    "properties": {},
+    "timestamp": "2026-06-29T11:04:11.280Z"
+  },
+  "M27VNUS_LNFG": {
+    "id": "M27VNUS_LNFG",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 50
+    },
+    "timestamp": "2026-06-29T11:04:23.992Z"
+  },
+  "PokshoDnuI4J": {
+    "id": "PokshoDnuI4J",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 50
+    },
+    "timestamp": "2026-06-29T11:04:24.064Z"
+  },
+  "63F3Ud7HY-DI": {
+    "id": "63F3Ud7HY-DI",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "date",
+      "stepName": "date"
+    },
+    "timestamp": "2026-06-29T11:20:28.792Z"
+  },
+  "e-ffX4C6gz48": {
+    "id": "e-ffX4C6gz48",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "location",
+      "stepName": "location"
+    },
+    "timestamp": "2026-06-29T11:20:38.462Z"
+  },
+  "5wuaNGWZV_5S": {
+    "id": "5wuaNGWZV_5S",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "guests",
+      "stepName": "guests"
+    },
+    "timestamp": "2026-06-29T11:20:45.205Z"
+  },
+  "e8lX9WfX-qxQ": {
+    "id": "e8lX9WfX-qxQ",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "budget",
+      "stepName": "budget"
+    },
+    "timestamp": "2026-06-29T11:20:54.734Z"
+  },
+  "jeUpVIcxBLmc": {
+    "id": "jeUpVIcxBLmc",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "style",
+      "stepName": "style"
+    },
+    "timestamp": "2026-06-29T11:21:02.813Z"
+  },
+  "l0j_8QNIqM28": {
+    "id": "l0j_8QNIqM28",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "stress",
+      "stepName": "stress"
+    },
+    "timestamp": "2026-06-29T11:21:06.150Z"
+  },
+  "3Cq_eVSel3qI": {
+    "id": "3Cq_eVSel3qI",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "priority",
+      "stepName": "priority"
+    },
+    "timestamp": "2026-06-29T11:21:12.203Z"
+  },
+  "F5oG90MuVY7P": {
+    "id": "F5oG90MuVY7P",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_completed",
+    "properties": {
+      "durationSeconds": 7753
+    },
+    "timestamp": "2026-06-29T11:21:14.002Z"
+  },
+  "Y-sItzU7ls7b": {
+    "id": "Y-sItzU7ls7b",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "email_captured",
+    "properties": {
+      "source": "gate"
+    },
+    "timestamp": "2026-06-29T11:21:30.178Z"
+  },
+  "4U83pYkc-5NW": {
+    "id": "4U83pYkc-5NW",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "whatsapp_submitted",
+    "properties": {},
+    "timestamp": "2026-06-29T11:21:30.193Z"
+  },
+  "h_mwjhVzdiJc": {
+    "id": "h_mwjhVzdiJc",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:21:31.886Z"
+  },
+  "Bolt5ceP-g24": {
+    "id": "Bolt5ceP-g24",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:21:31.976Z"
+  },
+  "VtszwJ-Naf5g": {
+    "id": "VtszwJ-Naf5g",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:29:44.451Z"
+  },
+  "JNv0dJbwUX4_": {
+    "id": "JNv0dJbwUX4_",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:29:44.744Z"
+  },
+  "i8w37pDrvkGO": {
+    "id": "i8w37pDrvkGO",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:29:52.264Z"
+  },
+  "Sdy3UKwuIf4D": {
+    "id": "Sdy3UKwuIf4D",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:29:52.412Z"
+  },
+  "nXAaYnFhEjXL": {
+    "id": "nXAaYnFhEjXL",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:31:44.269Z"
+  },
+  "RG7Dhe6SW0js": {
+    "id": "RG7Dhe6SW0js",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:31:44.329Z"
+  },
+  "jgLJgXIjZxA7": {
+    "id": "jgLJgXIjZxA7",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:31:54.188Z"
+  },
+  "fsWlnbJq3CfA": {
+    "id": "fsWlnbJq3CfA",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:31:54.242Z"
+  },
+  "yemtAJ0K3htX": {
+    "id": "yemtAJ0K3htX",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:32:32.768Z"
+  },
+  "-5HCkFuqwrBB": {
+    "id": "-5HCkFuqwrBB",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:32:32.846Z"
+  },
+  "77csoi2M0a0T": {
+    "id": "77csoi2M0a0T",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:33:13.928Z"
+  },
+  "KuzB4FfqWMLH": {
+    "id": "KuzB4FfqWMLH",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:33:14.091Z"
+  },
+  "2CyHBDUrYZ1o": {
+    "id": "2CyHBDUrYZ1o",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "date",
+      "stepName": "date"
+    },
+    "timestamp": "2026-06-29T11:34:02.536Z"
+  },
+  "5Mpkdu8cLx4u": {
+    "id": "5Mpkdu8cLx4u",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "location",
+      "stepName": "location"
+    },
+    "timestamp": "2026-06-29T11:34:26.916Z"
+  },
+  "TVVT-DTlAfOY": {
+    "id": "TVVT-DTlAfOY",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "guests",
+      "stepName": "guests"
+    },
+    "timestamp": "2026-06-29T11:34:35.108Z"
+  },
+  "TYHTEhBGybb6": {
+    "id": "TYHTEhBGybb6",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "budget",
+      "stepName": "budget"
+    },
+    "timestamp": "2026-06-29T11:34:43.261Z"
+  },
+  "ORz9ywIqq-uw": {
+    "id": "ORz9ywIqq-uw",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "style",
+      "stepName": "style"
+    },
+    "timestamp": "2026-06-29T11:34:58.527Z"
+  },
+  "8UTwdYMgq1EL": {
+    "id": "8UTwdYMgq1EL",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "stress",
+      "stepName": "stress"
+    },
+    "timestamp": "2026-06-29T11:35:03.836Z"
+  },
+  "16KlzgZIcK7N": {
+    "id": "16KlzgZIcK7N",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "priority",
+      "stepName": "priority"
+    },
+    "timestamp": "2026-06-29T11:35:08.655Z"
+  },
+  "V3zN7D9sO_tN": {
+    "id": "V3zN7D9sO_tN",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_completed",
+    "properties": {
+      "durationSeconds": 8590
+    },
+    "timestamp": "2026-06-29T11:35:11.211Z"
+  },
+  "DrHdUSLVDrPG": {
+    "id": "DrHdUSLVDrPG",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "priority",
+      "stepName": "priority"
+    },
+    "timestamp": "2026-06-29T11:35:11.331Z"
+  },
+  "TcRItxdmt1MV": {
+    "id": "TcRItxdmt1MV",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "email_captured",
+    "properties": {
+      "source": "gate"
+    },
+    "timestamp": "2026-06-29T11:36:03.302Z"
+  },
+  "owve0rRKbx5D": {
+    "id": "owve0rRKbx5D",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "whatsapp_submitted",
+    "properties": {},
+    "timestamp": "2026-06-29T11:36:03.311Z"
+  },
+  "Jkbrs7xgGbCG": {
+    "id": "Jkbrs7xgGbCG",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:36:04.705Z"
+  },
+  "j2bD420tCv_t": {
+    "id": "j2bD420tCv_t",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "result_viewed",
+    "properties": {
+      "riskScore": 35
+    },
+    "timestamp": "2026-06-29T11:36:04.841Z"
+  },
+  "-lhuzY3oUhwR": {
+    "id": "-lhuzY3oUhwR",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "date",
+      "stepName": "date"
+    },
+    "timestamp": "2026-06-29T12:02:31.229Z"
+  },
+  "nxqgSHuwxq3u": {
+    "id": "nxqgSHuwxq3u",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "location",
+      "stepName": "location"
+    },
+    "timestamp": "2026-06-29T12:12:48.008Z"
+  },
+  "1KHPr0x4G-x0": {
+    "id": "1KHPr0x4G-x0",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "guests",
+      "stepName": "guests"
+    },
+    "timestamp": "2026-06-29T12:12:54.054Z"
+  },
+  "CDU75Z5ZTfUM": {
+    "id": "CDU75Z5ZTfUM",
+    "sessionId": "F90dx4c8ccQp",
+    "name": "quiz_step_completed",
+    "properties": {
+      "step": "budget",
+      "stepName": "budget"
+    },
+    "timestamp": "2026-06-29T12:13:05.360Z"
+  }
+}
