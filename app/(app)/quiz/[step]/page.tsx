@@ -29,15 +29,15 @@ const FIELD_BY_STEP: Record<QuizStep, string> = {
 
 const HERO_BY_STEP: Record<QuizStep, { url: string; alt: string }> = {
   date: {
-    url: "date-mariage.jpg",
+    url: "/date-mariage.jpg",
     alt: "Décoration de mariage",
   },
   location: {
-    url: "ville-mariage.jpg",
+    url: "/ville-mariage.jpg",
     alt: "Destination et voyage",
   },
   guests: {
-    url: "invite-mariage.jpg",
+    url: "/invite-mariage.jpg",
     alt: "Invités lors d'un mariage",
   },
   budget: {
@@ -45,15 +45,15 @@ const HERO_BY_STEP: Record<QuizStep, { url: string; alt: string }> = {
     alt: "Budget et planification",
   },
   style: {
-    url: "thème-mariage.jpg",
+    url: "/thème-mariage.jpg",
     alt: "Inspiration de mariage",
   },
   stress: {
-    url: "stress-mariage.jpg",
+    url: "/stress-mariage.jpg",
     alt: "Moment calme",
   },
   priority: {
-    url: "priorité-mariage.jpg",
+    url: "/priorité-mariage.jpg",
     alt: "Décision et organisation",
   },
 };
