@@ -20,12 +20,19 @@ Contraintes STRICTES :
 - Les valeurs de "percentages" doivent sommer à 100 (±0.5 toléré).
 - "totalBudget" doit être exactement égal au budget fourni en entrée, ne l'arrondis pas.`;
 
+function styleLabel(answers: QuizAnswers): string {
+  if (answers.style === "autre" && answers.customStyle) {
+    return `${answers.customStyle}${answers.customStyleDescription ? ` - ${answers.customStyleDescription}` : ""}`;
+  }
+  return answers.style ?? "non précisé";
+}
+
 export function buildBudgetUserPrompt(answers: QuizAnswers): string {
   return `Budget total : ${answers.budget?.amount} ${answers.budget?.currency}
 Localisation : ${answers.location?.city}, ${answers.location?.country} (ajuste les ratios selon le coût de vie local et le marché du mariage local)
 Nombre d'invités : ${answers.guestCount}
 Budget par invité : ${Math.round((answers.budget?.amount ?? 0) / Math.max(answers.guestCount ?? 1, 1))} ${answers.budget?.currency}
-Style : ${answers.style}
+Style : ${styleLabel(answers)}
 Priorité principale : ${answers.mainPriority}
 Niveau de stress : ${answers.stressLevel}
 

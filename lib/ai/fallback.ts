@@ -13,10 +13,18 @@ const STYLE_LABELS: Record<string, string> = {
   destination: "Destination Wedding",
   rustique: "Rustique & champêtre",
   luxe: "Luxe & raffiné",
+  autre: "Thème personnalisé",
 };
 
+function getStyleLabel(answers: QuizAnswers): string {
+  if (answers.style === "autre" && answers.customStyle) {
+    return `${answers.customStyle}${answers.customStyleDescription ? ` - ${answers.customStyleDescription}` : ""}`;
+  }
+  return STYLE_LABELS[answers.style ?? "classique"] ?? "Élégant intemporel";
+}
+
 export function fallbackBlueprint(answers: QuizAnswers): WeddingBlueprint {
-  const styleLabel = STYLE_LABELS[answers.style ?? "classique"] ?? "Élégant intemporel";
+  const styleLabel = getStyleLabel(answers);
   return {
     concept: `${styleLabel} à ${answers.location?.city ?? "votre destination"}`,
     storytelling: `Un mariage ${styleLabel.toLowerCase()} pensé pour ${

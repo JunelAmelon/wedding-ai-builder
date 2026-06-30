@@ -12,6 +12,7 @@ import { QuestionLocation } from "@/components/quiz/QuestionLocation";
 import { QuestionGuests } from "@/components/quiz/QuestionGuests";
 import { QuestionBudget } from "@/components/quiz/QuestionBudget";
 import { QuestionStyle } from "@/components/quiz/QuestionStyle";
+import type { StyleAnswer } from "@/components/quiz/QuestionStyle";
 import { QuestionStress } from "@/components/quiz/QuestionStress";
 import { QuestionPriority } from "@/components/quiz/QuestionPriority";
 import { track } from "@/lib/analytics/posthog.client";
@@ -115,7 +116,16 @@ export default function QuizStepPage() {
 
   async function handleAnswer(value: unknown) {
     const field = FIELD_BY_STEP[step];
-    setAnswer(field as never, value as never);
+
+    if (step === "style" && typeof value === "object" && value !== null) {
+      const styleAnswer = value as StyleAnswer;
+      setAnswer("style" as never, styleAnswer.style as never);
+      setAnswer("customStyle" as never, (styleAnswer.customStyle ?? "") as never);
+      setAnswer("customStyleDescription" as never, (styleAnswer.customStyleDescription ?? "") as never);
+    } else {
+      setAnswer(field as never, value as never);
+    }
+
     track("quiz_step_completed", { step });
 
     if (sessionId) {

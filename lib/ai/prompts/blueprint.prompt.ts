@@ -16,9 +16,16 @@ Règles de contenu :
 - Aucune clé supplémentaire, aucun champ null, aucune valeur vide.
 - Toutes les valeurs textuelles en français.`;
 
+function styleLabel(answers: QuizAnswers): string {
+  if (answers.style === "autre" && answers.customStyle) {
+    return `${answers.customStyle}${answers.customStyleDescription ? ` - ${answers.customStyleDescription}` : ""}`;
+  }
+  return answers.style ?? "non précisé";
+}
+
 export function buildBlueprintUserPrompt(answers: QuizAnswers): string {
   return `Génère le blueprint pour un mariage avec :
-- Style souhaité : ${answers.style}
+- Style souhaité : ${styleLabel(answers)}
 - Lieu : ${answers.location?.city}, ${answers.location?.country}
 - Nombre d'invités : ${answers.guestCount}
 - Budget total : ${answers.budget?.amount} ${answers.budget?.currency}

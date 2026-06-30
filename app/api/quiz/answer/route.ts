@@ -32,6 +32,16 @@ export async function POST(req: Request) {
     const { sessionId, step, value } = parsed.data;
     const field = FIELD_BY_STEP[step];
 
+    let updatePayload: Record<string, unknown> = { [field]: value };
+    if (step === "style" && typeof value === "object" && value !== null) {
+      const styleAnswer = value as { style: unknown; customStyle?: string; customStyleDescription?: string };
+      updatePayload = {
+        style: styleAnswer.style,
+        customStyle: styleAnswer.customStyle ?? null,
+        customStyleDescription: styleAnswer.customStyleDescription ?? null,
+      };
+    }
+
     const session = await sessionRepo.get(sessionId);
     if (!session) {
       const res = NextResponse.json(

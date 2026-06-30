@@ -24,11 +24,18 @@ Calibration du score (déterministe) :
 - +10 par incohérence budgétaire détectée (plafonné à +30 au total pour ce critère).
 - Plafonne le score final à 95 maximum. Minimum réaliste : 10.`;
 
+function styleLabel(answers: QuizAnswers): string {
+  if (answers.style === "autre" && answers.customStyle) {
+    return `${answers.customStyle}${answers.customStyleDescription ? ` - ${answers.customStyleDescription}` : ""}`;
+  }
+  return answers.style ?? "non précisé";
+}
+
 export function buildRiskUserPrompt(answers: QuizAnswers, budgetBreakdown: BudgetBreakdown): string {
   return `Budget total : ${answers.budget?.amount} ${answers.budget?.currency} pour ${answers.guestCount} invités à ${answers.location?.city}, ${answers.location?.country}
 Date du mariage : ${answers.weddingDate}
 Niveau de stress (1-10) : ${answers.stressLevel}
-Style de mariage : ${answers.style}
+Style de mariage : ${styleLabel(answers)}
 Priorité principale : ${answers.mainPriority}
 Budget breakdown calculé : ${JSON.stringify(budgetBreakdown)}`;
 }

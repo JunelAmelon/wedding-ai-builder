@@ -56,6 +56,22 @@ export default function ResultPage() {
   const weddingDate = session.quizAnswers.weddingDate ? new Date(session.quizAnswers.weddingDate) : null;
   const today = new Date();
 
+  const styleLabel = (() => {
+    const { style, customStyle, customStyleDescription } = session.quizAnswers;
+    if (style === "autre" && customStyle) {
+      return `${customStyle}${customStyleDescription ? ` — ${customStyleDescription}` : ""}`;
+    }
+    const labels: Record<string, string> = {
+      boheme: "Bohème",
+      classique: "Classique & élégant",
+      moderne: "Moderne & minimaliste",
+      destination: "Destination wedding",
+      rustique: "Rustique & champêtre",
+      luxe: "Luxe & raffiné",
+    };
+    return style ? (labels[style] ?? style) : "Non précisé";
+  })();
+
   function formatDateFr(d: Date) {
     return new Intl.DateTimeFormat("fr-FR", {
       weekday: "long",
@@ -225,9 +241,9 @@ export default function ResultPage() {
                     <div className="text-xs text-text-secondary mt-1">Parcours guidé</div>
                   </div>
                   <div className="rounded-2xl border border-black/10 bg-surface p-4">
-                    <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Priorité</div>
-                    <div className="font-semibold mt-2">À sécuriser</div>
-                    <div className="text-xs text-text-secondary mt-1">Selon vos réponses</div>
+                    <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Style</div>
+                    <div className="font-semibold mt-2">{styleLabel}</div>
+                    <div className="text-xs text-text-secondary mt-1">Ambiance retenue</div>
                   </div>
                 </div>
               </div>
@@ -322,6 +338,16 @@ export default function ResultPage() {
                 pour votre journée
               </h2>
               <p className="text-text-secondary mt-4 leading-relaxed text-lg">{aiOutput.blueprint.concept}</p>
+
+              {session.quizAnswers.style === "autre" && session.quizAnswers.customStyle && (
+                <div className="mt-8 rounded-2xl border border-primary/15 bg-primary/5 p-5">
+                  <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-2">Thème choisi</div>
+                  <div className="font-semibold text-text-primary">{session.quizAnswers.customStyle}</div>
+                  {session.quizAnswers.customStyleDescription && (
+                    <p className="text-sm text-text-secondary mt-1">{session.quizAnswers.customStyleDescription}</p>
+                  )}
+                </div>
+              )}
 
               <div className="mt-8">
                 <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Storytelling</div>

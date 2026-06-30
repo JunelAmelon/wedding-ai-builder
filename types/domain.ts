@@ -4,7 +4,8 @@ export type WeddingStyle =
   | "moderne"
   | "destination"
   | "rustique"
-  | "luxe";
+  | "luxe"
+  | "autre";
 
 export type MainPriority =
   | "budget"
@@ -19,6 +20,8 @@ export interface QuizAnswers {
   guestCount?: number;
   budget?: { amount: number; currency: string };
   style?: WeddingStyle;
+  customStyle?: string; // thème personnalisé quand style = "autre"
+  customStyleDescription?: string; // mini description du thème personnalisé
   stressLevel?: number; // 1-10
   mainPriority?: MainPriority;
 }

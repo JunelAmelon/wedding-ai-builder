@@ -122,43 +122,19 @@ export default function ProfessionalsLandingPage() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-12 gap-10 items-start">
-            <div className="lg:col-span-7">
+          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 items-start">
+            {/* Title — first on mobile, top-left on desktop */}
+            <div className="order-1 lg:col-span-7 lg:pr-10">
               <h1 className="font-serif text-[clamp(2.4rem,5.5vw,4.2rem)] font-bold leading-[1.03] tracking-tight">
                 Des couples réellement compatibles.
                 <span className="block text-text-secondary/60">Pas des centaines de demandes inutiles.</span>
               </h1>
-              <p className="mt-6 text-lg text-text-secondary leading-relaxed max-w-xl">
-                Wedding AI Builder analyse les besoins de chaque futur marié avant de recommander uniquement les professionnels les plus adaptés à son budget, son style, sa localisation et son projet.
-              </p>
-              <p className="mt-4 text-lg text-text-primary font-medium max-w-xl">
-                Vous recevez moins de demandes, mais de bien meilleure qualité.
-              </p>
-
-              <div className="mt-9 flex flex-col sm:flex-row gap-3">
-                <Link href="/devenir-professionnel" className="w-full sm:w-auto">
-                  <Button variant="primary" className="w-full" iconRight={<ArrowRight size={18} />}>
-                    Créer mon profil gratuitement
-                  </Button>
-                </Link>
-                <a href="#how-it-works" className="w-full sm:w-auto">
-                  <Button variant="secondary" className="w-full">Découvrir le fonctionnement</Button>
-                </a>
-              </div>
-
-              <ul className="mt-10 border-t border-black/10 divide-y divide-black/10">
-                {BENEFITS.map((b) => (
-                  <li key={b} className="flex items-center gap-3 py-3 text-sm text-text-secondary">
-                    <Check size={15} className="text-success shrink-0" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
             </div>
 
             {/* The signature element: an index card, slightly rotated, taped at the corner —
-                a real artifact a vendor would recognize, not a dashboard widget */}
-            <div className="lg:col-span-5 lg:pt-6">
+                a real artifact a vendor would recognize, not a dashboard widget.
+                Second on mobile, right column on desktop. */}
+            <div className="order-2 lg:col-span-5 lg:pt-6 lg:row-span-2">
               <div className="relative max-w-sm mx-auto lg:mx-0 lg:ml-auto">
                 <div className="absolute -top-3 left-10 h-6 w-14 bg-primary/20 rotate-[-4deg] rounded-sm" />
                 <div className="rounded-2xl border border-black/10 bg-white shadow-[0_30px_80px_rgba(11,15,26,0.12)] p-6 rotate-[1.5deg]">
@@ -202,6 +178,36 @@ export default function ProfessionalsLandingPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Text block — third on mobile, bottom-left on desktop */}
+            <div className="order-3 lg:col-span-7 lg:pr-10">
+              <p className="mt-6 text-lg text-text-secondary leading-relaxed max-w-xl">
+                Wedding AI Builder analyse les besoins de chaque futur marié avant de recommander uniquement les professionnels les plus adaptés à son budget, son style, sa localisation et son projet.
+              </p>
+              <p className="mt-4 text-lg text-text-primary font-medium max-w-xl">
+                Vous recevez moins de demandes, mais de bien meilleure qualité.
+              </p>
+
+              <div className="mt-9 flex flex-col sm:flex-row gap-3">
+                <Link href="/devenir-professionnel" className="w-full sm:w-auto">
+                  <Button variant="primary" className="w-full" iconRight={<ArrowRight size={18} />}>
+                    Créer mon profil gratuitement
+                  </Button>
+                </Link>
+                <a href="#how-it-works" className="w-full sm:w-auto">
+                  <Button variant="secondary" className="w-full">Découvrir le fonctionnement</Button>
+                </a>
+              </div>
+
+              <ul className="mt-10 border-t border-black/10 divide-y divide-black/10">
+                {BENEFITS.map((b) => (
+                  <li key={b} className="flex items-center gap-3 py-3 text-sm text-text-secondary">
+                    <Check size={15} className="text-success shrink-0" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -328,7 +334,7 @@ export default function ProfessionalsLandingPage() {
       {/* Credit system — a progress bar that visibly stops where money enters,
           instead of four identical "step" cards */}
       <section className="py-16 sm:py-20 border-y border-black/10 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center sm:text-left">
           <div className="mb-14">
             <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Transparence</div>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Le système de crédits</h2>
@@ -337,8 +343,8 @@ export default function ProfessionalsLandingPage() {
           <div className="relative">
             <div className="hidden sm:block absolute top-5 left-5 right-5 h-px bg-black/10" />
             <div className="grid sm:grid-cols-4 gap-6">
-              {CREDIT_STEPS.map((step, i) => (
-                <div key={step.title} className="relative">
+              {CREDIT_STEPS.map((step) => (
+                <div key={step.title} className="relative flex flex-col items-center sm:items-start">
                   <div
                     className={`h-10 w-10 rounded-full flex items-center justify-center border ${
                       step.paid ? "bg-primary text-white border-primary" : "bg-white border-black/15 text-primary"
