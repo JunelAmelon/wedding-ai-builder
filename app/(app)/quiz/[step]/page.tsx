@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { TriangleAlert, User } from "lucide-react";
+import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { FloatingNav } from "@/components/ui/FloatingNav";
 import { ProgressBar } from "@/components/feedback/ProgressBar";
 import { useQuizStore, QUIZ_STEPS } from "@/lib/store/quizStore";
 import { QuestionDate } from "@/components/quiz/QuestionDate";
@@ -185,22 +185,6 @@ export default function QuizStepPage() {
     <div className="bg-background min-h-[100dvh]">
       <ProgressBar current={stepIndex + 1} total={QUIZ_STEPS.length} />
 
-      <div className="fixed top-6 left-0 right-0 z-40 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
-            Wedding<span className="text-primary">AI</span> Builder
-          </Link>
-          <Link href="/login" className="hidden sm:block">
-            <Button variant="secondary" iconLeft={<User size={18} />} className="h-9 px-4 text-sm">
-              Connexion
-            </Button>
-          </Link>
-          <Link href="/login" className="sm:hidden p-2 rounded-xl bg-white border border-black/10 text-text-primary">
-            <User size={20} />
-          </Link>
-        </div>
-      </div>
-
       <div className="grid lg:grid-cols-2 min-h-[100dvh]">
         <div className="flex items-center justify-center px-6 py-10 lg:py-12">
           <div className="max-w-xl mx-auto w-full">
@@ -231,6 +215,8 @@ export default function QuizStepPage() {
           </div>
         </div>
       </div>
+
+      <FloatingNav />
     </div>
   );
 }

@@ -9,6 +9,7 @@ export interface UserAccount {
   googleId: string | null;
   firstName: string;
   lastName: string;
+  avatarUrl: string | null;
   phone: string | null;
   role: UserRole;
   emailVerified: boolean;

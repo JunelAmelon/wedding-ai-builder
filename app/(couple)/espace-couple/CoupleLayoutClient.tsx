@@ -33,9 +33,13 @@ const COUPLE_NAV_SECONDARY = [
 const MOBILE_TABS = [
   { href: "/espace-couple/result", label: "Plan IA", icon: Sparkles, primary: true },
   { href: "/espace-couple/mariage", label: "Mariage", icon: Heart },
-  { href: "/espace-couple/planning", label: "Planning", icon: CalendarRange },
-  { href: "/espace-couple/prestataires", label: "Pros", icon: Users2 },
   { href: "/espace-couple/messagerie", label: "Messages", icon: MessageSquare },
+];
+
+const MOBILE_MORE = [
+  { href: "/espace-couple/planning", label: "Planning", icon: CalendarRange },
+  { href: "/espace-couple/budget", label: "Budget", icon: Wallet },
+  { href: "/espace-couple/prestataires", label: "Prestataires", icon: Users2 },
 ];
 
 function Logo({ size = 32 }: { size?: number }) {
@@ -54,7 +58,7 @@ export default function CoupleLayoutClient({
   user,
 }: {
   children: ReactNode;
-  user?: { firstName?: string; lastName?: string; email?: string } | null;
+  user?: { firstName?: string; lastName?: string; email?: string; avatarUrl?: string | null } | null;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -85,7 +89,7 @@ export default function CoupleLayoutClient({
         }`}
       >
         <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-2xl bg-white/40 border border-black/[0.04]" : ""}`}>
-          <Link href="/espace-couple" className="flex items-center gap-2.5 shrink-0">
+          <Link href="/espace-couple/result" className="flex items-center gap-2.5 shrink-0">
             <Logo />
             <span className="font-serif text-lg font-semibold tracking-tight">Wedding AI</span>
           </Link>
@@ -150,9 +154,17 @@ export default function CoupleLayoutClient({
             href="/espace-couple/parametres"
             className="flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.08)] hover:border-black/15 transition-colors shrink-0"
           >
-            <span className="h-8 w-8 rounded-full bg-primary text-white text-xs font-semibold flex items-center justify-center">
-              {initials || "·"}
-            </span>
+            {safeUser.avatarUrl ? (
+              <img
+                src={safeUser.avatarUrl}
+                alt={initials || "Profil"}
+                className="h-8 w-8 rounded-full object-cover border border-black/10"
+              />
+            ) : (
+              <span className="h-8 w-8 rounded-full bg-primary text-white text-xs font-semibold flex items-center justify-center">
+                {initials || "·"}
+              </span>
+            )}
             <span className="hidden xl:block text-sm font-medium truncate max-w-[110px]">
               {safeUser.firstName} {safeUser.lastName}
             </span>
@@ -161,7 +173,7 @@ export default function CoupleLayoutClient({
       </div>
 
       <header className="lg:hidden h-16 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#FAFAF8]/90 backdrop-blur-xl">
-        <Link href="/espace-couple" className="flex items-center gap-2">
+        <Link href="/espace-couple/result" className="flex items-center gap-2">
           <Logo size={28} />
           <span className="font-serif text-base font-semibold">Wedding AI</span>
         </Link>
@@ -185,15 +197,34 @@ export default function CoupleLayoutClient({
               </button>
             </div>
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-black/[0.06]">
-              <span className="h-10 w-10 rounded-full bg-primary text-white text-sm font-semibold flex items-center justify-center">
-                {initials || "·"}
-              </span>
+              {safeUser.avatarUrl ? (
+                <img
+                  src={safeUser.avatarUrl}
+                  alt={initials || "Profil"}
+                  className="h-10 w-10 rounded-full object-cover border border-black/10"
+                />
+              ) : (
+                <span className="h-10 w-10 rounded-full bg-primary text-white text-sm font-semibold flex items-center justify-center">
+                  {initials || "·"}
+                </span>
+              )}
               <div className="min-w-0">
                 <div className="text-sm font-medium truncate">{safeUser.firstName} {safeUser.lastName}</div>
                 <div className="text-xs text-text-secondary truncate">{safeUser.email}</div>
               </div>
             </div>
             <nav className="space-y-0.5 mb-6">
+              {MOBILE_MORE.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMoreOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-black/[0.04] transition-colors"
+                >
+                  <item.icon size={17} strokeWidth={1.75} />
+                  {item.label}
+                </Link>
+              ))}
               {COUPLE_NAV_SECONDARY.map((item) => (
                 <Link
                   key={item.href}
@@ -250,6 +281,16 @@ export default function CoupleLayoutClient({
               </Link>
             );
           })}
+          <button
+            onClick={() => setMoreOpen(true)}
+            className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-2xl text-[10px] font-medium transition-colors ${
+              moreOpen ? "text-primary" : "text-text-secondary"
+            }`}
+            aria-label="Plus"
+          >
+            <Menu size={19} strokeWidth={moreOpen ? 2.1 : 1.75} />
+            Plus
+          </button>
         </div>
       </nav>
     </div>

@@ -7,6 +7,7 @@ import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
+import { userRepo } from "@/lib/db/repositories/userRepo";
 
 const ProposalSchema = z.object({
   matchId: z.string().min(1),
@@ -30,7 +31,8 @@ export async function GET() {
     const detailed = await Promise.all(
       proposals.map(async (p) => {
         const project = await projectRepo.get(p.projectId);
-        return { ...p, project };
+        const couple = project ? await userRepo.get(project.userId) : null;
+        return { ...p, project, couple: couple ? { firstName: couple.firstName, lastName: couple.lastName, avatarUrl: couple.avatarUrl } : null };
       })
     );
     return NextResponse.json({ proposals: detailed });

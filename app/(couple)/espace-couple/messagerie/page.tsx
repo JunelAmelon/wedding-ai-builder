@@ -67,6 +67,7 @@ export default function CoupleMessagingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [phoneUnavailable, setPhoneUnavailable] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ firstName?: string; lastName?: string; avatarUrl?: string | null }>({});
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,6 +91,21 @@ export default function CoupleMessagingPage() {
     }
     loadProposals();
   }, [router, proposalId]);
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const json = await res.json();
+          setCurrentUser(json.user || {});
+        }
+      } catch {
+        // ignore
+      }
+    }
+    loadUser();
+  }, []);
 
   useEffect(() => {
     if (!selected) return;
@@ -272,7 +288,15 @@ export default function CoupleMessagingPage() {
                           </div>
                         )}
                         <div className={`flex ${isMe ? "justify-end" : "justify-start"} gap-2`}>
-                          {!isMe && <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logoUrl} className="h-8 w-8 text-[10px] self-end mb-1" />}
+                          {!isMe ? (
+                            <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logoUrl} className="h-8 w-8 text-[10px] self-end mb-1" />
+                          ) : (
+                            <Avatar
+                              name={`${currentUser.firstName || ""} ${currentUser.lastName || ""}`}
+                              src={currentUser.avatarUrl || undefined}
+                              className="h-8 w-8 text-[10px] self-end mb-1"
+                            />
+                          )}
                           <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-primary text-white rounded-br-md" : "bg-white text-text-primary border border-black/[0.06] rounded-bl-md"}`}>
                             <p className="leading-relaxed">{m.content}</p>
                             <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-text-secondary"}`}>

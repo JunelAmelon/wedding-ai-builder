@@ -38,6 +38,7 @@ export async function POST(req: Request) {
       googleId: null,
       firstName,
       lastName,
+      avatarUrl: null,
       phone: phone || null,
       role,
       emailVerified: false,

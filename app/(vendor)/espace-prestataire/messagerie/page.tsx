@@ -39,13 +39,17 @@ function formatFullDate(iso: string) {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 
-function Avatar({ name, className, online }: { name: string; className?: string; online?: boolean }) {
+function Avatar({ name, src, className, online }: { name: string; src?: string; className?: string; online?: boolean }) {
   const initials = name.slice(0, 2).toUpperCase();
   return (
     <div className={`relative shrink-0 ${className}`}>
-      <div className="rounded-full bg-primary/10 text-primary font-serif font-semibold flex items-center justify-center h-full w-full">
-        {initials}
-      </div>
+      {src ? (
+        <img src={src} alt={name} className="rounded-full object-cover border border-black/[0.06] h-full w-full" />
+      ) : (
+        <div className="rounded-full bg-primary/10 text-primary font-serif font-semibold flex items-center justify-center h-full w-full">
+          {initials}
+        </div>
+      )}
       {online && <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-white" />}
     </div>
   );
@@ -65,6 +69,7 @@ export default function VendorMessagingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [phoneUnavailable, setPhoneUnavailable] = useState(false);
+  const [vendorLogo, setVendorLogo] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -86,7 +91,19 @@ export default function VendorMessagingPage() {
         setLoading(false);
       }
     }
+    async function loadVendor() {
+      try {
+        const res = await fetch("/api/vendor/profile");
+        if (res.ok) {
+          const json = await res.json();
+          setVendorLogo(json.profile?.logo?.url || null);
+        }
+      } catch {
+        // ignore
+      }
+    }
     loadProposals();
+    loadVendor();
   }, [router, proposalId]);
 
   useEffect(() => {
@@ -186,7 +203,7 @@ export default function VendorMessagingPage() {
                       isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
                     }`}
                   >
-                    <Avatar name={p.project?.name || "M"} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
+                    <Avatar name={`${p.couple?.firstName || ""} ${p.couple?.lastName || ""}`} src={p.couple?.avatarUrl || undefined} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-semibold text-text-primary truncate text-sm">{p.project?.name || "Mariage"}</span>
@@ -217,7 +234,7 @@ export default function VendorMessagingPage() {
                   <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
                     <ChevronLeft size={20} className="text-text-secondary" />
                   </button>
-                  <Avatar name={selected.project?.name || "M"} className="h-11 w-11 text-base" online={selected.status === "accepted"} />
+                  <Avatar name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`} src={selected.couple?.avatarUrl || undefined} className="h-11 w-11 text-base" online={selected.status === "accepted"} />
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-text-primary truncate">{selected.project?.name || "Mariage"}</div>
                     <div className="text-xs text-text-secondary">
@@ -271,7 +288,11 @@ export default function VendorMessagingPage() {
                           </div>
                         )}
                         <div className={`flex ${isMe ? "justify-end" : "justify-start"} gap-2`}>
-                          {!isMe && <Avatar name={selected.project?.name || "M"} className="h-8 w-8 text-[10px] self-end mb-1" />}
+                          {isMe ? (
+                            <Avatar name="Vous" src={vendorLogo || undefined} className="h-8 w-8 text-[10px] self-end mb-1" />
+                          ) : (
+                            <Avatar name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`} src={selected.couple?.avatarUrl || undefined} className="h-8 w-8 text-[10px] self-end mb-1" />
+                          )}
                           <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-primary text-white rounded-br-md" : "bg-white text-text-primary border border-black/[0.06] rounded-bl-md"}`}>
                             <p className="leading-relaxed">{m.content}</p>
                             <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-text-secondary"}`}>

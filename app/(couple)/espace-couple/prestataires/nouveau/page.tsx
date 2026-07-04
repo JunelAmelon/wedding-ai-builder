@@ -206,26 +206,26 @@ export default function NewTenderPage() {
                 <label className="block font-mono text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
                   Tranche de budget pour ce service
                 </label>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="relative flex-1">
                     <Wallet size={14} className="absolute left-3 top-3.5 text-text-secondary" />
                     <input
                       type="number"
                       value={budgetMin}
                       onChange={(e) => setBudgetMin(e.target.value)}
-                      placeholder="Min"
+                      placeholder="Budget min"
                       className="w-full bg-transparent border border-black/10 rounded-xl text-text-primary pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
-                  <span className="text-text-secondary">—</span>
+                  <span className="text-text-secondary hidden sm:block">—</span>
                   <input
                     type="number"
                     value={budgetMax}
                     onChange={(e) => setBudgetMax(e.target.value)}
-                    placeholder="Max"
+                    placeholder="Budget max"
                     className="flex-1 bg-transparent border border-black/10 rounded-xl text-text-primary px-3 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
                   />
-                  <span className="text-xs text-text-secondary">EUR</span>
+                  <span className="text-xs text-text-secondary shrink-0">{project?.budget?.currency || "EUR"}</span>
                 </div>
               </div>
 

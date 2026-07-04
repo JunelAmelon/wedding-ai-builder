@@ -99,6 +99,7 @@ export async function POST(req: Request) {
       googleId: null,
       firstName: firstName || applicationData.contactName,
       lastName: lastName || "",
+      avatarUrl: null,
       phone: applicationData.phone,
       role: "vendor",
       emailVerified: false,

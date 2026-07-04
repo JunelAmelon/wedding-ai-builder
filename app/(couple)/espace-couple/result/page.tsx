@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -11,7 +11,6 @@ import {
   Download,
   Printer,
   ArrowRight,
-  ArrowUpRight,
   TriangleAlert,
   CheckCircle2,
 } from "lucide-react";
@@ -33,12 +32,80 @@ function normalizeStyleAnswer(quiz: WeddingSession["quizAnswers"]) {
   };
 }
 
+function monthsBetween(from: Date, to: Date) {
+  return (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24 * 30.4375);
+}
+
+function computeRiskEngine(
+  answers: WeddingSession["quizAnswers"],
+  totalBudget: number,
+  currency: string
+) {
+  let score = 20;
+  const criticalErrors: string[] = [];
+  const budgetInconsistencies: string[] = [];
+  const organizationalRisks: string[] = [];
+
+  const amount = answers.budget?.amount ?? totalBudget ?? 0;
+  const guests = Math.max(answers.guestCount ?? 1, 1);
+  const perGuest = amount / guests;
+
+  if (perGuest < 80 && amount > 0) {
+    score += 15;
+    organizationalRisks.push(`Le budget par invité est estimé à environ ${Math.round(perGuest)} ${currency}. Cela peut être juste pour un format familial, mais vérifiez que les postes lieu et traiteur restent réalistes dans ${answers.location?.city || "votre zone"}.`);
+  }
+
+  if ((answers.stressLevel ?? 0) >= 8) {
+    score += 20;
+    organizationalRisks.push("Le niveau de stress déclaré est élevé. Prévoyez de déléguer des tâches et de bloquer des créneaux de décision pour avancer sereinement.");
+  }
+
+  if (answers.weddingDate) {
+    const months = monthsBetween(new Date(), new Date(answers.weddingDate));
+    if (months < 0) {
+      score += 30;
+      criticalErrors.push("La date du mariage semble dépassée. Vérifiez votre date dans « Mon mariage » et mettez à jour votre planning.");
+    } else if (months < 3) {
+      score += 25;
+      criticalErrors.push("Le mariage est très proche. Concentrez-vous d'urgence sur la confirmation des prestataires clés (lieu, traiteur, musique) et l'envoi des dernières informations.");
+    } else if (months < 6) {
+      score += 15;
+      organizationalRisks.push("Le délai avant le mariage se resserre. Il est recommandé de finaliser les contrats et les acomptes dans les prochaines semaines pour sécuriser vos choix.");
+    } else if (months < 12) {
+      organizationalRisks.push("Vous disposez encore de plusieurs mois. C'est le bon moment pour rencontrer des prestataires et comparer les propositions en détail.");
+    } else if (months > 36) {
+      organizationalRisks.push("Le mariage est prévu dans plus de 3 ans. Vous avez le temps de poser vos repères, mais commencez à observer les tendances et les tarifs pour anticiper sereinement.");
+    } else {
+      organizationalRisks.push("Le délai disponible est confortable. Profitez-en pour affiner votre vision et constituer une short-list de prestataires au bon rythme.");
+    }
+  } else {
+    organizationalRisks.push("Aucune date de mariage n'est renseignée. Fixer une date permettra de lancer le planning et d'obtenir des devis plus précis.");
+  }
+
+  if (organizationalRisks.length === 0) {
+    organizationalRisks.push("Surveillez les délais de confirmation des prestataires clés pour sécuriser votre journée.");
+  }
+
+  score = Math.min(95, Math.max(10, score));
+
+  return {
+    riskScore: score,
+    criticalErrors,
+    budgetInconsistencies,
+    organizationalRisks,
+    scoreJustification: `Score calculé à partir du budget par invité (${Math.round(perGuest)} ${currency}), du niveau de stress déclaré (${answers.stressLevel ?? "?"}/10) et du délai restant avant le jour J.`,
+    generalAdvice: amount > 0
+      ? `Avec un budget de ${amount.toLocaleString("fr-FR")} ${currency} pour ${answers.guestCount ?? "vos"} invités à ${answers.location?.city || "votre destination"}, soit environ ${Math.round(perGuest)} ${currency} par invité, concentrez-vous d'abord sur les postes qui absorbent le plus de budget : lieu et traiteur. Anticipez les délais de réservation en fonction de la date retenue, et prévoyez une marge de 8 à 12 % pour les imprévus. Un planning régulier et des points de synchronisation avec vos prestataires vous aideront à maîtriser l'organisation.`
+      : "Le budget n'est pas encore renseigné. Définir une enveloppe globale permettra de calibrer les recommandations et d'identifier les arbitrages nécessaires.",
+  };
+}
+
 export default function CoupleResultPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [session, setSession] = useState<WeddingSession | null>(null);
-  const [revealedStep, setRevealedStep] = useState(0);
+  const [project, setProject] = useState<{ id: string; weddingDate?: string; budget?: { amount?: number; currency?: string }; guestCount?: number; location?: { city?: string; country?: string }; stressLevel?: number; style?: any; customStyle?: string; customStyleDescription?: string; mainPriority?: string } | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -49,8 +116,9 @@ export default function CoupleResultPage() {
           return;
         }
         if (!res.ok) throw new Error("Erreur de chargement");
-        const data = (await res.json()) as { session: WeddingSession; project?: { id: string } };
+        const data = (await res.json()) as { session: WeddingSession; project?: any };
         setSession(data.session);
+        setProject(data.project || null);
         track("couple_result_loaded", { projectId: data.project?.id });
       } catch {
         setError("Impossible de charger votre résultat.");
@@ -66,33 +134,6 @@ export default function CoupleResultPage() {
   if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-background p-6">Résultat indisponible.</div>;
 
   const { aiOutput } = session;
-  const weddingDate = session.quizAnswers.weddingDate ? new Date(session.quizAnswers.weddingDate) : null;
-  const today = new Date();
-
-  const styleAnswer = normalizeStyleAnswer(session.quizAnswers);
-  const displayStyle = aiOutput.blueprint.reformulatedStyle || (() => {
-    if (styleAnswer.style === "autre" && styleAnswer.customStyle) {
-      return `${styleAnswer.customStyle}${styleAnswer.customStyleDescription ? ` — ${styleAnswer.customStyleDescription}` : ""}`;
-    }
-    const labels: Record<string, string> = {
-      boheme: "Bohème",
-      classique: "Classique & élégant",
-      moderne: "Moderne & minimaliste",
-      destination: "Destination wedding",
-      rustique: "Rustique & champêtre",
-      luxe: "Luxe & raffiné",
-    };
-    return styleAnswer.style ? (labels[styleAnswer.style] ?? styleAnswer.style) : "Non précisé";
-  })();
-
-  function formatDateFr(d: Date) {
-    return new Intl.DateTimeFormat("fr-FR", {
-      weekday: "long",
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }).format(d);
-  }
 
   const BUDGET_LABELS: Record<string, string> = {
     venue: "Lieu de réception",
@@ -112,42 +153,94 @@ export default function CoupleResultPage() {
     contingency: "#64748b",
   };
 
-  const percentRows = Object.entries(aiOutput.budgetBreakdown.percentages).map(([k, v]) => [k, Number(v) || 0] as const);
-  const breakdown = aiOutput.budgetBreakdown.breakdown;
-  const totalBudget = aiOutput.budgetBreakdown.totalBudget;
-  const currency = aiOutput.budgetBreakdown.currency;
-
-  function formatAmount(amount: number) {
-    return `${Math.round(amount).toLocaleString("fr-FR")} ${currency}`;
+  function formatDateFr(d: Date) {
+    return new Intl.DateTimeFormat("fr-FR", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(d);
   }
 
-  const riskLabel =
-    aiOutput.riskScore >= 80
-      ? "Plusieurs points méritent d'être sécurisés"
-      : aiOutput.riskScore >= 60
-        ? "Bon niveau, quelques points à surveiller"
-        : "Très bon niveau de maîtrise";
+  const {
+    weddingDate,
+    displayStyle,
+    percentRows,
+    breakdown,
+    totalBudget,
+    currency,
+    formatAmount,
+    timelineWithDates,
+    riskEngine,
+    riskPct,
+    riskLabel,
+    dialCirc,
+  } = useMemo(() => {
+    const wDate = session.quizAnswers.weddingDate ? new Date(session.quizAnswers.weddingDate) : null;
+    const styleAnswer = normalizeStyleAnswer(session.quizAnswers);
+    const style =
+      aiOutput.blueprint.reformulatedStyle ||
+      (() => {
+        if (styleAnswer.style === "autre" && styleAnswer.customStyle) {
+          return `${styleAnswer.customStyle}${styleAnswer.customStyleDescription ? ` — ${styleAnswer.customStyleDescription}` : ""}`;
+        }
+        const labels: Record<string, string> = {
+          boheme: "Bohème",
+          classique: "Classique & élégant",
+          moderne: "Moderne & minimaliste",
+          destination: "Destination wedding",
+          rustique: "Rustique & champêtre",
+          luxe: "Luxe & raffiné",
+        };
+        return styleAnswer.style ? labels[styleAnswer.style] ?? styleAnswer.style : "Non précisé";
+      })();
 
-  const sortedMilestones = aiOutput.timeline.milestones.slice().sort((a, b) => b.monthsBeforeWedding - a.monthsBeforeWedding);
-  const maxMonths = Math.max(...sortedMilestones.map((m) => m.monthsBeforeWedding), 1);
-  const minMonths = Math.min(...sortedMilestones.map((m) => m.monthsBeforeWedding), 0);
+    const rows = Object.entries(aiOutput.budgetBreakdown.percentages).map(([k, v]) => [k, Number(v) || 0] as const);
+    const bd = aiOutput.budgetBreakdown.breakdown;
+    const tb = aiOutput.budgetBreakdown.totalBudget;
+    const cur = aiOutput.budgetBreakdown.currency;
+    const fa = (amount: number) => `${Math.round(amount).toLocaleString("fr-FR")} ${cur}`;
 
-  const timelineWithDates = sortedMilestones.map((m) => {
-    if (!weddingDate || Number.isNaN(weddingDate.getTime())) {
-      return { ...m, displayDate: `${m.monthsBeforeWedding} mois avant` };
-    }
-    const start = today;
-    const end = weddingDate;
-    const span = end.getTime() - start.getTime();
-    if (span <= 0) return { ...m, displayDate: formatDateFr(end) };
-    const denom = Math.max(1, maxMonths - minMonths);
-    const t = Math.max(0, Math.min(1, (maxMonths - m.monthsBeforeWedding) / denom));
-    const dt = new Date(start.getTime() + span * t);
-    return { ...m, displayDate: formatDateFr(dt) };
-  });
+    const today = new Date();
+    const sorted = aiOutput.timeline.milestones.slice().sort((a, b) => b.monthsBeforeWedding - a.monthsBeforeWedding);
+    const maxMonths = Math.max(...sorted.map((m) => m.monthsBeforeWedding), 1);
+    const minMonths = Math.min(...sorted.map((m) => m.monthsBeforeWedding), 0);
+    const timeline = sorted.map((m) => {
+      if (!wDate || Number.isNaN(wDate.getTime())) {
+        return { ...m, displayDate: `${m.monthsBeforeWedding} mois avant` };
+      }
+      const span = wDate.getTime() - today.getTime();
+      if (span <= 0) return { ...m, displayDate: formatDateFr(wDate) };
+      const denom = Math.max(1, maxMonths - minMonths);
+      const t = Math.max(0, Math.min(1, (maxMonths - m.monthsBeforeWedding) / denom));
+      const dt = new Date(today.getTime() + span * t);
+      return { ...m, displayDate: formatDateFr(dt) };
+    });
 
-  const riskPct = Math.min(100, Math.max(0, aiOutput.riskScore));
-  const dialCirc = 2 * Math.PI * 70;
+    const computed = computeRiskEngine(session.quizAnswers, tb, cur);
+    const rPct = Math.min(100, Math.max(0, computed.riskScore));
+    const rLabel =
+      computed.riskScore >= 80
+        ? "Plusieurs points méritent d'être sécurisés"
+        : computed.riskScore >= 60
+          ? "Bon niveau, quelques points à surveiller"
+          : "Très bon niveau de maîtrise";
+
+    return {
+      weddingDate: wDate,
+      displayStyle: style,
+      percentRows: rows,
+      breakdown: bd,
+      totalBudget: tb,
+      currency: cur,
+      formatAmount: fa,
+      timelineWithDates: timeline,
+      riskEngine: computed,
+      riskPct: rPct,
+      riskLabel: rLabel,
+      dialCirc: 2 * Math.PI * 70,
+    };
+  }, [aiOutput, session.quizAnswers]);
 
   return (
     <div className="min-h-[100dvh] bg-[#FBFAF7] text-text-primary">
@@ -186,10 +279,6 @@ export default function CoupleResultPage() {
             >
               <Download size={15} strokeWidth={1.75} /> Enregistrer en PDF
             </button>
-            <span className="text-text-secondary/30">·</span>
-            <Link href="/espace-couple" className="text-sm text-primary font-medium inline-flex items-center gap-1.5">
-              Dashboard <ArrowUpRight size={15} />
-            </Link>
           </div>
         </div>
 
@@ -213,7 +302,7 @@ export default function CoupleResultPage() {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-serif text-4xl font-bold">{aiOutput.riskScore}</span>
+                <span className="font-serif text-4xl font-bold">{riskEngine.riskScore}</span>
                 <span className="text-[11px] text-text-secondary uppercase tracking-[0.15em] mt-0.5">Risk Score</span>
               </div>
             </div>
@@ -226,7 +315,7 @@ export default function CoupleResultPage() {
 
             <div className="text-center sm:text-left">
               <p className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-1">Budget</p>
-              <p className="font-serif text-2xl font-bold">{aiOutput.budgetBreakdown.totalBudget} {aiOutput.budgetBreakdown.currency}</p>
+              <p className="font-serif text-2xl font-bold">{totalBudget} {currency}</p>
             </div>
 
             <div className="hidden sm:block w-px h-16 bg-black/[0.08]" />
@@ -433,19 +522,19 @@ export default function CoupleResultPage() {
         <div className="max-w-3xl mx-auto">
           <p className="text-xs uppercase tracking-[0.22em] text-primary/70 mb-5 text-center">Risques & vigilance</p>
           <h2 className="font-serif text-3xl font-bold tracking-tight text-center mb-6">Ce qui mérite votre attention</h2>
-          <p className="text-text-secondary leading-loose text-center mb-12">{aiOutput.riskEngine.scoreJustification}</p>
+          <p className="text-text-secondary leading-loose text-center mb-12">{riskEngine.scoreJustification}</p>
 
-          {aiOutput.riskEngine.generalAdvice && (
+          {riskEngine.generalAdvice && (
             <p className="text-text-primary leading-relaxed text-center italic font-serif mb-14 max-w-xl mx-auto">
-              "{aiOutput.riskEngine.generalAdvice}"
+              "{riskEngine.generalAdvice}"
             </p>
           )}
 
           <div className="grid sm:grid-cols-3 gap-x-8 gap-y-10">
             {[
-              { label: "Erreurs critiques", items: aiOutput.riskEngine.criticalErrors },
-              { label: "Incohérences budget", items: aiOutput.riskEngine.budgetInconsistencies },
-              { label: "Risques organisationnels", items: aiOutput.riskEngine.organizationalRisks },
+              { label: "Erreurs critiques", items: riskEngine.criticalErrors },
+              { label: "Incohérences budget", items: riskEngine.budgetInconsistencies },
+              { label: "Risques organisationnels", items: riskEngine.organizationalRisks },
             ].map((col) => (
               <div key={col.label}>
                 <div className="text-xs uppercase tracking-[0.18em] text-text-secondary mb-4 text-center sm:text-left">{col.label}</div>

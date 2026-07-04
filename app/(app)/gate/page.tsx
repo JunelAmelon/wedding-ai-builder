@@ -3,9 +3,9 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { ArrowRight, MessageCircle, Mail, Sparkles, User } from "lucide-react";
+import { ArrowRight, MessageCircle, Mail, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { FloatingNav } from "@/components/ui/FloatingNav";
 import { useQuizStore } from "@/lib/store/quizStore";
 import { track } from "@/lib/analytics/posthog.client";
 
@@ -99,22 +99,6 @@ function GatePageInner() {
 
   return (
     <div className="min-h-[100dvh] bg-background gradient-surface flex items-center justify-center px-6">
-      <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
-            Wedding<span className="text-primary">AI</span> Builder
-          </Link>
-          <Link href="/login" className="hidden sm:block">
-            <Button variant="secondary" iconLeft={<User size={18} />} className="h-9 px-4 text-sm">
-              Connexion
-            </Button>
-          </Link>
-          <Link href="/login" className="sm:hidden p-2 rounded-xl bg-white border border-black/10 text-text-primary">
-            <User size={20} />
-          </Link>
-        </div>
-      </div>
-
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="flex items-center gap-2 text-primary mb-4 animate-pulse-glow rounded-full w-fit px-3 py-1.5 bg-primary/10">
           <Sparkles size={16} />
@@ -217,6 +201,8 @@ function GatePageInner() {
           Vos données restent confidentielles. En créant un compte, vous acceptez nos conditions d'utilisation.
         </p>
       </motion.div>
+
+      <FloatingNav />
     </div>
   );
 }
