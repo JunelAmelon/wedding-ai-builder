@@ -24,8 +24,8 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
     <>
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between">
-          <Link href="/" className="inline-flex sm:flex items-center h-full overflow-visible flex-shrink-0 relative z-10 -ml-4 sm:-ml-6">
-            <Logo height={64} scale={2} />
+          <Link href="/" className="inline-flex sm:flex items-center h-full overflow-visible flex-shrink-0 relative z-10 -ml-12 sm:-ml-[4.5rem]">
+            <Logo height={80} scale={2.5} />
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
             {NAV_LINKS.map((link) => (
