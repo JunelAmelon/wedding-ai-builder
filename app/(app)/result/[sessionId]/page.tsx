@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { track } from "@/lib/analytics/posthog.client";
 import type { WeddingSession } from "@/types/domain";
@@ -15,6 +16,7 @@ import {
   Sparkles,
   TriangleAlert,
   ArrowRight,
+  User,
 } from "lucide-react";
 
 export default function ResultPage() {
@@ -154,6 +156,22 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-[100dvh] bg-background text-text-primary">
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
+            Wedding<span className="text-primary">AI</span> Builder
+          </Link>
+          <Link href="/login" className="hidden sm:block">
+            <Button variant="secondary" iconLeft={<User size={18} />} className="h-9 px-4 text-sm">
+              Connexion
+            </Button>
+          </Link>
+          <Link href="/login" className="sm:hidden p-2 rounded-xl bg-white border border-black/10 text-text-primary">
+            <User size={20} />
+          </Link>
+        </div>
+      </div>
+
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute -top-24 right-[-140px] h-[520px] w-[520px] rounded-full bg-primary/10 blur-3xl" />
