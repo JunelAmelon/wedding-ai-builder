@@ -16,11 +16,38 @@ const STYLE_LABELS: Record<string, string> = {
   autre: "Thème personnalisé",
 };
 
-function getStyleLabel(answers: QuizAnswers): string {
-  if (answers.style === "autre" && answers.customStyle) {
-    return `${answers.customStyle}${answers.customStyleDescription ? ` - ${answers.customStyleDescription}` : ""}`;
+function normalizeStyle(answers: QuizAnswers): { style: string | undefined; customStyle?: string; customStyleDescription?: string } {
+  const styleAny = answers.style as unknown;
+  if (typeof styleAny === "object" && styleAny !== null) {
+    const s = styleAny as Record<string, string>;
+    return {
+      style: s.style ?? undefined,
+      customStyle: s.customStyle ?? answers.customStyle,
+      customStyleDescription: s.customStyleDescription ?? answers.customStyleDescription,
+    };
   }
-  return STYLE_LABELS[answers.style ?? "classique"] ?? "Élégant intemporel";
+  return {
+    style: styleAny as string | undefined,
+    customStyle: answers.customStyle,
+    customStyleDescription: answers.customStyleDescription,
+  };
+}
+
+function getStyleLabel(answers: QuizAnswers): string {
+  const { style, customStyle, customStyleDescription } = normalizeStyle(answers);
+  if (style === "autre" && customStyle) {
+    return `${customStyle}${customStyleDescription ? ` - ${customStyleDescription}` : ""}`;
+  }
+  return STYLE_LABELS[style ?? "classique"] ?? "Élégant intemporel";
+}
+
+function getReformulatedStyle(answers: QuizAnswers): string {
+  const { style, customStyle, customStyleDescription } = normalizeStyle(answers);
+  if (style === "autre" && customStyle) {
+    const combined = `${customStyle}${customStyleDescription ? ` — ${customStyleDescription}` : ""}`;
+    return combined.charAt(0).toUpperCase() + combined.slice(1);
+  }
+  return STYLE_LABELS[style ?? "classique"] ?? "Élégant intemporel";
 }
 
 export function fallbackBlueprint(answers: QuizAnswers): WeddingBlueprint {
@@ -37,6 +64,7 @@ export function fallbackBlueprint(answers: QuizAnswers): WeddingBlueprint {
       { name: "Or doux", hex: "#C9A35C" },
       { name: "Vert sauge", hex: "#8A9A7E" },
     ],
+    reformulatedStyle: getReformulatedStyle(answers),
   };
 }
 

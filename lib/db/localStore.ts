@@ -63,6 +63,13 @@ export const localStore = {
     return merged;
   },
 
+  async delete(collection: string, id: string): Promise<void> {
+    guardProductionStore();
+    const data = await readCollection<unknown>(collection);
+    delete data[id];
+    await writeCollection(collection, data);
+  },
+
   async all<T>(collection: string): Promise<T[]> {
     const data = await readCollection<T>(collection);
     return Object.values(data);

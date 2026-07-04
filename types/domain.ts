@@ -65,6 +65,8 @@ export interface VendorApplication {
   id: string;
   createdAt: string;
   status: "pending" | "approved" | "rejected";
+  userId?: string;
+  profileId?: string;
   companyName: string;
   siret: string;
   brandName: string | null;
@@ -133,6 +135,7 @@ export interface WeddingBlueprint {
   storytelling: string;
   ambiance: string[];
   colorPalette: { name: string; hex: string }[];
+  reformulatedStyle?: string;
 }
 
 export interface BudgetBreakdown {

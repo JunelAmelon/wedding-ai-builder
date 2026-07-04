@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { vendorRepo } from "@/lib/db/repositories/vendorRepo";
 import { eventRepo } from "@/lib/db/repositories/eventRepo";
+import { userRepo } from "@/lib/db/repositories/userRepo";
+import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
+import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
 
 const AddressSchema = z.object({
   street: z.string().min(1),
@@ -47,6 +50,7 @@ const VendorApplicationSchema = z.object({
   siret: z.string().min(1),
   brandName: z.string().nullable().optional(),
   email: z.string().email(),
+  password: z.string().min(8),
   phone: z.string().min(1),
   website: z.string().url().nullable().optional(),
   address: AddressSchema,
@@ -77,33 +81,122 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Données invalides", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const payload = {
-      ...parsed.data,
-      brandName: parsed.data.brandName ?? null,
-      website: parsed.data.website ?? null,
-      otherCategory: parsed.data.otherCategory ?? null,
-      trainingDate: parsed.data.trainingDate ?? null,
-      trainingDescription: parsed.data.trainingDescription ?? null,
-      pricingDetails: parsed.data.pricingDetails ?? null,
+    const { password, ...applicationData } = parsed.data;
+
+    const existing = await userRepo.getByEmail(applicationData.email);
+    if (existing) {
+      return NextResponse.json({ error: "Un compte existe déjà avec cet email" }, { status: 409 });
+    }
+
+    const [firstName, ...lastNameParts] = applicationData.contactName.trim().split(/\s+/);
+    const lastName = lastNameParts.join(" ");
+
+    const user = await userRepo.create({
+      email: applicationData.email.toLowerCase(),
+      passwordHash: hashPassword(password),
+      googleId: null,
+      firstName: firstName || applicationData.contactName,
+      lastName: lastName || "",
+      phone: applicationData.phone,
+      role: "vendor",
+      emailVerified: false,
+    });
+
+    const profile = await vendorProfileRepo.create({
+      userId: user.id,
+      status: "pending",
+      companyName: applicationData.companyName,
+      siret: applicationData.siret,
+      brandName: applicationData.brandName ?? null,
+      email: user.email,
+      phone: applicationData.phone,
+      website: applicationData.website ?? null,
+      address: applicationData.address,
+      serviceCategory: applicationData.serviceCategory,
+      otherCategory: applicationData.otherCategory ?? null,
+      yearsOfExperience: applicationData.yearsOfExperience,
+      trainingDate: applicationData.trainingDate ?? null,
+      trainingDescription: applicationData.trainingDescription ?? null,
+      description: applicationData.description,
+      styles: applicationData.styles,
+      contactName: applicationData.contactName,
+      contactRole: applicationData.contactRole,
+      priceRange: applicationData.priceRange,
+      pricingDetails: applicationData.pricingDetails ?? null,
       serviceArea: {
-        ...parsed.data.serviceArea,
-        radius: parsed.data.serviceArea.radius ?? null,
-        travelPolicy: parsed.data.serviceArea.travelPolicy ?? null,
+        ...applicationData.serviceArea,
+        radius: applicationData.serviceArea.radius ?? null,
+        travelPolicy: applicationData.serviceArea.travelPolicy ?? null,
       },
       availability: {
-        ...parsed.data.availability,
-        noticePeriod: parsed.data.availability.noticePeriod ?? null,
+        ...applicationData.availability,
+        noticePeriod: applicationData.availability.noticePeriod ?? null,
       },
       portfolio: {
-        ...parsed.data.portfolio,
-        website: parsed.data.portfolio.website ?? null,
-        instagram: parsed.data.portfolio.instagram ?? null,
+        ...applicationData.portfolio,
+        website: applicationData.portfolio.website ?? null,
+        instagram: applicationData.portfolio.instagram ?? null,
       },
-    };
-    const application = await vendorRepo.create(payload);
+      tier: applicationData.tier,
+      documents: applicationData.documents,
+      acceptedTerms: applicationData.acceptedTerms,
+      reviewedAt: null,
+      reviewedBy: null,
+      notes: null,
+    });
+
+    const application = await vendorRepo.create({
+      companyName: applicationData.companyName,
+      siret: applicationData.siret,
+      brandName: applicationData.brandName ?? null,
+      email: applicationData.email,
+      phone: applicationData.phone,
+      website: applicationData.website ?? null,
+      address: applicationData.address,
+      serviceCategory: applicationData.serviceCategory,
+      otherCategory: applicationData.otherCategory ?? null,
+      yearsOfExperience: applicationData.yearsOfExperience,
+      trainingDate: applicationData.trainingDate ?? null,
+      trainingDescription: applicationData.trainingDescription ?? null,
+      description: applicationData.description,
+      styles: applicationData.styles,
+      contactName: applicationData.contactName,
+      contactRole: applicationData.contactRole,
+      priceRange: applicationData.priceRange,
+      pricingDetails: applicationData.pricingDetails ?? null,
+      serviceArea: {
+        ...applicationData.serviceArea,
+        radius: applicationData.serviceArea.radius ?? null,
+        travelPolicy: applicationData.serviceArea.travelPolicy ?? null,
+      },
+      availability: {
+        ...applicationData.availability,
+        noticePeriod: applicationData.availability.noticePeriod ?? null,
+      },
+      portfolio: {
+        ...applicationData.portfolio,
+        website: applicationData.portfolio.website ?? null,
+        instagram: applicationData.portfolio.instagram ?? null,
+      },
+      tier: applicationData.tier,
+      documents: applicationData.documents,
+      acceptedTerms: applicationData.acceptedTerms,
+      userId: user.id,
+      profileId: profile.id,
+    });
     await eventRepo.log(application.id, "vendor_application_created", { category: application.serviceCategory });
 
-    return NextResponse.json({ ok: true, id: application.id }, { status: 201 });
+    const token = createSession(user);
+    setSessionCookie(token);
+
+    return NextResponse.json(
+      {
+        ok: true,
+        id: application.id,
+        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
+      },
+      { status: 201 }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Une erreur est survenue";
     console.error("[vendor/apply]", message);

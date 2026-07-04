@@ -56,10 +56,26 @@ export default function ResultPage() {
   const weddingDate = session.quizAnswers.weddingDate ? new Date(session.quizAnswers.weddingDate) : null;
   const today = new Date();
 
+  const styleAnswer = (() => {
+    const styleAny = session.quizAnswers.style as unknown;
+    if (typeof styleAny === "object" && styleAny !== null) {
+      const s = styleAny as Record<string, string>;
+      return {
+        style: s.style ?? undefined,
+        customStyle: s.customStyle ?? session.quizAnswers.customStyle,
+        customStyleDescription: s.customStyleDescription ?? session.quizAnswers.customStyleDescription,
+      };
+    }
+    return {
+      style: styleAny as string | undefined,
+      customStyle: session.quizAnswers.customStyle,
+      customStyleDescription: session.quizAnswers.customStyleDescription,
+    };
+  })();
+
   const styleLabel = (() => {
-    const { style, customStyle, customStyleDescription } = session.quizAnswers;
-    if (style === "autre" && customStyle) {
-      return `${customStyle}${customStyleDescription ? ` — ${customStyleDescription}` : ""}`;
+    if (styleAnswer.style === "autre" && styleAnswer.customStyle) {
+      return `${styleAnswer.customStyle}${styleAnswer.customStyleDescription ? ` — ${styleAnswer.customStyleDescription}` : ""}`;
     }
     const labels: Record<string, string> = {
       boheme: "Bohème",
@@ -69,8 +85,10 @@ export default function ResultPage() {
       rustique: "Rustique & champêtre",
       luxe: "Luxe & raffiné",
     };
-    return style ? (labels[style] ?? style) : "Non précisé";
+    return styleAnswer.style ? (labels[styleAnswer.style] ?? styleAnswer.style) : "Non précisé";
   })();
+
+  const displayStyle = aiOutput.blueprint.reformulatedStyle || styleLabel;
 
   function formatDateFr(d: Date) {
     return new Intl.DateTimeFormat("fr-FR", {
@@ -242,7 +260,7 @@ export default function ResultPage() {
                   </div>
                   <div className="rounded-2xl border border-black/10 bg-surface p-4">
                     <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Style</div>
-                    <div className="font-semibold mt-2">{styleLabel}</div>
+                    <div className="font-semibold mt-2">{displayStyle}</div>
                     <div className="text-xs text-text-secondary mt-1">Ambiance retenue</div>
                   </div>
                 </div>
@@ -339,12 +357,12 @@ export default function ResultPage() {
               </h2>
               <p className="text-text-secondary mt-4 leading-relaxed text-lg">{aiOutput.blueprint.concept}</p>
 
-              {session.quizAnswers.style === "autre" && session.quizAnswers.customStyle && (
+              {styleAnswer.style === "autre" && styleAnswer.customStyle && (
                 <div className="mt-8 rounded-2xl border border-primary/15 bg-primary/5 p-5">
                   <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-2">Thème choisi</div>
-                  <div className="font-semibold text-text-primary">{session.quizAnswers.customStyle}</div>
-                  {session.quizAnswers.customStyleDescription && (
-                    <p className="text-sm text-text-secondary mt-1">{session.quizAnswers.customStyleDescription}</p>
+                  <div className="font-semibold text-text-primary">{styleAnswer.customStyle}</div>
+                  {styleAnswer.customStyleDescription && (
+                    <p className="text-sm text-text-secondary mt-1">{styleAnswer.customStyleDescription}</p>
                   )}
                 </div>
               )}

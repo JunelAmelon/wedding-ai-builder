@@ -5,8 +5,12 @@ let client: OpenAI | null = null;
 function getClient(): OpenAI {
   if (!client) {
     const apiKey = process.env.OPENAI_API_KEY;
+    const model = process.env.OPENAI_MODEL;
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY manquante dans l'environnement");
+    }
+    if (model && model.startsWith("o1") && model.includes("preview")) {
+      throw new Error(`Le modèle ${model} nécessite max_completion_tokens au lieu de max_tokens.`);
     }
     client = new OpenAI({ apiKey });
   }
@@ -29,21 +33,27 @@ export async function callAI({
   const openai = getClient();
   const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
-  const response = await openai.chat.completions.create({
-    model,
-    max_tokens: maxTokens,
-    temperature,
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: user },
-    ],
-  });
+  try {
+    const response = await openai.chat.completions.create({
+      model,
+      max_tokens: maxTokens,
+      temperature,
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+    });
 
-  const text = response.choices[0]?.message?.content;
-  if (!text) {
-    throw new Error("Réponse IA sans contenu texte exploitable");
+    const text = response.choices[0]?.message?.content;
+    if (!text) {
+      throw new Error("Réponse IA sans contenu texte exploitable");
+    }
+    return text;
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("[callAI] OpenAI error:", { model, errorMessage });
+    throw new Error(`OpenAI error: ${errorMessage}`);
   }
-  return text;
 }
 
 export function parseAIJson<T = unknown>(raw: string): T {

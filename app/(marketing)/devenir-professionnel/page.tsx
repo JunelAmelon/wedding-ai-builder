@@ -17,6 +17,7 @@ import {
   Phone,
   Globe,
   MapPin,
+  Lock,
   Briefcase,
   Calendar,
   Star,
@@ -97,6 +98,7 @@ const DEFAULT_FORM = {
   contactName: "",
   contactRole: "",
   email: "",
+  password: "",
   phone: "",
   website: "",
   street: "",
@@ -183,7 +185,7 @@ export default function ProfessionalRegistrationPage() {
       case 0:
         return !!(form.companyName && form.siret && form.contactName && form.contactRole);
       case 1:
-        return !!(form.email && form.phone && form.street && form.city && form.zipCode && form.country);
+        return !!(form.email && form.password && form.password.length >= 8 && form.phone && form.street && form.city && form.zipCode && form.country);
       case 2:
         return !!(form.serviceCategory && form.yearsOfExperience);
       case 3:
@@ -214,6 +216,7 @@ export default function ProfessionalRegistrationPage() {
         contactName: form.contactName,
         contactRole: form.contactRole,
         email: form.email,
+        password: form.password,
         phone: form.phone,
         website: form.website || null,
         address: {
@@ -400,6 +403,14 @@ export default function ProfessionalRegistrationPage() {
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" size={18} />
                     <input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className="w-full rounded-xl border border-black/10 pl-10 pr-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary" />
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-text-primary mb-1">Mot de passe *</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" size={18} />
+                    <input type="password" value={form.password} onChange={(e) => update("password", e.target.value)} placeholder="8 caractères minimum" className="w-full rounded-xl border border-black/10 pl-10 pr-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary" />
+                  </div>
+                  <p className="text-xs text-text-secondary mt-1.5">Vous l'utiliserez pour accéder à votre espace prestataire.</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-text-primary mb-1">Téléphone *</label>

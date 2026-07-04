@@ -58,3 +58,15 @@ export async function setCached<T>(key: string, value: T, ttlSeconds: number): P
   }
   memoryStore.set(key, { value: serialized, expiresAt: Date.now() + ttlSeconds * 1000 });
 }
+
+export async function delCached(key: string): Promise<void> {
+  const redis = getRedis();
+  if (redis) {
+    try {
+      await redis.del(key);
+    } catch {
+      redisFailed = true;
+    }
+  }
+  memoryStore.delete(key);
+}

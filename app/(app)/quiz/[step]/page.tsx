@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { TriangleAlert } from "lucide-react";
+import { TriangleAlert, User } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/feedback/ProgressBar";
 import { useQuizStore, QUIZ_STEPS } from "@/lib/store/quizStore";
 import { QuestionDate } from "@/components/quiz/QuestionDate";
@@ -183,15 +185,31 @@ export default function QuizStepPage() {
     <div className="bg-background min-h-[100dvh]">
       <ProgressBar current={stepIndex + 1} total={QUIZ_STEPS.length} />
 
+      <div className="fixed top-6 left-0 right-0 z-40 px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
+            Wedding<span className="text-primary">AI</span> Builder
+          </Link>
+          <Link href="/login" className="hidden sm:block">
+            <Button variant="secondary" iconLeft={<User size={18} />} className="h-9 px-4 text-sm">
+              Connexion
+            </Button>
+          </Link>
+          <Link href="/login" className="sm:hidden p-2 rounded-xl bg-white border border-black/10 text-text-primary">
+            <User size={20} />
+          </Link>
+        </div>
+      </div>
+
       <div className="grid lg:grid-cols-2 min-h-[100dvh]">
-        <div className="px-6 pt-20 pb-10 lg:pt-24">
+        <div className="flex items-center justify-center px-6 py-10 lg:py-12">
           <div className="max-w-xl mx-auto w-full">
             <div className="relative h-44 sm:h-56 rounded-3xl overflow-hidden border border-black/10 shadow-[0_20px_60px_rgba(11,15,26,0.06)] lg:hidden">
               <Image src={hero.url} alt={hero.alt} fill className="object-cover" sizes="100vw" priority />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
             </div>
 
-            <div className="mt-8">
+            <div className="mt-8 lg:mt-0">
               <AnimatePresence mode="wait">
                 {step === "date" && <QuestionDate key="date" onAnswer={handleAnswer} />}
                 {step === "location" && <QuestionLocation key="location" onAnswer={handleAnswer} />}
@@ -205,10 +223,12 @@ export default function QuizStepPage() {
           </div>
         </div>
 
-        <div className="hidden lg:block relative">
-          <Image src={hero.url} alt={hero.alt} fill className="object-cover" sizes="50vw" priority />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(124,58,237,0.20),transparent_60%),radial-gradient(circle_at_80%_70%,rgba(34,197,94,0.20),transparent_55%)]" />
+        <div className="hidden lg:flex items-center justify-center p-8 xl:p-12">
+          <div className="relative w-full max-w-xl max-h-[calc(100dvh/1.4)] aspect-[3/4] rounded-[2.5rem] overflow-hidden border border-black/10 shadow-[0_30px_80px_rgba(11,15,26,0.12)]">
+            <Image src={hero.url} alt={hero.alt} fill className="object-cover" sizes="(min-width: 1280px) 33vw, 50vw" priority />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(124,58,237,0.20),transparent_60%),radial-gradient(circle_at_80%_70%,rgba(34,197,94,0.20),transparent_55%)]" />
+          </div>
         </div>
       </div>
     </div>

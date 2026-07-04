@@ -95,8 +95,8 @@ function VideoIcon({ size = 16, className }: { size?: number; className?: string
 }
 
 const FAQ = [
-  { q: "Est-ce vraiment gratuit ?", a: "Oui. Créer votre profil et recevoir des opportunités est entièrement gratuit. Vous ne payez qu'avec des crédits lorsque vous choisissez de répondre à une opportunité." },
-  { q: "Quand les crédits sont-ils utilisés ?", a: "Uniquement quand vous décidez de répondre à une demande. La réception, la mise en relation et la visibilité sont gratuites." },
+  { q: "Est-ce vraiment gratuit ?", a: "Oui. Créer votre profil et recevoir des opportunités est entièrement gratuit. Vous ne payez qu'avec des roses lorsque vous choisissez de répondre à une opportunité." },
+  { q: "Quand les roses sont-elles utilisées ?", a: "Uniquement quand vous décidez de répondre à une demande. La réception, la mise en relation et la visibilité sont gratuites." },
   { q: "Puis-je refuser une demande ?", a: "Bien sûr. Vous restez libre d'accepter ou de décliner chaque opportunité qui vous est proposée." },
   { q: "Comment suis-je sélectionné ?", a: "Notre IA calcule un score de compatibilité basé sur le budget, le style, la localisation, la date et la gamme de chaque projet." },
   { q: "Puis-je modifier mes disponibilités ?", a: "Oui, vous pouvez mettre à jour vos disponibilités, votre zone d'intervention et votre gamme à tout moment." },
@@ -106,7 +106,7 @@ const CREDIT_STEPS = [
   { icon: Gift, title: "Inscription", desc: "Gratuite", paid: false },
   { icon: UserCircle, title: "Création du profil", desc: "Gratuite", paid: false },
   { icon: MousePointerClick, title: "Réception des opportunités", desc: "Gratuite", paid: false },
-  { icon: Star, title: "Vous choisissez de répondre", desc: "Crédits utilisés à ce moment-là", paid: true },
+  { icon: Star, title: "Vous choisissez de répondre", desc: "Roses utilisées à ce moment-là", paid: true },
 ];
 
 export default function ProfessionalsLandingPage() {
@@ -134,7 +134,7 @@ export default function ProfessionalsLandingPage() {
             {/* The signature element: an index card, slightly rotated, taped at the corner —
                 a real artifact a vendor would recognize, not a dashboard widget.
                 Second on mobile, right column on desktop. */}
-            <div className="order-2 lg:col-span-5 lg:pt-6 lg:row-span-2">
+            <div className="order-2 w-full flex justify-center lg:block lg:col-span-5 lg:pt-6 lg:row-span-2">
               <div className="relative max-w-sm mx-auto lg:mx-0 lg:ml-auto">
                 <div className="absolute -top-3 left-10 h-6 w-14 bg-primary/20 rotate-[-4deg] rounded-sm" />
                 <div className="rounded-2xl border border-black/10 bg-white shadow-[0_30px_80px_rgba(11,15,26,0.12)] p-6 rotate-[1.5deg]">
@@ -173,7 +173,7 @@ export default function ProfessionalsLandingPage() {
                   <div className="mt-5 pt-4 border-t border-dashed border-black/15 flex items-center justify-between">
                     <span className="text-xs text-text-secondary">3 professionnels invités</span>
                     <Button variant="primary" className="text-xs px-3 py-1.5 whitespace-normal">
-                      Répondre · 2 crédits
+                      Répondre · 2 roses
                     </Button>
                   </div>
                 </div>
@@ -337,7 +337,7 @@ export default function ProfessionalsLandingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center sm:text-left">
           <div className="mb-14">
             <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Transparence</div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Le système de crédits</h2>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Le système de roses</h2>
           </div>
 
           <div className="relative">
@@ -369,7 +369,7 @@ export default function ProfessionalsLandingPage() {
           <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3 text-center">Pourquoi gratuit ?</div>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-6 text-center">Pourquoi c'est gratuit ?</h2>
           <p className="text-lg text-text-secondary leading-relaxed mb-8 text-center">
-            Notre objectif est de constituer le plus grand réseau de professionnels qualifiés. Créer votre profil et recevoir des opportunités est entièrement gratuit. Vous utilisez uniquement des crédits lorsque vous décidez de répondre à une opportunité correspondant à votre activité.
+            Notre objectif est de constituer le plus grand réseau de professionnels qualifiés. Créer votre profil et recevoir des opportunités est entièrement gratuit. Vous utilisez uniquement des roses lorsque vous décidez de répondre à une opportunité correspondant à votre activité.
           </p>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-text-secondary border-t border-black/10 pt-6">
             {["Aucun abonnement obligatoire", "Aucun engagement", "Aucune commission cachée"].map((item) => (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Lock, Users, Briefcase, FileText, CheckCircle2, XCircle, Clock, ExternalLink, Search, Calendar, Mail, Phone, MapPin, ArrowLeft, ShieldCheck, Trash2, Save } from "lucide-react";
+import { Lock, Users, Briefcase, FileText, CheckCircle2, XCircle, Clock, ExternalLink, Search, Calendar, Mail, Phone, MapPin, ArrowLeft, ShieldCheck, Trash2, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
 import type { Lead, VendorApplication } from "@/types/domain";
 
@@ -28,6 +28,7 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [selectedVendor, setSelectedVendor] = useState<VendorApplication | null>(null);
   const [notes, setNotes] = useState("");
+  const [regenerating, setRegenerating] = useState<Set<string>>(new Set());
 
   async function login(e: React.FormEvent) {
     e.preventDefault();
@@ -68,6 +69,29 @@ export default function AdminPage() {
     }
   }
 
+  async function regenerateResult(sessionId: string) {
+    if (!token) return;
+    setRegenerating((prev) => new Set(prev).add(sessionId));
+    try {
+      const res = await fetch(`/api/admin/session/${sessionId}/regenerate`, {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Échec de la régénération");
+      alert("Résultat régénéré avec succès");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setRegenerating((prev) => {
+        const next = new Set(prev);
+        next.delete(sessionId);
+        return next;
+      });
+    }
+  }
+
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
+
   async function updateVendorStatus(id: string, status: VendorApplication["status"]) {
     if (!token) return;
     try {
@@ -77,9 +101,10 @@ export default function AdminPage() {
         body: JSON.stringify({ status, notes }),
       });
       if (!res.ok) throw new Error("Échec de la mise à jour");
-      const data = (await res.json()) as { application: VendorApplication };
+      const data = (await res.json()) as { application: VendorApplication; generatedPassword: string | null };
       setVendors((prev) => prev.map((v) => (v.id === id ? data.application : v)));
       setSelectedVendor(data.application);
+      setGeneratedPassword(data.generatedPassword || null);
       setNotes("");
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
@@ -198,6 +223,7 @@ export default function AdminPage() {
                     <th className="text-left px-4 py-3 font-medium">WhatsApp</th>
                     <th className="text-left px-4 py-3 font-medium">Source</th>
                     <th className="text-left px-4 py-3 font-medium">Date</th>
+                    <th className="text-left px-4 py-3 font-medium">Résultat</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-black/10">
@@ -212,6 +238,16 @@ export default function AdminPage() {
                       <td className="px-4 py-3">{lead.whatsapp || "—"}</td>
                       <td className="px-4 py-3"><span className="capitalize">{lead.source}</span></td>
                       <td className="px-4 py-3 text-text-secondary">{new Date(lead.capturedAt).toLocaleString("fr-FR")}</td>
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() => regenerateResult(lead.sessionId)}
+                          disabled={!lead.sessionId || regenerating.has(lead.sessionId)}
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 text-primary px-3 py-1.5 text-xs font-medium hover:bg-primary/20 transition disabled:opacity-50"
+                        >
+                          <Sparkles size={14} />
+                          {regenerating.has(lead.sessionId) ? "Génération..." : "Régénérer"}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -402,6 +438,14 @@ export default function AdminPage() {
                   className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
+
+              {generatedPassword && (
+                <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+                  <p className="text-sm text-green-800 font-medium mb-1">Mot de passe temporaire généré</p>
+                  <p className="font-mono text-lg text-green-900 font-semibold">{generatedPassword}</p>
+                  <p className="text-xs text-green-700 mt-1">Communiquez ce mot de passe au professionnel pour sa première connexion.</p>
+                </div>
+              )}
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <button

@@ -11,7 +11,7 @@ async function getFirestoreCol() {
 }
 
 export const vendorRepo = {
-  async create(data: Omit<VendorApplication, "id" | "createdAt" | "status" | "reviewedAt" | "reviewedBy" | "notes">): Promise<VendorApplication> {
+  async create(data: Omit<VendorApplication, "id" | "createdAt" | "status" | "reviewedAt" | "reviewedBy" | "notes" | "userId" | "profileId"> & { userId?: string; profileId?: string }): Promise<VendorApplication> {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const application: VendorApplication = {

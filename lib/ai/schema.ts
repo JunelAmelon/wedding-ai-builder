@@ -12,6 +12,7 @@ export const BlueprintSchema = z.object({
       })
     )
     .length(4),
+  reformulatedStyle: z.string().min(1).optional(),
 });
 
 export const BudgetBreakdownSchema = z

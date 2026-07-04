@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X, User } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/#how", label: "Comment ça marche" },
@@ -34,7 +34,12 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link href="/login" className="hidden sm:block">
+              <Button variant="secondary" iconLeft={<User size={18} />}>
+                Connexion
+              </Button>
+            </Link>
             <Link href={ctaHref} className="hidden sm:block">
               <Button variant="primary" iconRight={<ArrowRight size={18} />}>
                 {ctaLabel}
@@ -82,7 +87,12 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
                 </Link>
               ))}
             </nav>
-            <div className="mt-auto pt-6">
+            <div className="mt-auto pt-6 space-y-3">
+              <Link href="/login" onClick={() => setMenuOpen(false)}>
+                <Button variant="secondary" className="w-full" iconLeft={<User size={18} />}>
+                  Connexion
+                </Button>
+              </Link>
               <Link href={ctaHref} onClick={() => setMenuOpen(false)}>
                 <Button variant="primary" className="w-full" iconRight={<ArrowRight size={18} />}>
                   {ctaLabel}
