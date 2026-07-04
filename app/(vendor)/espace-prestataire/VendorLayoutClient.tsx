@@ -176,7 +176,7 @@ export default function VendorLayoutClient({
 
       {/* ============================== MOBILE : header minimal ============================== */}
       <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#FAFAF8]/90 backdrop-blur-xl">
-        <Link href="/espace-prestataire" className="flex items-center h-20 overflow-visible">
+        <Link href="/espace-prestataire" className="flex items-center h-20 overflow-visible -ml-5">
           <Logo height={120} scale={3} />
         </Link>
         <button
