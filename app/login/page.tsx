@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, Mail, Lock, Loader2 } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 
 function LoginPageInner() {
   const router = useRouter();
@@ -49,8 +50,8 @@ function LoginPageInner() {
     <div className="min-h-[100dvh] bg-background gradient-surface flex flex-col items-center justify-center px-4 sm:px-6 py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <Link href="/" className="inline-flex items-center gap-1 font-serif text-xl font-semibold tracking-tight mb-6">
-            Mariage<span className="text-primary">Facile</span>
+          <Link href="/" className="inline-flex items-center justify-center h-24 overflow-visible">
+            <Logo height={96} scale={3} origin="center" />
           </Link>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mb-2">Connexion</h1>
           <p className="text-text-secondary text-sm sm:text-base">Accédez à votre espace {role === "vendor" ? "prestataire" : "couple"}.</p>

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { track } from "@/lib/analytics/posthog.client";
+import { Logo } from "@/components/layout/Logo";
 import type { WeddingSession } from "@/types/domain";
 import {
   BadgeCheck,
@@ -156,10 +157,10 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-[100dvh] bg-background text-text-primary">
-      <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
-            Mariage<span className="text-primary">Facile</span>
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-0">
+        <div className="max-w-6xl mx-auto flex items-center justify-between h-20">
+          <Link href="/" className="inline-flex items-center h-full overflow-visible">
+            <Logo height={64} scale={2} />
           </Link>
           <Link href="/login" className="hidden sm:block">
             <Button variant="secondary" iconLeft={<User size={18} />} className="h-9 px-4 text-sm">

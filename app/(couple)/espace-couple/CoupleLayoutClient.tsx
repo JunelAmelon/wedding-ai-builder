@@ -16,6 +16,7 @@ import {
   X,
   LogOut,
 } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 
 const COUPLE_NAV = [
   { href: "/espace-couple/result", label: "Plan IA", icon: Sparkles },
@@ -41,17 +42,6 @@ const MOBILE_MORE = [
   { href: "/espace-couple/budget", label: "Budget", icon: Wallet },
   { href: "/espace-couple/prestataires", label: "Prestataires", icon: Users2 },
 ];
-
-function Logo({ size = 32 }: { size?: number }) {
-  return (
-    <span
-      className="rounded-xl bg-primary flex items-center justify-center shrink-0"
-      style={{ height: size, width: size }}
-    >
-      <Heart size={size * 0.5} strokeWidth={2} className="text-white" fill="currentColor" />
-    </span>
-  );
-}
 
 export default function CoupleLayoutClient({
   children,
@@ -89,9 +79,8 @@ export default function CoupleLayoutClient({
         }`}
       >
         <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-2xl bg-white/40 border border-black/[0.04]" : ""}`}>
-          <Link href="/espace-couple/result" className="flex items-center gap-2.5 shrink-0">
-            <Logo />
-            <span className="font-serif text-lg font-semibold tracking-tight">MariageFacile</span>
+          <Link href="/espace-couple/result" className="flex items-center h-20 overflow-visible flex-shrink-0 relative z-10">
+            <Logo height={64} scale={2} />
           </Link>
 
           <nav className="flex items-center gap-0.5 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.08)] px-1.5 py-1.5">
@@ -172,10 +161,9 @@ export default function CoupleLayoutClient({
         </div>
       </div>
 
-      <header className="lg:hidden h-16 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#FAFAF8]/90 backdrop-blur-xl">
-        <Link href="/espace-couple/result" className="flex items-center gap-2">
-          <Logo size={28} />
-          <span className="font-serif text-base font-semibold">MariageFacile</span>
+      <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#FAFAF8]/90 backdrop-blur-xl">
+        <Link href="/espace-couple/result" className="flex items-center h-20 overflow-visible">
+          <Logo height={64} scale={2} />
         </Link>
         <button
           onClick={() => setMoreOpen(true)}
