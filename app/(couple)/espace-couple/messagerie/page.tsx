@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { EmojiPicker } from "@/components/ui/EmojiPicker";
 import {
   Send,
   Loader2,
@@ -13,7 +14,6 @@ import {
   MapPin,
   ChevronLeft,
   Paperclip,
-  Smile,
   CheckCheck,
   Check,
   MoreVertical,
@@ -204,7 +204,7 @@ export default function CoupleMessagingPage() {
                       isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
                     }`}
                   >
-                    <Avatar name={p.vendor?.companyName || "P"} src={p.vendor?.logoUrl} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
+                    <Avatar name={p.vendor?.companyName || "P"} src={p.vendor?.logo?.url} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-semibold text-text-primary truncate text-sm">{p.vendor?.companyName || "Prestataire"}</span>
@@ -235,7 +235,7 @@ export default function CoupleMessagingPage() {
                   <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
                     <ChevronLeft size={20} className="text-text-secondary" />
                   </button>
-                  <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logoUrl} className="h-11 w-11 text-base" online={selected.status === "accepted"} />
+                  <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-11 w-11 text-base" online={selected.status === "accepted"} />
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-text-primary truncate">{selected.vendor?.companyName || "Prestataire"}</div>
                     <div className="text-xs text-text-secondary">
@@ -289,7 +289,7 @@ export default function CoupleMessagingPage() {
                         )}
                         <div className={`flex ${isMe ? "justify-end" : "justify-start"} gap-2`}>
                           {!isMe ? (
-                            <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logoUrl} className="h-8 w-8 text-[10px] self-end mb-1" />
+                            <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-8 w-8 text-[10px] self-end mb-1" />
                           ) : (
                             <Avatar
                               name={`${currentUser.firstName || ""} ${currentUser.lastName || ""}`}
@@ -323,7 +323,7 @@ export default function CoupleMessagingPage() {
                       placeholder="Écrivez votre message..."
                       className="flex-1 bg-transparent px-2 py-2 text-sm text-text-primary focus:outline-none"
                     />
-                    <button className="p-2 text-text-secondary hover:bg-black/[0.04] rounded-full transition"><Smile size={20} /></button>
+                    <EmojiPicker onEmojiSelect={(emoji) => setMessage((prev) => prev + emoji)} />
                     <Button
                       variant="primary"
                       onClick={sendMessage}
@@ -349,7 +349,7 @@ export default function CoupleMessagingPage() {
           {infoOpen && selected && (
             <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-[#FAFAF8] w-[300px] shrink-0">
               <div className="p-5 border-b border-black/[0.06] text-center">
-                <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logoUrl} className="h-20 w-20 text-xl mx-auto mb-3" online={selected.status === "accepted"} />
+                <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-20 w-20 text-xl mx-auto mb-3" online={selected.status === "accepted"} />
                 <h3 className="font-semibold text-text-primary">{selected.vendor?.companyName || "Prestataire"}</h3>
                 <p className="text-sm text-text-secondary">{selected.vendor?.serviceCategory}</p>
               </div>

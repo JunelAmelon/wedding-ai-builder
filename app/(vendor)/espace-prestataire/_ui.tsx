@@ -96,17 +96,16 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={`relative bg-white shadow-[0_18px_44px_rgba(11,15,26,0.07)] p-6 ${className}`}>
-      <div className="absolute inset-0 border pointer-events-none" style={{ borderColor: `${GOLD}40` }} />
+    <div className={`relative bg-white rounded-2xl border border-black/[0.06] shadow-[0_8px_24px_rgba(11,15,26,0.04)] p-6 ${className}`}>
       {(title || action) && (
         <div className="relative flex items-center justify-between mb-5">
-          {title && <h2 className="font-serif text-xl font-semibold">{title}</h2>}
+          {title && <h2 className="font-serif text-xl font-semibold text-text-primary">{title}</h2>}
           {action && (
             <Link
               href={action.href}
-              className="font-sans text-[10.5px] uppercase tracking-[0.1em] text-primary flex items-center gap-1"
+              className="font-sans text-[11px] uppercase tracking-[0.1em] text-primary font-medium flex items-center gap-1 hover:opacity-80 transition-opacity"
             >
-              {action.label} <ArrowUpRight size={13} />
+              {action.label} <ArrowUpRight size={14} />
             </Link>
           )}
         </div>
@@ -116,40 +115,3 @@ export function Card({
   );
 }
 
-export function StatCard({
-  label,
-  value,
-  icon,
-  accent,
-}: {
-  label: string;
-  value: string | number;
-  icon: React.ReactNode;
-  accent: "primary" | "success" | "warning" | "gold";
-}) {
-  const accents = {
-    primary: { bg: "bg-sky-100", text: "text-sky-700", glow: "rgba(14,165,233,0.10)" },
-    success: { bg: "bg-emerald-100", text: "text-emerald-700", glow: "rgba(16,185,129,0.10)" },
-    warning: { bg: "bg-amber-100", text: "text-amber-700", glow: "rgba(245,158,11,0.10)" },
-    gold: { bg: "bg-sky-100", text: "text-sky-700", glow: "rgba(14,165,233,0.10)" },
-  };
-  const a = accents[accent];
-  return (
-    <div
-      className="relative bg-white px-5 py-5 shadow-[0_18px_44px_rgba(11,15,26,0.07)] overflow-hidden"
-      style={{ boxShadow: `0 18px 44px rgba(11,15,26,0.07), inset 0 0 0 1px ${GOLD}40` }}
-    >
-      <div
-        className="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-60 pointer-events-none"
-        style={{ background: `radial-gradient(circle, ${a.glow}, transparent 70%)` }}
-      />
-      <div className="relative flex items-start justify-between">
-        <div>
-          <p className="font-sans text-[10px] uppercase tracking-[0.14em] text-text-secondary mb-2">{label}</p>
-          <p className="font-serif text-3xl font-semibold text-text-primary">{value}</p>
-        </div>
-        <div className={`h-10 w-10 rounded-full flex items-center justify-center ${a.bg} ${a.text}`}>{icon}</div>
-      </div>
-    </div>
-  );
-}

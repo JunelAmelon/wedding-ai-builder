@@ -15,17 +15,6 @@ interface Timeline {
   milestones: Milestone[];
 }
 
-const GOLD = "#B08A4A";
-
-function CornerFlourish({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 40 40" className={`absolute h-8 w-8 opacity-60 pointer-events-none ${className}`}>
-      <path d="M2 38C2 20 20 2 38 2" stroke={GOLD} strokeWidth="1" fill="none" />
-      <circle cx="2" cy="38" r="2" fill={GOLD} />
-    </svg>
-  );
-}
-
 export default function CouplePlanningPage() {
   const router = useRouter();
   const [project, setProject] = useState<any>(null);
@@ -171,7 +160,7 @@ export default function CouplePlanningPage() {
       {/* Header */}
       <div className="mb-14">
         <div className="flex items-center gap-2.5 mb-4">
-          <span className="h-px w-5" style={{ backgroundColor: GOLD }} />
+          <span className="h-px w-5 bg-primary" />
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-secondary">Organisation</p>
         </div>
         <h1 className="font-serif text-4xl font-semibold tracking-tight flex items-baseline">
@@ -192,16 +181,14 @@ export default function CouplePlanningPage() {
       )}
 
       {/* Add form */}
-      <div className="relative bg-gradient-to-b from-white to-background px-6 sm:px-8 py-6 mb-8 shadow-[0_18px_40px_rgba(11,15,26,0.07)]">
-        <div className="absolute inset-0 border pointer-events-none" style={{ borderColor: `${GOLD}40` }} />
+      <div className="rounded-2xl bg-white border border-black/[0.06] px-6 sm:px-8 py-6 mb-8 shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
         <div className="relative flex flex-col sm:flex-row gap-3">
           <input
             value={newTask}
             onChange={(e) => setNewTask(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addTask()}
             placeholder="Nom de l'étape..."
-            className="flex-1 bg-transparent border-0 border-b text-text-primary text-lg py-2 pr-2 focus:outline-none placeholder:text-text-secondary/50"
-            style={{ borderColor: GOLD }}
+            className="flex-1 bg-transparent border-0 border-b border-primary/30 text-text-primary text-lg py-2 pr-2 focus:outline-none focus:border-primary placeholder:text-text-secondary/50 transition-colors"
           />
           <div className="flex gap-3">
             <div className="relative">
@@ -211,8 +198,7 @@ export default function CouplePlanningPage() {
                 onChange={(e) => setNewMonths(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addTask()}
                 placeholder="Mois"
-                className="w-24 bg-transparent border-0 border-b text-text-primary text-lg py-2 pr-6 focus:outline-none text-center"
-                style={{ borderColor: GOLD }}
+                className="w-24 bg-transparent border-0 border-b border-primary/30 text-text-primary text-lg py-2 pr-6 focus:outline-none focus:border-primary text-center transition-colors"
               />
               <span className="absolute right-0 top-3 text-xs text-text-secondary">M</span>
             </div>
@@ -232,11 +218,10 @@ export default function CouplePlanningPage() {
       {suggestedTasks.length > 0 && (
         <div className="mb-12">
           <div className="flex items-center gap-2.5 mb-4">
-            <span className="h-px w-5" style={{ backgroundColor: GOLD }} />
+            <span className="h-px w-5 bg-primary" />
             <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-secondary">Suggestions de l'IA</p>
           </div>
-          <div className="relative bg-gradient-to-b from-white to-background px-6 py-5 shadow-[0_18px_40px_rgba(11,15,26,0.07)]">
-            <div className="absolute inset-0 border pointer-events-none" style={{ borderColor: `${GOLD}40` }} />
+          <div className="rounded-2xl bg-white border border-black/[0.06] px-6 py-5 shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
             <div className="relative flex flex-wrap gap-2">
               {suggestedTasks.map((s, i) => (
                 <button
@@ -254,40 +239,24 @@ export default function CouplePlanningPage() {
 
       {/* Task list */}
       {sorted.length === 0 ? (
-        <div className="relative bg-gradient-to-b from-white to-background px-8 py-12 text-center shadow-[0_30px_80px_rgba(11,15,26,0.10)]">
-          <div className="absolute inset-[10px] border pointer-events-none" style={{ borderColor: `${GOLD}55` }} />
-          <div className="absolute inset-[14px] border border-primary/15 pointer-events-none" />
-          <CornerFlourish className="top-3 left-3" />
-          <CornerFlourish className="top-3 right-3 -scale-x-100" />
-          <CornerFlourish className="bottom-3 left-3 -scale-y-100" />
-          <CornerFlourish className="bottom-3 right-3 scale-[-1]" />
-
-          <div className="relative">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] mb-4" style={{ color: GOLD }}>
-              Commencer
-            </p>
-            <h2 className="font-serif text-xl font-semibold text-text-primary mb-2">Aucune étape pour le moment</h2>
-            <p className="text-text-secondary max-w-md mx-auto text-sm leading-relaxed">
-              Ajoutez vos propres étapes ci-dessus ou sélectionnez les suggestions proposées par l'IA.
-            </p>
+        <div className="rounded-2xl bg-white border border-black/[0.06] px-8 py-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 mb-4">
+            <Plus size={24} className="text-primary" />
           </div>
+          <h2 className="font-serif text-xl font-semibold text-text-primary mb-2">Aucune étape pour le moment</h2>
+          <p className="text-text-secondary max-w-md mx-auto text-sm leading-relaxed">
+            Ajoutez vos propres étapes ci-dessus ou sélectionnez les suggestions proposées par l'IA.
+          </p>
         </div>
       ) : (
         <div className="relative pl-9">
-          <span
-            className="absolute left-2 top-1.5 bottom-1.5 w-px"
-            style={{ background: `linear-gradient(180deg, ${GOLD}, ${GOLD}22)` }}
-          />
+          <span className="absolute left-2 top-1.5 bottom-1.5 w-px bg-gradient-to-b from-primary to-primary/10" />
 
           <div className="space-y-4">
             {sorted.map((t) => (
               <div key={t.id} className="relative">
-                <span
-                  className="absolute -left-[26px] top-4 h-2 w-2 rounded-full"
-                  style={{ backgroundColor: GOLD, boxShadow: `0 0 0 4px #F6F1E4, 0 0 0 5px ${GOLD}33` }}
-                />
-                <div className="relative bg-gradient-to-b from-white to-background px-5 py-4 shadow-[0_18px_40px_rgba(11,15,26,0.07)]">
-                  <div className="absolute inset-0 border pointer-events-none" style={{ borderColor: t.completed ? "#A9C7AC" : `${GOLD}40` }} />
+                <span className="absolute -left-[26px] top-4 h-2 w-2 rounded-full bg-primary ring-4 ring-white" />
+                <div className="rounded-2xl bg-white border border-black/[0.06] px-5 py-4 shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
 
                   {editingId === t.id ? (
                     <div className="relative flex flex-col sm:flex-row gap-3">
@@ -295,8 +264,7 @@ export default function CouplePlanningPage() {
                         value={editTitle}
                         onChange={(e) => setEditTitle(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && saveEdit(t.id)}
-                        className="flex-1 bg-transparent border-0 border-b text-text-primary text-base py-1 focus:outline-none"
-                        style={{ borderColor: GOLD }}
+                        className="flex-1 bg-transparent border-0 border-b border-primary/30 text-text-primary text-base py-1 focus:outline-none focus:border-primary transition-colors"
                       />
                       <div className="flex gap-3">
                         <input
@@ -304,8 +272,7 @@ export default function CouplePlanningPage() {
                           value={editMonths}
                           onChange={(e) => setEditMonths(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && saveEdit(t.id)}
-                          className="w-20 bg-transparent border-0 border-b text-text-primary text-base py-1 text-center focus:outline-none"
-                          style={{ borderColor: GOLD }}
+                          className="w-20 bg-transparent border-0 border-b border-primary/30 text-text-primary text-base py-1 text-center focus:outline-none focus:border-primary transition-colors"
                         />
                         <Button
                           variant="primary"

@@ -129,12 +129,6 @@ export default function CoupleResultPage() {
     load();
   }, [router]);
 
-  if (loading) return <div className="min-h-[100dvh] bg-background" />;
-  if (error) return <div className="min-h-[100dvh] bg-background p-6">{error}</div>;
-  if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-background p-6">Résultat indisponible.</div>;
-
-  const { aiOutput } = session;
-
   const BUDGET_LABELS: Record<string, string> = {
     venue: "Lieu de réception",
     catering: "Traiteur",
@@ -176,6 +170,23 @@ export default function CoupleResultPage() {
     riskLabel,
     dialCirc,
   } = useMemo(() => {
+    if (!session?.aiOutput) {
+      return {
+        weddingDate: null,
+        displayStyle: "Non précisé",
+        percentRows: [] as [string, number][],
+        breakdown: {} as Record<string, number>,
+        totalBudget: 0,
+        currency: "EUR",
+        formatAmount: (amount: number) => `${Math.round(amount).toLocaleString("fr-FR")} EUR`,
+        timelineWithDates: [] as { monthsBeforeWedding: number; title: string; displayDate: string; tasks: string[] }[],
+        riskEngine: { riskScore: 0, criticalErrors: [], budgetInconsistencies: [], organizationalRisks: [], scoreJustification: "", generalAdvice: "" },
+        riskPct: 0,
+        riskLabel: "",
+        dialCirc: 2 * Math.PI * 70,
+      };
+    }
+    const aiOutput = session.aiOutput;
     const wDate = session.quizAnswers.weddingDate ? new Date(session.quizAnswers.weddingDate) : null;
     const styleAnswer = normalizeStyleAnswer(session.quizAnswers);
     const style =
@@ -240,7 +251,13 @@ export default function CoupleResultPage() {
       riskLabel: rLabel,
       dialCirc: 2 * Math.PI * 70,
     };
-  }, [aiOutput, session.quizAnswers]);
+  }, [session?.aiOutput, session?.quizAnswers]);
+
+  if (loading) return <div className="min-h-[100dvh] bg-background" />;
+  if (error) return <div className="min-h-[100dvh] bg-background p-6">{error}</div>;
+  if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-background p-6">Résultat indisponible.</div>;
+
+  const { aiOutput } = session;
 
   return (
     <div className="min-h-[100dvh] bg-[#FBFAF7] text-text-primary">

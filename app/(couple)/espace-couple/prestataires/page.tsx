@@ -3,7 +3,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, CheckCircle2, ChevronRight, ChevronLeft, Wallet, Sparkles, LayoutGrid, Rows3 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Loader2, CheckCircle2, ChevronRight, ChevronLeft, Wallet, Sparkles, LayoutGrid, Rows3, Plus } from "lucide-react";
 
 const CATEGORIES = [
   "Photographe / Vidéaste",
@@ -413,12 +414,10 @@ export default function CoupleVendorsPage() {
                 </button>
               </div>
 
-              <Link
-                href="/espace-couple/prestataires/nouveau"
-                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-primary border-b pb-0.5 border-primary/40"
-              >
-                <Sparkles size={13} />
-                Nouveau faire-part
+              <Link href="/espace-couple/prestataires/nouveau">
+                <Button variant="primary" iconLeft={<Plus size={16} />} className="min-h-10 px-4 text-sm">
+                  Nouveau faire-part
+                </Button>
               </Link>
             </div>
           </div>
@@ -509,7 +508,7 @@ export default function CoupleVendorsPage() {
                       </p>
                     </div>
 
-                    <span className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.1em] text-primary self-start sm:self-auto shrink-0">
+                    <span className="inline-flex items-center gap-1.5 bg-primary text-white rounded-full px-4 py-2 text-xs font-semibold self-start sm:self-auto shrink-0">
                       {hasResponses ? "Voir les réponses" : "Suivre"}
                       <ChevronRight size={13} />
                     </span>

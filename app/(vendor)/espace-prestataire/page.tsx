@@ -4,8 +4,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { ArrowUpRight, Bell, Send, CheckCircle2, TrendingUp, Target, Wallet } from "lucide-react";
-import { GOLD, RoseGlyph, SealTag, Card, StatCard } from "./_ui";
+import {
+  Send,
+  CheckCircle2,
+  TrendingUp,
+  Target,
+  Wallet,
+  Megaphone,
+  Images,
+  UserCircle,
+} from "lucide-react";
+import { Card } from "./_ui";
 
 export default function VendorDashboardPage() {
   const router = useRouter();
@@ -14,6 +23,10 @@ export default function VendorDashboardPage() {
       credits: number;
       newOpportunities: number;
       sentProposals: number;
+      activeProposals: number;
+      pendingProposals: number;
+      declinedProposals: number;
+      archivedProposals: number;
       responseRate: number;
       averageCompatibility: number;
       wonContracts: number;
@@ -34,9 +47,15 @@ export default function VendorDashboardPage() {
           router.push("/login?role=vendor");
           return;
         }
+        if (!res.ok) {
+          const json = await res.json().catch(() => ({}));
+          console.error("Dashboard API error", json.error || res.statusText);
+          setData(null);
+          return;
+        }
         setData(await res.json());
       } catch {
-        // ignore
+        setData(null);
       } finally {
         setLoading(false);
       }
@@ -45,214 +64,134 @@ export default function VendorDashboardPage() {
   }, [router]);
 
   if (loading) return <div className="min-h-[80dvh] bg-background" />;
-  if (!data) return <div className="p-8 text-text-secondary">Impossible de charger le tableau de bord.</div>;
+  if (!data) return <div className="p-8 text-text-secondary">Impossible de charger le tableau de bord. Vérifiez votre connexion ou réessayez.</div>;
 
   const s = data.stats;
-  const completion = s?.profileCompletion ?? 0;
-  const stitchCount = 10;
-  const filledStitches = Math.round((completion / 100) * stitchCount);
-
   const matches = data.matches || [];
-  const proposals = data.proposals || [];
-  const notifications = data.notifications || [];
+
+  const shortcuts = [
+    { label: "Appels d'offres", href: "/espace-prestataire/appels-offres", icon: Megaphone, count: s?.newOpportunities },
+    { label: "Propositions", href: "/espace-prestataire/propositions", icon: Send, count: s?.activeProposals },
+    { label: "Portfolio", href: "/espace-prestataire/portfolio", icon: Images },
+    { label: "Profil", href: "/espace-prestataire/profil", icon: UserCircle, count: s?.profileCompletion ? `${s.profileCompletion}%` : undefined },
+  ];
+
+  const statCards = [
+    { label: "Opportunités", value: s?.newOpportunities ?? 0, icon: Target, color: "bg-primary/10 text-primary" },
+    { label: "Propositions", value: s?.sentProposals ?? 0, icon: Send, color: "bg-sky-100 text-sky-700" },
+    { label: "Contrats gagnés", value: s?.wonContracts ?? 0, icon: CheckCircle2, color: "bg-emerald-100 text-emerald-700" },
+    { label: "Taux de réponse", value: `${s?.responseRate ?? 0}%`, icon: TrendingUp, color: s?.responseRate > 50 ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700" },
+  ];
 
   return (
-    <div className="max-w-6xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
       {/* Header */}
-      <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 mb-10">
-        <div className="relative">
-          <div className="flex items-center gap-2.5 mb-3.5">
-            <span className="h-px w-5" style={{ backgroundColor: GOLD }} />
-            <p className="font-sans text-[10px] uppercase tracking-[0.22em] text-text-secondary">Tableau de bord</p>
-          </div>
-          <h1 className="font-serif text-4xl font-semibold tracking-tight flex items-baseline">
-            <span className="text-5xl font-bold text-primary leading-none mr-0.5">A</span>perçu
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-text-secondary mb-2">Tableau de bord</p>
+          <h1 className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-text-primary">
+            Aperçu
           </h1>
-          <p className="text-text-secondary italic mt-2 max-w-md">
-            Suivez vos opportunités, propositions et performances, écriture après écriture.
+          <p className="text-text-secondary mt-2 max-w-md">
+            Suivez votre activité, vos opportunités et vos performances en un coup d'œil.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <SealTag ok={!!s?.verified} />
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.08em] ${
+              s?.verified ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+            }`}
+          >
+            <span className={`h-2 w-2 rounded-full ${s?.verified ? "bg-emerald-500" : "bg-amber-500"}`} />
+            {s?.verified ? "Profil vérifié" : "Profil en attente"}
+          </span>
           <Link href="/espace-prestataire/credits">
-            <Button variant="secondary" iconLeft={<Wallet size={18} />}>
-              Créditer mon solde
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      {/* Credits hero */}
-      <div className="relative bg-white shadow-[0_24px_60px_rgba(11,15,26,0.08)] mb-8 overflow-hidden">
-        <div className="absolute inset-0 border pointer-events-none" style={{ borderColor: `${GOLD}55` }} />
-        <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full opacity-10 pointer-events-none" style={{ background: `radial-gradient(circle, ${GOLD}, transparent 70%)` }} />
-        <div className="flex flex-col sm:flex-row sm:items-center gap-6 px-8 py-8">
-          <div className="flex items-center justify-center h-20 w-20 rounded-full shrink-0 bg-sky-100">
-            <RoseGlyph size={56} />
-          </div>
-          <div className="flex-1">
-            <div className="font-serif text-4xl font-bold text-primary leading-none">{s?.credits ?? 0}</div>
-            <div className="font-sans text-[10px] uppercase tracking-[0.18em] text-text-secondary mt-1.5">
-              Roses en réserve
-            </div>
-            <p className="text-sm text-text-secondary mt-2 max-w-md">
-              Chaque rose vous permet de répondre à un appel d'offres. Rechargez votre réserve pour ne manquer aucune opportunité.
-            </p>
-          </div>
-          <Link href="/espace-prestataire/credits" className="shrink-0">
             <Button variant="primary" iconLeft={<Wallet size={18} />}>
-              Créditer mon solde
+              {s?.credits ?? 0} roses
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-        <StatCard
-          label="Opportunités"
-          value={s?.newOpportunities ?? 0}
-          icon={<Target size={18} />}
-          accent="gold"
-        />
-        <StatCard
-          label="Propositions envoyées"
-          value={s?.sentProposals ?? 0}
-          icon={<Send size={18} />}
-          accent="primary"
-        />
-        <StatCard
-          label="Contrats gagnés"
-          value={s?.wonContracts ?? 0}
-          icon={<CheckCircle2 size={18} />}
-          accent="success"
-        />
-        <StatCard
-          label="Taux de réponse"
-          value={`${s?.responseRate ?? 0}%`}
-          icon={<TrendingUp size={18} />}
-          accent={s?.responseRate && s.responseRate > 50 ? "success" : "warning"}
-        />
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {statCards.map((stat, i) => (
+          <div
+            key={i}
+            className="rounded-2xl bg-white border border-black/[0.06] p-5 shadow-[0_8px_24px_rgba(11,15,26,0.04)]"
+          >
+            <div className={`h-10 w-10 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
+              <stat.icon size={20} strokeWidth={1.8} />
+            </div>
+            <p className="font-serif text-3xl font-semibold text-text-primary">{stat.value}</p>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-text-secondary mt-1">{stat.label}</p>
+          </div>
+        ))}
       </div>
 
       {/* Main grid */}
-      <div className="grid lg:grid-cols-[1.6fr_1fr] gap-7 items-start">
+      <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6 items-start">
+        {/* Opportunities */}
         <Card title="Nouvelles opportunités" action={{ label: "Voir tout", href: "/espace-prestataire/appels-offres" }}>
           {matches.length === 0 ? (
-            <div className="text-center py-10">
-              <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-sky-100">
-                <Target size={24} className="text-sky-600" />
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-primary/10 mb-4">
+                <Target size={24} className="text-primary" />
               </div>
-              <p className="text-text-secondary italic">Aucune opportunité pour le moment.</p>
+              <p className="text-text-secondary font-medium mb-1">Aucune opportunité pour le moment</p>
+              <p className="text-sm text-text-secondary/70 max-w-xs mx-auto">
+                Les nouveaux appels d'offres correspondant à votre profil apparaîtront ici.
+              </p>
             </div>
           ) : (
-            <div className="relative space-y-4">
+            <div className="space-y-3">
               {matches.slice(0, 5).map((match) => (
-                <div
+                <Link
                   key={match.id}
-                  className="flex items-center justify-between gap-4 px-4 py-4 bg-white border-l-2"
-                  style={{ borderColor: GOLD }}
+                  href={`/espace-prestataire/appels-offres/${match.tenderId || ""}`}
+                  className="flex items-center justify-between gap-4 p-4 rounded-xl bg-surface hover:bg-white hover:shadow-[0_4px_16px_rgba(11,15,26,0.06)] border border-black/[0.04] transition-all group"
                 >
                   <div className="min-w-0">
-                    <div className="font-serif font-semibold text-text-primary text-lg truncate">
-                      {match.category} — {match.project?.location?.city || "Non précisé"}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
+                        {match.category}
+                      </span>
+                      <span className="text-[11px] text-text-secondary">
+                        {match.project?.location?.city || "Lieu non précisé"}
+                      </span>
                     </div>
-                    <div className="text-text-secondary text-sm">
-                      Budget {match.project?.budget?.amount || "—"} {match.project?.budget?.currency || "EUR"}
+                    <div className="text-sm text-text-secondary">
+                      Budget {match.project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {match.project?.budget?.currency || "EUR"}
                     </div>
                   </div>
-                  <div
-                    className="h-[52px] w-[52px] rounded-full border-[1.5px] border-primary text-primary flex flex-col items-center justify-center shrink-0"
-                    style={{ transform: "rotate(-6deg)" }}
-                  >
-                    <span className="font-serif font-bold text-[15px] leading-none">{match.score}%</span>
-                    <span className="font-sans text-[6.5px] tracking-[0.05em] mt-0.5">AFFINITÉ</span>
+                  <div className="flex flex-col items-center justify-center shrink-0">
+                    <div className="h-12 w-12 rounded-full border-2 border-primary/20 text-primary flex items-center justify-center group-hover:border-primary transition-colors">
+                      <span className="font-serif font-bold text-sm">{match.score}%</span>
+                    </div>
+                    <span className="text-[9px] uppercase tracking-[0.08em] text-text-secondary mt-1">affinité</span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
         </Card>
 
-        <div className="space-y-7">
-          <Card title="Profil brodé" action={{ label: "Compléter", href: "/espace-prestataire/profil" }}>
-            <div className="relative flex gap-1.5 mb-3.5">
-              {Array.from({ length: stitchCount }).map((_, i) => {
-                const done = i < filledStitches;
-                return (
-                  <div key={i} className="relative flex-1 h-[2px]" style={{ background: done ? GOLD : `${GOLD}33` }}>
-                    {done && (
-                      <span
-                        className="absolute -top-1 left-1/2 w-px h-2"
-                        style={{ backgroundColor: GOLD, transform: "translateX(-50%) rotate(20deg)" }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <p className="font-sans text-[10.5px] uppercase tracking-[0.1em] text-text-secondary mb-5">
-              Complété à {completion}%
-            </p>
-            <p className="text-sm text-text-secondary leading-relaxed mb-5">
-              Un profil complet augmente votre visibilité auprès des futurs mariés et améliore vos chances de correspondre à leurs attentes.
-            </p>
-            <Link href="/espace-prestataire/profil">
-              <Button variant="primary" className="w-full" iconRight={<ArrowUpRight size={18} />}>
-                Compléter mon profil
-              </Button>
-            </Link>
-          </Card>
-
-          {notifications.length > 0 && (
-            <Card title="Notifications" action={{ label: "Tout voir", href: "/espace-prestataire/notifications" }}>
-              <div className="relative space-y-3">
-                {notifications.slice(0, 4).map((n, i) => (
-                  <div
-                    key={i}
-                    className="flex items-start gap-3 px-4 py-3 bg-white border-l-2"
-                    style={{ borderColor: GOLD }}
-                  >
-                    <Bell size={16} className="text-primary mt-0.5 shrink-0" />
-                    <p className="text-sm text-text-secondary line-clamp-2">{n.message}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          {proposals.length > 0 && (
-            <Card title="Dernières propositions" action={{ label: "Historique", href: "/espace-prestataire/propositions" }}>
-              <div className="relative space-y-3">
-                {proposals.slice(0, 4).map((p, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between px-4 py-3 bg-white border-l-2"
-                    style={{ borderColor: GOLD }}
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-text-primary truncate">
-                        {p.project?.name || "Appel d'offres"}
-                      </p>
-                      <p className="text-xs text-text-secondary">{p.project?.category || p.category || "—"}</p>
-                    </div>
-                    <span
-                      className={`text-[10px] uppercase tracking-[0.08em] font-sans px-2 py-1 rounded-full ${
-                        p.status === "accepted"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : p.status === "declined"
-                          ? "bg-slate-200 text-slate-600"
-                          : "bg-amber-100 text-amber-700"
-                      }`}
-                    >
-                      {p.status === "accepted" ? "Gagné" : p.status === "declined" ? "Refusé" : "En attente"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
-        </div>
+        {/* Shortcuts */}
+        <Card title="Accès rapide">
+          <div className="grid grid-cols-2 gap-3">
+            {shortcuts.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex flex-col items-center justify-center gap-2 rounded-xl bg-surface hover:bg-primary hover:text-white transition-colors p-5 text-center"
+              >
+                <item.icon size={24} strokeWidth={1.8} className="text-primary group-hover:text-white transition-colors" />
+                <span className="text-xs font-medium text-text-primary group-hover:text-white transition-colors">{item.label}</span>
+                {item.count && <span className="text-[10px] text-text-secondary group-hover:text-white/80 transition-colors">{item.count}</span>}
+              </Link>
+            ))}
+          </div>
+        </Card>
       </div>
     </div>
   );

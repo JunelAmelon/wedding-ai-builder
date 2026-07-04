@@ -11,7 +11,6 @@ import {
   Images,
   Bell,
   MessageCircle,
-  BarChart3,
   SlidersHorizontal,
   Menu,
   X,
@@ -28,7 +27,6 @@ const VENDOR_NAV = [
   { href: "/espace-prestataire/appels-offres", label: "Appels d'offres", icon: Megaphone },
   { href: "/espace-prestataire/propositions", label: "Propositions", icon: Send },
   { href: "/espace-prestataire/portfolio", label: "Portfolio", icon: Images },
-  { href: "/espace-prestataire/statistiques", label: "Statistiques", icon: BarChart3 },
 ];
 
 const VENDOR_NAV_SECONDARY = [

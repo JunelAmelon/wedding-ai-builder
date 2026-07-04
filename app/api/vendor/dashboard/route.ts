@@ -5,6 +5,7 @@ import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { creditRepo } from "@/lib/db/repositories/creditRepo";
+import { projectRepo } from "@/lib/db/repositories/projectRepo";
 
 export async function GET() {
   try {
@@ -18,10 +19,10 @@ export async function GET() {
       return NextResponse.json({ error: "Profil professionnel introuvable" }, { status: 404 });
     }
 
-    const matches = await matchRepo.listByVendor(profile.id);
+    const matches = await matchRepo.listByVendor(profile.id).catch(() => []);
     const newOpportunities = matches.filter((m) => m.status === "suggested").length;
 
-    const proposals = await proposalRepo.listByVendor(profile.id);
+    const proposals = await proposalRepo.listByVendor(profile.id).catch(() => []);
     const sentProposals = proposals.length;
     const wonContracts = proposals.filter((p) => p.status === "accepted").length;
     const pendingProposals = proposals.filter((p) => p.status === "pending").length;
@@ -29,16 +30,39 @@ export async function GET() {
     const archivedProposals = proposals.filter((p) => p.status === "archived").length;
     const activeProposals = proposals.filter((p) => p.status === "pending" || p.status === "accepted").length;
     const responseRate = sentProposals > 0 ? Math.round((wonContracts / sentProposals) * 100) : 0;
-    const averageCompatibility = sentProposals > 0
-      ? Math.round(matches.filter((m) => proposals.some((p) => p.matchId === m.id)).reduce((acc, m) => acc + m.score, 0) / sentProposals)
+    const matched = matches.filter((m) => proposals.some((p) => p.matchId === m.id));
+    const averageCompatibility = matched.length > 0
+      ? Math.round(matched.reduce((acc, m) => acc + (m.score ?? 0), 0) / matched.length)
       : 0;
 
-    const unreadNotifications = await notificationRepo.listUnreadByUser(user.id);
-    const creditTransactions = await creditRepo.listByVendor(profile.id);
+    const unreadNotifications = await notificationRepo.listUnreadByUser(user.id).catch(() => []);
+    const creditTransactions = await creditRepo.listByVendor(profile.id).catch(() => []);
+
+    const enrichedMatches = await Promise.all(
+      matches.map(async (m) => {
+        try {
+          const project = m.projectId ? await projectRepo.get(m.projectId) : null;
+          return { ...m, project };
+        } catch {
+          return { ...m, project: null };
+        }
+      })
+    );
+
+    const enrichedProposals = await Promise.all(
+      proposals.map(async (p) => {
+        try {
+          const project = p.projectId ? await projectRepo.get(p.projectId) : null;
+          return { ...p, project };
+        } catch {
+          return { ...p, project: null };
+        }
+      })
+    );
 
     return NextResponse.json({
       stats: {
-        credits: profile.credits,
+        credits: profile.credits ?? 0,
         newOpportunities,
         sentProposals,
         activeProposals,
@@ -48,15 +72,16 @@ export async function GET() {
         responseRate,
         averageCompatibility,
         wonContracts,
-        profileCompletion: profile.profileCompletion,
-        verified: profile.verified,
+        profileCompletion: profile.profileCompletion ?? 0,
+        verified: profile.verified ?? false,
       },
-      matches: matches.slice(0, 10),
-      proposals: proposals.slice(0, 10),
+      matches: enrichedMatches.slice(0, 10),
+      proposals: enrichedProposals.slice(0, 10),
       notifications: unreadNotifications,
       creditTransactions: creditTransactions.slice(0, 10),
     });
   } catch (err) {
+    console.error("[dashboard] error", err);
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     return NextResponse.json({ error: message }, { status: 500 });
