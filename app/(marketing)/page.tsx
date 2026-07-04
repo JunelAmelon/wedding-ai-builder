@@ -325,14 +325,14 @@ export default function LandingPage() {
 
       <footer className="px-4 sm:px-6 pb-8 sm:pb-10">
         <div className="max-w-6xl mx-auto border-t border-black/10 pt-6 sm:pt-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-text-secondary">
-          <div className="font-serif text-base text-text-primary font-semibold">WeddingAI Builder</div>
+          <div className="font-serif text-base text-text-primary font-semibold">MariageFacile</div>
           <div className="flex flex-wrap gap-4">
             <a href="#" className="hover:text-text-primary transition">Confidentialité</a>
             <a href="#" className="hover:text-text-primary transition">CGU</a>
             <a href="#" className="hover:text-text-primary transition">Contact</a>
             <a href="#" className="hover:text-text-primary transition">Prestataires</a>
           </div>
-          <div className="text-xs">© {new Date().getFullYear()} Wedding AI Builder. Tous droits réservés.</div>
+          <div className="text-xs">© {new Date().getFullYear()} MariageFacile. Tous droits réservés.</div>
         </div>
       </footer>
     </main>

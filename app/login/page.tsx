@@ -50,7 +50,7 @@ function LoginPageInner() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link href="/" className="inline-flex items-center gap-1 font-serif text-xl font-semibold tracking-tight mb-6">
-            Wedding<span className="text-primary">AI</span> Builder
+            Mariage<span className="text-primary">Facile</span>
           </Link>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mb-2">Connexion</h1>
           <p className="text-text-secondary text-sm sm:text-base">Accédez à votre espace {role === "vendor" ? "prestataire" : "couple"}.</p>

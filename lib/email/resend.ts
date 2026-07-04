@@ -21,7 +21,7 @@ export async function sendResultEmail(to: string, sessionId: string): Promise<vo
   }
 
   await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL || "Wedding AI Builder <hello@weddingaibuilder.app>",
+    from: process.env.RESEND_FROM_EMAIL || "MariageFacile <hello@mariagefacile.fr>",
     to,
     subject: "Votre plan de mariage personnalisé est prêt 💍",
     html: `

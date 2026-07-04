@@ -115,7 +115,7 @@ export default function VendorLayoutClient({
           <Link href="/espace-prestataire" className="flex items-center gap-2.5 shrink-0">
             <Logo />
             <span className="font-serif text-lg font-semibold tracking-tight">
-              Wedding AI <span className="text-primary">Pro</span>
+              MariageFacile <span className="text-primary">Pro</span>
             </span>
           </Link>
 
@@ -192,7 +192,7 @@ export default function VendorLayoutClient({
       <header className="lg:hidden h-16 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#FAFAF8]/90 backdrop-blur-xl">
         <Link href="/espace-prestataire" className="flex items-center gap-2">
           <Logo size={28} />
-          <span className="font-serif text-base font-semibold">Wedding AI Pro</span>
+          <span className="font-serif text-base font-semibold">MariageFacile Pro</span>
         </Link>
         <button
           onClick={() => setMoreOpen(true)}

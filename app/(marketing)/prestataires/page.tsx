@@ -183,7 +183,7 @@ export default function ProfessionalsLandingPage() {
             {/* Text block — third on mobile, bottom-left on desktop */}
             <div className="order-3 lg:col-span-7 lg:pr-10">
               <p className="mt-6 text-lg text-text-secondary leading-relaxed max-w-xl">
-                Wedding AI Builder analyse les besoins de chaque futur marié avant de recommander uniquement les professionnels les plus adaptés à son budget, son style, sa localisation et son projet.
+                MariageFacile analyse les besoins de chaque futur marié avant de recommander uniquement les professionnels les plus adaptés à son budget, son style, sa localisation et son projet.
               </p>
               <p className="mt-4 text-lg text-text-primary font-medium max-w-xl">
                 Vous recevez moins de demandes, mais de bien meilleure qualité.
@@ -488,7 +488,7 @@ export default function ProfessionalsLandingPage() {
               Rejoignez gratuitement les premiers professionnels
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-white">
-              Rejoignez gratuitement les premiers professionnels du Wedding AI Builder
+              Rejoignez gratuitement les premiers professionnels du MariageFacile
             </h2>
             <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-2xl mx-auto">
               Créez votre profil en quelques minutes et laissez notre intelligence artificielle vous proposer des couples réellement compatibles.

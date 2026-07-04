@@ -3,13 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { ArrowRight, Menu, X, User } from "lucide-react";
+import { ArrowRight, Menu, X, User, Heart } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/#how", label: "Comment ça marche" },
   { href: "/#trust", label: "Ils nous font confiance" },
   { href: "/prestataires", label: "Professionnels" },
-  { href: "/#start", label: "Commencer" },
 ];
 
 interface HeaderProps {
@@ -24,8 +23,11 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
     <>
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-serif text-lg sm:text-xl font-semibold tracking-tight">
-            Wedding<span className="text-primary">AI</span> Builder
+          <Link href="/" className="inline-flex items-center gap-2 font-serif text-lg sm:text-xl font-semibold tracking-tight">
+            <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white">
+              <Heart size={16} className="fill-white" />
+            </span>
+            Mariage<span className="text-primary">Facile</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
             {NAV_LINKS.map((link) => (
@@ -64,8 +66,11 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
           />
           <div className="fixed top-0 left-0 bottom-0 z-50 w-[80%] max-w-[300px] bg-white shadow-2xl p-6 md:hidden flex flex-col">
             <div className="flex items-center justify-between mb-8">
-              <div className="font-serif text-lg font-semibold tracking-tight">
-                Wedding<span className="text-primary">AI</span> Builder
+              <div className="inline-flex items-center gap-2 font-serif text-lg font-semibold tracking-tight">
+                <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white">
+                  <Heart size={16} className="fill-white" />
+                </span>
+                Mariage<span className="text-primary">Facile</span>
               </div>
               <button
                 onClick={() => setMenuOpen(false)}

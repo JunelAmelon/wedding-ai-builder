@@ -6,7 +6,7 @@ const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
 const serif = DM_Serif_Display({ subsets: ["latin"], weight: ["400"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
-  title: "Wedding AI Builder",
+  title: "MariageFacile",
   description: "Générez un plan de mariage personnalisé en moins de 5 minutes.",
 };
 
