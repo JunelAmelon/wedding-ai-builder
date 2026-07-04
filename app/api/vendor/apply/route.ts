@@ -43,6 +43,8 @@ const PortfolioSchema = z.object({
   website: z.string().url().nullable().optional(),
   instagram: z.string().nullable().optional(),
   videos: z.array(z.string().url()).default([]),
+  faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
+  reviews: z.array(z.object({ author: z.string().min(1), rating: z.number().min(0).max(5), text: z.string().min(1), date: z.string() })).default([]),
 });
 
 const VendorApplicationSchema = z.object({
@@ -105,6 +107,7 @@ export async function POST(req: Request) {
     const profile = await vendorProfileRepo.create({
       userId: user.id,
       status: "pending",
+      logo: null,
       companyName: applicationData.companyName,
       siret: applicationData.siret,
       brandName: applicationData.brandName ?? null,

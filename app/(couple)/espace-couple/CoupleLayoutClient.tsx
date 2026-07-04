@@ -11,6 +11,7 @@ import {
   Users2,
   SlidersHorizontal,
   Sparkles,
+  MessageSquare,
   Menu,
   X,
   LogOut,
@@ -22,6 +23,7 @@ const COUPLE_NAV = [
   { href: "/espace-couple/budget", label: "Budget", icon: Wallet },
   { href: "/espace-couple/planning", label: "Planning", icon: CalendarRange },
   { href: "/espace-couple/prestataires", label: "Prestataires", icon: Users2 },
+  { href: "/espace-couple/messagerie", label: "Messages", icon: MessageSquare },
 ];
 
 const COUPLE_NAV_SECONDARY = [
@@ -33,6 +35,7 @@ const MOBILE_TABS = [
   { href: "/espace-couple/mariage", label: "Mariage", icon: Heart },
   { href: "/espace-couple/planning", label: "Planning", icon: CalendarRange },
   { href: "/espace-couple/prestataires", label: "Pros", icon: Users2 },
+  { href: "/espace-couple/messagerie", label: "Messages", icon: MessageSquare },
 ];
 
 function Logo({ size = 32 }: { size?: number }) {
