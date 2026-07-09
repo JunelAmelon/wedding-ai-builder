@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -107,25 +107,9 @@ function Reveal({ children, className = "" }: { children: React.ReactNode; class
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [activeStep, setActiveStep] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const score = 82;
   const circumference = 238;
   const offset = circumference - (score / 100) * circumference;
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!isMobile) return;
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % PROCESS_STEPS.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [isMobile]);
 
   return (
     <main className="min-h-[100dvh] bg-background text-text-primary overflow-x-hidden">
@@ -406,17 +390,19 @@ export default function LandingPage() {
               })}
             </div>
 
-            {/* Version mobile : accordéon vertical interactif */}
-            <div className="md:hidden flex flex-col gap-3 h-[420px]">
+            {/* Version mobile : accordéon déclenché par le scroll */}
+            <div className="md:hidden flex flex-col gap-3">
               {PROCESS_STEPS.map((step, i) => {
                 const isActive = activeStep === i;
                 return (
-                  <div
+                  <motion.div
                     key={step.n}
                     onClick={() => setActiveStep(i)}
                     tabIndex={0}
                     onFocus={() => setActiveStep(i)}
-                    className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-[flex-grow] duration-500 ease-out ${
+                    onViewportEnter={() => setActiveStep(i)}
+                    viewport={{ amount: 0.5 }}
+                    className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 ease-out min-h-[70vh] ${
                       isActive ? "flex-[3]" : "flex-[1]"
                     }`}
                   >
@@ -455,7 +441,7 @@ export default function LandingPage() {
                       <h3 className="font-serif text-white text-lg mb-1">{step.title}</h3>
                       <p className="text-white/80 text-sm leading-relaxed">{step.desc}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
