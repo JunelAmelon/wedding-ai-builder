@@ -130,6 +130,9 @@ export async function PUT(req: Request) {
       try {
         const session = await sessionRepo.get(updated.sessionId);
         if (session) {
+          if (session.userId && session.userId !== user.id) {
+            return NextResponse.json({ error: "Cette session n'appartient pas à votre compte" }, { status: 403 });
+          }
           const refreshedQuiz = {
             ...session.quizAnswers,
             weddingDate: updated.weddingDate ?? session.quizAnswers.weddingDate,

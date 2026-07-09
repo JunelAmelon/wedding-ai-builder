@@ -266,7 +266,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* GALLERY : preuve visuelle stylisée */}
+      {/* GALERIE : preuve visuelle stylisée */}
       <Reveal>
         <section className="px-4 sm:px-6 py-14 sm:py-16">
           <div className="max-w-6xl mx-auto">
@@ -275,10 +275,10 @@ export default function LandingPage() {
                 De vrais mariages, de vrais prestataires
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-                Pas des stocks photos génériques
+                Des vrais mariages, pas des catalogues
               </h2>
               <p className="text-text-secondary text-sm sm:text-base">
-                Chaque plan s&apos;appuie sur un réseau réel de prestataires, voici le genre de mariages qu&apos;ils accompagnent.
+                Chaque décor, chaque lieu et chaque prestataire que nous recommandons a déjà fait le bonheur d&apos;un couple.
               </p>
             </div>
 
@@ -333,17 +333,17 @@ export default function LandingPage() {
         </section>
       </Reveal>
 
-      {/* PROCESS : panneaux qui se déplient */}
+      {/* PROCESSUS : panneaux qui se déplient */}
       <Reveal>
         <section id="how" className="px-4 sm:px-6 py-14 sm:py-16 bg-surface">
           <div className="max-w-6xl mx-auto">
             <div className="max-w-xl mx-auto text-center mb-10">
-              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Le processus</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Comment ça marche</div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-                De vos réponses au plan complet
+                De vos envies à votre plan en 4 étapes
               </h2>
               <p className="text-text-secondary text-sm sm:text-base">
-                Survolez chaque étape pour voir comment elle s&apos;enchaîne avec la suivante.
+                Pas de tableur, pas de recherche infinie. Vous répondez, notre IA construit le reste.
               </p>
             </div>
 
@@ -463,16 +463,16 @@ export default function LandingPage() {
         </section>
       </Reveal>
 
-      {/* INCLUDED */}
+      {/* INCLUS */}
       <Reveal>
         <section className="px-4 sm:px-6 py-14 sm:py-16">
           <div className="max-w-[620px] mx-auto rounded-2xl border border-black/[0.06] bg-surface p-7 sm:p-8">
             <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Inclus dans chaque plan</div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-5">Ce que vous recevez</h2>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-5">Tout ce qu&apos;il faut, sans rien payer</h2>
             <ul className="space-y-3 text-sm">
               {[
                 { label: "Budget détaillé", value: "par poste" },
-                { label: "Timeline", value: "mensuelle" },
+                { label: "Planning", value: "mensuelle" },
                 { label: "Matching prestataires", value: "selon budget" },
                 { label: "Score de risque", value: "+ actions" },
               ].map((row) => (
@@ -492,13 +492,12 @@ export default function LandingPage() {
         <section id="free" className="px-4 sm:px-6 py-14 sm:py-16 bg-surface">
           <div className="max-w-6xl mx-auto">
             <div className="max-w-xl mx-auto text-center mb-10">
-              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">La gratuité, en chiffres</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">La gratuité, tout simplement</div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-                Ce que coûterait une organisation classique
+                Zéro euro, zéro compromis
               </h2>
               <p className="text-text-secondary text-sm sm:text-base">
-                Recherches, comparaisons, coordination : voici une estimation courante du temps et des frais que ça
-                représente d&apos;habitude, annulée pour vous et pour vos prestataires.
+                Recherches, devis et coordination : on assume tout ce qui coûte du temps et de l&apos;argent. Pour vous, c&apos;est 0 €.
               </p>
             </div>
 
@@ -553,7 +552,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="max-w-xl mx-auto text-center mb-10">
               <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Retours de couples</div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Ce qu&apos;ils en ont pensé</h2>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Ils ont lancé leur plan en une soirée</h2>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -594,8 +593,7 @@ export default function LandingPage() {
               <div>
                 <h3 className="font-serif text-2xl mb-1.5">Vous êtes prestataire ou wedding planner ?</h3>
                 <p className="text-white/70 text-sm max-w-md">
-                  Recevez des demandes de couples déjà qualifiés selon votre budget et votre style, sans démarchage
-                  et sans frais d&apos;accès.
+                  Recevez des demandes de couples déjà qualifiés, sans démarcher et sans frais d&apos;accès.
                 </p>
               </div>
               <Link href="/prestataires" className="relative z-10">
@@ -614,7 +612,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="max-w-xl mx-auto text-center mb-10">
               <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Avant de vous lancer</div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Questions fréquentes</h2>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Vous avez des questions, nous avons des réponses claires</h2>
             </div>
 
             <div className="max-w-[680px] mx-auto">
@@ -645,15 +643,15 @@ export default function LandingPage() {
         </section>
       </Reveal>
 
-      {/* CTA FINAL */}
+      {/* APPEL FINAL */}
       <Reveal>
         <section className="px-4 sm:px-6 py-16 sm:py-[70px] text-center">
           <div className="max-w-6xl mx-auto">
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3.5">
-              Votre plan de mariage vous attend
+              Votre plan de mariage est prêt à être créé
             </h2>
             <p className="text-text-secondary max-w-md mx-auto mb-6">
-              5 minutes, 5 questions, un plan complet et des prestataires qui correspondent vraiment.
+              5 questions, 5 minutes, des prestataires qui vous correspondent vraiment.
             </p>
             <Link href="/quiz">
               <Button variant="coupon" iconRight={<ArrowRight size={18} />}>

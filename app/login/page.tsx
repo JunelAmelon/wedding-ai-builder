@@ -37,6 +37,9 @@ function LoginPageInner() {
         throw new Error(data.error || "Identifiants incorrects");
       }
 
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem("wab_quiz_state");
+      }
       const destination = data.user.role === "vendor" ? "/espace-prestataire" : "/espace-couple/result";
       router.push(destination);
     } catch (err) {

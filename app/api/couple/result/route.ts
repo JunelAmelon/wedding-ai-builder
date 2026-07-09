@@ -21,6 +21,10 @@ export async function GET() {
       return NextResponse.json({ error: "Session introuvable" }, { status: 404 });
     }
 
+    if (session.userId && session.userId !== user.id) {
+      return NextResponse.json({ error: "Cette session n'appartient pas à votre compte" }, { status: 403 });
+    }
+
     return NextResponse.json({ session, project });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";

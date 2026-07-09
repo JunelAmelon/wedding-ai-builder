@@ -95,6 +95,10 @@ export async function POST(req: Request) {
       if (sessionId) {
         const session = await sessionRepo.get(sessionId);
         if (session) {
+          if (session.userId && session.userId !== user.id) {
+            return NextResponse.json({ error: "Cette session est déjà associée à un autre compte" }, { status: 409 });
+          }
+          await sessionRepo.setUserId(sessionId, user.id);
           await projectRepo.create({
             userId: user.id,
             coupleProfileId: coupleProfile.id,

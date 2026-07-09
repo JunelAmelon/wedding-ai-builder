@@ -48,6 +48,7 @@ export interface WeddingSession {
   quizAnswers: QuizAnswers;
   aiOutput: AIOutput | null;
   leadId: string | null;
+  userId: string | null; // propriétaire de la session (null = anonyme)
 }
 
 export interface Lead {

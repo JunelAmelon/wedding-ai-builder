@@ -23,6 +23,7 @@ export const sessionRepo = {
       quizAnswers: {},
       aiOutput: null,
       leadId: null,
+      userId: null,
     };
     if (useLocal()) {
       await localStore.set(COLLECTION, session.id, session);
@@ -108,6 +109,17 @@ export const sessionRepo = {
     }
     const col = await getFirestoreCol();
     await col.doc(id).update({ leadId, updatedAt: now });
+    const doc = await col.doc(id).get();
+    return doc.data() as WeddingSession;
+  },
+
+  async setUserId(id: string, userId: string): Promise<WeddingSession> {
+    const now = new Date().toISOString();
+    if (useLocal()) {
+      return localStore.update<WeddingSession>(COLLECTION, id, { userId, updatedAt: now });
+    }
+    const col = await getFirestoreCol();
+    await col.doc(id).update({ userId, updatedAt: now });
     const doc = await col.doc(id).get();
     return doc.data() as WeddingSession;
   },

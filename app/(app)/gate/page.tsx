@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle, Mail, Sparkles } from "lucide-react";
@@ -20,6 +20,7 @@ function GatePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { sessionId, setSession, reset } = useQuizStore();
+  const registeredRef = useRef(false);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -31,6 +32,16 @@ function GatePageInner() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [msgIndex, setMsgIndex] = useState(0);
+
+  useEffect(() => {
+    function onBeforeUnload() {
+      if (!registeredRef.current) {
+        window.localStorage.removeItem("wab_quiz_state");
+      }
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,6 +95,7 @@ function GatePageInner() {
         throw new Error(data.error || "Échec de la création du compte");
       }
       track("account_created", { sessionId, source: "gate" });
+      registeredRef.current = true;
       router.push("/espace-couple");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Une erreur est survenue, réessayez.";

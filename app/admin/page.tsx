@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Lock, Users, Briefcase, FileText, CheckCircle2, XCircle, Clock, ExternalLink, Search, Calendar, Mail, Phone, MapPin, ArrowLeft, ShieldCheck, Trash2, Save, Sparkles } from "lucide-react";
+import { Lock, Users, Briefcase, FileText, CheckCircle2, XCircle, Clock, ExternalLink, Search, Calendar, Mail, Phone, MapPin, ArrowLeft, ShieldCheck, Trash2, Save, Sparkles, AlertTriangle, Wrench } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import type { Lead, VendorApplication } from "@/types/domain";
@@ -25,11 +25,14 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [vendors, setVendors] = useState<VendorApplication[]>([]);
-  const [activeTab, setActiveTab] = useState<"leads" | "vendors">("leads");
+  const [activeTab, setActiveTab] = useState<"leads" | "vendors" | "projects">("leads");
   const [search, setSearch] = useState("");
   const [selectedVendor, setSelectedVendor] = useState<VendorApplication | null>(null);
   const [notes, setNotes] = useState("");
   const [regenerating, setRegenerating] = useState<Set<string>>(new Set());
+  const [audit, setAudit] = useState<{ totalProjects: number; corruptedCount: number; corrupted: any[] } | null>(null);
+  const [auditing, setAuditing] = useState(false);
+  const [fixing, setFixing] = useState<Set<string>>(new Set());
 
   async function login(e: React.FormEvent) {
     e.preventDefault();
@@ -86,6 +89,44 @@ export default function AdminPage() {
       setRegenerating((prev) => {
         const next = new Set(prev);
         next.delete(sessionId);
+        return next;
+      });
+    }
+  }
+
+  async function loadAudit() {
+    if (!token) return;
+    setAuditing(true);
+    try {
+      const res = await fetch("/api/admin/project-audit", {
+        headers: { authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Échec de l'audit");
+      setAudit(await res.json());
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setAuditing(false);
+    }
+  }
+
+  async function fixProject(projectId: string) {
+    if (!token) return;
+    setFixing((prev) => new Set(prev).add(projectId));
+    try {
+      const res = await fetch(`/api/admin/project/${projectId}/fix`, {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Échec de la réparation");
+      alert("Projet réparé avec succès");
+      await loadAudit();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setFixing((prev) => {
+        const next = new Set(prev);
+        next.delete(projectId);
         return next;
       });
     }
@@ -203,6 +244,17 @@ export default function AdminPage() {
             >
               <Briefcase size={16} /> Professionnels ({vendors.length})
             </button>
+            <button
+              onClick={() => {
+                setActiveTab("projects");
+                if (!audit) loadAudit();
+              }}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                activeTab === "projects" ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              <AlertTriangle size={16} /> Projets
+            </button>
           </div>
 
           <div className="relative flex-1 max-w-md">
@@ -257,6 +309,93 @@ export default function AdminPage() {
               </table>
             </div>
             {filteredLeads.length === 0 && <p className="p-6 text-center text-text-secondary">Aucune soumission marié.</p>}
+          </div>
+        )}
+
+        {activeTab === "projects" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-serif text-lg font-semibold">Audit des projets</h2>
+                {audit && (
+                  <p className="text-sm text-text-secondary">
+                    {audit.totalProjects} projet(s) au total — {audit.corruptedCount} problème(s) détecté(s)
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={loadAudit}
+                disabled={auditing}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90 transition disabled:opacity-50"
+              >
+                <Wrench size={16} />
+                {auditing ? "Audit en cours..." : "Relancer l'audit"}
+              </button>
+            </div>
+
+            {audit ? (
+              audit.corrupted.length === 0 ? (
+                <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
+                  <CheckCircle2 className="mx-auto text-green-600 mb-2" size={32} />
+                  <p className="text-green-800 font-medium">Aucun projet corrompu détecté.</p>
+                  <p className="text-green-700 text-sm mt-1">
+                    Si un utilisateur voit encore des données d'un autre compte, le problème vient probablement d'une nouvelle fuite après connexion (vérifiez que le code corrigé est bien déployé).
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-black/10 bg-white overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-surface text-text-secondary">
+                        <tr>
+                          <th className="text-left px-4 py-3 font-medium">Projet</th>
+                          <th className="text-left px-4 py-3 font-medium">Utilisateur</th>
+                          <th className="text-left px-4 py-3 font-medium">Session</th>
+                          <th className="text-left px-4 py-3 font-medium">Problème</th>
+                          <th className="text-left px-4 py-3 font-medium">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-black/10">
+                        {audit.corrupted.map((issue) => (
+                          <tr key={issue.projectId} className="hover:bg-surface/50">
+                            <td className="px-4 py-3 font-mono text-xs">{issue.projectId}</td>
+                            <td className="px-4 py-3">
+                              <div className="text-text-primary">{issue.userEmail}</div>
+                              <div className="text-xs text-text-secondary font-mono">{issue.userId}</div>
+                            </td>
+                            <td className="px-4 py-3 font-mono text-xs">{issue.sessionId || "—"}</td>
+                            <td className="px-4 py-3">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 text-xs font-medium">
+                                <AlertTriangle size={12} />
+                                {issue.message}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              {issue.type === "wrong_owner" || issue.type === "orphan_session" || issue.type === "missing_session" ? (
+                                <button
+                                  onClick={() => fixProject(issue.projectId)}
+                                  disabled={fixing.has(issue.projectId)}
+                                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 text-primary px-3 py-1.5 text-xs font-medium hover:bg-primary/20 transition disabled:opacity-50"
+                                >
+                                  <Wrench size={14} />
+                                  {fixing.has(issue.projectId) ? "Réparation..." : "Réparer"}
+                                </button>
+                              ) : (
+                                <span className="text-text-secondary text-xs">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )
+            ) : (
+              <div className="rounded-2xl border border-black/10 bg-white p-8 text-center">
+                <p className="text-text-secondary">Cliquez sur « Relancer l'audit » pour analyser les projets.</p>
+              </div>
+            )}
           </div>
         )}
 
