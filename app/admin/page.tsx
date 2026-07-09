@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Lock, Users, Briefcase, FileText, CheckCircle2, XCircle, Clock, ExternalLink, Search, Calendar, Mail, Phone, MapPin, ArrowLeft, ShieldCheck, Trash2, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 import type { Lead, VendorApplication } from "@/types/domain";
 
 const STATUS_LABELS: Record<VendorApplication["status"], string> = {
@@ -140,13 +141,15 @@ export default function AdminPage() {
               className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
             />
             {error && <p className="text-sm text-red-600">{error}</p>}
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              className="w-full inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-white font-semibold disabled:opacity-60"
+              loading={loading}
+              variant="primary"
+              className="w-full"
             >
               {loading ? "Connexion..." : "Accéder au dashboard"}
-            </button>
+            </Button>
           </form>
           <div className="mt-6 text-center">
             <Link href="/" className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition">

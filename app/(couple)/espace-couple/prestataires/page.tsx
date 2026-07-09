@@ -362,18 +362,16 @@ export default function CoupleVendorsPage() {
                 {tenderError && <p className="text-sm text-red-600">{tenderError}</p>}
               </div>
 
-              <button
+              <Button
                 onClick={launchTender}
                 disabled={launching}
-                className="w-full flex items-center justify-center gap-3 bg-primary text-white font-mono text-xs uppercase tracking-[0.14em] py-4 shadow-[0_10px_24px_rgba(140,59,62,0.25)] transition-transform active:translate-y-px disabled:opacity-60"
+                loading={launching}
+                variant="primary"
+                className="w-full"
+                iconLeft={launching ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
               >
-                {launching ? (
-                  <Loader2 size={16} className="animate-spin" />
-                ) : (
-                  <Sparkles size={16} />
-                )}
                 {launching ? "Scellement en cours..." : "Sceller la demande"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

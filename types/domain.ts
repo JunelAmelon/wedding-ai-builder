@@ -130,12 +130,44 @@ export interface ShareRecord {
 
 // ---------- AI Output structuré ----------
 
+export interface StyleLevels {
+  elegance: number; // 1-10
+  conviviality: number; // 1-10
+  modernity: number; // 1-10
+  tradition: number; // 1-10
+}
+
+export interface WeddingInspiration {
+  category: string;
+  ideas: string[];
+}
+
 export interface WeddingBlueprint {
   concept: string;
+  conceptName?: string;
+  emotionalSummary?: string;
   storytelling: string;
   ambiance: string[];
+  ambianceLevel?: number; // 1-10
   colorPalette: { name: string; hex: string }[];
+  paletteExplanation?: string;
   reformulatedStyle?: string;
+  styleLevels?: StyleLevels;
+  inspirations?: WeddingInspiration[];
+  mistakesToAvoid?: string[];
+}
+
+export interface BudgetCategoryStatus {
+  key: string;
+  planned: number;
+  recommended: number;
+  realisticMin: number;
+  realisticMax: number;
+  percentage: number;
+  riskLevel: "excellent" | "good" | "tight" | "critical";
+  margin: number;
+  savingsPotential: number;
+  overrunEstimate: number;
 }
 
 export interface BudgetBreakdown {
@@ -157,16 +189,42 @@ export interface BudgetBreakdown {
     decoration: number;
     contingency: number;
   };
+  categoryStatuses?: BudgetCategoryStatus[];
+  globalRiskLevel?: "excellent" | "good" | "tight" | "critical";
+  totalOverrunEstimate?: number;
+  totalSavingsPotential?: number;
 }
 
 export interface TimelineMilestone {
   monthsBeforeWedding: number;
   title: string;
   tasks: string[];
+  priority?: "low" | "medium" | "high" | "critical";
+  urgency?: "early" | "soon" | "urgent" | "late";
+  idealDeadline?: string;
+  displayDate?: string;
+  timeNeeded?: string;
+  consequences?: string;
+  dependencies?: string[];
+  status?: "completed" | "in_progress" | "upcoming" | "overdue";
 }
 
 export interface Timeline {
   milestones: TimelineMilestone[];
+  globalProgress?: number;
+  nextCriticalStep?: { title: string; deadline: string; daysLeft?: number } | null;
+}
+
+export interface RiskItem {
+  id: string;
+  category: "budget" | "organizational" | "deadline" | "providers" | "weather" | "guests" | "logistics";
+  title: string;
+  description: string;
+  severity: number; // 1-10
+  probability: number; // 1-10
+  impact: number; // 1-10
+  solution: string;
+  priority: number; // 1-10
 }
 
 export interface RiskEngineOutput {
@@ -176,6 +234,67 @@ export interface RiskEngineOutput {
   riskScore: number;
   scoreJustification: string;
   generalAdvice: string;
+  scoreBreakdown?: { label: string; points: number }[];
+  risks?: RiskItem[];
+}
+
+export interface Scenario {
+  id: string;
+  name: string;
+  description: string;
+  totalBudget: number;
+  savings: number;
+  advantages: string[];
+  disadvantages: string[];
+  experienceImpact: string;
+}
+
+export interface Opportunity {
+  id: string;
+  title: string;
+  description: string;
+  estimatedSavings?: number;
+  impact: "low" | "medium" | "high";
+}
+
+export interface CompatibilityResult {
+  score: number;
+  coherent: string[];
+  incoherent: string[];
+  solutions: string[];
+}
+
+export interface OmissionItem {
+  id: string;
+  label: string;
+  category: string;
+  priority: "low" | "medium" | "high";
+  suggestion: string;
+}
+
+export interface ProviderInsight {
+  category: string;
+  estimatedCount?: number;
+  availability: "tight" | "moderate" | "good";
+  marketTension: number; // 1-10
+  bookingOrder?: number;
+  advice: string;
+}
+
+export interface ActionItem {
+  label: string;
+  points?: number;
+  priority: "low" | "medium" | "high";
+  deadline?: string;
+}
+
+export interface CoachSummary {
+  preparationLevel: number; // 1-10
+  topDecisions: ActionItem[];
+  mistakesToAvoid: string[];
+  absolutePriorities: string[];
+  savingsOpportunities: string[];
+  reassurance: string;
 }
 
 export interface AIOutput {
@@ -184,6 +303,12 @@ export interface AIOutput {
   timeline: Timeline;
   riskEngine: RiskEngineOutput;
   riskScore: number;
+  scenarios?: Scenario[];
+  opportunities?: Opportunity[];
+  compatibility?: CompatibilityResult;
+  omissions?: OmissionItem[];
+  providerInsights?: ProviderInsight[];
+  coachSummary?: CoachSummary;
   generatedAt: string;
   model: string;
   cacheHit: boolean;

@@ -177,12 +177,13 @@ function GatePageInner() {
         {error && (
           <div className="rounded-2xl border border-red-200 bg-red-50 p-4 mb-4 text-sm text-red-700">
             <p>{error}</p>
-            <button
+            <Button
               onClick={handleRestart}
-              className="mt-3 inline-flex items-center justify-center rounded-full bg-red-600 px-4 py-2 text-white font-medium text-xs hover:bg-red-700 transition"
+              variant="primary"
+              className="mt-3 text-xs px-4 py-2"
             >
               Recommencer le quiz
-            </button>
+            </Button>
           </div>
         )}
 

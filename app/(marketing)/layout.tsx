@@ -1,3 +1,10 @@
+import { ContactWidget } from "@/components/layout/ContactWidget";
+
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <ContactWidget />
+    </>
+  );
 }

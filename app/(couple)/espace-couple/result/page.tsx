@@ -115,13 +115,18 @@ export default function CoupleResultPage() {
           router.push("/login?role=couple");
           return;
         }
-        if (!res.ok) throw new Error("Erreur de chargement");
+        if (!res.ok) {
+          const payload = (await res.json().catch(() => null)) as { error?: string } | null;
+          const message = payload?.error || `Erreur de chargement (HTTP ${res.status})`;
+          throw new Error(message);
+        }
         const data = (await res.json()) as { session: WeddingSession; project?: any };
         setSession(data.session);
         setProject(data.project || null);
         track("couple_result_loaded", { projectId: data.project?.id });
-      } catch {
-        setError("Impossible de charger votre résultat.");
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Impossible de charger votre résultat.";
+        setError(message);
       } finally {
         setLoading(false);
       }

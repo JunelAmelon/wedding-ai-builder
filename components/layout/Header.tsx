@@ -22,9 +22,9 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 left-0 right-0 z-50 border-b border-black/10 bg-white/80 backdrop-blur-xl mb-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-20 sm:h-24 flex items-center justify-between">
-          <Link href="/" className="inline-flex sm:flex items-center h-full overflow-visible flex-shrink-0 relative z-10 -ml-12 sm:-ml-[4.5rem]">
+          <Link href="/" className="inline-flex sm:flex items-center h-full overflow-visible flex-shrink-0 relative z-10 -ml-6 sm:-ml-[4.5rem]">
             <Logo height={80} scale={2.5} />
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
@@ -35,10 +35,12 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Commencer" }: HeaderProp
             ))}
           </nav>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link href="/login" className="hidden sm:block">
-              <Button variant="secondary" iconLeft={<User size={18} />}>
-                Connexion
-              </Button>
+            <Link
+              href="/login"
+              className="hidden sm:flex items-center justify-center h-10 w-10 rounded-full border border-primary/20 bg-white shadow-sm text-primary hover:bg-primary hover:text-white transition"
+              aria-label="Connexion"
+            >
+              <User size={20} />
             </Link>
             <Link href={ctaHref} className="hidden sm:block">
               <Button variant="primary" iconRight={<ArrowRight size={18} />}>

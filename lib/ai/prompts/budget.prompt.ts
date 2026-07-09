@@ -12,13 +12,34 @@ Schéma strict :
   "percentages": {
     "venue": number, "catering": number, "photography": number,
     "music": number, "decoration": number, "contingency": number
-  }
+  },
+  "categoryStatuses": [
+    {
+      "key": "venue",
+      "planned": number,
+      "recommended": number,
+      "realisticMin": number,
+      "realisticMax": number,
+      "percentage": number,
+      "riskLevel": "excellent" | "good" | "tight" | "critical",
+      "margin": number,
+      "savingsPotential": number,
+      "overrunEstimate": number
+    }
+  ],
+  "globalRiskLevel": "excellent" | "good" | "tight" | "critical",
+  "totalOverrunEstimate": number,
+  "totalSavingsPotential": number
 }
 Contraintes STRICTES :
 - La somme des valeurs de "breakdown" doit être ÉGALE à "totalBudget" (tolérance d'arrondi 1% maximum).
-- "contingency" doit représenter entre 8% et 12% du total (jamais moins de 8%, jamais plus de 12%).
+- "contingency" doit représenter entre 8% et 12% du total.
 - Les valeurs de "percentages" doivent sommer à 100 (±0.5 toléré).
-- "totalBudget" doit être exactement égal au budget fourni en entrée, ne l'arrondis pas.`;
+- "totalBudget" doit être exactement égal au budget fourni en entrée, ne l'arrondis pas.
+- Pour "categoryStatuses", fournis obligatoirement 6 entrées : venue, catering, photography, music, decoration, contingency. Les montants doivent refléter le marché local (ville/pays) et le budget par invité.
+- "recommended" est le montant idéal pour ce marché. "realisticMin/Max" sont les fourchettes réalistes. "margin" = planned - recommended (négatif = sous-budgeté). "savingsPotential" est l'économie maximale réalisable sans dégrader l'expérience. "overrunEstimate" est le dépassement probable si rien n'est arbitré.
+- "globalRiskLevel" synthétise le risque global : excellent (marge confortable), good (équilibré), tight (risqué), critical (déséquilibre majeur).
+- "totalOverrunEstimate" et "totalSavingsPotential" sont des montants totaux estimés.`;
 
 function styleLabel(answers: QuizAnswers): string {
   if (answers.style === "autre" && answers.customStyle) {

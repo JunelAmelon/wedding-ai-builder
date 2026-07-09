@@ -8,14 +8,32 @@ Schéma strict :
   "organizationalRisks": string[],
   "riskScore": number,
   "scoreJustification": string,
-  "generalAdvice": string
+  "generalAdvice": string,
+  "scoreBreakdown": [
+    { "label": string, "points": number }
+  ],
+  "risks": [
+    {
+      "id": string,
+      "category": "budget" | "organizational" | "deadline" | "providers" | "weather" | "guests" | "logistics",
+      "title": string,
+      "description": string,
+      "severity": number,
+      "probability": number,
+      "impact": number,
+      "solution": string,
+      "priority": number
+    }
+  ]
 }
 Règles de contenu :
 - Chaque élément de "criticalErrors" doit être un paragraphe de 40 à 80 mots, avec diagnostic + conseil concret, adapté au budget par invité, à la ville/pays et au délai restant.
-- Chaque élément de "budgetInconsistencies" doit être un paragraphe de 40 à 80 mots expliquant un risque budgétaire et comment l'atténuer (re-négociation, choix alternatifs, arbitrages réalistes).
+- Chaque élément de "budgetInconsistencies" doit être un paragraphe de 40 à 80 mots expliquant un risque budgétaire et comment l'atténuer.
 - "organizationalRisks" ne doit jamais être vide (min 1, max 4). Chaque élément doit être un paragraphe de 40 à 80 mots avec recommandation opérationnelle.
 - "scoreJustification" : 1 à 2 phrases en français, calculée à partir du budget par invité, du stress déclaré et du délai avant le jour J.
-- "generalAdvice" : un paragraphe de 100 à 180 mots avec une synthèse professionnelle, un plan d'action prioritaire et des conseils personnalisés selon la ville, le pays, le budget, le nombre d'invités et le niveau de stress.
+- "generalAdvice" : un paragraphe de 100 à 180 mots avec une synthèse professionnelle, un plan d'action prioritaire et des conseils personnalisés.
+- "scoreBreakdown" : détail exact des points ajoutés au score (ex: { label: "Budget par invité bas", points: 15 }). La somme des points doit correspondre approximativement au riskScore - 20.
+- "risks" : 4 à 7 risques structurés, chacun avec category, title (max 6 mots), description (40-80 mots), severity/probability/impact/priority sur 1-10, et solution (1 phrase actionnable).
 Calibration du score (déterministe) :
 - Base 20.
 - +15 si le budget total / nombre d'invités est inférieur au seuil bas du marché local.

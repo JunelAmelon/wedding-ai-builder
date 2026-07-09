@@ -132,15 +132,15 @@ export async function PUT(req: Request) {
         if (session) {
           const refreshedQuiz = {
             ...session.quizAnswers,
-            weddingDate: updated.weddingDate || session.quizAnswers.weddingDate,
-            location: updated.location || session.quizAnswers.location,
-            guestCount: updated.guestCount || session.quizAnswers.guestCount,
-            budget: updated.budget || session.quizAnswers.budget,
-            style: updated.style || session.quizAnswers.style,
-            customStyle: updated.customStyle || session.quizAnswers.customStyle,
-            customStyleDescription: updated.customStyleDescription || session.quizAnswers.customStyleDescription,
-            mainPriority: (updated.mainPriority || session.quizAnswers.mainPriority) as never,
-            stressLevel: updated.stressLevel || session.quizAnswers.stressLevel,
+            weddingDate: updated.weddingDate ?? session.quizAnswers.weddingDate,
+            location: updated.location ?? session.quizAnswers.location,
+            guestCount: updated.guestCount ?? session.quizAnswers.guestCount,
+            budget: updated.budget ?? session.quizAnswers.budget,
+            style: updated.style ?? session.quizAnswers.style,
+            customStyle: updated.customStyle ?? session.quizAnswers.customStyle,
+            customStyleDescription: updated.customStyleDescription ?? session.quizAnswers.customStyleDescription,
+            mainPriority: (updated.mainPriority ?? session.quizAnswers.mainPriority) as never,
+            stressLevel: updated.stressLevel ?? session.quizAnswers.stressLevel,
           };
           await sessionRepo.updateAnswers(updated.sessionId, refreshedQuiz);
           await delCached(`ai-output:${updated.sessionId}`);

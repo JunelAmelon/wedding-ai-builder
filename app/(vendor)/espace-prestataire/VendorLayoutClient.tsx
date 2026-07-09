@@ -101,7 +101,7 @@ export default function VendorLayoutClient({
         }`}
       >
         <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-2xl bg-white/40 border border-black/[0.04]" : ""}`}>
-          <Link href="/espace-prestataire" className="flex items-center h-20 overflow-visible flex-shrink-0 relative z-10">
+          <Link href="/espace-prestataire" className="flex items-center h-20 overflow-visible flex-shrink-0 relative z-10 -ml-10">
             <Logo height={120} scale={3} />
           </Link>
 
@@ -176,7 +176,7 @@ export default function VendorLayoutClient({
 
       {/* ============================== MOBILE : header minimal ============================== */}
       <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#FAFAF8]/90 backdrop-blur-xl">
-        <Link href="/espace-prestataire" className="flex items-center h-20 overflow-visible -ml-5">
+        <Link href="/espace-prestataire" className="flex items-center h-20 overflow-visible -ml-10">
           <Logo height={120} scale={3} />
         </Link>
         <button

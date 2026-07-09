@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import {
   ArrowRight,
   Camera,
@@ -28,7 +29,6 @@ import {
   ShieldCheck,
   MousePointerClick,
   Gift,
-  Briefcase,
   Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -115,7 +115,7 @@ export default function ProfessionalsLandingPage() {
       <Header ctaHref="/devenir-professionnel" ctaLabel="Créer mon profil" />
 
       {/* Hero — asymmetric, the "fiche" is a literal index card pinned at an angle */}
-      <section className="relative pt-24 sm:pt-28 pb-20 sm:pb-28">
+      <section className="relative pt-4 sm:pt-6 pb-20 sm:pb-28">
         <div className="absolute inset-0 -z-10">
           <div className="absolute -top-20 right-[-120px] h-[480px] w-[480px] rounded-full bg-primary/10 blur-3xl" />
           <div className="absolute bottom-[-120px] left-[-120px] h-[480px] w-[480px] rounded-full bg-success/10 blur-3xl" />
@@ -482,28 +482,24 @@ export default function ProfessionalsLandingPage() {
       {/* Final CTA */}
       <section className="py-20 sm:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="rounded-3xl border border-black/10 bg-primary shadow-[0_30px_80px_rgba(11,15,26,0.08)] p-8 sm:p-12">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-2 text-sm text-white font-medium mb-6">
-              <Briefcase size={16} />
-              Rejoignez gratuitement les premiers professionnels
-            </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-white">
-              Rejoignez gratuitement les premiers professionnels du MariageFacile
-            </h2>
-            <p className="text-lg text-white/80 leading-relaxed mb-8 max-w-2xl mx-auto">
-              Créez votre profil en quelques minutes et laissez notre intelligence artificielle vous proposer des couples réellement compatibles.
-            </p>
-            <p className="text-white font-medium mb-8">
-              Nous ne vous promettons pas plus de demandes. Nous vous aidons à recevoir les bonnes demandes.
-            </p>
-            <Link href="/devenir-professionnel" className="w-full sm:w-auto inline-block">
-              <Button variant="secondary" className="w-full bg-white text-text-primary hover:bg-white/90 border-white" iconRight={<ArrowRight size={18} />}>
-                Créer mon profil gratuitement
-              </Button>
-            </Link>
-          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+            Rejoignez gratuitement les premiers professionnels du MariageFacile
+          </h2>
+          <p className="text-lg text-text-secondary leading-relaxed mb-8 max-w-2xl mx-auto">
+            Créez votre profil en quelques minutes et laissez notre intelligence artificielle vous proposer des couples réellement compatibles.
+          </p>
+          <p className="text-text-primary font-medium mb-8">
+            Nous ne vous promettons pas plus de demandes. Nous vous aidons à recevoir les bonnes demandes.
+          </p>
+          <Link href="/devenir-professionnel" className="w-full sm:w-auto inline-block">
+            <Button variant="coupon" className="w-full" iconRight={<ArrowRight size={18} />}>
+              Créer mon profil gratuitement
+            </Button>
+          </Link>
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }
