@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { QuizRouteGuard } from "@/components/QuizRouteGuard";
 
-const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
-const serif = DM_Serif_Display({ subsets: ["latin"], weight: ["400"], variable: "--font-serif" });
+const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const display = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
+const serif = Space_Grotesk({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
   title: "MariageFacile",
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className={`${sans.variable} ${serif.variable}`}>
+      <body className={`${sans.variable} ${display.variable} ${serif.variable}`}>
         <QuizRouteGuard>{children}</QuizRouteGuard>
       </body>
     </html>

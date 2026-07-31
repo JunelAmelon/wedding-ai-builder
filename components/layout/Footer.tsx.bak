@@ -1,0 +1,58 @@
+import Link from "next/link";
+import { Logo } from "@/components/layout/Logo";
+
+export function Footer() {
+  return (
+    <footer className="pt-16 pb-8">
+      <div className="wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-8 pb-10 border-b border-black/10">
+          <div>
+            <div className="h-16 mb-3">
+              <Logo height={64} scale={1} />
+            </div>
+            <p className="text-grey text-[13px] leading-relaxed max-w-xs">
+              Planifiez votre mariage en 5 minutes avec l&apos;IA. Gratuit pour les couples et les prestataires.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-display text-[12.5px] font-bold mb-3.5 text-text-primary">Produit</h4>
+            <ul className="space-y-2 text-[13px] text-grey">
+              <li><Link href="/#how" className="hover:text-ink transition">Comment ça marche</Link></li>
+              <li><Link href="/#free" className="hover:text-ink transition">Gratuité</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display text-[12.5px] font-bold mb-3.5 text-text-primary">Prestataires</h4>
+            <ul className="space-y-2 text-[13px] text-grey">
+              <li><Link href="/devenir-professionnel" className="hover:text-ink transition">Devenir partenaire</Link></li>
+              <li><Link href="/prestataires" className="hover:text-ink transition">Espace pro</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display text-[12.5px] font-bold mb-3.5 text-text-primary">Ressources</h4>
+            <ul className="space-y-2 text-[13px] text-grey">
+              <li><Link href="/#" className="hover:text-ink transition">Blog</Link></li>
+              <li><Link href="/#faq" className="hover:text-ink transition">FAQ</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-display text-[12.5px] font-bold mb-3.5 text-text-primary">Légal</h4>
+            <ul className="space-y-2 text-[13px] text-grey">
+              <li><Link href="/#" className="hover:text-ink transition">Confidentialité</Link></li>
+              <li><Link href="/#" className="hover:text-ink transition">CGU</Link></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-grey-light">
+          <span>© {new Date().getFullYear()} Mariage Facile. Tous droits réservés.</span>
+          <span>Fait avec soin en France</span>
+        </div>
+      </div>
+    </footer>
+  );
+}

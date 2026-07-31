@@ -118,7 +118,7 @@ export default function VendorCreditsPage() {
           </div>
           <div>
             <div className="font-semibold text-text-primary mb-1">2. Choisissez de répondre</div>
-            <p>Vous ne consommez des roses que lorsque vous décidez d'envoyer une proposition.</p>
+            <p>Vous ne consommez des roses que lorsque vous décidez d&apos;envoyer une proposition.</p>
           </div>
           <div>
             <div className="font-semibold text-text-primary mb-1">3. Discutez avec le couple</div>

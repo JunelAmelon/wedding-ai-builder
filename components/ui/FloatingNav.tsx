@@ -40,16 +40,16 @@ export function FloatingNav({ homeHref = "/", loginHref = "/login", className }:
           >
             <Link
               href={homeHref}
-              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-black/[0.06] px-4 py-2.5 text-sm font-medium text-text-primary hover:bg-primary/5 transition"
+              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-black/[0.06] px-4 py-2.5 text-sm font-medium text-text-primary hover:bg-[#8B7BD8]/5 transition"
             >
-              <Home size={16} className="text-primary" />
+              <Home size={16} className="text-[#8B7BD8]" />
               Accueil
             </Link>
             <Link
               href={loginHref}
-              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-black/[0.06] px-4 py-2.5 text-sm font-medium text-text-primary hover:bg-primary/5 transition"
+              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-black/[0.06] px-4 py-2.5 text-sm font-medium text-text-primary hover:bg-[#8B7BD8]/5 transition"
             >
-              <User size={16} className="text-primary" />
+              <User size={16} className="text-[#8B7BD8]" />
               Connexion
             </Link>
           </motion.div>
@@ -59,7 +59,7 @@ export function FloatingNav({ homeHref = "/", loginHref = "/login", className }:
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
-        className="h-14 w-14 rounded-full bg-primary text-white shadow-[0_6px_24px_rgba(11,15,26,0.18)] hover:bg-primary/90 active:scale-95 transition flex items-center justify-center"
+        className="h-14 w-14 rounded-full bg-[#8B7BD8] text-white shadow-[0_6px_24px_rgba(11,15,26,0.18)] hover:bg-[#8B7BD8]/90 active:scale-95 transition flex items-center justify-center"
       >
         {open ? <X size={24} /> : <Menu size={24} />}
       </button>

@@ -25,7 +25,7 @@ export default async function VendorLayout({ children }: { children: ReactNode }
             Profil en cours de validation
           </h1>
           <p className="text-text-secondary leading-relaxed">
-            Votre profil professionnel est actuellement examiné par notre équipe. Vous recevrez un email dès qu'il sera approuvé.
+            Votre profil professionnel est actuellement examiné par notre équipe. Vous recevrez un email dès qu&apos;il sera approuvé.
           </p>
         </div>
       </div>

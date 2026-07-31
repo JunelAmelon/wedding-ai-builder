@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, CheckCircle2, ArrowLeft, Wallet, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import PageHeader from "@/components/couple/PageHeader";
+import type { WeddingProject } from "@/types/marketplace";
 
 const CATEGORIES = [
   "Photographe / Vidéaste",
@@ -39,7 +41,7 @@ export default function NewTenderPage() {
   const [budgetMax, setBudgetMax] = useState<string>("");
   const [requirements, setRequirements] = useState<string>("");
   const [priority, setPriority] = useState<string>("");
-  const [project, setProject] = useState<any>(null);
+  const [project, setProject] = useState<WeddingProject | null>(null);
   const [loading, setLoading] = useState(true);
   const [launching, setLaunching] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -100,7 +102,13 @@ export default function NewTenderPage() {
     const min = Number(budgetMin);
     const max = Number(budgetMax);
     const hasBudget = !isNaN(min) && !isNaN(max) && min > 0 && max > 0;
-    const payload: any = {
+    const payload: {
+      projectId: string;
+      category: string;
+      budgetRange?: { min: number; max: number; currency: string };
+      requirements?: string[];
+      priority?: string;
+    } = {
       projectId: currentProject.id,
       category,
     };
@@ -132,33 +140,25 @@ export default function NewTenderPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
 
   return (
     <div className="max-w-4xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
       <Link
         href="/espace-couple/prestataires"
-        className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.12em] text-text-secondary hover:text-text-primary mb-10"
+        className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-text-secondary hover:text-text-primary mb-10"
       >
-        <ArrowLeft size={14} /> Retour aux appels d'offres
+        <ArrowLeft size={14} /> Retour aux appels d&apos;offres
       </Link>
 
-      {/* Header */}
-      <div className="mb-14">
-        <div className="flex items-center gap-2.5 mb-4">
-          <span className="h-px w-5 bg-primary" />
-          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-secondary">Nouveau faire-part</p>
-        </div>
-        <h1 className="font-serif text-4xl font-semibold tracking-tight flex items-baseline">
-          <span className="text-5xl font-bold text-primary leading-none mr-0.5">N</span>ouvel appel d'offres
-        </h1>
-        <p className="mt-2 text-text-secondary italic max-w-md">
-          Scellez une nouvelle demande et confiez-la aux artisans les plus proches de votre univers.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Nouveau faire-part"
+        title="Nouvel appel d&apos;offres"
+        description="Scellez une nouvelle demande et confiez-la aux artisans les plus proches de votre univers."
+      />
 
       <div className="max-w-lg mx-auto">
-        <div className="relative bg-gradient-to-b from-white to-background px-8 sm:px-12 py-12 shadow-[0_30px_80px_rgba(11,15,26,0.10)]">
+        <div className="relative bg-gradient-to-b from-white to-surface px-8 sm:px-12 py-12 shadow-[0_30px_80px_rgba(11,15,26,0.10)]">
           <div className="absolute inset-[10px] border border-primary/20 pointer-events-none" />
           <div className="absolute inset-[14px] border border-primary/15 pointer-events-none" />
 
@@ -168,11 +168,11 @@ export default function NewTenderPage() {
           <CornerFlourish className="bottom-3 right-3 scale-[-1]" />
 
           <div className="relative text-center">
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-primary">
+            <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-primary">
               Nouveau faire-part
             </p>
-            <h2 className="font-serif text-2xl font-semibold text-text-primary mt-3 mb-4">
-              Lancer un appel d'offres
+            <h2 className="font-display text-2xl font-semibold text-text-primary mt-3 mb-4">
+              Lancer un appel d&apos;offres
             </h2>
             <p className="text-text-secondary text-sm mb-10 max-w-sm mx-auto leading-relaxed">
               Choisissez le prestataire recherché. Nous scellons votre demande et la transmettons aux trois
@@ -181,7 +181,7 @@ export default function NewTenderPage() {
 
             <div className="space-y-6 text-left mb-10">
               <div>
-                <label className="block font-mono text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
+                <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
                   Type de prestataire
                 </label>
                 <div className="relative">
@@ -204,7 +204,7 @@ export default function NewTenderPage() {
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
+                <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
                   Tranche de budget pour ce service
                 </label>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -231,7 +231,7 @@ export default function NewTenderPage() {
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
+                <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
                   Exigences spécifiques
                 </label>
                 <input
@@ -244,7 +244,7 @@ export default function NewTenderPage() {
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
+                <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
                   Priorité principale pour ce service
                 </label>
                 <input
@@ -275,7 +275,7 @@ export default function NewTenderPage() {
 
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#2B2620]/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-md bg-gradient-to-b from-white to-background p-8 sm:p-10 text-center shadow-2xl">
+          <div className="relative w-full max-w-md bg-gradient-to-b from-white to-surface p-8 sm:p-10 text-center shadow-2xl">
             <div className="absolute inset-[10px] border border-primary/20 pointer-events-none" />
             <CornerFlourish className="top-3 left-3" />
             <CornerFlourish className="top-3 right-3 -scale-x-100" />
@@ -287,14 +287,14 @@ export default function NewTenderPage() {
                    style={{ background: "radial-gradient(circle at 35% 30%, #A9C7AC, #3f5c44 65%)" }}>
                 <CheckCircle2 size={22} className="text-white" />
               </div>
-              <h3 className="font-serif text-xl font-semibold text-text-primary mb-3">C'est scellé.</h3>
+              <h3 className="font-display text-xl font-semibold text-text-primary mb-3">C&apos;est scellé.</h3>
               <p className="text-text-secondary text-sm mb-8 leading-relaxed">
                 Votre faire-part est en route. Dans quelques instants, les trois prestataires les plus proches de
                 votre univers vous contacteront pour que vous puissiez choisir en toute sérénité.
               </p>
               <button
                 onClick={() => router.push("/espace-couple/prestataires")}
-                className="w-full bg-primary text-white font-mono text-xs uppercase tracking-[0.14em] py-4"
+                className="w-full bg-primary text-white font-semibold text-xs uppercase tracking-[0.14em] py-4"
               >
                 Voir mes appels
               </button>

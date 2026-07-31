@@ -21,7 +21,7 @@ function isFirebaseConfigured(): boolean {
   return isValidCredential(projectId) && isValidCredential(clientEmail) && isValidCredential(privateKey);
 }
 
-export function useLocal(): boolean {
+export function isLocalMode(): boolean {
   const envLocal = normalizeEnvBool(process.env.USE_LOCAL_DB);
   if (envLocal) return true;
   // Si Firebase est demandé mais non configuré, on bascule sur local avec un avertissement
@@ -35,5 +35,5 @@ export function useLocal(): boolean {
 }
 
 export function getStoreBackend(): "local" | "firebase" {
-  return useLocal() ? "local" : "firebase";
+  return isLocalMode() ? "local" : "firebase";
 }

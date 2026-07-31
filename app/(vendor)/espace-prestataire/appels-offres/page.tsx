@@ -21,7 +21,6 @@ import {
   Flower2,
   Loader2,
   Megaphone,
-  Eye,
   LayoutGrid,
   Rows3,
   Sparkles,
@@ -29,15 +28,21 @@ import {
   ChevronRight,
   CheckCircle2,
 } from "lucide-react";
+import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
 import { PageHeader, Card } from "../_ui";
 
 type ViewMode = "dossier" | "liste";
 
 export default function VendorOpportunitiesPage() {
   const router = useRouter();
-  const [opportunities, setOpportunities] = useState<any[]>([]);
+  interface Opportunity {
+    match: ProjectVendorMatch;
+    project: WeddingProject | null;
+  }
+
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<any | null>(null);
+  const [selected, setSelected] = useState<Opportunity | null>(null);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [roses, setRoses] = useState(0);
@@ -132,7 +137,7 @@ export default function VendorOpportunitiesPage() {
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-2">
         <PageHeader
           label="Opportunités"
-          title="Appels d'offres"
+          title="Appels d&apos;offres"
           subtitle="Uniquement les mariages compatibles avec votre profil."
         />
 
@@ -173,7 +178,7 @@ export default function VendorOpportunitiesPage() {
             <Megaphone size={22} className="text-primary" />
           </div>
           <h2 className="font-serif text-xl font-semibold mb-2">Aucune opportunité pour le moment</h2>
-          <p className="text-text-secondary">Nous vous notifierons dès qu'un couple compatible publiera un appel d'offres.</p>
+          <p className="text-text-secondary">Nous vous notifierons dès qu&apos;un couple compatible publiera un appel d&apos;offres.</p>
         </Card>
       ) : view === "dossier" ? (
         <div className="grid gap-6 mt-8 lg:grid-cols-2">
@@ -242,7 +247,7 @@ export default function VendorOpportunitiesPage() {
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-serif">Répondre à l'appel d'offres</DialogTitle>
+            <DialogTitle className="font-serif">Répondre à l&apos;appel d&apos;offres</DialogTitle>
             <DialogDescription className="text-text-secondary">
               Cette réponse consomme 2 roses. Rédigez un message personnalisé.
             </DialogDescription>
@@ -288,7 +293,7 @@ export default function VendorOpportunitiesPage() {
             </div>
             <DialogTitle className="font-serif">Proposition envoyée</DialogTitle>
             <DialogDescription className="text-text-secondary">
-              Votre message a bien été transmis au couple. Vous serez notifié dès qu'il le consultera.
+              Votre message a bien été transmis au couple. Vous serez notifié dès qu&apos;il le consultera.
               <br />
               <span className="inline-flex items-center gap-1.5 mt-3 text-primary font-medium">
                 <Flower2 size={14} className="text-rose-500" />
@@ -342,13 +347,14 @@ function DossierCard({
   onRespond,
   onIgnore,
 }: {
-  match: any;
-  project: any;
+  match: ProjectVendorMatch;
+  project: WeddingProject | null;
   onView: () => void;
   onRespond: () => void;
   onIgnore: () => void;
 }) {
   const isContacted = match.status === "contacted";
+  if (!project) return null;
 
   return (
     <div className="relative rounded-2xl bg-white border border-black/[0.06] shadow-[0_18px_44px_rgba(11,15,26,0.06)] overflow-visible">
@@ -465,14 +471,15 @@ function OpportunityRow({
   onRespond,
   onIgnore,
 }: {
-  match: any;
-  project: any;
+  match: ProjectVendorMatch;
+  project: WeddingProject | null;
   isLast: boolean;
   onView: () => void;
   onRespond: () => void;
   onIgnore: () => void;
 }) {
   const isContacted = match.status === "contacted";
+  if (!project) return null;
 
   return (
     <div

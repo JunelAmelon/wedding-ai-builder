@@ -8,5 +8,5 @@ export default function CoupleDashboardPage() {
   useEffect(() => {
     router.replace("/espace-couple/result");
   }, [router]);
-  return <div className="min-h-[80dvh] bg-background" />;
+  return <div className="min-h-[80dvh] bg-surface" />;
 }

@@ -2,19 +2,32 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Check } from "lucide-react";
+import Image from "next/image";
+import PageHeader from "@/components/couple/PageHeader";
+import {
+  Loader2,
+  Check,
+  MoreHorizontal,
+  CalendarDays,
+  MapPin,
+  Wallet,
+  Palette,
+  Compass,
+  Gauge,
+  Plus,
+  X,
+  Pencil,
+  Trash2,
+  User,
+  Phone,
+  Mail,
+  Users,
+  Camera,
+  ImageIcon,
+} from "lucide-react";
+import type { Witness, UserAccount, WeddingProject } from "@/types/marketplace";
 
-/**
- * ============================================================================
- * "Le Grimoire du Mariage" — refonte complète de la page Mon mariage
- * ============================================================================
- * Concept : ce n'est plus un formulaire, c'est un grimoire enluminé qu'on
- * remplit. Chaque section est un "chapitre" marqué d'une lettrine.
- * Une marge d'encre verticale à gauche se remplit progressivement à mesure
- * que les chapitres sont complétés.
- * Le bouton de sauvegarde est un sceau qui s'imprime au clic.
- * ============================================================================
- */
+type MeUser = Omit<UserAccount, "passwordHash">;
 
 const STYLE_OPTIONS = [
   { value: "boheme", label: "Bohème" },
@@ -34,35 +47,65 @@ const PRIORITY_OPTIONS = [
   { value: "stress", label: "Stress" },
 ];
 
-const GOLD = "#B08A4A";
+const WITNESS_ROLES = [
+  "Témoin du marié",
+  "Témoin de la mariée",
+  "Coordinateur jour J",
+  "Personne de confiance",
+  "Autre",
+];
 
-function Lettrine({ children }: { children: string }) {
-  return (
-    <span
-      className="float-left mr-2 leading-[0.8] font-serif font-bold text-primary"
-      style={{ fontSize: "2.6rem" }}
-    >
-      {children}
-    </span>
-  );
-}
+const CONTACT_COLORS = [
+  "linear-gradient(135deg,#f7c6c6,#e89aa0)",
+  "linear-gradient(135deg,#c7d9f7,#9db8e8)",
+  "linear-gradient(135deg,#f7e2b8,#e8b98a)",
+  "linear-gradient(135deg,#c6f0d8,#8ad9ae)",
+];
 
 export default function CoupleWeddingPage() {
   const router = useRouter();
-  const [project, setProject] = useState<any>(null);
+  const [project, setProject] = useState<WeddingProject | null>(null);
+  const [user, setUser] = useState<MeUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [sealed, setSealed] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  // Témoins
+  const [witnesses, setWitnesses] = useState<Witness[]>([]);
+  const [showWitnessModal, setShowWitnessModal] = useState(false);
+  const [editingWitness, setEditingWitness] = useState<Witness | null>(null);
+  const [witnessForm, setWitnessForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    role: "Témoin du marié",
+    notes: "",
+    photo: null as { url: string; name?: string; publicId?: string; filename?: string } | null,
+  });
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [savingWitness, setSavingWitness] = useState(false);
+  const [witnessMenuOpen, setWitnessMenuOpen] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/couple/project");
-        if (res.status === 401) {
+        const [projectRes, witnessRes, meRes] = await Promise.all([
+          fetch("/api/couple/project"),
+          fetch("/api/couple/witnesses"),
+          fetch("/api/me"),
+        ]);
+        if (projectRes.status === 401) {
           router.push("/login?role=couple");
           return;
         }
-        setProject((await res.json()).project);
+        setProject((await projectRes.json()).project);
+        if (witnessRes.ok) {
+          setWitnesses((await witnessRes.json()).witnesses || []);
+        }
+        if (meRes.ok) {
+          setUser((await meRes.json()).user);
+        }
       } catch {
         // ignore
       } finally {
@@ -110,8 +153,8 @@ export default function CoupleWeddingPage() {
       });
       if (res.ok) {
         setProject((await res.json()).project);
-        setSealed(true);
-        setTimeout(() => setSealed(false), 2400);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2400);
       } else {
         const json = await res.json().catch(() => ({}));
         console.error("[Mon mariage] save failed", json.error || res.statusText, JSON.stringify(json.details, null, 2));
@@ -121,21 +164,118 @@ export default function CoupleWeddingPage() {
     }
   }
 
-  const updateField = (field: string, value: unknown) => setProject({ ...project, [field]: value });
+  // Fonctions pour les témoins
+  function openAddWitness() {
+    setEditingWitness(null);
+    setWitnessForm({ firstName: "", lastName: "", email: "", phone: "", role: "Témoin du marié", notes: "", photo: null });
+    setShowWitnessModal(true);
+  }
+
+  function openEditWitness(witness: Witness) {
+    setEditingWitness(witness);
+    setWitnessForm({
+      firstName: witness.firstName,
+      lastName: witness.lastName,
+      email: witness.email,
+      phone: witness.phone,
+      role: witness.role,
+      notes: witness.notes || "",
+      photo: witness.photo || null,
+    });
+    setShowWitnessModal(true);
+    setWitnessMenuOpen(null);
+  }
+
+  async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (res.ok) {
+        const { url } = await res.json();
+        setWitnessForm((prev) => ({ ...prev, photo: { url, name: file.name } }));
+      }
+    } catch {
+      // ignore
+    } finally {
+      setUploadingPhoto(false);
+    }
+  }
+
+  async function saveWitness() {
+    if (!witnessForm.firstName || !witnessForm.lastName || !witnessForm.email || !witnessForm.phone) return;
+    setSavingWitness(true);
+    try {
+      const payload = {
+        firstName: witnessForm.firstName,
+        lastName: witnessForm.lastName,
+        email: witnessForm.email,
+        phone: witnessForm.phone,
+        role: witnessForm.role,
+        notes: witnessForm.notes,
+        photo: witnessForm.photo,
+      };
+      if (editingWitness) {
+        const res = await fetch(`/api/couple/witnesses/${editingWitness.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          const { witness } = await res.json();
+          setWitnesses((prev) => prev.map((w) => (w.id === witness.id ? witness : w)));
+        }
+      } else {
+        const res = await fetch("/api/couple/witnesses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          const { witness } = await res.json();
+          setWitnesses((prev) => [...prev, witness]);
+        }
+      }
+      setShowWitnessModal(false);
+    } finally {
+      setSavingWitness(false);
+    }
+  }
+
+  async function deleteWitness(id: string) {
+    if (!confirm("Supprimer ce témoin ?")) return;
+    const res = await fetch(`/api/couple/witnesses/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setWitnesses((prev) => prev.filter((w) => w.id !== id));
+    }
+    setWitnessMenuOpen(null);
+  }
+
+  const updateField = (field: string, value: unknown) => {
+    if (!project) return;
+    setProject({ ...project, [field]: value } as WeddingProject);
+  };
   const updateNested = (path: string, value: unknown) => {
+    if (!project) return;
     const keys = path.split(".");
     const updated = { ...project };
-    let target: any = updated;
+    let target: Record<string, unknown> = updated as unknown as Record<string, unknown>;
     for (let i = 0; i < keys.length - 1; i++) {
-      if (!target[keys[i]] || typeof target[keys[i]] !== "object") {
-        target[keys[i]] = {};
+      const key = keys[i];
+      const current = target[key];
+      if (current === null || typeof current !== "object") {
+        target[key] = {};
       }
-      target = target[keys[i]];
+      target = target[key] as Record<string, unknown>;
     }
     target[keys[keys.length - 1]] = value;
-    setProject(updated);
+    setProject(updated as WeddingProject);
   };
 
+  // Chapitres de complétion
   const chapters = useMemo(() => {
     if (!project) return [];
     return [
@@ -148,273 +288,656 @@ export default function CoupleWeddingPage() {
     ];
   }, [project]);
   const doneCount = chapters.filter((c) => c.done).length;
-  const progressPct = chapters.length ? (doneCount / chapters.length) * 100 : 0;
 
-  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#f3f2ee]" />;
 
-  const inputClass =
-    "w-full bg-transparent border-0 border-b border-[#E2E8F0] focus:border-primary focus:outline-none px-0.5 py-2 text-text-primary font-serif text-lg placeholder:text-text-secondary/50 transition-colors";
-  const selectClass = inputClass + " appearance-none cursor-pointer";
-  const labelClass = "block text-[11px] uppercase tracking-[0.18em] text-primary mb-1.5";
+  // Initiales pour l'avatar
+  const initials = (project?.name || "Mon mariage")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w: string) => w[0]?.toUpperCase())
+    .join("");
+
+  // Formatage de la date
+  const formattedDate = project?.weddingDate
+    ? new Date(project.weddingDate).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+    : "À définir";
+
+  // Lieu formaté
+  const formattedLocation = [project?.location?.city, project?.location?.country].filter(Boolean).join(", ") || "À définir";
+
+  // Budget formaté
+  const formattedBudget = project?.budget?.amount
+    ? `${Number(project.budget.amount).toLocaleString("fr-FR")} ${project.budget.currency || "€"}`
+    : "À définir";
+
+  // Style label
+  const styleLabel = STYLE_OPTIONS.find((s) => s.value === project?.style)?.label || "À définir";
+
+  // Priorité label
+  const priorityLabel = PRIORITY_OPTIONS.find((p) => p.value === project?.mainPriority)?.label || "À définir";
 
   return (
-    <div className="min-h-[100dvh] bg-surface text-text-primary px-6 py-12 lg:py-16">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-14">
-          <div className="flex items-center gap-2.5 mb-4">
-            <span className="h-px w-5" style={{ backgroundColor: GOLD }} />
-            <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-secondary">Le grimoire</p>
-          </div>
-          <h1 className="font-serif text-4xl font-semibold tracking-tight flex items-baseline">
-            <span className="text-5xl font-bold text-primary leading-none mr-0.5">M</span>on mariage
-          </h1>
-          <p className="mt-2 text-text-secondary italic max-w-md">
-            Chaque chapitre rempli affine vos recommandations. Le grimoire se referme de lui-même quand tout est noté.
-          </p>
-        </div>
+    <div className="min-h-screen bg-[#f3f2ee]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
+        <PageHeader
+          eyebrow="Mon espace"
+          title="Mon mariage"
+          description="Ces informations affinent vos recommandations de budget, de planning et de prestataires."
+        />
 
-        <div
-          className="relative mt-14 rounded-[1.75rem] border border-[#E2E8F0] shadow-[0_40px_120px_rgba(11,15,26,0.08)] overflow-hidden"
-          style={{ background: "linear-gradient(180deg,#ffffff,#f8f6fb)" }}
-        >
-          <div
-            className="absolute inset-0 opacity-[0.45] pointer-events-none mix-blend-multiply"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 15% 20%, rgba(124,58,237,0.06), transparent 40%), radial-gradient(circle at 85% 80%, rgba(124,58,237,0.07), transparent 45%)",
-            }}
-          />
-
-          <div className="relative flex">
-            {/* Marge d'encre — se remplit chapitre par chapitre */}
-            <div className="hidden sm:flex w-14 shrink-0 flex-col items-center py-12 gap-0">
-              <div className="relative flex-1 w-px">
-                <div className="absolute inset-0 bg-[#E2E8F0]" />
+        <div className="flex flex-col lg:flex-row gap-8 mt-6">
+          {/* ===== COLONNE PRINCIPALE ===== */}
+          <div className="flex-1 min-w-0">
+            {/* ===== CARTE DE PROFIL ===== */}
+            <div className="bg-white rounded-[20px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] mb-6">
+              {/* Couverture */}
+              <div
+                className="relative h-[180px] sm:h-[230px] overflow-hidden"
+                style={{
+                  background: "repeating-linear-gradient(100deg, #4f6b52 0px, #4f6b52 42px, #56724f 42px, #56724f 84px)",
+                }}
+              >
+                {/* Figure décorative */}
                 <div
-                  className="absolute top-0 left-0 w-px bg-gradient-to-b from-primary to-[#A78BFA] transition-[height] duration-700"
-                  style={{ height: `${progressPct}%` }}
-                />
-                {chapters.map((c, i) => (
-                  <span
-                    key={c.label}
-                    className={`absolute -left-[3px] h-[7px] w-[7px] rounded-full transition-colors duration-500 ${
-                      c.done ? "bg-primary" : "bg-surface border border-[#E2E8F0]"
-                    }`}
-                    style={{ top: `${(i / Math.max(1, chapters.length - 1)) * 100}%` }}
+                  className="absolute right-[8%] -bottom-[10px] w-[180px] h-[180px] sm:w-[230px] sm:h-[230px] rounded-full opacity-90 hidden sm:flex items-center justify-center text-[72px] sm:text-[96px]"
+                  style={{
+                    background: "radial-gradient(circle at 40% 30%, #e8a06b 0%, #d9713f 55%, #b85630 100%)",
+                  }}
+                >
+                  💑
+                </div>
+              </div>
+
+              {/* Infos profil */}
+              <div className="relative px-6 sm:px-8 pb-5 text-center">
+                {/* Avatar - Photo de profil ou initiales */}
+                {user?.avatarUrl ? (
+                  <Image
+                    src={user.avatarUrl}
+                    alt="Photo de profil"
+                    width={104}
+                    height={104}
+                    className="w-[90px] h-[90px] sm:w-[104px] sm:h-[104px] rounded-full border-[5px] border-white mx-auto -mt-[45px] sm:-mt-[52px] object-cover shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
                   />
+                ) : (
+                  <div
+                    className="w-[90px] h-[90px] sm:w-[104px] sm:h-[104px] rounded-full border-[5px] border-white mx-auto -mt-[45px] sm:-mt-[52px] flex items-center justify-center text-[32px] sm:text-[40px] font-bold shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
+                    style={{ background: "linear-gradient(160deg, #e7d9c9, #c9ab8c)" }}
+                  >
+                    {initials || "MM"}
+                  </div>
+                )}
+
+                {/* Nom éditable */}
+                <input
+                  type="text"
+                  value={project?.name || ""}
+                  onChange={(e) => updateField("name", e.target.value)}
+                  placeholder="Le mariage de..."
+                  className="mt-3 w-full text-center font-bold text-[17px] text-[#1c1c1c] bg-transparent border-0 outline-none placeholder:text-[#8b8b86]/40"
+                />
+                <div className="text-[12.5px] text-[#8b8b86] mt-0.5 mb-4">Projet mariage</div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-center gap-2.5 sm:absolute sm:right-8 sm:bottom-5">
+                  <button
+                    onClick={save}
+                    disabled={saving}
+                    className={`rounded-[20px] px-5 py-2 text-[12.5px] font-semibold transition ${
+                      saved ? "bg-[#7fd6a0] text-[#1c1c1c]" : "bg-[#1c1c1c] text-white"
+                    } disabled:opacity-60`}
+                  >
+                    {saving ? "Enregistrement..." : saved ? "✅ Enregistré" : "Enregistrer"}
+                  </button>
+                  <button className="w-9 h-9 rounded-full border border-[#e6e4dd] bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition">
+                    <MoreHorizontal size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Onglets (stats) */}
+              <div className="flex gap-8 sm:gap-9 border-t border-[#e6e4dd] px-6 sm:px-8 overflow-x-auto">
+                {[
+                  { label: "Invités", value: project?.guestCount || "—", active: true },
+                  { label: "Budget", value: formattedBudget, active: false },
+                  { label: "Style", value: styleLabel, active: false },
+                  { label: "Priorité", value: priorityLabel, active: false },
+                ].map((tab) => (
+                  <div
+                    key={tab.label}
+                    className={`py-4 shrink-0 cursor-pointer whitespace-nowrap ${
+                      tab.active ? "border-b-[2.5px] border-[#7fd6a0]" : ""
+                    }`}
+                  >
+                    <span className="text-[13px] text-[#8b8b86]">{tab.label} </span>
+                    <span className="text-[13px] font-bold text-[#1c1c1c]">{tab.value}</span>
+                  </div>
                 ))}
+              </div>
+
+              {/* ===== SECTION DÉTAILS DU PROJET ===== */}
+              <div className="px-6 sm:px-8 py-6">
+                <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">Détails du projet</div>
+
+                {/* Date & invités */}
+                <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                    <CalendarDays size={16} />
+                  </span>
+                  <div className="flex-1 grid sm:grid-cols-2 gap-x-6 gap-y-4">
+                    <div>
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Date du mariage</div>
+                      <input
+                        type="date"
+                        value={project?.weddingDate ? new Date(project.weddingDate).toISOString().split("T")[0] : ""}
+                        onChange={(e) => updateField("weddingDate", e.target.value || null)}
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] focus:border-b focus:border-[#7fd6a0]"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Nombre d&apos;invités</div>
+                      <input
+                        type="number"
+                        value={project?.guestCount || ""}
+                        onChange={(e) => updateField("guestCount", e.target.value ? Number(e.target.value) : null)}
+                        placeholder="0"
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] placeholder:text-[#8b8b86]/40 placeholder:font-normal"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Lieu */}
+                <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                    <MapPin size={16} />
+                  </span>
+                  <div className="flex-1 grid sm:grid-cols-2 gap-x-6 gap-y-4">
+                    <div>
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Ville</div>
+                      <input
+                        type="text"
+                        value={project?.location?.city || ""}
+                        onChange={(e) => updateNested("location.city", e.target.value)}
+                        placeholder="Bordeaux"
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] placeholder:text-[#8b8b86]/40 placeholder:font-normal"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Pays</div>
+                      <input
+                        type="text"
+                        value={project?.location?.country || ""}
+                        onChange={(e) => updateNested("location.country", e.target.value)}
+                        placeholder="France"
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] placeholder:text-[#8b8b86]/40 placeholder:font-normal"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Budget */}
+                <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                    <Wallet size={16} />
+                  </span>
+                  <div className="flex-1 grid sm:grid-cols-2 gap-x-6 gap-y-4">
+                    <div>
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Budget total</div>
+                      <input
+                        type="number"
+                        value={project?.budget?.amount || ""}
+                        onChange={(e) => updateNested("budget.amount", e.target.value ? Number(e.target.value) : null)}
+                        placeholder="15000"
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] placeholder:text-[#8b8b86]/40 placeholder:font-normal"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Devise</div>
+                      <input
+                        type="text"
+                        value={project?.budget?.currency || "EUR"}
+                        onChange={(e) => updateNested("budget.currency", e.target.value)}
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Style */}
+                <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                    <Palette size={16} />
+                  </span>
+                  <div className="flex-1">
+                    <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Style</div>
+                    <select
+                      value={project?.style || ""}
+                      onChange={(e) => updateField("style", e.target.value || null)}
+                      className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] appearance-auto cursor-pointer"
+                    >
+                      <option value="">Sélectionner</option>
+                      {STYLE_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
+
+                    {/* Champs personnalisés pour "Autre" */}
+                    {project?.style === "autre" && (
+                      <div className="mt-3 pl-4 border-l-2 border-[#7fd6a0] space-y-3">
+                        <div>
+                          <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Votre thème</div>
+                          <input
+                            type="text"
+                            value={project?.customStyle || ""}
+                            onChange={(e) => updateField("customStyle", e.target.value)}
+                            placeholder="Ex: Vintage chic"
+                            className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] placeholder:text-[#8b8b86]/40 placeholder:font-normal"
+                          />
+                        </div>
+                        <div>
+                          <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Description</div>
+                          <textarea
+                            value={project?.customStyleDescription || ""}
+                            onChange={(e) => updateField("customStyleDescription", e.target.value)}
+                            rows={2}
+                            placeholder="Décrivez votre style..."
+                            className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] resize-y placeholder:text-[#8b8b86]/40 placeholder:font-normal"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Priorité */}
+                <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                    <Compass size={16} />
+                  </span>
+                  <div className="flex-1">
+                    <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Priorité principale</div>
+                    <select
+                      value={project?.mainPriority || ""}
+                      onChange={(e) => updateField("mainPriority", e.target.value || null)}
+                      className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] appearance-auto cursor-pointer"
+                    >
+                      <option value="">Sélectionner</option>
+                      {PRIORITY_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Stress */}
+                <div className="flex items-start gap-3.5 py-4">
+                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                    <Gauge size={16} />
+                  </span>
+                  <div className="flex-1">
+                    <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Niveau de stress actuel</div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={10}
+                      value={project?.stressLevel || 0}
+                      onChange={(e) => updateField("stressLevel", Number(e.target.value))}
+                      className="w-full mt-2"
+                      style={{ accentColor: "#7fd6a0" }}
+                    />
+                    <div className="text-[12px] text-[#8b8b86] mt-1">{project?.stressLevel ?? 0}/10</div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Contenu — les chapitres */}
-            <div className="flex-1 px-7 sm:px-12 py-12 space-y-14">
-              <section>
-                <p className="font-serif text-sm">
-                  <Lettrine>I</Lettrine>
-                  dentité du projet — donnez un nom à votre histoire, celui que vous verrez partout dans votre espace.
-                </p>
-                <div className="mt-5">
-                  <label className={labelClass}>Nom du projet</label>
-                  <input
-                    value={project?.name || ""}
-                    onChange={(e) => updateField("name", e.target.value)}
-                    placeholder="Le mariage de..."
-                    className={inputClass}
+            {/* ===== GRILLE DE CONTENU ===== */}
+            <div className="grid md:grid-cols-[260px_1fr] gap-5">
+              {/* Carte Récapitulatif */}
+              <div className="bg-white rounded-[18px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+                <h3 className="text-[15px] font-bold text-[#1c1c1c] mb-4">Récapitulatif</h3>
+
+                <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                    <CalendarDays size={14} />
+                  </span>
+                  Date : <b className="text-[#1c1c1c] font-semibold">{formattedDate}</b>
+                </div>
+
+                <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                    <MapPin size={14} />
+                  </span>
+                  Lieu : <b className="text-[#1c1c1c] font-semibold">{formattedLocation}</b>
+                </div>
+
+                <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                    <Wallet size={14} />
+                  </span>
+                  Budget : <b className="text-[#1c1c1c] font-semibold">{formattedBudget}</b>
+                </div>
+
+                <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                    <Palette size={14} />
+                  </span>
+                  Style : <b className="text-[#1c1c1c] font-semibold">{styleLabel}</b>
+                </div>
+
+                <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86]">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                    <Compass size={14} />
+                  </span>
+                  Priorité : <b className="text-[#1c1c1c] font-semibold">{priorityLabel}</b>
+                </div>
+              </div>
+
+              {/* Carte Complétion */}
+              <div className="bg-[#dff05a] rounded-[18px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+                <h3 className="text-[15px] font-bold text-[#1c1c1c] mb-4">Complétion du profil</h3>
+                <div className="text-[28px] font-bold text-[#1c1c1c] mb-2">
+                  {doneCount}<span className="text-[16px] font-medium text-[#1c1c1c]/60">/{chapters.length}</span>
+                </div>
+                <div className="h-2 rounded-full bg-[#1c1c1c]/10 overflow-hidden mb-4">
+                  <div
+                    className="h-full rounded-full bg-[#1c1c1c] transition-all duration-500"
+                    style={{ width: `${chapters.length ? (doneCount / chapters.length) * 100 : 0}%` }}
                   />
                 </div>
-              </section>
-
-              <section>
-                <p className="font-serif text-sm">
-                  <Lettrine>I</Lettrine>
-                  l était une fois une date, et un nombre d'invités à accueillir ce jour-là.
-                </p>
-                <div className="mt-5 grid sm:grid-cols-2 gap-x-8 gap-y-5">
-                  <div>
-                    <label className={labelClass}>Date du mariage</label>
-                    <input
-                      type="date"
-                      value={project?.weddingDate ? new Date(project.weddingDate).toISOString().split("T")[0] : ""}
-                      onChange={(e) => updateField("weddingDate", e.target.value || null)}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Nombre d'invités</label>
-                    <input
-                      type="number"
-                      value={project?.guestCount || ""}
-                      onChange={(e) => updateField("guestCount", e.target.value ? Number(e.target.value) : null)}
-                      placeholder="0"
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section>
-                <p className="font-serif text-sm">
-                  <Lettrine>U</Lettrine>
-                  n lieu choisi avec soin, point d'ancrage de tous les souvenirs à venir.
-                </p>
-                <div className="mt-5 grid sm:grid-cols-2 gap-x-8 gap-y-5">
-                  <div>
-                    <label className={labelClass}>Ville</label>
-                    <input
-                      value={project?.location?.city || ""}
-                      onChange={(e) => updateNested("location.city", e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Pays</label>
-                    <input
-                      value={project?.location?.country || ""}
-                      onChange={(e) => updateNested("location.country", e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section>
-                <p className="font-serif text-sm">
-                  <Lettrine>L</Lettrine>
-                  e trésor consacré à cette journée, et la monnaie dans laquelle il se compte.
-                </p>
-                <div className="mt-5 grid sm:grid-cols-2 gap-x-8 gap-y-5">
-                  <div>
-                    <label className={labelClass}>Budget total</label>
-                    <input
-                      type="number"
-                      value={project?.budget?.amount || ""}
-                      onChange={(e) => updateNested("budget.amount", e.target.value ? Number(e.target.value) : null)}
-                      placeholder="0"
-                      className={inputClass}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>Devise</label>
-                    <input
-                      value={project?.budget?.currency || "EUR"}
-                      onChange={(e) => updateNested("budget.currency", e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-              </section>
-
-              <section>
-                <p className="font-serif text-sm">
-                  <Lettrine>L</Lettrine>
-                  'âme de la fête se révèle dans son style — choisissez celui qui vous ressemble.
-                </p>
-                <div className="mt-5">
-                  <label className={labelClass}>Style</label>
-                  <select
-                    value={project?.style || ""}
-                    onChange={(e) => updateField("style", e.target.value || null)}
-                    className={selectClass}
-                  >
-                    <option value="">Sélectionner</option>
-                    {STYLE_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {project?.style === "autre" && (
-                  <div className="mt-6 space-y-5 pl-4 border-l border-[#E2E8F0]">
-                    <div>
-                      <label className={labelClass}>Votre thème</label>
-                      <input
-                        value={project?.customStyle || ""}
-                        onChange={(e) => updateField("customStyle", e.target.value)}
-                        className={inputClass}
-                      />
+                <div className="space-y-2">
+                  {chapters.map((c) => (
+                    <div key={c.label} className="flex items-center gap-2.5 text-[13px]">
+                      <span
+                        className={`h-4 w-4 rounded-full flex items-center justify-center shrink-0 ${
+                          c.done ? "bg-[#1c1c1c]" : "bg-[#1c1c1c]/10 border border-[#1c1c1c]/20"
+                        }`}
+                      >
+                        {c.done && <Check size={10} className="text-[#dff05a]" />}
+                      </span>
+                      <span className={c.done ? "text-[#1c1c1c] font-medium" : "text-[#1c1c1c]/60"}>{c.label}</span>
                     </div>
-                    <div>
-                      <label className={labelClass}>Description</label>
-                      <textarea
-                        value={project?.customStyleDescription || ""}
-                        onChange={(e) => updateField("customStyleDescription", e.target.value)}
-                        rows={3}
-                        className={inputClass + " resize-none"}
-                      />
-                    </div>
-                  </div>
-                )}
-              </section>
-
-              <section>
-                <p className="font-serif text-sm">
-                  <Lettrine>E</Lettrine>
-                  nfin, ce qui compte le plus pour vous deux, au-delà de tout le reste.
-                </p>
-                <div className="mt-5">
-                  <label className={labelClass}>Priorité principale</label>
-                  <select
-                    value={project?.mainPriority || ""}
-                    onChange={(e) => updateField("mainPriority", e.target.value || null)}
-                    className={selectClass}
-                  >
-                    <option value="">Sélectionner</option>
-                    {PRIORITY_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
-                    ))}
-                  </select>
+                  ))}
                 </div>
-              </section>
+              </div>
             </div>
           </div>
 
-          {/* Pied de page — le sceau, pas un bouton plein classique */}
-          <div className="relative border-t border-[#E2E8F0] px-7 sm:px-12 py-8 flex items-center justify-between gap-6">
-            <p className="text-xs text-text-secondary hidden sm:block">
-              {doneCount}/{chapters.length} chapitres complétés
-            </p>
+          {/* ===== PANNEAU LATÉRAL (Témoins & Personnes de confiance) - Visible sur mobile aussi ===== */}
+          <div className="w-full lg:w-[230px] shrink-0 lg:border-l border-[#e6e4dd] lg:pl-6 mt-6 lg:mt-0">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[16px] font-bold text-[#1c1c1c]">Témoins & Contacts</h3>
+              <button
+                onClick={openAddWitness}
+                className="w-7 h-7 rounded-full bg-[#dff05a] flex items-center justify-center text-[#1c1c1c] hover:bg-[#d4e54f] transition"
+                title="Ajouter un témoin"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
 
-            <button
-              onClick={save}
-              disabled={saving}
-              className="group relative h-20 w-20 shrink-0 mx-auto sm:mx-0 select-none"
-              aria-label="Enregistrer et recalculer"
-            >
-              <svg viewBox="0 0 100 100" className={`h-full w-full transition-transform duration-500 ${sealed ? "scale-100" : "scale-95 group-hover:scale-100"}`}>
-                <circle cx="50" cy="50" r="46" fill="#7C3AED" />
-                <circle cx="50" cy="50" r="46" fill="none" stroke="#5b21b6" strokeWidth="2" />
-                {[...Array(14)].map((_, i) => {
-                  const angle = (i / 14) * Math.PI * 2;
-                  const x1 = 50 + Math.cos(angle) * 40;
-                  const y1 = 50 + Math.sin(angle) * 40;
-                  const x2 = 50 + Math.cos(angle) * 47;
-                  const y2 = 50 + Math.sin(angle) * 47;
-                  return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#5b21b6" strokeWidth="2.5" strokeLinecap="round" />;
-                })}
-                <circle cx="50" cy="50" r="30" fill="none" stroke="#A78BFA" strokeWidth="1" opacity="0.5" />
-                {saving ? (
-                  <foreignObject x="38" y="38" width="24" height="24">
-                    <Loader2 size={24} className="text-white animate-spin" />
-                  </foreignObject>
-                ) : sealed ? (
-                  <foreignObject x="36" y="36" width="28" height="28">
-                    <Check size={28} className="text-white" />
-                  </foreignObject>
-                ) : (
-                  <text x="50" y="57" textAnchor="middle" fontFamily="serif" fontSize="22" fill="#f5f3ff">
-                    &
-                  </text>
-                )}
-              </svg>
-              <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[11px] uppercase tracking-[0.18em] text-text-secondary whitespace-nowrap">
-                {saving ? "Scellement..." : sealed ? "Scellé" : "Sceller"}
-              </span>
-            </button>
+            {witnesses.length === 0 ? (
+              <div className="text-[13px] text-[#8b8b86] leading-relaxed mb-4">
+                <p className="mb-3">Aucun témoin ou personne de confiance enregistré.</p>
+                <button
+                  onClick={openAddWitness}
+                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#1c1c1c] bg-[#f1f0eb] hover:bg-[#e6e4dd] px-3 py-1.5 rounded-full transition"
+                >
+                  <Plus size={12} />
+                  Ajouter un témoin
+                </button>
+              </div>
+            ) : (
+              <ul className="space-y-3.5">
+                {witnesses.map((witness, i) => (
+                  <li key={witness.id} className="relative flex items-center gap-2.5 group">
+                    {witness.photo?.url ? (
+                      <Image
+                        src={witness.photo.url}
+                        alt={`${witness.firstName} ${witness.lastName}`}
+                        width={36}
+                        height={36}
+                        className="w-9 h-9 rounded-full object-cover shrink-0"
+                      />
+                    ) : (
+                      <div
+                        className="w-9 h-9 rounded-full shrink-0 flex items-center justify-center text-[12px] font-bold text-white"
+                        style={{ background: CONTACT_COLORS[i % CONTACT_COLORS.length] }}
+                      >
+                        {witness.firstName[0]}{witness.lastName[0]}
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13px] font-semibold text-[#1c1c1c] truncate">
+                        {witness.firstName} {witness.lastName}
+                      </div>
+                      <div className="text-[10.5px] text-[#8b8b86] truncate">{witness.role}</div>
+                    </div>
+                    <button
+                      onClick={() => setWitnessMenuOpen(witnessMenuOpen === witness.id ? null : witness.id)}
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[#8b8b86] hover:bg-[#f1f0eb] opacity-0 group-hover:opacity-100 transition"
+                    >
+                      <MoreHorizontal size={14} />
+                    </button>
 
-            <div className="hidden sm:block w-[140px]" />
+                    {/* Menu déroulant */}
+                    {witnessMenuOpen === witness.id && (
+                      <div className="absolute right-0 top-8 z-10 bg-white rounded-xl shadow-lg border border-[#e6e4dd] py-1.5 min-w-[120px]">
+                        <button
+                          onClick={() => openEditWitness(witness)}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+                        >
+                          <Pencil size={12} />
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() => deleteWitness(witness.id)}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-600 hover:bg-red-50 transition"
+                        >
+                          <Trash2 size={12} />
+                          Supprimer
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
+
+      {/* ===== MODAL AJOUT/ÉDITION TÉMOIN ===== */}
+      {showWitnessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-[#f3f2ee] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setShowWitnessModal(false)}
+              className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
+              aria-label="Fermer"
+            >
+              <X size={15} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+                <Users size={20} className="text-[#1c1c1c]" />
+              </div>
+              <div>
+                <h2 className="font-bold text-xl text-[#1c1c1c]">
+                  {editingWitness ? "Modifier le témoin" : "Ajouter un témoin"}
+                </h2>
+                <p className="text-[#8b8b86] text-sm">Personne de confiance pour le jour J</p>
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                    Prénom *
+                  </label>
+                  <div className="relative">
+                    <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                    <input
+                      type="text"
+                      value={witnessForm.firstName}
+                      onChange={(e) => setWitnessForm({ ...witnessForm, firstName: e.target.value })}
+                      placeholder="Marie"
+                      className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                    Nom *
+                  </label>
+                  <input
+                    type="text"
+                    value={witnessForm.lastName}
+                    onChange={(e) => setWitnessForm({ ...witnessForm, lastName: e.target.value })}
+                    placeholder="Dupont"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  Email *
+                </label>
+                <div className="relative">
+                  <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                  <input
+                    type="email"
+                    value={witnessForm.email}
+                    onChange={(e) => setWitnessForm({ ...witnessForm, email: e.target.value })}
+                    placeholder="marie@exemple.com"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  Téléphone *
+                </label>
+                <div className="relative">
+                  <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                  <input
+                    type="tel"
+                    value={witnessForm.phone}
+                    onChange={(e) => setWitnessForm({ ...witnessForm, phone: e.target.value })}
+                    placeholder="+33 6 12 34 56 78"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  Photo (optionnel)
+                </label>
+                <div className="flex items-center gap-4">
+                  {witnessForm.photo?.url ? (
+                    <div className="relative">
+                      <Image
+                        src={witnessForm.photo.url}
+                        alt="Photo témoin"
+                        width={64}
+                        height={64}
+                        className="w-16 h-16 rounded-full object-cover border-2 border-[#dff05a]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setWitnessForm({ ...witnessForm, photo: null })}
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-[#f1f0eb] border-2 border-dashed border-[#e4e2db] flex items-center justify-center">
+                      <ImageIcon size={24} className="text-[#8b8b86]" />
+                    </div>
+                  )}
+                  <label className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="hidden"
+                      disabled={uploadingPhoto}
+                    />
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] text-sm font-medium hover:bg-[#f1f0eb] transition cursor-pointer">
+                      {uploadingPhoto ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin" />
+                          Chargement...
+                        </>
+                      ) : (
+                        <>
+                          <Camera size={14} />
+                          {witnessForm.photo ? "Changer la photo" : "Ajouter une photo"}
+                        </>
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  Rôle
+                </label>
+                <select
+                  value={witnessForm.role}
+                  onChange={(e) => setWitnessForm({ ...witnessForm, role: e.target.value })}
+                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] cursor-pointer"
+                >
+                  {WITNESS_ROLES.map((role) => (
+                    <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  Notes (optionnel)
+                </label>
+                <textarea
+                  value={witnessForm.notes}
+                  onChange={(e) => setWitnessForm({ ...witnessForm, notes: e.target.value })}
+                  placeholder="Informations supplémentaires..."
+                  rows={3}
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] resize-none"
+                />
+              </div>
+
+              <button
+                onClick={saveWitness}
+                disabled={savingWitness || !witnessForm.firstName || !witnessForm.lastName || !witnessForm.email || !witnessForm.phone}
+                className="w-full bg-[#1c1c1c] text-white rounded-xl py-3 font-semibold text-[14px] hover:bg-[#333] transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {savingWitness ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Enregistrement...
+                  </>
+                ) : (
+                  <>
+                    <Check size={16} />
+                    {editingWitness ? "Mettre à jour" : "Ajouter le témoin"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

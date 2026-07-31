@@ -22,9 +22,9 @@ export function QuestionStress({ onAnswer }: { onAnswer: (value: number) => void
           onChange={(e) => setLevel(Number(e.target.value))}
           className="w-full accent-primary"
         />
-        <div className="rounded-2xl border border-black/10 bg-surface p-4 text-center">
-          <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Votre ressenti</div>
-          <div className="font-serif text-3xl font-bold mt-2 text-text-primary">{level}/10</div>
+        <div className="rounded-r-lg border border-line bg-surface p-4 text-center">
+          <div className="text-xs uppercase tracking-[0.22em] text-grey">Votre ressenti</div>
+          <div className="font-display text-3xl font-bold mt-2 text-text-primary">{level}/10</div>
           <div className="text-sm text-text-secondary mt-1">
             {level <= 3 ? "Plutôt zen" : level <= 6 ? "Un peu de pression" : "Très chargé"}
           </div>

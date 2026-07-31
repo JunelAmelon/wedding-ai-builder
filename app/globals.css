@@ -3,19 +3,70 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-serif: "DM Serif Display", ui-serif, Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-serif: "Space Grotesk", ui-serif, Georgia, serif;
+
+  --bg: #FFFFFF;
+  --ink: #0E0E10;
+  --grey: #6B6B72;
+  --grey-light: #9A9AA1;
+  --line: #EDEDF0;
+  --surface: #F7F7F9;
+
+  --yellow: #F4D93E;
+  --lavender: #E4DBFB;
+  --lavender-deep: #8B7BD8;
+  --coral: #F2704A;
+  --sage-chip: #D8ECD9;
+  --sage: #3C8552;
+  --rose-chip: #FBE1E6;
+  --bordeaux: #8C2F39;
+
+  --r-lg: 28px;
+  --r-md: 20px;
+  --r-sm: 14px;
 }
 
 html,
 body {
-  background-color: #ffffff;
-  color: #0b0f1a;
+  background-color: var(--bg);
+  color: var(--ink);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+section {
+  padding: 56px 0;
+}
+
+@media (max-width: 860px) {
+  section { padding: 36px 0; }
 }
 
 .scrollbar-none::-webkit-scrollbar {

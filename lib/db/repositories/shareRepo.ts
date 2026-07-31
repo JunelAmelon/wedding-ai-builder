@@ -4,7 +4,7 @@ import { localStore } from "@/lib/db/localStore";
 
 const COLLECTION = "shares";
 
-function useLocal(): boolean {
+function isLocalMode(): boolean {
   return process.env.USE_LOCAL_DB !== "false";
 }
 
@@ -23,7 +23,7 @@ export const shareRepo = {
       createdAt: new Date().toISOString(),
       viewCount: 0,
     };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, record.slug, record);
     } else {
       const col = await getFirestoreCol();
@@ -33,14 +33,14 @@ export const shareRepo = {
   },
 
   async get(slug: string): Promise<ShareRecord | null> {
-    if (useLocal()) return localStore.get<ShareRecord>(COLLECTION, slug);
+    if (isLocalMode()) return localStore.get<ShareRecord>(COLLECTION, slug);
     const col = await getFirestoreCol();
     const doc = await col.doc(slug).get();
     return doc.exists ? (doc.data() as ShareRecord) : null;
   },
 
   async incrementView(slug: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const record = await localStore.get<ShareRecord>(COLLECTION, slug);
       if (!record) return;
       await localStore.update<ShareRecord>(COLLECTION, slug, { viewCount: record.viewCount + 1 });

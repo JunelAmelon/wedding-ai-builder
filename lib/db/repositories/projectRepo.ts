@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { WeddingProject } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "wedding_projects";
 
@@ -15,7 +15,7 @@ export const projectRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const project: WeddingProject = { ...data, id, createdAt: now, updatedAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, project);
       return project;
     }
@@ -25,14 +25,14 @@ export const projectRepo = {
   },
 
   async list(): Promise<WeddingProject[]> {
-    if (useLocal()) return localStore.all<WeddingProject>(COLLECTION);
+    if (isLocalMode()) return localStore.all<WeddingProject>(COLLECTION);
     const col = await getFirestoreCol();
     const snap = await col.get();
     return snap.docs.map((d) => d.data() as WeddingProject);
   },
 
   async listByUser(userId: string): Promise<WeddingProject[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<WeddingProject>(COLLECTION);
       return all.filter((p) => p.userId === userId);
     }
@@ -42,7 +42,7 @@ export const projectRepo = {
   },
 
   async get(id: string): Promise<WeddingProject | null> {
-    if (useLocal()) return localStore.get<WeddingProject>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<WeddingProject>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as WeddingProject) : null;
@@ -50,7 +50,7 @@ export const projectRepo = {
 
   async update(id: string, data: Partial<WeddingProject>): Promise<WeddingProject> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<WeddingProject>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();
@@ -60,7 +60,7 @@ export const projectRepo = {
   },
 
   async delete(id: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.delete(COLLECTION, id);
       return;
     }

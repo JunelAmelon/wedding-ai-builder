@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { Notification } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "notifications";
 
@@ -15,7 +15,7 @@ export const notificationRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const notification: Notification = { ...data, id, read: false, createdAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, notification);
       return notification;
     }
@@ -25,7 +25,7 @@ export const notificationRepo = {
   },
 
   async listByUser(userId: string): Promise<Notification[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Notification>(COLLECTION);
       return all.filter((n) => n.userId === userId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     }
@@ -35,7 +35,7 @@ export const notificationRepo = {
   },
 
   async listUnreadByUser(userId: string): Promise<Notification[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Notification>(COLLECTION);
       return all.filter((n) => n.userId === userId && !n.read).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     }
@@ -45,14 +45,14 @@ export const notificationRepo = {
   },
 
   async get(id: string): Promise<Notification | null> {
-    if (useLocal()) return localStore.get<Notification>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<Notification>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as Notification) : null;
   },
 
   async markAsRead(id: string): Promise<Notification> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<Notification>(COLLECTION, id, { read: true });
     }
     const col = await getFirestoreCol();
@@ -62,7 +62,7 @@ export const notificationRepo = {
   },
 
   async markAllAsRead(userId: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Notification>(COLLECTION);
       const toUpdate = all.filter((n) => n.userId === userId && !n.read);
       await Promise.all(toUpdate.map((n) => localStore.update<Notification>(COLLECTION, n.id, { read: true })));

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { track } from "@/lib/analytics/posthog.client";
 import type { WeddingSession } from "@/types/domain";
@@ -11,8 +12,16 @@ import {
   Download,
   Printer,
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   TriangleAlert,
   CheckCircle2,
+  Sparkles,
+  Heart,
+  Wallet,
+  Clock,
+  Flag,
+  Lightbulb,
 } from "lucide-react";
 
 function normalizeStyleAnswer(quiz: WeddingSession["quizAnswers"]) {
@@ -105,7 +114,6 @@ export default function CoupleResultPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [session, setSession] = useState<WeddingSession | null>(null);
-  const [project, setProject] = useState<{ id: string; weddingDate?: string; budget?: { amount?: number; currency?: string }; guestCount?: number; location?: { city?: string; country?: string }; stressLevel?: number; style?: any; customStyle?: string; customStyleDescription?: string; mainPriority?: string } | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -120,9 +128,8 @@ export default function CoupleResultPage() {
           const message = payload?.error || `Erreur de chargement (HTTP ${res.status})`;
           throw new Error(message);
         }
-        const data = (await res.json()) as { session: WeddingSession; project?: any };
+        const data = (await res.json()) as { session: WeddingSession; project?: { id?: string } | null };
         setSession(data.session);
-        setProject(data.project || null);
         track("couple_result_loaded", { projectId: data.project?.id });
       } catch (err) {
         const message = err instanceof Error ? err.message : "Impossible de charger votre résultat.";
@@ -144,12 +151,12 @@ export default function CoupleResultPage() {
   };
 
   const BUDGET_COLORS: Record<string, string> = {
-    venue: "#4f46e5",
-    catering: "#0ea5e9",
-    photography: "#10b981",
-    music: "#f59e0b",
-    decoration: "#ec4899",
-    contingency: "#64748b",
+    venue: "#3C8552",
+    catering: "#F2704A",
+    photography: "#8B7BD8",
+    music: "#F4D93E",
+    decoration: "#FBE1E6",
+    contingency: "#6B6B72",
   };
 
   function formatDateFr(d: Date) {
@@ -167,7 +174,6 @@ export default function CoupleResultPage() {
     percentRows,
     breakdown,
     totalBudget,
-    currency,
     formatAmount,
     timelineWithDates,
     riskEngine,
@@ -211,7 +217,7 @@ export default function CoupleResultPage() {
         return styleAnswer.style ? labels[styleAnswer.style] ?? styleAnswer.style : "Non précisé";
       })();
 
-    const rows = Object.entries(aiOutput.budgetBreakdown.percentages).map(([k, v]) => [k, Number(v) || 0] as const);
+    const rows = Object.entries(aiOutput.budgetBreakdown.percentages).map(([k, v]) => [k, Number(v) || 0] as [string, number]);
     const bd = aiOutput.budgetBreakdown.breakdown;
     const tb = aiOutput.budgetBreakdown.totalBudget;
     const cur = aiOutput.budgetBreakdown.currency;
@@ -237,7 +243,7 @@ export default function CoupleResultPage() {
     const rPct = Math.min(100, Math.max(0, computed.riskScore));
     const rLabel =
       computed.riskScore >= 80
-        ? "Plusieurs points méritent d'être sécurisés"
+        ? "Plusieurs points méritent d&apos;être sécurisés"
         : computed.riskScore >= 60
           ? "Bon niveau, quelques points à surveiller"
           : "Très bon niveau de maîtrise";
@@ -248,7 +254,6 @@ export default function CoupleResultPage() {
       percentRows: rows,
       breakdown: bd,
       totalBudget: tb,
-      currency: cur,
       formatAmount: fa,
       timelineWithDates: timeline,
       riskEngine: computed,
@@ -258,209 +263,358 @@ export default function CoupleResultPage() {
     };
   }, [session?.aiOutput, session?.quizAnswers]);
 
-  if (loading) return <div className="min-h-[100dvh] bg-background" />;
-  if (error) return <div className="min-h-[100dvh] bg-background p-6">{error}</div>;
-  if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-background p-6">Résultat indisponible.</div>;
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const [canScroll, setCanScroll] = useState({ left: false, right: false });
+
+  const scrollTimeline = (direction: number) => {
+    timelineRef.current?.scrollBy({ left: direction * 220, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const el = timelineRef.current;
+    const update = () => {
+      if (!el) return;
+      setCanScroll({
+        left: el.scrollLeft > 0,
+        right: el.scrollLeft + el.clientWidth < el.scrollWidth - 1,
+      });
+    };
+    update();
+    el?.addEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      el?.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [timelineWithDates.length]);
+
+  if (loading) return <div className="min-h-[100dvh] bg-surface" />;
+  if (error) return <div className="min-h-[100dvh] bg-surface p-6">{error}</div>;
+  if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-surface p-6">Résultat indisponible.</div>;
 
   const { aiOutput } = session;
 
-  return (
-    <div className="min-h-[100dvh] bg-[#FBFAF7] text-text-primary">
-      {/* ============================== HERO — pas de badge/icône, juste du texte qui respire ============================== */}
-      <section className="relative px-6 pt-20 pb-24 overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute -top-32 right-[-160px] h-[560px] w-[560px] rounded-full bg-primary/[0.07] blur-[100px]" />
-          <div className="absolute bottom-[-200px] left-[-160px] h-[520px] w-[520px] rounded-full bg-success/[0.06] blur-[100px]" />
+  const riskTone =
+    riskEngine.riskScore >= 80 ? "#F2704A" : riskEngine.riskScore >= 60 ? "#F4D93E" : "#3C8552";
+
+  const metricCards = [
+    {
+      label: "Wedding Risk Score",
+      value: riskEngine.riskScore.toString(),
+      hint: riskLabel,
+      chip: "#F4D93E",
+      icon: Sparkles,
+    },
+    {
+      label: "Budget",
+      value: formatAmount(totalBudget),
+      hint: "enveloppe totale",
+      chip: "#D8ECD9",
+      icon: Wallet,
+    },
+    {
+      label: "Style",
+      value: displayStyle,
+      hint: "ambiance",
+      chip: "#FBE1E6",
+      icon: Heart,
+    },
+    {
+      label: "Délai",
+      value: weddingDate ? `${Math.max(0, Math.round(monthsBetween(new Date(), weddingDate)))} mois` : "—",
+      hint: "avant le jour J",
+      chip: "#E4DBFB",
+      icon: Clock,
+    },
+  ] as const;
+
+  const HeroImage = (
+    <div className="relative w-full max-w-[520px] mx-auto">
+      <div className="relative rounded-[34px] overflow-hidden shadow-[0_50px_110px_rgba(14,14,16,0.16)]">
+        <div className="relative w-full aspect-[1/1.15] rounded-[28px] overflow-hidden">
+          <Image
+            src="/hero-result.png"
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 520px"
+            className="object-cover"
+            unoptimized
+            priority
+          />
         </div>
 
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-primary/70 mb-6">Votre plan personnalisé</p>
-          <h1 className="font-serif text-[clamp(2.6rem,5.5vw,4.4rem)] font-bold leading-[1.05] tracking-tight">
-            Le chemin vers
-            <br />
-            votre journée
-          </h1>
-          {weddingDate && !Number.isNaN(weddingDate.getTime()) && (
-            <p className="mt-6 text-text-secondary text-lg flex items-center justify-center gap-2">
-              <CalendarDays size={17} strokeWidth={1.75} className="text-text-secondary/60" />
-              {formatDateFr(weddingDate)}
-            </p>
-          )}
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <button
-              onClick={() => { track("couple_result_print"); window.print(); }}
-              className="text-sm text-text-secondary hover:text-text-primary inline-flex items-center gap-1.5 transition-colors"
-            >
-              <Printer size={15} strokeWidth={1.75} /> Imprimer
-            </button>
-            <span className="text-text-secondary/30">·</span>
-            <button
-              onClick={() => { track("couple_result_pdf"); window.print(); }}
-              className="text-sm text-text-secondary hover:text-text-primary inline-flex items-center gap-1.5 transition-colors"
-            >
-              <Download size={15} strokeWidth={1.75} /> Enregistrer en PDF
-            </button>
+        <div className="absolute left-4 right-4 sm:left-6 sm:right-6 -bottom-6 rounded-[24px] bg-white border border-black/10 shadow-[0_18px_40px_rgba(14,14,16,0.14)] p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-grey">Résumé</div>
+              <div className="mt-1 font-display text-lg font-bold text-ink leading-snug break-words">{displayStyle}</div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: riskTone }}>
+                <Sparkles size={15} color="#0E0E10" />
+              </span>
+              <div>
+                <div className="font-display text-lg font-bold text-ink leading-none">{riskEngine.riskScore}</div>
+                <div className="text-[10px] text-text-secondary">score</div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Score, budget, style — plus de cartes carrées identiques, un seul ruban horizontal */}
-        <div className="max-w-4xl mx-auto mt-20">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-12 sm:gap-16">
-            <div className="relative h-44 w-44 shrink-0">
-              <svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">
-                <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(11,15,26,0.07)" strokeWidth="6" />
-                <circle
-                  cx="80" cy="80" r="70" fill="none"
-                  stroke="url(#riskGrad)" strokeWidth="6" strokeLinecap="round"
-                  strokeDasharray={dialCirc}
-                  strokeDashoffset={dialCirc - (riskPct / 100) * dialCirc}
-                />
-                <defs>
-                  <linearGradient id="riskGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#4f46e5" />
-                    <stop offset="100%" stopColor="#10b981" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-serif text-4xl font-bold">{riskEngine.riskScore}</span>
-                <span className="text-[11px] text-text-secondary uppercase tracking-[0.15em] mt-0.5">Risk Score</span>
+      <div className="absolute -top-6 left-4 sm:-top-8 sm:-left-6 bg-white rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-line w-[160px] sm:w-[190px]">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="h-2 w-2 rounded-full bg-sage" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Budget</span>
+        </div>
+        <div className="font-display text-xl font-bold text-ink truncate">{formatAmount(totalBudget)}</div>
+        <div className="text-[10px] text-text-secondary mt-1">enveloppe totale</div>
+      </div>
+
+      <div className="absolute top-6 right-4 sm:top-10 sm:-right-7 bg-yellow rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-white/60 w-[160px] sm:w-[190px]">
+        <div className="flex items-center gap-2 mb-2">
+          <CalendarDays size={14} className="text-ink" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-ink/70">Date</span>
+        </div>
+        <div className="font-display text-sm font-bold text-ink leading-snug">
+          {weddingDate && !Number.isNaN(weddingDate.getTime()) ? formatDateFr(weddingDate) : "Non définie"}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-[100dvh] bg-surface text-text-primary">
+      {/* ============================== HERO ============================== */}
+      <section className="px-6 pt-10 pb-14 lg:pt-12 lg:pb-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-[1.05fr_.95fr] gap-12 lg:gap-16 items-center">
+            <div className="text-center lg:text-left">
+              <span className="inline-flex items-center h-[26px] px-3.5 rounded-full border border-line text-[11px] font-semibold uppercase tracking-[0.04em] text-grey bg-white mb-5">
+                Votre plan personnalisé
+              </span>
+              <h1 className="font-display text-[clamp(2.4rem,4.6vw,3.4rem)] font-bold leading-[1.05] tracking-tight text-ink">
+                Le chemin vers
+                <br />
+                votre journée
+              </h1>
+              {weddingDate && !Number.isNaN(weddingDate.getTime()) && (
+                <p className="mt-5 text-text-secondary text-base lg:text-lg flex items-center justify-center lg:justify-start gap-2">
+                  <CalendarDays size={17} strokeWidth={1.75} className="text-text-secondary/60" />
+                  {formatDateFr(weddingDate)}
+                </p>
+              )}
+
+              <p className="mt-5 text-text-secondary leading-relaxed max-w-lg mx-auto lg:mx-0">
+                Votre plan est généré à partir de vos réponses (budget, style, date, niveau de stress) pour vous guider étape par étape et sécuriser les décisions clés.
+              </p>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                <button
+                  onClick={() => { track("couple_result_print"); window.print(); }}
+                  className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-line bg-white text-sm font-semibold text-text-secondary hover:text-text-primary hover:bg-black/[0.02] transition"
+                >
+                  <Printer size={15} strokeWidth={1.75} /> Imprimer
+                </button>
+                <button
+                  onClick={() => { track("couple_result_pdf"); window.print(); }}
+                  className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-line bg-white text-sm font-semibold text-text-secondary hover:text-text-primary hover:bg-black/[0.02] transition"
+                >
+                  <Download size={15} strokeWidth={1.75} /> PDF
+                </button>
               </div>
             </div>
 
-            <div className="text-center sm:text-left max-w-xs">
-              <p className="text-sm text-text-secondary leading-relaxed">{riskLabel}</p>
-            </div>
+            {HeroImage}
+          </div>
+        </div>
+      </section>
 
-            <div className="hidden sm:block w-px h-16 bg-black/[0.08]" />
+      {/* ============================== SCORE RIBBON ============================== */}
+      <section className="px-6 pb-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="rounded-[32px] bg-ink text-white overflow-hidden shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
+            <div className="p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-6 flex-wrap">
+                <div>
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/60">Synthèse</div>
+                  <div className="font-display text-2xl sm:text-3xl font-bold mt-2 leading-tight">Vos repères en un coup d&apos;œil</div>
+                  <div className="text-sm text-white/65 mt-2 max-w-xl text-justify">
+                    Des indicateurs rapides, inspirés d&apos;un dashboard, pour savoir où vous êtes et où concentrer votre énergie.
+                  </div>
+                </div>
 
-            <div className="text-center sm:text-left">
-              <p className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-1">Budget</p>
-              <p className="font-serif text-2xl font-bold">{totalBudget} {currency}</p>
-            </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: riskTone }} />
+                  <span className="text-xs text-white/70">{riskLabel}</span>
+                </div>
+              </div>
 
-            <div className="hidden sm:block w-px h-16 bg-black/[0.08]" />
-
-            <div className="text-center sm:text-left">
-              <p className="text-xs uppercase tracking-[0.2em] text-text-secondary mb-1">Style</p>
-              <p className="font-serif text-2xl font-bold">{displayStyle}</p>
+              <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {metricCards.map((m) => {
+                  const Icon = m.icon;
+                  return (
+                    <div
+                      key={m.label}
+                      className="rounded-[26px] bg-white/[0.06] border border-white/[0.10] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">{m.label}</div>
+                          <div className={`font-display text-2xl font-bold mt-2 leading-snug ${m.label === "Style" ? "break-words" : "truncate"}`}>{m.value}</div>
+                        </div>
+                        <span className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: m.chip }}>
+                          <Icon size={18} color="#0E0E10" />
+                        </span>
+                      </div>
+                      <div className="text-xs text-white/60 mt-2 leading-snug">{m.hint}</div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ============================== BLUEPRINT ============================== */}
-      <section className="px-6 py-16">
+      <section className="px-6 py-16 bg-white">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-primary/70 mb-5">Blueprint</p>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Une direction claire pour votre journée</h2>
-          <p className="text-text-secondary mt-6 leading-loose text-lg">{aiOutput.blueprint.concept}</p>
-        </div>
+          <span className="inline-flex items-center h-[26px] px-3.5 rounded-full border border-line text-[11px] font-semibold uppercase tracking-[0.04em] text-grey bg-white mb-5">
+            Blueprint
+          </span>
+          <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink">Une direction claire pour votre journée</h2>
+          <h3 className="font-display text-2xl sm:text-3xl font-semibold text-ink mt-6 leading-snug text-center">{aiOutput.blueprint.concept}</h3>
 
-        <div className="max-w-3xl mx-auto mt-12 text-center">
-          <p className="text-text-primary/90 leading-loose text-base italic font-serif">"{aiOutput.blueprint.storytelling}"</p>
-        </div>
+          {aiOutput.blueprint.storytelling && (
+            <p className="mt-10 text-text-primary leading-relaxed text-base italic font-display text-justify">“{aiOutput.blueprint.storytelling}”</p>
+          )}
 
-        <div className="max-w-2xl mx-auto mt-14 flex flex-wrap items-center justify-center gap-2">
-          {aiOutput.blueprint.ambiance.map((item) => (
-            <span key={item} className="text-sm text-text-secondary border-b border-primary/30 pb-0.5">{item}</span>
-          ))}
-        </div>
-
-        <div className="max-w-md mx-auto mt-12 flex items-center justify-center gap-4">
-          {aiOutput.blueprint.colorPalette.map((c) => (
-            <div key={`${c.name}-${c.hex}`} className="flex flex-col items-center gap-2">
-              <span className="h-10 w-10 rounded-full border border-black/10" style={{ backgroundColor: c.hex }} />
-              <span className="text-[11px] text-text-secondary">{c.name}</span>
+          {aiOutput.blueprint.ambiance.length > 0 && (
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+              {aiOutput.blueprint.ambiance.map((item) => (
+                <span key={item} className="inline-flex h-8 items-center px-4 rounded-full border border-line bg-surface text-sm font-semibold text-text-secondary">
+                  {item}
+                </span>
+              ))}
             </div>
-          ))}
+          )}
+
+          {aiOutput.blueprint.colorPalette.length > 0 && (
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-5">
+              {aiOutput.blueprint.colorPalette.map((c) => (
+                <div key={`${c.name}-${c.hex}`} className="flex flex-col items-center gap-2">
+                  <span className="h-12 w-12 rounded-full border border-black/10 shadow-sm" style={{ backgroundColor: c.hex }} />
+                  <span className="text-xs text-text-secondary">{c.name}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ============================== TIMELINE — parchemin, une seule ligne sinueuse, à découvrir ============================== */}
-      <section className="px-6 py-20 relative overflow-hidden">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <p className="text-xs uppercase tracking-[0.3em] text-primary/70 mb-5">Votre parcours</p>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Le chemin jusqu'au Jour J</h2>
-          <p className="text-text-secondary mt-4 leading-relaxed">
-            Faites défiler le ruban et découvrez chaque étape de votre parchemin nuptial.
-          </p>
-        </div>
-
-        {/* Le parchemin : fond texturé crème, ligne d'encre sinueuse, un seul fil continu */}
-        <div className="relative max-w-5xl mx-auto rounded-[2rem] overflow-hidden border border-[#e8e0cf]"
-          style={{ background: "linear-gradient(180deg,#fdfbf3,#f7f1e1)" }}
-        >
-          <div
-            className="absolute inset-0 opacity-[0.5] pointer-events-none mix-blend-multiply"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 30%, rgba(120,100,60,0.05), transparent 40%), radial-gradient(circle at 80% 70%, rgba(120,100,60,0.06), transparent 45%)",
-            }}
-          />
-
-          <div className="relative px-6 sm:px-14 py-16">
-            <div className="flex overflow-x-auto gap-10 sm:gap-16 pb-4 snap-x snap-mandatory scrollbar-hide">
-              {timelineWithDates.map((m, idx) => {
-                const wave = idx % 2 === 0 ? "translate-y-0" : "translate-y-10";
-                return (
-                  <div key={`${m.monthsBeforeWedding}-${m.title}`} className={`relative shrink-0 w-[260px] snap-center ${wave}`}>
-                    <div className="flex flex-col items-center text-center">
-                      <span className="font-serif text-xs text-[#a98955] tracking-[0.2em] uppercase mb-3">
-                        Étape {idx + 1}
-                      </span>
-                      <span className="h-3 w-3 rounded-full bg-[#c2a878] ring-4 ring-[#fdfbf3] mb-4 shrink-0" />
-                      <h3 className="font-serif text-xl font-semibold text-[#3c3424]">{m.title}</h3>
-                      <p className="text-xs text-[#8a7a55] mt-1.5 mb-4">{m.displayDate}</p>
-                      <div className="space-y-1.5">
-                        {m.tasks.map((t) => (
-                          <p key={t} className="text-sm text-[#5c5238] leading-snug">{t}</p>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <p className="text-center text-[11px] text-[#a98955] mt-10 tracking-wide">
-              ← faites glisser pour parcourir le parchemin →
+      {/* ============================== TIMELINE ============================== */}
+      <section className="px-6 py-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
+            <span className="inline-flex items-center h-[26px] px-3.5 rounded-full border border-line text-[11px] font-semibold uppercase tracking-[0.04em] text-grey bg-white mb-5">
+              Votre parcours
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink">Le chemin jusqu&apos;au Jour J</h2>
+            <p className="text-text-secondary mt-4 leading-relaxed max-w-2xl text-justify">
+              Chaque étape est calibrée selon votre date. Concentrez-vous sur l&apos;échéance suivante pour avancer sereinement.
             </p>
           </div>
-        </div>
-      </section>
 
-      {/* ============================== MATCHING CTA — discret, plus de gros pavé carré ============================== */}
-      <section className="px-6 py-16">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight">Des prestataires alignés avec votre budget</h2>
-          <p className="text-text-secondary mt-4 leading-relaxed">
-            On vous met en relation avec des professionnels vérifiés, adaptés à votre style, votre date et votre enveloppe exacte.
-          </p>
-          <div className="mt-8">
-            <Link href="/espace-couple/prestataires">
-              <Button
-                variant="primary"
-                onClick={() => track("couple_providers_cta_clicked")}
-                iconRight={<ArrowRight size={18} />}
-              >
-                Trouver des prestataires disponibles
-              </Button>
-            </Link>
+          <div className="rounded-[32px] bg-ink text-white overflow-hidden shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
+            <div className="p-6 lg:p-8">
+              <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Flag size={14} className="text-sage" />
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/60">Frise chronologique</div>
+                </div>
+              </div>
+
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => scrollTimeline(-1)}
+                  className={`absolute left-2 top-[24px] z-20 h-5 w-5 rounded-full bg-yellow text-ink flex items-center justify-center shadow-sm transition ${canScroll.left ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                  aria-label="Défiler vers la gauche"
+                >
+                  <ChevronLeft size={12} strokeWidth={2.5} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollTimeline(1)}
+                  className={`absolute right-2 top-[24px] z-20 h-5 w-5 rounded-full bg-yellow text-ink flex items-center justify-center shadow-sm transition ${canScroll.right ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                  aria-label="Défiler vers la droite"
+                >
+                  <ChevronRight size={12} strokeWidth={2.5} />
+                </button>
+
+                <div
+                  ref={timelineRef}
+                  className="overflow-x-auto -mx-2 px-2 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                >
+                  <div className="relative flex gap-4 min-w-max">
+                    <div className="absolute top-[34px] left-0 right-0 h-[2px] bg-yellow" />
+
+                    {timelineWithDates.map((m, idx) => {
+                      const bg = ["#D8ECD9", "#E4DBFB", "#FBE1E6", "#F4D93E", "#F2704A"][idx % 5];
+                      return (
+                        <div
+                          key={`${m.monthsBeforeWedding}-${m.title}`}
+                          className="relative w-[170px] shrink-0 flex flex-col"
+                        >
+                          <div className="h-5 self-center flex items-center justify-center text-[10px] text-white/50 mb-2">
+                            {m.monthsBeforeWedding === 0 ? "Jour J" : `M-${m.monthsBeforeWedding}`}
+                          </div>
+
+                          <div className="relative z-10 self-center mb-5">
+                            <span className="h-3 w-3 rounded-full ring-4 ring-ink block" style={{ backgroundColor: bg }} />
+                          </div>
+
+                          <div className="flex-1 min-h-0 w-full rounded-[22px] bg-white/[0.06] border border-white/[0.10] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] p-4">
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="text-[10px] uppercase tracking-[0.18em] text-white/60 truncate">
+                                Étape {idx + 1}
+                              </div>
+                              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: bg }} />
+                            </div>
+                            <div className="font-display text-base font-bold mt-2 leading-snug">
+                              {m.title}
+                            </div>
+                            <div className="text-xs text-white/60 mt-1">{m.displayDate}</div>
+
+                            <div className="mt-3 space-y-2">
+                              {m.tasks.slice(0, 2).map((task) => (
+                                <div key={task} className="text-xs text-white/70 leading-snug flex items-start gap-2">
+                                  <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: bg }} />
+                                  <span className="line-clamp-2">{task}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-text-secondary mt-3">Tarif affiché avant validation. Aucun engagement sans confirmation.</p>
         </div>
       </section>
 
-      {/* ============================== BUDGET — conservé tel quel, c'est la partie qui plaît ============================== */}
-      <section className="px-6 py-14 bg-surface border-y border-black/10">
+      {/* ============================== BUDGET ============================== */}
+      <section className="px-6 py-16 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="rounded-[32px] border border-black/10 bg-white shadow-[0_30px_90px_rgba(11,15,26,0.08)] overflow-hidden">
-            <div className="p-7">
-              <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Répartition en pourcentages</div>
-              <div className="mt-6 flex flex-col sm:flex-row items-center gap-8">
-                <svg viewBox="0 0 200 200" className="w-56 h-56 shrink-0">
+          <div className="bg-surface rounded-[28px] p-6 lg:p-12 border border-line">
+            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-14 items-center">
+              <div className="flex flex-col items-center">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-grey mb-4">Répartition du budget</span>
+                <svg viewBox="0 0 200 200" className="w-56 h-56 lg:w-64 lg:h-64">
                   {(() => {
                     const sorted = percentRows.slice().sort((a, b) => b[1] - a[1]);
                     let cumulative = 0;
@@ -478,7 +632,7 @@ export default function CoupleResultPage() {
                       const y2 = 100 + 80 * Math.sin(end);
                       const lx = 100 + 55 * Math.cos(mid);
                       const ly = 100 + 55 * Math.sin(mid);
-                      const amount = (breakdown as any)[k] ?? 0;
+                      const amount = (breakdown as Record<string, number>)[k] ?? 0;
                       return (
                         <g key={k}>
                           <path
@@ -504,78 +658,181 @@ export default function CoupleResultPage() {
                     });
                   })()}
                 </svg>
-
-                <div className="flex-1 w-full">
-                  <div className="space-y-3">
-                    {percentRows
-                      .slice()
-                      .sort((a, b) => b[1] - a[1])
-                      .map(([k, v]) => (
-                        <div key={k} className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-2">
-                            <span className="h-3 w-3 rounded-full" style={{ backgroundColor: BUDGET_COLORS[k] ?? "#94a3b8" }} />
-                            <span className="text-sm text-text-secondary">{BUDGET_LABELS[k] ?? k}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="font-semibold text-text-primary block">{formatAmount((breakdown as any)[k] ?? 0)}</span>
-                            <span className="text-xs text-text-secondary">{Math.round(v)}%</span>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
+                <div className="mt-4 text-center">
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-grey">Total</div>
+                  <div className="font-display text-2xl font-bold text-ink">{formatAmount(totalBudget)}</div>
                 </div>
               </div>
 
-              <div className="mt-7 rounded-3xl border border-black/10 bg-surface p-5">
-                <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-2">Vue d'ensemble</div>
-                <p className="text-sm text-text-secondary leading-relaxed">
-                  Le budget total est réparti sur les postes essentiels d'un mariage. Le lieu et la restauration
-                  absorbent généralement la plus grande part. La provision Imprévus (8-12%) est incluse pour
-                  absorber les dépassements classiques.
+              <div className="text-center lg:text-left">
+                <h3 className="font-display text-2xl font-bold text-ink mb-2">Répartition en postes</h3>
+                <p className="text-sm text-text-secondary mb-8 max-w-md mx-auto lg:mx-0">
+                  Le lieu et la restauration absorbent généralement la plus grande part. La provision Imprévus (8-12%) est incluse pour absorber les dépassements classiques.
                 </p>
+                <div className="space-y-3">
+                  {percentRows
+                    .slice()
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([k, v]) => (
+                      <div key={k} className="flex items-center justify-between gap-3 bg-white rounded-2xl px-5 py-4 border border-line">
+                        <div className="flex items-center gap-3">
+                          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: BUDGET_COLORS[k] ?? "#94a3b8" }} />
+                          <span className="text-sm font-medium text-text-primary">{BUDGET_LABELS[k] ?? k}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-display font-bold text-ink block">{formatAmount((breakdown as Record<string, number>)[k] ?? 0)}</span>
+                          <span className="text-xs text-text-secondary">{Math.round(v)}%</span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============================== RISQUES — texte, plus de trois pavés carrés ============================== */}
+      {/* ============================== PROVIDERS CTA ============================== */}
       <section className="px-6 py-16">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-xs uppercase tracking-[0.22em] text-primary/70 mb-5 text-center">Risques & vigilance</p>
-          <h2 className="font-serif text-3xl font-bold tracking-tight text-center mb-6">Ce qui mérite votre attention</h2>
-          <p className="text-text-secondary leading-loose text-center mb-12">{riskEngine.scoreJustification}</p>
-
-          {riskEngine.generalAdvice && (
-            <p className="text-text-primary leading-relaxed text-center italic font-serif mb-14 max-w-xl mx-auto">
-              "{riskEngine.generalAdvice}"
-            </p>
-          )}
-
-          <div className="grid sm:grid-cols-3 gap-x-8 gap-y-10">
-            {[
-              { label: "Erreurs critiques", items: riskEngine.criticalErrors },
-              { label: "Incohérences budget", items: riskEngine.budgetInconsistencies },
-              { label: "Risques organisationnels", items: riskEngine.organizationalRisks },
-            ].map((col) => (
-              <div key={col.label}>
-                <div className="text-xs uppercase tracking-[0.18em] text-text-secondary mb-4 text-center sm:text-left">{col.label}</div>
-                {col.items.length ? (
-                  <ul className="space-y-3">
-                    {col.items.map((e, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-text-secondary leading-relaxed">
-                        <TriangleAlert size={14} strokeWidth={1.75} className="text-warning shrink-0 mt-0.5" />
-                        {e}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="flex items-center gap-2 text-sm text-text-secondary">
-                    <CheckCircle2 size={14} strokeWidth={1.75} className="text-success shrink-0" /> Aucune détectée
-                  </p>
-                )}
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-lavender rounded-[28px] p-8 lg:p-14 overflow-hidden">
+            <div className="grid lg:grid-cols-[1fr_auto] gap-10 items-center">
+              <div>
+                <span className="inline-flex items-center h-[26px] px-3.5 rounded-full bg-white/65 border-none text-[11px] font-semibold uppercase tracking-[0.04em] text-grey mb-5">
+                  Matching
+                </span>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-ink">Des prestataires alignés avec votre budget</h2>
+                <p className="text-text-secondary mt-4 leading-relaxed max-w-md text-justify">
+                  On vous met en relation avec des professionnels vérifiés, adaptés à votre style, votre date et votre enveloppe exacte.
+                </p>
+                <div className="mt-8">
+                  <Link href="/espace-couple/prestataires">
+                    <Button
+                      variant="primary"
+                      onClick={() => track("couple_providers_cta_clicked")}
+                      iconRight={<ArrowRight size={18} />}
+                    >
+                      Trouver des prestataires
+                    </Button>
+                  </Link>
+                </div>
+                <p className="text-xs text-text-secondary mt-3">Tarif affiché avant validation. Aucun engagement sans confirmation.</p>
               </div>
-            ))}
+
+              <div className="hidden lg:flex relative w-[280px] h-[220px] items-center justify-center">
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-[20px] p-4 shadow-[0_14px_30px_rgba(14,14,16,0.12)] w-[140px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="h-2 w-2 rounded-full bg-coral" />
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Traiteur</span>
+                  </div>
+                  <div className="font-display text-lg font-bold">2 300 €</div>
+                  <div className="text-[10px] text-text-secondary">Solde final</div>
+                </div>
+                <div className="absolute right-0 top-4 bg-yellow rounded-[20px] p-4 shadow-[0_14px_30px_rgba(14,14,16,0.12)] w-[140px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="h-2 w-2 rounded-full bg-ink" />
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Photo</span>
+                  </div>
+                  <div className="font-display text-lg font-bold">890 €</div>
+                  <div className="text-[10px] text-text-secondary">Acompte</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================== RISKS ============================== */}
+      <section className="px-6 py-16 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-[1fr_1.3fr] gap-12 items-start">
+            <div className="text-center lg:text-left">
+              <span className="inline-flex items-center h-[26px] px-3.5 rounded-full border border-line text-[11px] font-semibold uppercase tracking-[0.04em] text-grey bg-white mb-5">
+                Risques & vigilance
+              </span>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink">Ce qui mérite votre attention</h2>
+              <p className="text-text-secondary mt-4 leading-relaxed max-w-2xl mx-auto lg:mx-0">{riskEngine.scoreJustification}</p>
+
+              <div className="mt-8 relative h-44 w-44 mx-auto">
+                <svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">
+                  <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(11,15,26,0.07)" strokeWidth="6" />
+                  <circle
+                    cx="80" cy="80" r="70" fill="none"
+                    stroke={riskTone} strokeWidth="6" strokeLinecap="round"
+                    strokeDasharray={dialCirc}
+                    strokeDashoffset={dialCirc - (riskPct / 100) * dialCirc}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="font-display text-4xl font-bold text-ink">{riskEngine.riskScore}</span>
+                  <span className="text-[11px] text-text-secondary uppercase tracking-[0.15em] mt-0.5">Risk Score</span>
+                </div>
+              </div>
+
+              {riskEngine.generalAdvice && (
+                <p className="mt-8 text-text-primary leading-relaxed italic font-display max-w-sm mx-auto lg:mx-0 text-justify">
+                  “{riskEngine.generalAdvice}”
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              {[
+                { label: "Erreurs critiques", items: riskEngine.criticalErrors, icon: TriangleAlert, color: "#F2704A" },
+                { label: "Incohérences budget", items: riskEngine.budgetInconsistencies, icon: Wallet, color: "#F4D93E" },
+                { label: "Risques organisationnels", items: riskEngine.organizationalRisks, icon: Lightbulb, color: "#E4DBFB" },
+              ].map((col) => {
+                const Icon = col.icon;
+                return (
+                  <div key={col.label} className="bg-surface rounded-[20px] p-5 border border-line">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="h-7 w-7 rounded-full flex items-center justify-center" style={{ backgroundColor: col.color }}>
+                        <Icon size={14} color="#0E0E10" />
+                      </span>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-grey">{col.label}</span>
+                    </div>
+                    {col.items.length ? (
+                      <ul className="space-y-3">
+                        {col.items.map((e, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-text-secondary leading-relaxed">
+                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: col.color }} />
+                            {e}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="flex items-center gap-2 text-sm text-text-secondary">
+                        <CheckCircle2 size={14} strokeWidth={1.75} className="text-success shrink-0" /> Aucune détectée
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================== FINAL CTA ============================== */}
+      <section className="px-6 pb-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-ink rounded-[28px] p-10 lg:p-16 text-center">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-4">Votre plan de mariage est en route</h2>
+            <p className="text-white/60 max-w-md mx-auto mb-8 leading-relaxed">
+              Continuez à affiner votre planning, consulter vos prestataires recommandés et ajuster votre budget depuis votre espace couple.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link href="/espace-couple/prestataires">
+                <span className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-white text-ink text-sm font-semibold hover:bg-white/90 transition">
+                  Découvrir les prestataires <ArrowRight size={16} />
+                </span>
+              </Link>
+              <Link href="/espace-couple/budget">
+                <span className="inline-flex items-center gap-2 h-12 px-6 rounded-full border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition">
+                  Ajuster mon budget
+                </span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

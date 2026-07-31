@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { VendorProfile } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "vendor_profiles";
 
@@ -23,7 +23,7 @@ export const vendorProfileRepo = {
       createdAt: now,
       updatedAt: now,
     };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, profile);
       return profile;
     }
@@ -33,14 +33,14 @@ export const vendorProfileRepo = {
   },
 
   async list(): Promise<VendorProfile[]> {
-    if (useLocal()) return localStore.all<VendorProfile>(COLLECTION);
+    if (isLocalMode()) return localStore.all<VendorProfile>(COLLECTION);
     const col = await getFirestoreCol();
     const snap = await col.get();
     return snap.docs.map((d) => d.data() as VendorProfile);
   },
 
   async listApproved(): Promise<VendorProfile[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<VendorProfile>(COLLECTION);
       return all.filter((p) => p.status === "approved");
     }
@@ -50,14 +50,14 @@ export const vendorProfileRepo = {
   },
 
   async get(id: string): Promise<VendorProfile | null> {
-    if (useLocal()) return localStore.get<VendorProfile>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<VendorProfile>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as VendorProfile) : null;
   },
 
   async getByUserId(userId: string): Promise<VendorProfile | null> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<VendorProfile>(COLLECTION);
       return all.find((p) => p.userId === userId) ?? null;
     }
@@ -68,7 +68,7 @@ export const vendorProfileRepo = {
 
   async update(id: string, data: Partial<VendorProfile>): Promise<VendorProfile> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<VendorProfile>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();

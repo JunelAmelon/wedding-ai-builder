@@ -27,13 +27,13 @@ export function Button({
 
   const buttonClasses = cn(
     "relative inline-flex w-full sm:w-auto items-center justify-center gap-2",
-    "h-auto min-h-12 rounded-full px-5 sm:px-6 py-3 text-[15px] font-semibold",
-    "transition duration-150",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+    "h-auto min-h-12 rounded-full px-6 sm:px-7 py-3 text-[14px] font-semibold",
+    "transition duration-200",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
     "disabled:opacity-60 disabled:cursor-not-allowed",
-    variant === "primary" && "bg-primary text-white shadow-[0_6px_0_#5B21B6] hover:shadow-[0_4px_0_#5B21B6] hover:translate-y-[1px] active:shadow-[0_2px_0_#5B21B6] active:translate-y-[2px]",
-    variant === "secondary" && "bg-transparent text-text-primary border border-text-primary/20 hover:bg-black/[0.02]",
-    variant === "coupon" && "bg-primary text-white border-2 border-dashed border-white/70 shadow-[0_6px_0_#5B21B6] hover:shadow-[0_4px_0_#5B21B6] hover:translate-y-[1px] active:shadow-[0_2px_0_#5B21B6] active:translate-y-[2px]",
+    variant === "primary" && "bg-ink text-white border border-ink hover:bg-black hover:-translate-y-[1px]",
+    variant === "secondary" && "bg-transparent text-ink border border-ink/15 hover:bg-surface hover:border-ink/25",
+    variant === "coupon" && "bg-ink text-white border-2 border-dashed border-white/70 hover:bg-black",
     className
   );
 

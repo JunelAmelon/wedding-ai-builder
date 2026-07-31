@@ -28,6 +28,8 @@ import {
   ExternalLink,
   Star,
 } from "lucide-react";
+import Image from "next/image";
+import type { Message, Proposal, WeddingProject } from "@/types/marketplace";
 
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
@@ -44,7 +46,7 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
   return (
     <div className={`relative shrink-0 ${className}`}>
       {src ? (
-        <img src={src} alt={name} className="rounded-full object-cover border border-black/[0.06] h-full w-full" />
+        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-black/[0.06]" unoptimized />
       ) : (
         <div className="rounded-full bg-primary/10 text-primary font-serif font-semibold flex items-center justify-center h-full w-full">
           {initials}
@@ -55,13 +57,20 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
   );
 }
 
+type CoupleInfo = { firstName: string; lastName: string; avatarUrl: string | null };
+type EnrichedProject = WeddingProject & { email?: string; phone?: string };
+interface ProposalWithDetails extends Proposal {
+  project: EnrichedProject | null;
+  couple: CoupleInfo | null;
+}
+
 export default function VendorMessagingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const proposalId = searchParams.get("proposal");
-  const [proposals, setProposals] = useState<any[]>([]);
-  const [selected, setSelected] = useState<any | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<ProposalWithDetails[]>([]);
+  const [selected, setSelected] = useState<ProposalWithDetails | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -81,9 +90,9 @@ export default function VendorMessagingPage() {
           return;
         }
         const json = await res.json();
-        const list = json.proposals || [];
+        const list = (json.proposals || []) as ProposalWithDetails[];
         setProposals(list);
-        const preselected = list.find((p: any) => p.id === proposalId) || list[0];
+        const preselected = list.find((p) => p.id === proposalId) || list[0];
         setSelected(preselected);
       } catch {
         // ignore
@@ -108,8 +117,9 @@ export default function VendorMessagingPage() {
 
   useEffect(() => {
     if (!selected) return;
+    const id = selected.id;
     async function loadMessages() {
-      const res = await fetch(`/api/messages?proposalId=${selected.id}`);
+      const res = await fetch(`/api/messages?proposalId=${id}`);
       const json = await res.json();
       setMessages(json.messages || []);
     }
@@ -147,8 +157,8 @@ export default function VendorMessagingPage() {
     );
   }, [proposals, search]);
 
-  const lastMessage = (p: any) => messages.filter((m) => m.proposalId === p.id).pop() || null;
-  const unreadCount = (p: any) => messages.filter((m) => m.proposalId === p.id && m.senderRole !== "vendor" && !m.readAt).length;
+  const lastMessage = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id).pop() || null;
+  const unreadCount = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id && m.senderRole !== "vendor" && !m.readAt).length;
 
   if (loading) return <div className="min-h-[80dvh] bg-background" />;
 
@@ -263,7 +273,7 @@ export default function VendorMessagingPage() {
 
                 {phoneUnavailable && (
                   <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center justify-between">
-                    <span>L'appel téléphonique n'est pas encore disponible. Utilisez la messagerie.</span>
+                    <span>L&apos;appel téléphonique n&apos;est pas encore disponible. Utilisez la messagerie.</span>
                     <button onClick={() => setPhoneUnavailable(false)} className="p-1 hover:bg-amber-100 rounded"><X size={14} /></button>
                   </div>
                 )}
@@ -385,12 +395,12 @@ export default function VendorMessagingPage() {
                         <span>{selected.project.guestCount} invités</span>
                       </div>
                     )}
-                    {selected.project?.style?.style && (
+                    {selected.project?.style && (
                       <div className="flex items-center gap-2 text-text-secondary">
                         <Star size={14} className="text-primary" />
                         <span className="capitalize">
-                          Style {selected.project.style.style}
-                          {selected.project.style.customStyleDescription && ` — ${selected.project.style.customStyleDescription}`}
+                          Style {selected.project.style}
+                          {selected.project.customStyleDescription && ` — ${selected.project.customStyleDescription}`}
                         </span>
                       </div>
                     )}

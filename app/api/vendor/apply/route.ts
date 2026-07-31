@@ -101,7 +101,10 @@ export async function POST(req: Request) {
       lastName: lastName || "",
       avatarUrl: null,
       phone: applicationData.phone,
+      address: null,
       role: "vendor",
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
       emailVerified: false,
     });
 
@@ -191,9 +194,7 @@ export async function POST(req: Request) {
     await eventRepo.log(application.id, "vendor_application_created", { category: application.serviceCategory });
 
     const token = createSession(user);
-    setSessionCookie(token);
-
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         ok: true,
         id: application.id,
@@ -201,6 +202,8 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
+    setSessionCookie(response, token);
+    return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Une erreur est survenue";
     console.error("[vendor/apply]", message);

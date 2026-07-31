@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { Tender } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "tenders";
 
@@ -15,7 +15,7 @@ export const tenderRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const tender: Tender = { ...data, id, createdAt: now, updatedAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, tender);
       return tender;
     }
@@ -25,14 +25,14 @@ export const tenderRepo = {
   },
 
   async list(): Promise<Tender[]> {
-    if (useLocal()) return localStore.all<Tender>(COLLECTION);
+    if (isLocalMode()) return localStore.all<Tender>(COLLECTION);
     const col = await getFirestoreCol();
     const snap = await col.get();
     return snap.docs.map((d) => d.data() as Tender);
   },
 
   async listByProject(projectId: string): Promise<Tender[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Tender>(COLLECTION);
       return all.filter((t) => t.projectId === projectId);
     }
@@ -42,7 +42,7 @@ export const tenderRepo = {
   },
 
   async get(id: string): Promise<Tender | null> {
-    if (useLocal()) return localStore.get<Tender>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<Tender>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as Tender) : null;
@@ -50,7 +50,7 @@ export const tenderRepo = {
 
   async update(id: string, data: Partial<Tender>): Promise<Tender> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<Tender>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();

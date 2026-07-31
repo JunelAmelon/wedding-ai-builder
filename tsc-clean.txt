@@ -1,0 +1,18 @@
+﻿app/(couple)/espace-couple/messagerie/page.tsx(120,59): error TS18047: 'selected' is possibly 'null'.
+app/(couple)/espace-couple/prestataires/[id]/page.tsx(78,11): error TS2430: Interface 'EnrichedVendor' incorrectly extends interface 'VendorProfile'.
+  Types of property 'serviceArea' are incompatible.
+    Type '{ cities?: string[] | undefined; } | undefined' is not assignable to type '{ regions: string[]; cities: string[]; radius: number | null; travelPolicy: string | null; }'.
+      Type 'undefined' is not assignable to type '{ regions: string[]; cities: string[]; radius: number | null; travelPolicy: string | null; }'.
+app/(couple)/espace-couple/prestataires/[id]/page.tsx(207,61): error TS2339: Property 'notes' does not exist on type 'TenderWithProposals'.
+app/(couple)/espace-couple/prestataires/[id]/page.tsx(237,86): error TS2345: Argument of type 'string | null' is not assignable to parameter of type 'string | Date | undefined'.
+  Type 'null' is not assignable to type 'string | Date | undefined'.
+app/(couple)/espace-couple/prestataires/profil/[vendorId]/page.tsx(72,11): error TS2430: Interface 'EnrichedVendorProfile' incorrectly extends interface 'VendorProfile'.
+  Types of property 'pricingDetails' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string | null'.
+      Type 'undefined' is not assignable to type 'string | null'.
+app/(couple)/espace-couple/prestataires/profil/[vendorId]/page.tsx(287,12): error TS18048: 'vendor.portfolio.videos.length' is possibly 'undefined'.
+app/(couple)/espace-couple/result/page.tsx(635,38): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ venue: number; catering: number; photography: number; music: number; decoration: number; contingency: number; } | Record<string, number>'.
+  No index signature with a parameter of type 'string' was found on type '{ venue: number; catering: number; photography: number; music: number; decoration: number; contingency: number; } | Record<string, number>'.
+app/(couple)/espace-couple/result/page.tsx(683,97): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ venue: number; catering: number; photography: number; music: number; decoration: number; contingency: number; } | Record<string, number>'.
+  No index signature with a parameter of type 'string' was found on type '{ venue: number; catering: number; photography: number; music: number; decoration: number; contingency: number; } | Record<string, number>'.
+

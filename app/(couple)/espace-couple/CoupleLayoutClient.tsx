@@ -2,9 +2,9 @@
 
 import { ReactNode, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import {
-  LayoutGrid,
   Heart,
   Wallet,
   CalendarRange,
@@ -16,7 +16,6 @@ import {
   X,
   LogOut,
 } from "lucide-react";
-import { Logo } from "@/components/layout/Logo";
 
 const COUPLE_NAV = [
   { href: "/espace-couple/result", label: "Plan IA", icon: Sparkles },
@@ -72,15 +71,15 @@ export default function CoupleLayoutClient({
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#FAFAF8] text-text-primary">
+    <div className="min-h-[100dvh] bg-surface text-text-primary">
       <div
         className={`hidden lg:block fixed inset-x-0 z-40 px-6 transition-all duration-300 ${
           scrolled ? "top-0 py-3 bg-white/75 backdrop-blur-xl border-b border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.06)]" : "top-5"
         }`}
       >
         <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-2xl bg-white/40 border border-black/[0.04]" : ""}`}>
-          <Link href="/espace-couple/result" className="flex items-center h-20 overflow-visible flex-shrink-0 relative z-10 -ml-10">
-            <Logo height={120} scale={3} />
+          <Link href="/espace-couple/result" className="font-display text-xl font-semibold text-[#1c1c1c]">
+            Mariage Facile
           </Link>
 
           <nav className="flex items-center gap-0.5 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.08)] px-1.5 py-1.5">
@@ -91,7 +90,7 @@ export default function CoupleLayoutClient({
                   key={item.href}
                   href={item.href}
                   className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-colors ${
-                    active ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary hover:bg-black/[0.04]"
+                    active ? "bg-ink text-white" : "text-text-secondary hover:text-text-primary hover:bg-black/[0.04]"
                   }`}
                 >
                   <item.icon size={15} strokeWidth={1.9} className={active ? "text-white" : "text-text-secondary/70"} />
@@ -144,13 +143,11 @@ export default function CoupleLayoutClient({
             className="flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.08)] hover:border-black/15 transition-colors shrink-0"
           >
             {safeUser.avatarUrl ? (
-              <img
-                src={safeUser.avatarUrl}
-                alt={initials || "Profil"}
-                className="h-8 w-8 rounded-full object-cover border border-black/10"
-              />
+              <div className="relative h-8 w-8 shrink-0">
+                <Image src={safeUser.avatarUrl} alt={initials || "Profil"} fill sizes="32px" className="rounded-full object-cover border border-black/10" unoptimized />
+              </div>
             ) : (
-              <span className="h-8 w-8 rounded-full bg-primary text-white text-xs font-semibold flex items-center justify-center">
+              <span className="h-8 w-8 rounded-full bg-ink text-white text-xs font-semibold flex items-center justify-center">
                 {initials || "·"}
               </span>
             )}
@@ -161,9 +158,9 @@ export default function CoupleLayoutClient({
         </div>
       </div>
 
-      <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#FAFAF8]/90 backdrop-blur-xl">
-        <Link href="/espace-couple/result" className="flex items-center h-20 overflow-visible -ml-10">
-          <Logo height={120} scale={3} />
+      <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-surface/90 backdrop-blur-xl">
+        <Link href="/espace-couple/result" className="font-display text-xl font-semibold text-[#1c1c1c]">
+          Mariage Facile
         </Link>
         <button
           onClick={() => setMoreOpen(true)}
@@ -179,20 +176,18 @@ export default function CoupleLayoutClient({
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setMoreOpen(false)} />
           <div className="relative ml-auto h-full w-72 bg-white p-5 flex flex-col">
             <div className="flex items-center justify-between mb-6">
-              <span className="font-serif text-base font-semibold">Menu</span>
+              <span className="font-display text-base font-semibold">Menu</span>
               <button onClick={() => setMoreOpen(false)} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/[0.04]">
                 <X size={18} />
               </button>
             </div>
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-black/[0.06]">
               {safeUser.avatarUrl ? (
-                <img
-                  src={safeUser.avatarUrl}
-                  alt={initials || "Profil"}
-                  className="h-10 w-10 rounded-full object-cover border border-black/10"
-                />
+                <div className="relative h-10 w-10 shrink-0">
+                  <Image src={safeUser.avatarUrl} alt={initials || "Profil"} fill sizes="40px" className="rounded-full object-cover border border-black/10" unoptimized />
+                </div>
               ) : (
-                <span className="h-10 w-10 rounded-full bg-primary text-white text-sm font-semibold flex items-center justify-center">
+                <span className="h-10 w-10 rounded-full bg-ink text-white text-sm font-semibold flex items-center justify-center">
                   {initials || "·"}
                 </span>
               )}
@@ -250,7 +245,7 @@ export default function CoupleLayoutClient({
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className="-mt-7 h-14 w-14 rounded-full bg-primary text-white flex items-center justify-center shadow-[0_10px_24px_rgba(244,63,94,0.35)] shrink-0"
+                  className="-mt-7 h-14 w-14 rounded-full bg-ink text-white flex items-center justify-center shadow-[0_10px_24px_rgba(14,14,16,0.25)] shrink-0"
                 >
                   <tab.icon size={22} strokeWidth={2} />
                 </Link>
@@ -261,7 +256,7 @@ export default function CoupleLayoutClient({
                 key={tab.href}
                 href={tab.href}
                 className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-2xl text-[10px] font-medium transition-colors ${
-                  active ? "text-primary" : "text-text-secondary"
+                  active ? "text-ink" : "text-text-secondary"
                 }`}
               >
                 <tab.icon size={19} strokeWidth={active ? 2.1 : 1.75} />
@@ -272,7 +267,7 @@ export default function CoupleLayoutClient({
           <button
             onClick={() => setMoreOpen(true)}
             className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-2xl text-[10px] font-medium transition-colors ${
-              moreOpen ? "text-primary" : "text-text-secondary"
+              moreOpen ? "text-ink" : "text-text-secondary"
             }`}
             aria-label="Plus"
           >

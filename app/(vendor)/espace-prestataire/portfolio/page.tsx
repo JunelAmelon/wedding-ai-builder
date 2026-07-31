@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { CloudinaryUpload } from "@/components/vendor/CloudinaryUpload";
-import { Upload, Trash2, Images, Plus, Star, MessageCircleQuestion } from "lucide-react";
+import { Upload, Trash2, Plus, Star, MessageCircleQuestion } from "lucide-react";
+import type { VendorProfile } from "@/types/marketplace";
 import { PageHeader, Card } from "../_ui";
 
 interface CloudinaryAsset {
@@ -15,7 +17,7 @@ interface CloudinaryAsset {
 
 export default function VendorPortfolioPage() {
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<VendorProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [images, setImages] = useState<CloudinaryAsset[]>([]);
@@ -92,7 +94,7 @@ export default function VendorPortfolioPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {images.map((img) => (
             <div key={img.publicId} className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-surface border border-black/10 group">
-              <img src={img.url} alt={img.filename} className="w-full h-full object-cover" />
+              <Image src={img.url} alt={img.filename} fill sizes="(max-width: 1024px) 50vw, 33vw" className="object-cover" unoptimized />
               <button
                 onClick={() => removeImage(img.publicId)}
                 className="absolute top-2 right-2 p-2 rounded-xl bg-white/90 text-error opacity-0 group-hover:opacity-100 transition"

@@ -10,6 +10,7 @@ const UpdateMeSchema = z.object({
   lastName: z.string().min(1).optional(),
   avatarUrl: z.string().url().nullable().optional(),
   phone: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
 });
 
 export async function GET() {
@@ -36,8 +37,12 @@ export async function GET() {
       lastName: user.lastName,
       avatarUrl: user.avatarUrl,
       role: user.role,
+      adminRole: user.adminRole,
       phone: user.phone,
+      address: user.address,
       emailVerified: user.emailVerified,
+      stripeCustomerId: user.stripeCustomerId,
+      stripeSubscriptionId: user.stripeSubscriptionId,
     },
     profile,
   });
@@ -77,8 +82,12 @@ export async function PUT(req: Request) {
         lastName: user.lastName,
         avatarUrl: user.avatarUrl,
         role: user.role,
+        adminRole: user.adminRole,
         phone: user.phone,
+        address: user.address,
         emailVerified: user.emailVerified,
+        stripeCustomerId: user.stripeCustomerId,
+        stripeSubscriptionId: user.stripeSubscriptionId,
       },
       profile,
     });

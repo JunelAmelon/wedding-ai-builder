@@ -1,624 +1,178 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Lock, Users, Briefcase, FileText, CheckCircle2, XCircle, Clock, ExternalLink, Search, Calendar, Mail, Phone, MapPin, ArrowLeft, ShieldCheck, Trash2, Save, Sparkles, AlertTriangle, Wrench } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import type { Lead, VendorApplication } from "@/types/domain";
+import {
+  Users,
+  Briefcase,
+  ClipboardList,
+  FolderKanban,
+  TrendingUp,
+  CreditCard,
+  Euro,
+  ArrowUpRight,
+  Loader2,
+} from "lucide-react";
+import type { AdminDashboardStats } from "@/types/admin";
 
-const STATUS_LABELS: Record<VendorApplication["status"], string> = {
-  pending: "En attente",
-  approved: "Approuvé",
-  rejected: "Rejeté",
-};
+const SAGE = "#D8ECD9";
+const LIME = "#dff05a";
+const INK = "#1c1c1c";
 
-const STATUS_COLORS: Record<VendorApplication["status"], string> = {
-  pending: "bg-amber-100 text-amber-700 border-amber-200",
-  approved: "bg-green-100 text-green-700 border-green-200",
-  rejected: "bg-red-100 text-red-700 border-red-200",
-};
+const STAT_CARDS = [
+  { key: "totalCouples" as const, label: "Couples inscrits", icon: Users, prefix: "" },
+  { key: "totalVendors" as const, label: "Prestataires", icon: Briefcase, prefix: "" },
+  { key: "pendingVendors" as const, label: "Candidatures en attente", icon: ClipboardList, prefix: "" },
+  { key: "totalProjects" as const, label: "Mariages actifs", icon: FolderKanban, prefix: "" },
+  { key: "activeSubscriptions" as const, label: "Abonnements actifs", icon: CreditCard, prefix: "" },
+  { key: "monthlyRecurringRevenue" as const, label: "MRR", icon: Euro, prefix: "€" },
+];
 
-export default function AdminPage() {
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [vendors, setVendors] = useState<VendorApplication[]>([]);
-  const [activeTab, setActiveTab] = useState<"leads" | "vendors" | "projects">("leads");
-  const [search, setSearch] = useState("");
-  const [selectedVendor, setSelectedVendor] = useState<VendorApplication | null>(null);
-  const [notes, setNotes] = useState("");
-  const [regenerating, setRegenerating] = useState<Set<string>>(new Set());
-  const [audit, setAudit] = useState<{ totalProjects: number; corruptedCount: number; corrupted: any[] } | null>(null);
-  const [auditing, setAuditing] = useState(false);
-  const [fixing, setFixing] = useState<Set<string>>(new Set());
+const TIME_FRAMES = [
+  { key: "today" as const, label: "Aujourd'hui" },
+  { key: "week" as const, label: "7 jours" },
+  { key: "month" as const, label: "30 jours" },
+];
 
-  async function login(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/admin/data", {
-        headers: { authorization: `Bearer ${password}` },
-      });
-      if (!res.ok) throw new Error("Mot de passe incorrect");
-      const data = (await res.json()) as { leads: Lead[]; vendorApplications: VendorApplication[] };
-      setToken(password);
-      setLeads(data.leads);
-      setVendors(data.vendorApplications);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function refresh() {
-    if (!token) return;
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin/data", {
-        headers: { authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Session expirée");
-      const data = (await res.json()) as { leads: Lead[]; vendorApplications: VendorApplication[] };
-      setLeads(data.leads);
-      setVendors(data.vendorApplications);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur");
-      setToken(null);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function regenerateResult(sessionId: string) {
-    if (!token) return;
-    setRegenerating((prev) => new Set(prev).add(sessionId));
-    try {
-      const res = await fetch(`/api/admin/session/${sessionId}/regenerate`, {
-        method: "POST",
-        headers: { authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Échec de la régénération");
-      alert("Résultat régénéré avec succès");
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
-    } finally {
-      setRegenerating((prev) => {
-        const next = new Set(prev);
-        next.delete(sessionId);
-        return next;
-      });
-    }
-  }
-
-  async function loadAudit() {
-    if (!token) return;
-    setAuditing(true);
-    try {
-      const res = await fetch("/api/admin/project-audit", {
-        headers: { authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Échec de l'audit");
-      setAudit(await res.json());
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
-    } finally {
-      setAuditing(false);
-    }
-  }
-
-  async function fixProject(projectId: string) {
-    if (!token) return;
-    setFixing((prev) => new Set(prev).add(projectId));
-    try {
-      const res = await fetch(`/api/admin/project/${projectId}/fix`, {
-        method: "POST",
-        headers: { authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Échec de la réparation");
-      alert("Projet réparé avec succès");
-      await loadAudit();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
-    } finally {
-      setFixing((prev) => {
-        const next = new Set(prev);
-        next.delete(projectId);
-        return next;
-      });
-    }
-  }
-
-  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
-
-  async function updateVendorStatus(id: string, status: VendorApplication["status"]) {
-    if (!token) return;
-    try {
-      const res = await fetch(`/api/admin/vendor/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", authorization: `Bearer ${token}` },
-        body: JSON.stringify({ status, notes }),
-      });
-      if (!res.ok) throw new Error("Échec de la mise à jour");
-      const data = (await res.json()) as { application: VendorApplication; generatedPassword: string | null };
-      setVendors((prev) => prev.map((v) => (v.id === id ? data.application : v)));
-      setSelectedVendor(data.application);
-      setGeneratedPassword(data.generatedPassword || null);
-      setNotes("");
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
-    }
-  }
+export default function AdminDashboardPage() {
+  const [stats, setStats] = useState<AdminDashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (token) refresh();
+    fetch("/api/admin/stats")
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Erreur de chargement");
+        const data = await res.json();
+        setStats(data.stats);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  const filteredLeads = leads.filter((l) =>
-    [l.email, l.whatsapp, l.source].filter(Boolean).join(" ").toLowerCase().includes(search.toLowerCase())
-  );
-  const filteredVendors = vendors.filter((v) =>
-    [v.companyName, v.email, v.phone, v.serviceCategory, v.contactName].filter(Boolean).join(" ").toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (!token) {
+  if (loading) {
     return (
-      <main className="min-h-[100dvh] bg-background flex items-center justify-center px-6">
-        <div className="w-full max-w-md rounded-3xl border border-black/10 bg-white p-8 shadow-[0_30px_80px_rgba(11,15,26,0.08)]">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-6">
-            <Lock className="text-primary" size={32} />
-          </div>
-          <h1 className="font-serif text-2xl font-bold text-text-primary text-center mb-2">Espace Superadmin</h1>
-          <p className="text-text-secondary text-center text-sm mb-6">Saisissez le mot de passe admin pour accéder aux soumissions.</p>
-          <form onSubmit={login} className="space-y-4">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mot de passe admin"
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <Button
-              type="submit"
-              disabled={loading}
-              loading={loading}
-              variant="primary"
-              className="w-full"
-            >
-              {loading ? "Connexion..." : "Accéder au dashboard"}
-            </Button>
-          </form>
-          <div className="mt-6 text-center">
-            <Link href="/" className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition">
-              <ArrowLeft size={16} /> Retour à l'accueil
-            </Link>
-          </div>
-        </div>
-      </main>
+      <div className="flex items-center justify-center h-[60vh]">
+        <Loader2 size={28} className="animate-spin" style={{ color: INK }} />
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="rounded-2xl bg-rose-50 text-rose-700 p-6">
+        <p className="font-medium">Impossible de charger le dashboard</p>
+        <p className="text-sm opacity-80">{error}</p>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-[100dvh] bg-background">
-      <div className="border-b border-black/10 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <ShieldCheck className="text-primary" size={24} />
-            <h1 className="font-serif text-xl font-semibold text-text-primary">Superadmin</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={refresh}
-              className="text-sm text-text-secondary hover:text-text-primary transition"
-              disabled={loading}
-            >
-              {loading ? "Chargement..." : "Actualiser"}
-            </button>
-            <Link href="/" className="text-sm text-text-secondary hover:text-text-primary transition">
-              Accueil
-            </Link>
-          </div>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-semibold font-display" style={{ color: INK }}>Dashboard</h1>
+        <p className="text-sm mt-1" style={{ color: `${INK}99` }}>Vue d&apos;ensemble de l&apos;activité de la plateforme</p>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
-          <div className="flex items-center gap-2 bg-white rounded-xl border border-black/10 p-1">
-            <button
-              onClick={() => setActiveTab("leads")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                activeTab === "leads" ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary"
-              }`}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        {STAT_CARDS.map((card) => {
+          const value = stats[card.key] ?? 0;
+          return (
+            <div
+              key={card.key}
+              className="bg-white rounded-2xl border border-[#1c1c1c]/10 p-5 shadow-[0_8px_30px_rgba(11,15,26,0.04)]"
             >
-              <Users size={16} /> Mariés ({leads.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("vendors")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                activeTab === "vendors" ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              <Briefcase size={16} /> Professionnels ({vendors.length})
-            </button>
-            <button
-              onClick={() => {
-                setActiveTab("projects");
-                if (!audit) loadAudit();
-              }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                activeTab === "projects" ? "bg-primary text-white" : "text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              <AlertTriangle size={16} /> Projets
-            </button>
+              <div className="flex items-start justify-between mb-3">
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: SAGE, color: INK }}>
+                  <card.icon size={20} strokeWidth={1.75} />
+                </div>
+              </div>
+              <div className="text-2xl font-semibold font-display" style={{ color: INK }}>
+                {card.prefix}
+                {typeof value === "number" ? value.toLocaleString("fr-FR") : value}
+              </div>
+              <div className="text-sm mt-0.5" style={{ color: `${INK}99` }}>{card.label}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-[#1c1c1c]/10 p-6 shadow-[0_8px_30px_rgba(11,15,26,0.04)]">
+          <h2 className="text-base font-semibold mb-4" style={{ color: INK }}>Nouveaux inscrits</h2>
+          <div className="grid grid-cols-3 gap-4">
+            {TIME_FRAMES.map((tf) => {
+              const coupleKey = `newCouples${tf.key.charAt(0).toUpperCase() + tf.key.slice(1)}` as keyof AdminDashboardStats;
+              const vendorKey = `newVendors${tf.key.charAt(0).toUpperCase() + tf.key.slice(1)}` as keyof AdminDashboardStats;
+              return (
+                <div key={tf.key} className="rounded-xl p-4" style={{ backgroundColor: SAGE }}>
+                  <div className="text-xs uppercase tracking-wide mb-2" style={{ color: `${INK}99` }}>{tf.label}</div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-lg font-semibold" style={{ color: INK }}>{stats[coupleKey] as number}</div>
+                      <div className="text-xs" style={{ color: `${INK}99` }}>Couples</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-semibold" style={{ color: INK }}>{stats[vendorKey] as number}</div>
+                      <div className="text-xs" style={{ color: `${INK}99` }}>Pros</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" size={18} />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher..."
-              className="w-full rounded-xl border border-black/10 pl-10 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+          <div className="mt-6 flex items-center justify-between p-4 rounded-xl" style={{ backgroundColor: LIME }}>
+            <div className="flex items-center gap-3">
+              <TrendingUp size={18} style={{ color: INK }} />
+              <span className="text-sm font-medium" style={{ color: INK }}>Taux de conversion quiz → compte</span>
+            </div>
+            <span className="text-lg font-semibold" style={{ color: INK }}>{stats.quizToAccountRate}%</span>
           </div>
         </div>
 
-        {activeTab === "leads" && (
-          <div className="rounded-2xl border border-black/10 bg-white overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-surface text-text-secondary">
-                  <tr>
-                    <th className="text-left px-4 py-3 font-medium">Email</th>
-                    <th className="text-left px-4 py-3 font-medium">WhatsApp</th>
-                    <th className="text-left px-4 py-3 font-medium">Source</th>
-                    <th className="text-left px-4 py-3 font-medium">Date</th>
-                    <th className="text-left px-4 py-3 font-medium">Résultat</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-black/10">
-                  {filteredLeads.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-surface/50">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <Mail size={14} className="text-text-secondary" />
-                          {lead.email}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">{lead.whatsapp || "—"}</td>
-                      <td className="px-4 py-3"><span className="capitalize">{lead.source}</span></td>
-                      <td className="px-4 py-3 text-text-secondary">{new Date(lead.capturedAt).toLocaleString("fr-FR")}</td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => regenerateResult(lead.sessionId)}
-                          disabled={!lead.sessionId || regenerating.has(lead.sessionId)}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 text-primary px-3 py-1.5 text-xs font-medium hover:bg-primary/20 transition disabled:opacity-50"
-                        >
-                          <Sparkles size={14} />
-                          {regenerating.has(lead.sessionId) ? "Génération..." : "Régénérer"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {filteredLeads.length === 0 && <p className="p-6 text-center text-text-secondary">Aucune soumission marié.</p>}
-          </div>
-        )}
-
-        {activeTab === "projects" && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-serif text-lg font-semibold">Audit des projets</h2>
-                {audit && (
-                  <p className="text-sm text-text-secondary">
-                    {audit.totalProjects} projet(s) au total — {audit.corruptedCount} problème(s) détecté(s)
-                  </p>
-                )}
-              </div>
-              <button
-                onClick={loadAudit}
-                disabled={auditing}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium hover:bg-primary/90 transition disabled:opacity-50"
-              >
-                <Wrench size={16} />
-                {auditing ? "Audit en cours..." : "Relancer l'audit"}
-              </button>
-            </div>
-
-            {audit ? (
-              audit.corrupted.length === 0 ? (
-                <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center">
-                  <CheckCircle2 className="mx-auto text-green-600 mb-2" size={32} />
-                  <p className="text-green-800 font-medium">Aucun projet corrompu détecté.</p>
-                  <p className="text-green-700 text-sm mt-1">
-                    Si un utilisateur voit encore des données d'un autre compte, le problème vient probablement d'une nouvelle fuite après connexion (vérifiez que le code corrigé est bien déployé).
-                  </p>
-                </div>
-              ) : (
-                <div className="rounded-2xl border border-black/10 bg-white overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-surface text-text-secondary">
-                        <tr>
-                          <th className="text-left px-4 py-3 font-medium">Projet</th>
-                          <th className="text-left px-4 py-3 font-medium">Utilisateur</th>
-                          <th className="text-left px-4 py-3 font-medium">Session</th>
-                          <th className="text-left px-4 py-3 font-medium">Problème</th>
-                          <th className="text-left px-4 py-3 font-medium">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-black/10">
-                        {audit.corrupted.map((issue) => (
-                          <tr key={issue.projectId} className="hover:bg-surface/50">
-                            <td className="px-4 py-3 font-mono text-xs">{issue.projectId}</td>
-                            <td className="px-4 py-3">
-                              <div className="text-text-primary">{issue.userEmail}</div>
-                              <div className="text-xs text-text-secondary font-mono">{issue.userId}</div>
-                            </td>
-                            <td className="px-4 py-3 font-mono text-xs">{issue.sessionId || "—"}</td>
-                            <td className="px-4 py-3">
-                              <span className="inline-flex items-center gap-1 rounded-full bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 text-xs font-medium">
-                                <AlertTriangle size={12} />
-                                {issue.message}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3">
-                              {issue.type === "wrong_owner" || issue.type === "orphan_session" || issue.type === "missing_session" ? (
-                                <button
-                                  onClick={() => fixProject(issue.projectId)}
-                                  disabled={fixing.has(issue.projectId)}
-                                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 text-primary px-3 py-1.5 text-xs font-medium hover:bg-primary/20 transition disabled:opacity-50"
-                                >
-                                  <Wrench size={14} />
-                                  {fixing.has(issue.projectId) ? "Réparation..." : "Réparer"}
-                                </button>
-                              ) : (
-                                <span className="text-text-secondary text-xs">—</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )
-            ) : (
-              <div className="rounded-2xl border border-black/10 bg-white p-8 text-center">
-                <p className="text-text-secondary">Cliquez sur « Relancer l'audit » pour analyser les projets.</p>
-              </div>
+        <div className="bg-white rounded-2xl border border-[#1c1c1c]/10 p-6 shadow-[0_8px_30px_rgba(11,15,26,0.04)]">
+          <h2 className="text-base font-semibold mb-4" style={{ color: INK }}>Top catégories</h2>
+          <div className="space-y-3">
+            {stats.topCategories.length === 0 && (
+              <p className="text-sm" style={{ color: `${INK}99` }}>Aucune donnée</p>
             )}
-          </div>
-        )}
-
-        {activeTab === "vendors" && (
-          <div className="grid gap-4">
-            {filteredVendors.map((vendor) => (
-              <div
-                key={vendor.id}
-                onClick={() => {
-                  setSelectedVendor(vendor);
-                  setNotes(vendor.notes || "");
-                }}
-                className="cursor-pointer rounded-2xl border border-black/10 bg-white p-5 hover:border-primary/30 transition"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <Briefcase className="text-primary" size={20} />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-text-primary">{vendor.companyName}</div>
-                      <div className="text-xs text-text-secondary">{vendor.serviceCategory}</div>
-                    </div>
-                  </div>
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${STATUS_COLORS[vendor.status]}`}>
-                    {vendor.status === "pending" && <Clock size={12} />}
-                    {vendor.status === "approved" && <CheckCircle2 size={12} />}
-                    {vendor.status === "rejected" && <XCircle size={12} />}
-                    {STATUS_LABELS[vendor.status]}
-                  </span>
-                </div>
-                <div className="grid sm:grid-cols-3 gap-2 text-sm text-text-secondary">
-                  <div className="flex items-center gap-2"><Mail size={14} /> {vendor.email}</div>
-                  <div className="flex items-center gap-2"><Phone size={14} /> {vendor.phone}</div>
-                  <div className="flex items-center gap-2"><Calendar size={14} /> {new Date(vendor.createdAt).toLocaleDateString("fr-FR")}</div>
-                </div>
+            {stats.topCategories.map((cat) => (
+              <div key={cat.category} className="flex items-center justify-between text-sm" style={{ color: INK }}>
+                <span className="truncate pr-3">{cat.category}</span>
+                <span className="font-medium">{cat.count}</span>
               </div>
             ))}
-            {filteredVendors.length === 0 && <p className="p-6 text-center text-text-secondary rounded-2xl border border-black/10 bg-white">Aucune candidature professionnelle.</p>}
-          </div>
-        )}
-      </div>
-
-      {selectedVendor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedVendor(null)} />
-          <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl p-5 sm:p-7">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="font-serif text-xl font-semibold text-text-primary">{selectedVendor.companyName}</h2>
-              <button onClick={() => setSelectedVendor(null)} className="p-2 rounded-lg hover:bg-black/5"><XCircle size={20} className="text-text-secondary" /></button>
-            </div>
-
-            <div className="space-y-6">
-              <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-text-secondary">SIRET</span>
-                  <p className="font-medium text-text-primary">{selectedVendor.siret}</p>
-                </div>
-                <div>
-                  <span className="text-text-secondary">Marque</span>
-                  <p className="font-medium text-text-primary">{selectedVendor.brandName || "—"}</p>
-                </div>
-                <div>
-                  <span className="text-text-secondary">Catégorie</span>
-                  <p className="font-medium text-text-primary">{selectedVendor.serviceCategory}</p>
-                </div>
-                <div>
-                  <span className="text-text-secondary">Gamme</span>
-                  <p className="font-medium text-text-primary capitalize">{selectedVendor.tier}</p>
-                </div>
-                <div>
-                  <span className="text-text-secondary">Expérience</span>
-                  <p className="font-medium text-text-primary">{selectedVendor.yearsOfExperience} an(s)</p>
-                </div>
-                <div>
-                  <span className="text-text-secondary">Formation</span>
-                  <p className="font-medium text-text-primary">{selectedVendor.trainingDate ? new Date(selectedVendor.trainingDate).toLocaleDateString("fr-FR") : "—"}</p>
-                </div>
-                <div>
-                  <span className="text-text-secondary">Tarifs</span>
-                  <p className="font-medium text-text-primary">{selectedVendor.priceRange.min} - {selectedVendor.priceRange.max} {selectedVendor.priceRange.currency}</p>
-                </div>
-                <div>
-                  <span className="text-text-secondary">Zone</span>
-                  <p className="font-medium text-text-primary">
-                    {selectedVendor.serviceArea.regions.join(", ") || selectedVendor.serviceArea.cities.join(", ")}
-                    {selectedVendor.serviceArea.radius ? ` (${selectedVendor.serviceArea.radius} km)` : ""}
-                  </p>
-                </div>
-                <div className="sm:col-span-2">
-                  <span className="text-text-secondary">Adresse</span>
-                  <p className="font-medium text-text-primary flex items-center gap-2"><MapPin size={14} /> {selectedVendor.address.street}, {selectedVendor.address.zipCode} {selectedVendor.address.city}, {selectedVendor.address.country}</p>
-                </div>
-                <div className="sm:col-span-2">
-                  <span className="text-text-secondary">Contact</span>
-                  <p className="font-medium text-text-primary">{selectedVendor.contactName} — {selectedVendor.contactRole}</p>
-                </div>
-                <div className="sm:col-span-2">
-                  <span className="text-text-secondary">Description</span>
-                  <p className="text-text-primary mt-1">{selectedVendor.description}</p>
-                </div>
-                <div className="sm:col-span-2">
-                  <span className="text-text-secondary">Styles</span>
-                  <p className="text-text-primary mt-1">{selectedVendor.styles.join(", ") || "—"}</p>
-                </div>
-                {selectedVendor.pricingDetails && (
-                  <div className="sm:col-span-2">
-                    <span className="text-text-secondary">Détails tarifaires</span>
-                    <p className="text-text-primary mt-1">{selectedVendor.pricingDetails}</p>
-                  </div>
-                )}
-                {selectedVendor.trainingDescription && (
-                  <div className="sm:col-span-2">
-                    <span className="text-text-secondary">Détail formation</span>
-                    <p className="text-text-primary mt-1">{selectedVendor.trainingDescription}</p>
-                  </div>
-                )}
-                {selectedVendor.serviceArea.travelPolicy && (
-                  <div className="sm:col-span-2">
-                    <span className="text-text-secondary">Déplacements</span>
-                    <p className="text-text-primary mt-1">{selectedVendor.serviceArea.travelPolicy}</p>
-                  </div>
-                )}
-                {selectedVendor.availability.noticePeriod && (
-                  <div>
-                    <span className="text-text-secondary">Préavis</span>
-                    <p className="font-medium text-text-primary">{selectedVendor.availability.noticePeriod}</p>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <span className="text-text-secondary text-sm">Portfolio ({selectedVendor.portfolio.images.length})</span>
-                <div className="mt-2 grid gap-2">
-                  {selectedVendor.portfolio.images.map((img) => (
-                    <a
-                      key={img.publicId}
-                      href={img.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-between rounded-xl border border-black/10 bg-surface p-3 hover:border-primary/50 transition"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <FileText size={18} className="text-primary shrink-0" />
-                        <span className="text-sm text-text-primary truncate">{img.filename}</span>
-                      </div>
-                      <ExternalLink size={16} className="text-text-secondary shrink-0" />
-                    </a>
-                  ))}
-                  {selectedVendor.portfolio.images.length === 0 && <p className="text-sm text-text-secondary">Aucune image.</p>}
-                </div>
-              </div>
-
-              <div>
-                <span className="text-text-secondary text-sm">Documents ({selectedVendor.documents.length})</span>
-                <div className="mt-2 grid gap-2">
-                  {selectedVendor.documents.map((doc) => (
-                    <a
-                      key={doc.publicId}
-                      href={doc.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center justify-between rounded-xl border border-black/10 bg-surface p-3 hover:border-primary/50 transition"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <FileText size={18} className="text-primary shrink-0" />
-                        <span className="text-sm text-text-primary truncate">{doc.filename}</span>
-                      </div>
-                      <ExternalLink size={16} className="text-text-secondary shrink-0" />
-                    </a>
-                  ))}
-                  {selectedVendor.documents.length === 0 && <p className="text-sm text-text-secondary">Aucun document.</p>}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-1">Notes internes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
-                  className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-
-              {generatedPassword && (
-                <div className="rounded-xl border border-green-200 bg-green-50 p-4">
-                  <p className="text-sm text-green-800 font-medium mb-1">Mot de passe temporaire généré</p>
-                  <p className="font-mono text-lg text-green-900 font-semibold">{generatedPassword}</p>
-                  <p className="text-xs text-green-700 mt-1">Communiquez ce mot de passe au professionnel pour sa première connexion.</p>
-                </div>
-              )}
-
-              <div className="flex flex-wrap gap-3 pt-2">
-                <button
-                  onClick={() => updateVendorStatus(selectedVendor.id, "approved")}
-                  className="inline-flex items-center gap-2 rounded-full bg-green-600 px-5 py-2.5 text-white text-sm font-semibold hover:bg-green-700 transition"
-                >
-                  <CheckCircle2 size={16} /> Approuver
-                </button>
-                <button
-                  onClick={() => updateVendorStatus(selectedVendor.id, "rejected")}
-                  className="inline-flex items-center gap-2 rounded-full bg-red-600 px-5 py-2.5 text-white text-sm font-semibold hover:bg-red-700 transition"
-                >
-                  <XCircle size={16} /> Rejeter
-                </button>
-                <button
-                  onClick={() => updateVendorStatus(selectedVendor.id, "pending")}
-                  className="inline-flex items-center gap-2 rounded-full bg-amber-100 text-amber-700 border border-amber-200 px-5 py-2.5 text-sm font-semibold hover:bg-amber-200 transition"
-                >
-                  <Clock size={16} /> Remettre en attente
-                </button>
-                <button
-                  onClick={() => setSelectedVendor(null)}
-                  className="ml-auto inline-flex items-center gap-2 rounded-full border border-black/10 px-5 py-2.5 text-sm font-semibold text-text-secondary hover:bg-black/5 transition"
-                >
-                  <Trash2 size={16} /> Fermer
-                </button>
-              </div>
-            </div>
           </div>
         </div>
-      )}
-    </main>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Link
+          href="/admin/candidatures"
+          className="flex items-center justify-between p-5 rounded-2xl text-white hover:opacity-90 transition-colors"
+          style={{ backgroundColor: INK }}
+        >
+          <span className="font-medium">Voir les candidatures</span>
+          <ArrowUpRight size={18} />
+        </Link>
+        <Link
+          href="/admin/couples"
+          className="flex items-center justify-between p-5 rounded-2xl border border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30 transition-colors"
+          style={{ backgroundColor: SAGE, color: INK }}
+        >
+          <span className="font-medium">Gérer les couples</span>
+          <ArrowUpRight size={18} />
+        </Link>
+        <Link
+          href="/admin/pros"
+          className="flex items-center justify-between p-5 rounded-2xl border border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30 transition-colors"
+          style={{ backgroundColor: LIME, color: INK }}
+        >
+          <span className="font-medium">Gérer les pros</span>
+          <ArrowUpRight size={18} />
+        </Link>
+      </div>
+    </div>
   );
 }

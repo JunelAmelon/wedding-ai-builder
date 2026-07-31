@@ -149,7 +149,7 @@ export async function PUT(req: Request) {
           await delCached(`ai-output:${updated.sessionId}`);
           const output = await generateWeddingPlan(refreshedQuiz, updated.sessionId);
           await sessionRepo.setAIOutput(updated.sessionId, output);
-          await taskRepo.createFromTimeline(project.id, output.timeline, updated.weddingDate);
+          await taskRepo.createFromTimeline(project.id, output.timeline);
           regenerated = true;
         }
       } catch (regenErr) {

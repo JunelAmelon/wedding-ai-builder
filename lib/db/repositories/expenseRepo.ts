@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { WeddingExpense } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "wedding_expenses";
 
@@ -15,7 +15,7 @@ export const expenseRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const expense: WeddingExpense = { ...data, id, createdAt: now, updatedAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, expense);
       return expense;
     }
@@ -25,7 +25,7 @@ export const expenseRepo = {
   },
 
   async listByProject(projectId: string): Promise<WeddingExpense[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<WeddingExpense>(COLLECTION);
       return all.filter((e) => e.projectId === projectId);
     }
@@ -35,7 +35,7 @@ export const expenseRepo = {
   },
 
   async get(id: string): Promise<WeddingExpense | null> {
-    if (useLocal()) return localStore.get<WeddingExpense>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<WeddingExpense>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as WeddingExpense) : null;
@@ -43,7 +43,7 @@ export const expenseRepo = {
 
   async update(id: string, data: Partial<WeddingExpense>): Promise<WeddingExpense> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<WeddingExpense>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();
@@ -53,7 +53,7 @@ export const expenseRepo = {
   },
 
   async delete(id: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.delete(COLLECTION, id);
       return;
     }

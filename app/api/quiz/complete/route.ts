@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       const res = NextResponse.json({ ok: true, ready: true });
       res.headers.set("x-store-backend", getStoreBackend());
       return res;
-    } catch (err) {
+    } catch {
       const res = NextResponse.json({ ok: true, ready: false });
       res.headers.set("x-store-backend", getStoreBackend());
       return res;

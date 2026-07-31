@@ -22,14 +22,14 @@ export function QuestionPriority({ onAnswer }: { onAnswer: (value: MainPriority)
             key={opt.value}
             onClick={() => setPriority(opt.value)}
             className={
-              "w-full rounded-xl border px-4 py-4 text-left transition " +
+              "w-full rounded-r-md border px-4 py-4 text-left transition " +
               (priority === opt.value
-                ? "border-primary bg-primary/10"
-                : "border-black/10 bg-white hover:border-black/20")
+                ? "border-ink/25 bg-sage-chip ring-1 ring-ink/10"
+                : "border-line bg-white hover:border-ink/20 hover:bg-surface")
             }
             type="button"
           >
-            <div className="font-semibold">{opt.label}</div>
+            <div className="font-semibold text-text-primary">{opt.label}</div>
           </button>
         ))}
       </div>

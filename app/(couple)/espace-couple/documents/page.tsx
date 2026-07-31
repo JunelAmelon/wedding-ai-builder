@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import PageHeader from "@/components/couple/PageHeader";
 import { FileText, Calculator, Sparkles, ArrowRight } from "lucide-react";
 
 const DOCUMENT_LINKS = [
@@ -24,12 +24,11 @@ const DOCUMENT_LINKS = [
 export default function CoupleDocumentsPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-8">
-        <h1 className="font-serif text-3xl font-bold tracking-tight mb-2">Documents</h1>
-        <p className="text-text-secondary">
-          Accédez aux documents générés par l'application. L'upload de vos propres fichiers n'est pas encore activé.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Documents"
+        title="Documents"
+        description="Accédez aux documents générés par l'application. L'upload de vos propres fichiers n'est pas encore activé."
+      />
 
       <div className="grid gap-4">
         {DOCUMENT_LINKS.map((doc) => (
@@ -57,7 +56,7 @@ export default function CoupleDocumentsPage() {
       <div className="mt-10 rounded-2xl border border-dashed border-black/20 p-8 text-center">
         <FileText size={40} className="text-text-secondary mx-auto mb-3" />
         <p className="text-text-secondary text-sm max-w-md mx-auto">
-          L'ajout de contrats, devis et factures personnels sera disponible prochainement.
+          L&apos;ajout de contrats, devis et factures personnels sera disponible prochainement.
         </p>
       </div>
     </div>

@@ -146,7 +146,8 @@ export function calculateMatchScore(
 
   // Guest count compatibility
   if (ctx.guestCount && vendor.serviceArea) {
-    const capacity = (vendor as any).capacity ?? (vendor as any).guestCapacity;
+    const vendorData = vendor as unknown as { capacity?: number; guestCapacity?: number };
+    const capacity = vendorData.capacity ?? vendorData.guestCapacity;
     if (capacity && ctx.guestCount <= capacity) {
       score += 10;
       reasons.push("sa capacité correspond à votre nombre d'invités");
@@ -270,7 +271,7 @@ export async function findTopMatches(
     return {
       id: "",
       projectId: project.id,
-      tenderId: (tender as any).id ?? null,
+      tenderId: tender.id ?? null,
       vendorId: vendor.id,
       category,
       score,

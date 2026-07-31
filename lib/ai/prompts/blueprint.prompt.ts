@@ -49,14 +49,6 @@ function normalizeStyle(answers: QuizAnswers): { style: string | undefined; cust
   };
 }
 
-function styleLabel(answers: QuizAnswers): string {
-  const { style, customStyle, customStyleDescription } = normalizeStyle(answers);
-  if (style === "autre" && customStyle) {
-    return `${customStyle}${customStyleDescription ? ` - ${customStyleDescription}` : ""}`;
-  }
-  return style ?? "non précisé";
-}
-
 export function buildBlueprintUserPrompt(answers: QuizAnswers): string {
   const { style, customStyle, customStyleDescription } = normalizeStyle(answers);
   const styleLine = style === "autre" && customStyle

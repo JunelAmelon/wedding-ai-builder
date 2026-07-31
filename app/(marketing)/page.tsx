@@ -1,660 +1,360 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ArrowRight, ShieldCheck, Check } from "lucide-react";
-
-const PROCESS_STEPS = [
-  {
-    n: "01",
-    title: "Vous répondez",
-    desc: "Date, budget, style, invités. Cinq questions, une par écran, sans jargon.",
-    img: "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=700&h=900&q=85",
-  },
-  {
-    n: "02",
-    title: "L'IA analyse",
-    desc: "Vos contraintes réelles sont croisées pour identifier les priorités et les risques.",
-    img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=700&h=900&q=85",
-  },
-  {
-    n: "03",
-    title: "Le plan se construit",
-    desc: "Budget réparti par poste, planning mensuel jusqu'au jour J.",
-    img: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=700&h=900&q=85",
-  },
-  {
-    n: "04",
-    title: "Les prestataires arrivent",
-    desc: "Matching automatique selon votre budget et votre style, sans recherche manuelle.",
-    img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=700&h=900&q=85",
-  },
-];
-
-const TESTIMONIALS = [
-  {
-    name: "Léa & Thomas",
-    meta: "Mariés en juin 2026, Nantes",
-    quote: "On a eu notre budget réparti en une soirée, alors qu'on tournait en rond depuis un mois.",
-    img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=600&h=400&q=80",
-  },
-  {
-    name: "Awa & Karim",
-    meta: "Mariés en avril 2026, Lyon",
-    quote: "Le matching nous a proposé un traiteur qu'on n'aurait jamais trouvé nous-mêmes, dans notre budget.",
-    img: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=600&h=400&q=80",
-  },
-  {
-    name: "Manon & Julie",
-    meta: "Mariage prévu en 2027, Bordeaux",
-    quote: "Gratuit, sans piège, sans CB à entrer. On a testé par curiosité, on est restés pour le plan.",
-    img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&h=400&q=80",
-  },
-];
+import { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
+import { Header, Footer } from "@/components/layout";
+import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const FAQS = [
-  {
-    q: "Est-ce vraiment gratuit pour les couples ?",
-    a: "Oui, sans exception. La plateforme est gratuite pour les couples comme pour les prestataires qui y sont référencés.",
-  },
-  {
-    q: "Que fait l'IA de mes réponses ?",
-    a: "Vos réponses servent uniquement à construire votre plan et à sélectionner des prestataires pertinents. Elles ne sont jamais revendues.",
-  },
-  {
-    q: "Puis-je modifier mon plan après coup ?",
-    a: "Oui, vous pouvez ajuster budget, date ou style à tout moment, le plan et le matching se recalculent.",
-  },
-  {
-    q: "Combien de prestataires vais-je recevoir ?",
-    a: "En général entre 3 et 5 recommandations par catégorie, choisies selon votre budget réel, pas une liste générique.",
-  },
+  { q: "Le plan est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et recevez immédiatement un budget réparti, un planning et une liste de prestataires compatibles." },
+  { q: "Mes données sont-elles utilisées à des fins commerciales ?", a: "Non. Nous ne revendons aucune donnée. Le plan peut être généré sans créer de compte." },
+  { q: "Comment sont choisis les prestataires ?", a: "Notre IA croise votre budget, votre style, votre date et votre zone géographique avec les profils vérifiés." },
+  { q: "Puis-je modifier mon plan après l'avoir reçu ?", a: "Oui, vous pouvez ajuster chaque poste et synchroniser les modifications avec votre espace couple." },
 ];
-
-const BUDGET_ROWS = [
-  { label: "Lieu de réception", amount: "8 500 €", dot: "bg-primary" },
-  { label: "Traiteur", amount: "6 200 €", dot: "bg-success" },
-  { label: "Photo & Vidéo", amount: "2 800 €", dot: "bg-[var(--cta-secondary,#F97316)]" },
-  { label: "Décoration", amount: "1 900 €", dot: "bg-black/30" },
-];
-
-const PROGRESS_ROWS = [
-  { label: "Budget", pct: 88 },
-  { label: "Planning", pct: 74 },
-  { label: "Prestataires", pct: 61 },
-  { label: "Risques", pct: 92 },
-];
-
-function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 export default function LandingPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeStep, setActiveStep] = useState(0);
-  const score = 82;
-  const circumference = 238;
-  const offset = circumference - (score / 100) * circumference;
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [testiIndex, setTestiIndex] = useState(0);
+  const heroStageOuterRef = useRef<HTMLDivElement>(null);
+  const heroStageRef = useRef<HTMLDivElement>(null);
+
+  const scaleHeroStage = useCallback(() => {
+    const outer = heroStageOuterRef.current;
+    const stage = heroStageRef.current;
+    if (!outer || !stage) return;
+    const available = outer.parentElement?.clientWidth || outer.clientWidth;
+    const scale = Math.min(1, available / 900);
+    stage.style.transform = `scale(${scale})`;
+    outer.style.height = `${520 * scale}px`;
+  }, []);
+
+  useEffect(() => {
+    scaleHeroStage();
+    window.addEventListener("resize", scaleHeroStage);
+    return () => window.removeEventListener("resize", scaleHeroStage);
+  }, [scaleHeroStage]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const testimonials = [
+    {
+      initials: "LT",
+      name: "Léa & Thomas",
+      meta: "Mariés à Nantes",
+      quote: "On a eu notre budget réparti en une soirée, alors qu&apos;on tournait en rond depuis un mois.",
+      img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=120&h=120&q=80",
+    },
+    {
+      initials: "AK",
+      name: "Awa & Karim",
+      meta: "Mariés à Lyon",
+      quote: "Le matching nous a proposé un traiteur qu&apos;on n&apos;aurait jamais trouvé nous-mêmes, dans notre budget.",
+      img: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=120&h=120&q=80",
+    },
+  ];
 
   return (
-    <main className="min-h-[100dvh] bg-background text-text-primary overflow-x-hidden">
-      <Header />
+    <>
+      <Header ctaHref="/quiz" ctaLabel="Créer mon plan" />
 
-      {/* HERO */}
-      <section className="relative pt-4 sm:pt-6 pb-10 sm:pb-12 px-4 sm:px-6" id="home">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
-            <div>
-              <h1 className="font-serif text-[clamp(2.4rem,5.5vw,4.2rem)] font-bold leading-[1.03] tracking-tight mb-5">
-                Votre mariage prêt en 5 minutes.
-                <span className="block text-text-secondary/60">Avec les bons pros.</span>
-              </h1>
-
-              <p className="text-text-secondary text-base sm:text-lg leading-relaxed mb-7 max-w-xl">
-                Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère
-                un plan complet et vous propose automatiquement les prestataires qui correspondent.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-3 mb-6">
-                <Link href="/quiz" className="w-full sm:w-auto">
-                  <Button variant="primary" iconRight={<ArrowRight size={18} />} className="w-full">
-                    Créer mon plan
-                  </Button>
-                </Link>
-                <Link href="#how" className="w-full sm:w-auto">
-                  <Button variant="secondary" className="w-full">
-                    Voir comment ça marche
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-3.5 flex-wrap mb-5">
-                <div className="flex -space-x-2.5">
-                  {[
-                    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&w=96&h=96&q=80",
-                    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&w=96&h=96&q=80",
-                    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=facearea&w=96&h=96&q=80",
-                    "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=facearea&w=96&h=96&q=80",
-                  ].map((src, idx) => (
-                    <div key={src} className="h-[38px] w-[38px] rounded-full border-2 border-white bg-white overflow-hidden shadow-sm">
-                      <Image src={src} alt="" width={38} height={38} className="h-full w-full object-cover" priority={idx === 0} />
-                    </div>
-                  ))}
-                </div>
-                <p className="text-sm text-text-secondary">
-                  <span className="font-bold text-text-primary">+2 400 couples</span> ont déjà planifié leur mariage
-                </p>
-              </div>
-
-              <div className="inline-flex items-center gap-2.5 text-sm text-text-secondary">
-                <span className="inline-flex items-center justify-center h-[26px] w-[26px] rounded-full border-[1.5px] border-primary text-primary text-[0.62rem] font-bold">
-                  0€
-                </span>
-                100% gratuit pour les couples, aucune carte bancaire demandée
-              </div>
-            </div>
-
-            {/* Dossier card */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              whileHover={{ y: -4 }}
-              className="rounded-[20px] border border-black/10 bg-white shadow-[0_20px_60px_rgba(11,15,26,0.08)] overflow-hidden transition-shadow hover:shadow-[0_28px_70px_rgba(11,15,26,0.12)]"
-            >
-              <div className="px-5 sm:px-6 py-4 border-b border-black/[0.06] flex items-center justify-between text-xs font-semibold uppercase tracking-[0.08em] text-text-secondary">
-                <span>Votre plan de mariage IA</span>
-                <span>Aperçu</span>
-              </div>
-
-              <div className="p-5 sm:p-6">
-                <div className="flex items-center gap-4 sm:gap-5 mb-6 flex-wrap">
-                  <div className="relative h-[88px] w-[88px] shrink-0">
-                    <svg viewBox="0 0 90 90" className="h-full w-full -rotate-90">
-                      <circle cx="45" cy="45" r="38" strokeWidth="7" className="stroke-black/10 fill-none" />
-                      <circle
-                        cx="45"
-                        cy="45"
-                        r="38"
-                        strokeWidth="7"
-                        className="stroke-primary fill-none"
-                        strokeLinecap="round"
-                        strokeDasharray={circumference}
-                        strokeDashoffset={offset}
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="font-serif text-2xl leading-none">{score}</div>
-                      <div className="text-[0.62rem] text-text-secondary tracking-[0.08em] mt-0.5">/100</div>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 min-w-[180px] space-y-2.5">
-                    {PROGRESS_ROWS.map((row) => (
-                      <div key={row.label} className="flex items-center justify-between gap-2.5">
-                        <div className="text-sm text-text-secondary w-[82px] shrink-0">{row.label}</div>
-                        <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                          <div className="h-1.5 flex-1 min-w-0 rounded-full bg-black/[0.06] overflow-hidden">
-                            <motion.div
-                              className="h-full rounded-full bg-gradient-to-r from-primary to-success"
-                              initial={{ width: 0 }}
-                              whileInView={{ width: `${row.pct}%` }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 1.1, ease: "easeOut" }}
-                            />
-                          </div>
-                          <div className="text-xs font-bold text-primary w-9 text-right shrink-0">{row.pct}%</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-black/[0.06] space-y-3">
-                  {BUDGET_ROWS.map((b) => (
-                    <div key={b.label} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2 text-text-secondary">
-                        <span className={`h-2 w-2 rounded-full ${b.dot}`} />
-                        {b.label}
-                      </div>
-                      <div className="font-bold text-text-primary">{b.amount}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-5 rounded-xl border border-primary/15 bg-primary/5 px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
-                  <div className="text-sm text-primary inline-flex items-center gap-2">
-                    <ShieldCheck size={18} className="shrink-0" />
-                    <span className="leading-tight">Plan complet disponible après inscription</span>
-                  </div>
-                  <ArrowRight size={18} className="text-primary shrink-0" />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* GALERIE : preuve visuelle stylisée */}
-      <Reveal>
-        <section className="px-4 sm:px-6 py-14 sm:py-16">
-          <div className="max-w-6xl mx-auto">
-            <div className="max-w-xl mx-auto text-center mb-10">
-              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">
-                De vrais mariages, de vrais prestataires
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-                Des vrais mariages, pas des catalogues
-              </h2>
-              <p className="text-text-secondary text-sm sm:text-base">
-                Chaque décor, chaque lieu et chaque prestataire que nous recommandons a déjà fait le bonheur d&apos;un couple.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
-              <motion.div
-                whileHover={{ y: -6 }}
-                className="relative bg-white rounded-[4px] shadow-[0_18px_40px_rgba(11,15,26,0.12)] p-2.5 pb-9 -rotate-2"
-              >
-                <div className="relative h-[300px] w-full overflow-hidden rounded-[2px]">
-                  <Image
-                    src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&h=1000&q=90"
-                    alt="Cérémonie de mariage en extérieur"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="absolute bottom-2.5 left-4.5 right-4.5 font-serif text-sm">Cérémonie, lieu recommandé</div>
-              </motion.div>
-
-              {/* Cadre du milieu : couleur unie primaire, plus de dégradé */}
-              <motion.div
-                whileHover={{ y: -6 }}
-                className="relative rounded-2xl p-1.5 rotate-1 bg-primary shadow-[0_18px_40px_rgba(124,58,237,0.22)]"
-              >
-                <div className="rounded-xl overflow-hidden bg-white relative h-[340px]">
-                  <Image
-                    src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=900&h=1100&q=90"
-                    alt="Table de réception de mariage décorée"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="absolute -top-3.5 -right-3.5 bg-white border border-black/10 rounded-full px-3.5 py-2 text-xs font-bold text-primary shadow-lg">
-                  Décoration ★ 4.9
-                </div>
-              </motion.div>
-
-              <motion.div whileHover={{ y: -6 }} className="relative p-4">
-                <div className="absolute top-0 left-0 h-7 w-7 border-t-[3px] border-l-[3px] border-primary" />
-                <div className="absolute bottom-0 right-0 h-7 w-7 border-b-[3px] border-r-[3px] border-primary" />
-                <div className="relative h-[300px] w-full overflow-hidden rounded-lg shadow-[0_14px_30px_rgba(11,15,26,0.1)]">
-                  <Image
-                    src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&h=1000&q=90"
-                    alt="Photographe capturant un mariage"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-      </Reveal>
-
-      {/* PROCESSUS : panneaux qui se déplient */}
-      <Reveal>
-        <section id="how" className="px-4 sm:px-6 py-14 sm:py-16 bg-surface">
-          <div className="max-w-6xl mx-auto">
-            <div className="max-w-xl mx-auto text-center mb-10">
-              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Comment ça marche</div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-                De vos envies à votre plan en 4 étapes
-              </h2>
-              <p className="text-text-secondary text-sm sm:text-base">
-                Pas de tableur, pas de recherche infinie. Vous répondez, notre IA construit le reste.
-              </p>
-            </div>
-
-            {/* Version desktop : panneaux interactifs qui se déplient */}
-            <div className="hidden md:flex gap-3 h-[440px]">
-              {PROCESS_STEPS.map((step, i) => {
-                const isActive = activeStep === i;
-                return (
-                  <div
-                    key={step.n}
-                    onMouseEnter={() => setActiveStep(i)}
-                    onFocus={() => setActiveStep(i)}
-                    tabIndex={0}
-                    className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-[flex-grow] duration-500 ease-out ${
-                      isActive ? "flex-[3]" : "flex-[1]"
-                    }`}
-                  >
-                    <Image
-                      src={step.img}
-                      alt={step.title}
-                      fill
-                      className={`object-cover transition-transform duration-700 ${isActive ? "scale-105" : "scale-100"}`}
-                    />
-                    <div
-                      className={`absolute inset-0 transition-opacity duration-500 ${
-                        isActive
-                          ? "bg-gradient-to-t from-black/80 via-black/10 to-black/30"
-                          : "bg-primary/50"
-                      }`}
-                    />
-
-                    {/* Numéro, toujours visible */}
-                    <div className="absolute top-6 left-6 font-serif text-3xl text-white z-10">{step.n}</div>
-
-                    {/* Titre replié, vertical */}
-                    <div
-                      className={`absolute inset-0 flex items-end justify-center pb-8 transition-opacity duration-300 ${
-                        isActive ? "opacity-0 pointer-events-none" : "opacity-100"
-                      }`}
-                    >
-                      <span
-                        className="text-white font-serif text-sm tracking-wide"
-                        style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
-                      >
-                        {step.title}
-                      </span>
-                    </div>
-
-                    {/* Contenu déplié */}
-                    <div
-                      className={`absolute inset-x-0 bottom-0 p-6 transition-all duration-500 ${
-                        isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 pointer-events-none"
-                      }`}
-                    >
-                      <h3 className="font-serif text-white text-xl mb-2">{step.title}</h3>
-                      <p className="text-white/80 text-sm leading-relaxed max-w-[280px]">{step.desc}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Version mobile : accordéon déclenché par le scroll */}
-            <div className="md:hidden flex flex-col gap-3">
-              {PROCESS_STEPS.map((step, i) => {
-                const isActive = activeStep === i;
-                return (
-                  <motion.div
-                    key={step.n}
-                    onClick={() => setActiveStep(i)}
-                    tabIndex={0}
-                    onFocus={() => setActiveStep(i)}
-                    onViewportEnter={() => setActiveStep(i)}
-                    viewport={{ amount: 0.5 }}
-                    className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 ease-out min-h-[70vh] ${
-                      isActive ? "flex-[3]" : "flex-[1]"
-                    }`}
-                  >
-                    <Image
-                      src={step.img}
-                      alt={step.title}
-                      fill
-                      className={`object-cover transition-transform duration-700 ${isActive ? "scale-105" : "scale-100"}`}
-                    />
-                    <div
-                      className={`absolute inset-0 transition-opacity duration-500 ${
-                        isActive
-                          ? "bg-gradient-to-t from-black/80 via-black/10 to-black/30"
-                          : "bg-primary/50"
-                      }`}
-                    />
-
-                    {/* Numéro, toujours visible */}
-                    <div className="absolute top-4 left-4 font-serif text-2xl text-white z-10">{step.n}</div>
-
-                    {/* Titre replié, horizontal */}
-                    <div
-                      className={`absolute inset-0 flex items-center pl-12 pr-4 transition-opacity duration-300 ${
-                        isActive ? "opacity-0 pointer-events-none" : "opacity-100"
-                      }`}
-                    >
-                      <span className="text-white font-serif text-base truncate">{step.title}</span>
-                    </div>
-
-                    {/* Contenu déplié */}
-                    <div
-                      className={`absolute inset-x-0 bottom-0 p-5 transition-all duration-500 ${
-                        isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 pointer-events-none"
-                      }`}
-                    >
-                      <h3 className="font-serif text-white text-lg mb-1">{step.title}</h3>
-                      <p className="text-white/80 text-sm leading-relaxed">{step.desc}</p>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      </Reveal>
-
-      {/* INCLUS */}
-      <Reveal>
-        <section className="px-4 sm:px-6 py-14 sm:py-16">
-          <div className="max-w-[620px] mx-auto rounded-2xl border border-black/[0.06] bg-surface p-7 sm:p-8">
-            <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Inclus dans chaque plan</div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-5">Tout ce qu&apos;il faut, sans rien payer</h2>
-            <ul className="space-y-3 text-sm">
-              {[
-                { label: "Budget détaillé", value: "par poste" },
-                { label: "Planning", value: "mensuelle" },
-                { label: "Matching prestataires", value: "selon budget" },
-                { label: "Score de risque", value: "+ actions" },
-              ].map((row) => (
-                <li key={row.label} className="flex items-baseline gap-2">
-                  <span className="text-text-secondary whitespace-nowrap">{row.label}</span>
-                  <span className="flex-1 border-b border-dotted border-black/10 -translate-y-1" />
-                  <span className="font-bold whitespace-nowrap">{row.value}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      </Reveal>
-
-      {/* GRATUITÉ */}
-      <Reveal>
-        <section id="free" className="px-4 sm:px-6 py-14 sm:py-16 bg-surface">
-          <div className="max-w-6xl mx-auto">
-            <div className="max-w-xl mx-auto text-center mb-10">
-              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">La gratuité, tout simplement</div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3">
-                Zéro euro, zéro compromis
-              </h2>
-              <p className="text-text-secondary text-sm sm:text-base">
-                Recherches, devis et coordination : on assume tout ce qui coûte du temps et de l&apos;argent. Pour vous, c&apos;est 0 €.
-              </p>
-            </div>
-
-            <div className="flex justify-center">
-              <div className="relative w-full max-w-[660px] bg-white border border-black/10 rounded-2xl p-6 sm:p-8 shadow-[0_16px_40px_rgba(11,15,26,0.08)]">
-                <div className="flex justify-between items-start gap-2.5 border-b border-text-primary pb-3.5 mb-4 flex-wrap">
-                  <h3 className="font-serif text-xl">Organisation classique (estimation)</h3>
-                  <span className="text-xs text-text-secondary">Sans mariagefacile</span>
-                </div>
-
-                {[
-                  { label: "Recherches et comparaisons manuelles", value: "~15h" },
-                  { label: "Devis hors budget à trier", value: "~600 €" },
-                  { label: "Coordination du planning", value: "~250 €" },
-                  { label: "Mise en relation prestataires", value: "~400 €" },
-                ].map((row, i, arr) => (
-                  <div
-                    key={row.label}
-                    className={`flex justify-between text-sm py-2 text-text-secondary ${
-                      i < arr.length - 1 ? "border-b border-dotted border-black/10" : ""
-                    }`}
-                  >
-                    <span>{row.label}</span>
-                    <span className="font-bold text-text-primary">{row.value}</span>
-                  </div>
-                ))}
-
-                <div className="relative mt-4 pt-3.5">
-                  <div className="flex justify-between items-baseline gap-2.5 font-serif text-xl">
-                    <span>Coût estimé habituel</span>
-                    <span>≈ 1 250 €</span>
-                  </div>
-                  <div className="absolute left-0 right-0 top-[46%] h-0.5 bg-primary -rotate-3" />
-                  <div className="absolute -right-1 sm:right-2.5 -top-8 h-20 w-20 sm:h-[100px] sm:w-[100px] rounded-full border-[3px] border-primary text-primary flex items-center justify-center text-center -rotate-[11deg] font-bold text-[0.6rem] sm:text-xs bg-primary/5">
-                    GRATUIT<br />POUR TOUS
-                  </div>
-                </div>
-
-                <div className="mt-6 text-sm text-text-secondary text-center">
-                  Chez mariagefacile, couples comme prestataires (wedding planners inclus) utilisent la plateforme sans
-                  frais d&apos;accès. Le matching est notre métier, pas un service qu&apos;on facture.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </Reveal>
-
-      {/* TÉMOIGNAGES */}
-      <Reveal>
-        <section id="testi" className="px-4 sm:px-6 py-14 sm:py-16">
-          <div className="max-w-6xl mx-auto">
-            <div className="max-w-xl mx-auto text-center mb-10">
-              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Retours de couples</div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Ils ont lancé leur plan en une soirée</h2>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {TESTIMONIALS.map((t) => (
-                <motion.div
-                  key={t.name}
-                  whileHover={{ y: -6 }}
-                  className="group bg-white border border-black/[0.06] overflow-hidden shadow-[0_10px_26px_rgba(11,15,26,0.06)] transition-shadow hover:shadow-[0_18px_40px_rgba(11,15,26,0.12)]"
-                >
-                  <div className="relative h-[190px] overflow-hidden">
-                    <Image
-                      src={t.img}
-                      alt=""
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
-                    <div className="absolute left-4 bottom-3 text-white">
-                      <strong className="block font-serif text-lg">{t.name}</strong>
-                      <span className="text-xs opacity-85">{t.meta}</span>
-                    </div>
-                  </div>
-                  <div className="px-5 py-5">
-                    <p className="font-serif italic text-base leading-relaxed">&laquo; {t.quote} &raquo;</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </Reveal>
-
-      {/* PRESTATAIRES */}
-      <Reveal>
-        <section className="px-4 sm:px-6 py-14 sm:py-16 bg-surface">
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-text-primary text-white p-7 sm:p-10 flex items-center justify-between gap-6 flex-wrap">
-              <div>
-                <h3 className="font-serif text-2xl mb-1.5">Vous êtes prestataire ou wedding planner ?</h3>
-                <p className="text-white/70 text-sm max-w-md">
-                  Recevez des demandes de couples déjà qualifiés, sans démarcher et sans frais d&apos;accès.
-                </p>
-              </div>
-              <Link href="/prestataires" className="relative z-10">
-                <Button variant="primary" iconRight={<ArrowRight size={18} />}>
-                  Espace prestataires
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </Reveal>
-
-      {/* FAQ */}
-      <Reveal>
-        <section id="faq" className="px-4 sm:px-6 py-14 sm:py-16">
-          <div className="max-w-6xl mx-auto">
-            <div className="max-w-xl mx-auto text-center mb-10">
-              <div className="text-xs uppercase tracking-[0.22em] text-primary font-medium mb-3">Avant de vous lancer</div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight">Vous avez des questions, nous avons des réponses claires</h2>
-            </div>
-
-            <div className="max-w-[680px] mx-auto">
-              {FAQS.map((item, idx) => {
-                const isOpen = openFaq === idx;
-                return (
-                  <div key={item.q} className={`border-b border-dashed border-black/[0.08] ${isOpen ? "open" : ""}`}>
-                    <button
-                      onClick={() => setOpenFaq(isOpen ? null : idx)}
-                      className="w-full flex items-center justify-between gap-4 py-5 text-left font-serif text-base sm:text-lg font-medium group"
-                    >
-                      <span className="pr-2">{item.q}</span>
-                      <span className="text-primary text-xl leading-none transition-transform duration-200 shrink-0 group-hover:scale-110">
-                        {isOpen ? "×" : "+"}
-                      </span>
-                    </button>
-                    <div
-                      className="overflow-hidden transition-[max-height] duration-300"
-                      style={{ maxHeight: isOpen ? "220px" : "0px" }}
-                    >
-                      <p className="pb-5 text-text-secondary text-sm leading-relaxed">{item.a}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      </Reveal>
-
-      {/* APPEL FINAL */}
-      <Reveal>
-        <section className="px-4 sm:px-6 py-16 sm:py-[70px] text-center">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mb-3.5">
-              Votre plan de mariage est prêt à être créé
-            </h2>
-            <p className="text-text-secondary max-w-md mx-auto mb-6">
-              5 questions, 5 minutes, des prestataires qui vous correspondent vraiment.
+      <main>
+        {/* HERO */}
+        <section className="hero">
+          <div className="wrap">
+            <h1>Rencontrez le planificateur de mariage le plus rapide</h1>
+            <p className="lead">
+              Budget, planning et prestataires générés par IA, avec des mises en relation en direct — 3x plus rapide qu&apos;une organisation classique.
             </p>
-            <Link href="/quiz">
-              <Button variant="coupon" iconRight={<ArrowRight size={18} />}>
-                Créer mon plan gratuitement
-              </Button>
-            </Link>
-            <div className="flex gap-4.5 justify-center flex-wrap mt-10 text-xs text-text-secondary">
-              <span className="inline-flex items-center gap-1.5"><Check size={14} className="text-success" /> Gratuit pour les couples</span>
-              <span className="inline-flex items-center gap-1.5"><Check size={14} className="text-success" /> Sans carte bancaire</span>
-              <span className="inline-flex items-center gap-1.5"><Check size={14} className="text-success" /> Résultat en 5 minutes</span>
+            <div className="btn-row">
+              <Link href="/quiz" className="btn btn-solid">Créer mon plan — Gratuit ! <ArrowRight size={16} /></Link>
+              <Link href="#how" className="btn btn-outline">Voir une démo</Link>
+            </div>
+
+            <div className="hero-stage-outer" ref={heroStageOuterRef}>
+              <div className="hero-stage" ref={heroStageRef}>
+                <div className="stat-card stat-yellow reveal">
+                  <Clock className="ic" size={24} />
+                  <div className="num">5 min</div>
+                  <div className="lbl">Temps moyen pour générer un plan</div>
+                </div>
+
+                <div className="share-card reveal">
+                  <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
+                  <p>Partagez votre plan et vos favoris en un lien</p>
+                  <button className="btn btn-solid">Copier le lien</button>
+                </div>
+
+                <div className="stage-phone reveal">
+                  <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=420&h=800&q=85" alt="" width={420} height={800} className="w-full h-full object-cover" unoptimized />
+                </div>
+
+                <div className="product-card reveal">
+                  <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
+                  <div className="n">Studio Lumière</div>
+                  <div className="p">Dès 890 €</div>
+                </div>
+
+                <div className="stat-card stat-coral reveal">
+                  <Users className="ic" size={24} color="#fff" />
+                  <div className="num">2 400+</div>
+                  <div className="lbl">Couples accompagnés en France</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="logo-strip">
+              <span>Château d&apos;Or</span>
+              <span>Belle Fleur</span>
+              <span>Lumière Studio</span>
+              <span>Maison Rosé</span>
+              <span>Douce Table</span>
             </div>
           </div>
         </section>
-      </Reveal>
+
+        {/* COMMENT CA MARCHE */}
+        <section id="how">
+          <div className="wrap">
+            <div className="section-head-center">
+              <span className="eyebrow-pill">Comment ça marche</span>
+              <h2 style={{ marginTop: 16 }}>Un plan conçu pour avancer, pas pour stresser</h2>
+              <p>Cinq questions simples, une IA qui fait le tri, et un plan complet prêt à suivre jusqu&apos;au jour J.</p>
+            </div>
+            <div className="promo-duo">
+              <div className="promo-card yellow reveal">
+                <div className="promo-visual">
+                  <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&h=400&q=85" alt="" width={300} height={400} className="w-full h-full object-cover" unoptimized />
+                  <span className="promo-badge">60%</span>
+                </div>
+                <div className="promo-text">
+                  <span className="eyebrow-pill">Étape 1</span>
+                  <h3>Quiz éclair, plan complet</h3>
+                  <p>Cinq questions, une par écran, sans jargon ni tableur à remplir.</p>
+                  <Link href="/quiz" className="btn btn-outline">Commencer</Link>
+                </div>
+              </div>
+
+              <div className="promo-card lavender reveal">
+                <div className="promo-visual-duo">
+                  <div className="promo-mini-card">
+                    <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=140&h=90&q=85" alt="" width={140} height={90} className="w-full h-full object-cover" unoptimized />
+                    <div className="mn">Bouquet frais</div>
+                    <div className="mp">89,99 €</div>
+                  </div>
+                  <div className="promo-main-visual">
+                    <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=250&h=300&q=85" alt="" width={250} height={300} className="w-full h-full object-cover" unoptimized />
+                    <span className="promo-avatars">
+                      <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&w=60&h=60&q=80" alt="" width={60} height={60} className="w-full h-full object-cover" unoptimized />
+                      <Image src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&w=60&h=60&q=80" alt="" width={60} height={60} className="w-full h-full object-cover" unoptimized />
+                    </span>
+                  </div>
+                  <span className="promo-conv">32%</span>
+                </div>
+                <div className="promo-text">
+                  <span className="eyebrow-pill">Étape 2</span>
+                  <h3>Matching en direct</h3>
+                  <p>Des prestataires filtrés selon votre budget réel, disponibles tout de suite.</p>
+                  <Link href="/prestataires" className="btn btn-outline">Découvrir</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FREE */}
+        <section id="free">
+          <div className="wrap">
+            <div className="colorblock lavender reveal">
+              <div className="cb-visual">
+                <div className="cb-img-wrap">
+                  <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&h=600&q=85" alt="" width={500} height={600} className="w-full h-full object-cover" unoptimized />
+                  <div className="cb-badge"><b>0 €</b>pour toujours</div>
+                </div>
+              </div>
+              <div className="cb-text">
+                <span className="eyebrow-pill">Zéro compromis</span>
+                <h2>Zéro envoi, zéro compte</h2>
+                <p style={{ marginBottom: 20 }}>
+                  Pas de carte bancaire, pas d&apos;e-mail à confirmer, pas d&apos;appel commercial. Un plan complet, immédiatement, sans rien à donner en échange.
+                </p>
+                <Link href="/quiz" className="btn btn-solid">Créer mon plan</Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* VIDEO GRID */}
+        <section>
+          <div className="wrap">
+            <span className="eyebrow-pill">Nos prestataires</span>
+            <h2 style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des équipes déjà notées par des centaines de couples</h2>
+            <div className="video-grid reveal">
+              <div className="vc vc1">
+                <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&h=650&q=85" alt="" width={500} height={650} className="w-full h-full object-cover" unoptimized />
+                <span className="badge-corner-stat">Photographe</span>
+                <span className="badge-play">▶</span>
+              </div>
+              <div className="vc vc2">
+                <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
+                <span className="badge-live">LIVE</span>
+                <span className="badge-play">▶</span>
+              </div>
+              <div className="vc vc3">
+                <Image src="https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
+                <span className="badge-heart">♥</span>
+              </div>
+              <div className="vc vc4">
+                <Image src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=350&h=350&q=85" alt="" width={350} height={350} className="w-full h-full object-cover" unoptimized />
+                <span className="badge-play">▶</span>
+              </div>
+              <div className="vc vc5">
+                <Image src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
+                <span className="badge-stat">20+ mariages</span>
+              </div>
+              <div className="vc vc6">
+                <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=350&h=350&q=85" alt="" width={350} height={350} className="w-full h-full object-cover" unoptimized />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* VALUES + RESULTS */}
+        <section>
+          <div className="wrap">
+            <div className="side-hero">
+              <div>
+                <span className="eyebrow-pill">Nos valeurs</span>
+                <h2 style={{ marginTop: 18, marginBottom: 22 }}>On vous aide à célébrer, sans le stress logistique</h2>
+                <div className="accordion-mini">
+                  <div className="row">Un budget réaliste, pas une estimation vague <ChevronDown size={16} className="chev" /></div>
+                  <div className="row">Des prestataires vérifiés, pas une liste au hasard <ChevronDown size={16} className="chev" /></div>
+                  <div className="row">Un plan qui évolue avec vous <ChevronDown size={16} className="chev" /></div>
+                </div>
+              </div>
+              <div className="sh-visual reveal">
+                <div className="sh-phone">
+                  <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=460&h=760&q=85" alt="" width={460} height={760} className="w-full h-full object-cover" unoptimized />
+                  <div className="sh-guarantee"><b>0€</b>garanti</div>
+                  <div className="sh-caption">
+                    <Image src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&w=96&h=96&q=80" alt="" width={96} height={96} className="w-full h-full object-cover" unoptimized />
+                    <div><div className="n">Awa & Karim</div><div className="p">Plan généré en 4 min</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="chip-grid" style={{ marginTop: 36 }}>
+              <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--rose-chip)" }}>⏱</span><div><div className="num">15h</div><div className="lbl">économisées en recherches</div></div></div>
+              <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--sage-chip)" }}>✓</span><div><div className="num">92%</div><div className="lbl">de couples satisfaits du matching</div></div></div>
+              <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--lavender)" }}>€</span><div><div className="num">1 250€</div><div className="lbl">économisés en moyenne</div></div></div>
+              <div className="chip reveal"><span className="dot-ic" style={{ background: "#FDEBD3" }}>★</span><div><div className="num">4.8/5</div><div className="lbl">note moyenne des prestataires</div></div></div>
+            </div>
+          </div>
+        </section>
+
+        {/* TESTIMONIALS */}
+        <section id="testi">
+          <div className="wrap">
+            <div className="section-head-center">
+              <span className="eyebrow-pill">Ils l&apos;ont testé</span>
+              <h2 style={{ marginTop: 18 }}>Les résultats parlent d&apos;eux-mêmes</h2>
+            </div>
+
+            <div className="testi-row">
+              <div className="quote-card reveal">
+                <div className="qc-head">
+                  <div className="qc-brand">
+                    <span className="logo-dot">{testimonials[testiIndex].initials}</span>
+                    <div><div className="n">{testimonials[testiIndex].name}</div><div className="t">{testimonials[testiIndex].meta}</div></div>
+                  </div>
+                  <span className="qc-cta">Témoignage</span>
+                </div>
+                <div className="quote">{testimonials[testiIndex].quote}</div>
+                <div className="qc-foot">
+                  <div className="qc-author">
+                    <Image src={testimonials[testiIndex].img} alt="" width={120} height={120} className="w-full h-full object-cover" unoptimized />
+                    <span className="n">{testimonials[testiIndex].name}</span>
+                  </div>
+                  <div className="qc-nav">
+                    <div className="qc-dots">
+                      {testimonials.map((_, i) => (
+                        <span key={i} className={i === testiIndex ? "on" : ""} />
+                      ))}
+                    </div>
+                    <div className="qc-arrows">
+                      <button onClick={() => setTestiIndex((i) => (i === 0 ? testimonials.length - 1 : i - 1))}><ChevronLeft size={14} /></button>
+                      <button onClick={() => setTestiIndex((i) => (i + 1) % testimonials.length)}><ChevronRight size={14} /></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stat-stack reveal">
+                <div className="box"><div className="num">3x</div><div className="lbl">Plus rapide qu&apos;une organisation classique</div></div>
+                <div className="box"><div className="num">92%</div><div className="lbl">De couples satisfaits du matching</div></div>
+                <div className="box"><div className="num">24h</div><div className="lbl">Pour obtenir un plan complet</div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq">
+          <div className="wrap">
+            <div className="section-head-center">
+              <span className="eyebrow-pill">Questions</span>
+              <h2 style={{ marginTop: 18 }}>Vos questions</h2>
+            </div>
+            <div className="faq-wrap reveal">
+              {FAQS.map((item, i) => {
+                const isOpen = openFaq === i;
+                return (
+                  <div key={i} className={`faq-item ${isOpen ? "open" : ""}`}>
+                    <button className="faq-q" onClick={() => setOpenFaq(isOpen ? null : i)} aria-expanded={isOpen}>
+                      {item.q}
+                      <span className="sign">+</span>
+                    </button>
+                    <div className="faq-a" style={{ maxHeight: isOpen ? 200 : 0 }}>
+                      <p>{item.a}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* FINAL CTA */}
+        <section>
+          <div className="wrap">
+            <div className="final-cta reveal">
+              <h2>Votre plan de mariage est prêt à être créé</h2>
+              <p>Rejoignez les couples qui organisent leur mariage sans stress, en commençant par un plan clair et gratuit.</p>
+              <div className="btn-row" style={{ justifyContent: "center" }}>
+                <Link href="/quiz" className="btn btn-solid">Créer mon plan — Gratuit ! <ArrowRight size={16} /></Link>
+                <Link href="/prestataires" className="btn btn-outline">Découvrir les prestataires</Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
 
       <Footer />
-    </main>
+    </>
   );
 }
-

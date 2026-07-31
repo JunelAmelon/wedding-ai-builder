@@ -1,4 +1,5 @@
 import type { WeddingStyle } from "./domain";
+import type { AdminRole } from "./admin";
 
 export type UserRole = "couple" | "vendor" | "admin";
 
@@ -11,7 +12,11 @@ export interface UserAccount {
   lastName: string;
   avatarUrl: string | null;
   phone: string | null;
+  address: string | null;
   role: UserRole;
+  adminRole?: AdminRole;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
   emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
@@ -246,6 +251,10 @@ export interface DashboardStats {
   credits: number;
   newOpportunities: number;
   sentProposals: number;
+  activeProposals: number;
+  pendingProposals: number;
+  declinedProposals: number;
+  archivedProposals: number;
   responseRate: number;
   averageCompatibility: number;
   wonContracts: number;
@@ -271,4 +280,18 @@ export interface ProposalDetail extends Proposal {
   project: WeddingProject;
   vendor: VendorProfile;
   couple: CoupleProfile;
+}
+
+export interface Witness {
+  id: string;
+  projectId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: string; // "Témoin marié", "Témoin mariée", "Coordinateur", etc.
+  photo: { url: string; publicId?: string; filename?: string; name?: string } | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { CoupleProfile } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "couple_profiles";
 
@@ -15,7 +15,7 @@ export const coupleProfileRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const profile: CoupleProfile = { ...data, id, createdAt: now, updatedAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, profile);
       return profile;
     }
@@ -25,21 +25,21 @@ export const coupleProfileRepo = {
   },
 
   async list(): Promise<CoupleProfile[]> {
-    if (useLocal()) return localStore.all<CoupleProfile>(COLLECTION);
+    if (isLocalMode()) return localStore.all<CoupleProfile>(COLLECTION);
     const col = await getFirestoreCol();
     const snap = await col.get();
     return snap.docs.map((d) => d.data() as CoupleProfile);
   },
 
   async get(id: string): Promise<CoupleProfile | null> {
-    if (useLocal()) return localStore.get<CoupleProfile>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<CoupleProfile>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as CoupleProfile) : null;
   },
 
   async getByUserId(userId: string): Promise<CoupleProfile | null> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<CoupleProfile>(COLLECTION);
       return all.find((p) => p.userId === userId) ?? null;
     }
@@ -50,7 +50,7 @@ export const coupleProfileRepo = {
 
   async update(id: string, data: Partial<CoupleProfile>): Promise<CoupleProfile> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<CoupleProfile>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();

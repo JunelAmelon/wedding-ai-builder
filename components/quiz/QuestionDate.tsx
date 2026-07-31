@@ -17,7 +17,7 @@ export function QuestionDate({ onAnswer }: { onAnswer: (value: string) => void }
         type="date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
-        className="w-full rounded-xl bg-white border border-black/10 px-4 py-4 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full rounded-r-md bg-surface border border-line px-4 py-4 text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
       />
     </QuestionShell>
   );

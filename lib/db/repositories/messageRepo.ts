@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { Message } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "messages";
 
@@ -15,7 +15,7 @@ export const messageRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const message: Message = { ...data, id, createdAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, message);
       return message;
     }
@@ -25,7 +25,7 @@ export const messageRepo = {
   },
 
   async listByProposal(proposalId: string): Promise<Message[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Message>(COLLECTION);
       return all.filter((m) => m.proposalId === proposalId).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     }
@@ -35,7 +35,7 @@ export const messageRepo = {
   },
 
   async listByUser(userId: string): Promise<Message[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Message>(COLLECTION);
       return all.filter((m) => m.senderId === userId).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     }
@@ -46,7 +46,7 @@ export const messageRepo = {
 
   async markAsRead(proposalId: string, userId: string): Promise<void> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Message>(COLLECTION);
       const toUpdate = all.filter((m) => m.proposalId === proposalId && m.senderId !== userId && !m.readAt);
       await Promise.all(toUpdate.map((m) => localStore.update<Message>(COLLECTION, m.id, { readAt: now })));

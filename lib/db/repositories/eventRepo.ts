@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "events";
 
@@ -26,7 +26,7 @@ export const eventRepo = {
       properties,
       timestamp: new Date().toISOString(),
     };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, event.id, event);
       return;
     }
@@ -35,7 +35,7 @@ export const eventRepo = {
   },
 
   async listBySession(sessionId: string): Promise<AppEvent[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<AppEvent>(COLLECTION);
       return all.filter((e) => e.sessionId === sessionId);
     }

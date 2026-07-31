@@ -1,0 +1,488 @@
+﻿node.exe : 
+Au caractère Ligne:1 : 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+./app/(app)/quiz/[step]/page.tsx
+8:10  Error: 'Button' is defined but never used.  
+@typescript-eslint/no-unused-vars
+
+./app/(app)/result/[sessionId]/components/BlueprintSection.tsx
+33:3  Error: 'styleLabel' is defined but never used.  
+@typescript-eslint/no-unused-vars
+
+./app/(app)/result/[sessionId]/components/BudgetSection.tsx
+176:100  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+
+./app/(app)/result/[sessionId]/components/ExtrasSection.tsx
+4:61  Error: 'CompatibilityResult' is defined but never used.  
+@typescript-eslint/no-unused-vars
+4:113  Error: 'CoachSummary' is defined but never used.  
+@typescript-eslint/no-unused-vars
+16:3  Error: 'Scale' is defined but never used.  
+@typescript-eslint/no-unused-vars
+17:3  Error: 'Search' is defined but never used.  
+@typescript-eslint/no-unused-vars
+21:3  Error: 'ChevronDown' is defined but never used.  
+@typescript-eslint/no-unused-vars
+22:3  Error: 'ChevronUp' is defined but never used.  
+@typescript-eslint/no-unused-vars
+132:103  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+343:107  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+
+./app/(app)/result/[sessionId]/page.tsx
+63:9  Error: 'today' is assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+149:94  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+279:25  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+
+./app/(couple)/espace-couple/budget/page.tsx
+12:3  Error: 'Clock' is defined but never used.  
+@typescript-eslint/no-unused-vars
+19:3  Error: 'ArrowDownRight' is defined but never used.  
+@typescript-eslint/no-unused-vars
+20:3  Error: 'MoreVertical' is defined but never used.  
+@typescript-eslint/no-unused-vars
+24:3  Error: 'ChevronDown' is defined but never used.  
+@typescript-eslint/no-unused-vars
+51:42  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+52:44  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+53:44  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+56:56  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+96:22  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+159:37  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+185:75  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+206:27  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./app/(couple)/espace-couple/CoupleLayoutClient.tsx
+7:3  Error: 'LayoutGrid' is defined but never used.  
+@typescript-eslint/no-unused-vars
+146:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+188:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(couple)/espace-couple/documents/page.tsx
+59:12  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`.  
+react/no-unescaped-entities
+
+./app/(couple)/espace-couple/mariage/page.tsx
+65:42  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+66:36  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+259:17  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./app/(couple)/espace-couple/messagerie/page.tsx
+45:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+60:46  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+61:44  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+62:44  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+84:43  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+151:27  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+152:27  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+266:28  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+266:49  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+
+./app/(couple)/espace-couple/parametres/page.tsx
+109:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(couple)/espace-couple/planning/page.tsx
+56:42  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+57:38  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+63:52  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+103:29  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+185:31  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+198:9  Warning: The 'taskList' logical expression could make the dependencies 
+of useMemo Hook (at line 201) change on every render. Move it inside the 
+useMemo callback. Alternatively, wrap the initialization of 'taskList' in its 
+own useMemo() Hook.  react-hooks/exhaustive-deps
+266:36  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+500:64  Error: 'idx' is defined but never used.  
+@typescript-eslint/no-unused-vars
+501:64  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+594:29  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+
+./app/(couple)/espace-couple/prestataires/nouveau/page.tsx
+43:42  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+104:20  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+144:52  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+168:32  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+283:90  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+
+./app/(couple)/espace-couple/prestataires/page.tsx
+47:37  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+104:42  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+105:42  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+111:60  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+130:26  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+131:49  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+132:43  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+189:20  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+322:60  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./app/(couple)/espace-couple/prestataires/profil/[vendorId]/page.tsx
+11:3  Error: 'DialogHeader' is defined but never used.  
+@typescript-eslint/no-unused-vars
+62:40  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+138:32  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+163:40  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+197:54  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+233:45  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+303:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+500:27  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+548:35  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+575:39  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+605:33  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./app/(couple)/espace-couple/prestataires/[id]/page.tsx
+8:44  Error: 'LayoutGrid' is defined but never used.  
+@typescript-eslint/no-unused-vars
+8:56  Error: 'Rows3' is defined but never used.  
+@typescript-eslint/no-unused-vars
+91:40  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+139:92  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+144:47  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+147:45  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+149:47  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+161:54  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+281:152  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+281:160  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+294:92  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+296:61  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+365:112  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+424:43  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./app/(couple)/espace-couple/result/page.tsx
+131:81  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+177:5  Error: 'currency' is assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+443:123  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+445:56  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+525:112  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+527:80  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+637:52  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+685:111  Error: Unexpected any. Specify a different type.  
+@typescript-eslint/no-explicit-any
+
+./app/(marketing)/blog/page.tsx
+111:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+120:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+142:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+182:23  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+182:62  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+184:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+215:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+218:47  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+260:81  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+
+./app/(marketing)/devenir-professionnel/page.tsx
+484:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+493:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+511:31  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+515:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+571:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+602:25  Error: 'Icon' is assigned a value but never used.  
+@typescript-eslint/no-unused-vars
+
+./app/(marketing)/page.tsx
+6:36  Error: 'Check' is defined but never used.  
+@typescript-eslint/no-unused-vars
+80:120  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+96:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+102:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+106:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+120:30  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+135:104  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+140:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+154:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+159:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+161:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+162:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+184:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+192:47  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+192:73  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+207:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+212:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+217:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+221:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+225:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+229:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+250:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+253:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+273:51  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+274:68  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`. 
+ react/no-unescaped-entities
+289:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+307:102  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+
+./app/(marketing)/prestataires/page.tsx
+67:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+76:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+98:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+147:189  Error: `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, 
+`&rsquo;`.  react/no-unescaped-entities
+156:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+165:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+187:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+217:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+232:21  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+273:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(vendor)/espace-prestataire/messagerie/page.tsx
+48:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(vendor)/espace-prestataire/portfolio/page.tsx
+96:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(vendor)/espace-prestataire/profil/page.tsx
+148:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/(vendor)/espace-prestataire/VendorLayoutClient.tsx
+80:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+205:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/admin/AdminLayoutClient.tsx
+144:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/admin/blog/BlogEditor.tsx
+155:28  Warning: Using `<img>` could result in slower LCP and higher bandwidth. 
+Consider using `<Image />` from `next/image` to automatically optimize images. 
+This may incur additional usage or cost from your provider. See: 
+https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./lib/db/repositories/taskRepo.ts
+79:67  Error: '_weddingDate' is defined but never used.  
+@typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: 
+https://nextjs.org/docs/basic-features/eslint#disabling-rules
+npm notice
+npm notice New major version of npm available! 10.9.3 -> 12.0.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1
+npm notice To update run: npm install -g npm@12.0.1
+npm notice

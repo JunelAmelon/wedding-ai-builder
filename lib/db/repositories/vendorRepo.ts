@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { VendorApplication } from "@/types/domain";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "vendor_applications";
 
@@ -23,7 +23,7 @@ export const vendorRepo = {
       reviewedBy: null,
       notes: null,
     };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, application);
       return application;
     }
@@ -33,7 +33,7 @@ export const vendorRepo = {
   },
 
   async list(): Promise<VendorApplication[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.all<VendorApplication>(COLLECTION);
     }
     const col = await getFirestoreCol();
@@ -42,7 +42,7 @@ export const vendorRepo = {
   },
 
   async get(id: string): Promise<VendorApplication | null> {
-    if (useLocal()) return localStore.get<VendorApplication>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<VendorApplication>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as VendorApplication) : null;
@@ -50,7 +50,7 @@ export const vendorRepo = {
 
   async updateStatus(id: string, status: VendorApplication["status"], notes: string | null, reviewer: string): Promise<VendorApplication> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<VendorApplication>(COLLECTION, id, { status, notes, reviewedAt: now, reviewedBy: reviewer });
     }
     const col = await getFirestoreCol();

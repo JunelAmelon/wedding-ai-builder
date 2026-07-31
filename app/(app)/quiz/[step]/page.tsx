@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { TriangleAlert } from "lucide-react";
-import { Button } from "@/components/ui/Button";
 import { FloatingNav } from "@/components/ui/FloatingNav";
 import { ProgressBar } from "@/components/feedback/ProgressBar";
 import { useQuizStore, QUIZ_STEPS } from "@/lib/store/quizStore";
@@ -170,7 +169,7 @@ export default function QuizStepPage() {
           <p className="text-text-secondary mt-3">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-white font-semibold"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-[#8B7BD8] px-6 py-3 text-white font-semibold"
           >
             Réessayer
           </button>
@@ -210,8 +209,6 @@ export default function QuizStepPage() {
         <div className="hidden lg:flex items-center justify-center p-8 xl:p-12">
           <div className="relative w-full max-w-xl max-h-[calc(100dvh/1.4)] aspect-[3/4] rounded-[2.5rem] overflow-hidden border border-black/10 shadow-[0_30px_80px_rgba(11,15,26,0.12)]">
             <Image src={hero.url} alt={hero.alt} fill className="object-cover" sizes="(min-width: 1280px) 33vw, 50vw" priority />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(124,58,237,0.20),transparent_60%),radial-gradient(circle_at_80%_70%,rgba(34,197,94,0.20),transparent_55%)]" />
           </div>
         </div>
       </div>

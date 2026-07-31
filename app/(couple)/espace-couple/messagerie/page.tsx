@@ -27,6 +27,8 @@ import {
   FileText,
   ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
+import type { Message, Proposal, WeddingProject, VendorProfile } from "@/types/marketplace";
 
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
@@ -38,13 +40,19 @@ function formatFullDate(iso: string) {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 }
 
+type EnrichedProject = WeddingProject & { email?: string; phone?: string };
+interface ProposalWithDetails extends Proposal {
+  project: EnrichedProject | null;
+  vendor: VendorProfile | null;
+}
+
 function Avatar({ name, src, className, online }: { name: string; src?: string; className?: string; online?: boolean }) {
   return (
     <div className={`relative shrink-0 ${className}`}>
       {src ? (
-        <img src={src} alt={name} className="rounded-full object-cover border border-black/[0.06] h-full w-full" />
+        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-black/[0.06]" unoptimized />
       ) : (
-        <div className="rounded-full bg-primary/10 text-primary font-serif font-semibold flex items-center justify-center h-full w-full">
+        <div className="rounded-full bg-primary/10 text-primary font-display font-semibold flex items-center justify-center h-full w-full">
           {name.slice(0, 2).toUpperCase()}
         </div>
       )}
@@ -57,9 +65,9 @@ export default function CoupleMessagingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const proposalId = searchParams.get("proposal");
-  const [proposals, setProposals] = useState<any[]>([]);
-  const [selected, setSelected] = useState<any | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<ProposalWithDetails[]>([]);
+  const [selected, setSelected] = useState<ProposalWithDetails | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -80,8 +88,8 @@ export default function CoupleMessagingPage() {
         }
         const json = await res.json();
         const list = json.proposals || [];
-        setProposals(list);
-        const preselected = list.find((p: any) => p.id === proposalId) || list[0];
+        setProposals(list as ProposalWithDetails[]);
+        const preselected = (list as ProposalWithDetails[]).find((p) => p.id === proposalId) || list[0] || null;
         setSelected(preselected);
       } catch {
         // ignore
@@ -110,6 +118,7 @@ export default function CoupleMessagingPage() {
   useEffect(() => {
     if (!selected) return;
     async function loadMessages() {
+      if (!selected) return;
       const res = await fetch(`/api/messages?proposalId=${selected.id}`);
       const json = await res.json();
       setMessages(json.messages || []);
@@ -148,10 +157,10 @@ export default function CoupleMessagingPage() {
     );
   }, [proposals, search]);
 
-  const lastMessage = (p: any) => messages.filter((m) => m.proposalId === p.id).pop() || null;
-  const unreadCount = (p: any) => messages.filter((m) => m.proposalId === p.id && m.senderRole !== "couple" && !m.readAt).length;
+  const lastMessage = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id).pop() || null;
+  const unreadCount = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id && m.senderRole !== "couple" && !m.readAt).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
 
   return (
     <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
@@ -161,18 +170,18 @@ export default function CoupleMessagingPage() {
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-5 bg-primary/10">
               <Inbox size={28} className="text-primary" />
             </div>
-            <h2 className="font-serif text-xl font-semibold mb-2">Aucune conversation</h2>
+            <h2 className="font-display text-xl font-semibold mb-2">Aucune conversation</h2>
             <p className="text-text-secondary max-w-md mx-auto">Acceptez une proposition ou contactez un professionnel pour démarrer la conversation.</p>
           </div>
         </div>
       ) : (
         <div className={`grid h-full ${mobileOpen ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-[300px_1fr]"} ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
           {/* Sidebar */}
-          <div className={`flex flex-col border-r border-black/[0.06] bg-[#FAFAF8] ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
+          <div className={`flex flex-col border-r border-black/[0.06] bg-surface ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
             <div className="p-4 border-b border-black/[0.06]">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-serif text-xl font-semibold">Messages</h2>
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white px-2 py-1 rounded-full border border-black/[0.06]">
+                <h2 className="font-display text-xl font-semibold">Messages</h2>
+                <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white px-2 py-1 rounded-full border border-black/[0.06]">
                   {proposals.length}
                 </span>
               </div>
@@ -208,7 +217,7 @@ export default function CoupleMessagingPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-semibold text-text-primary truncate text-sm">{p.vendor?.companyName || "Prestataire"}</span>
-                        {lm && <span className="font-mono text-[10px] text-text-secondary shrink-0">{formatDate(lm.createdAt)}</span>}
+                        {lm && <span className="font-semibold text-[10px] text-text-secondary shrink-0">{formatDate(lm.createdAt)}</span>}
                       </div>
                       <div className="flex items-center justify-between gap-2">
                         <span className={`text-xs truncate ${unread ? "text-text-primary font-medium" : "text-text-secondary"}`}>
@@ -231,7 +240,7 @@ export default function CoupleMessagingPage() {
           <div className={`flex flex-col bg-white ${mobileOpen ? "flex" : "hidden lg:flex"}`}>
             {selected ? (
               <>
-                <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-[#FAFAF8]/50">
+                <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-surface/50">
                   <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
                     <ChevronLeft size={20} className="text-text-secondary" />
                   </button>
@@ -263,12 +272,12 @@ export default function CoupleMessagingPage() {
 
                 {phoneUnavailable && (
                   <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center justify-between">
-                    <span>L'appel téléphonique n'est pas encore disponible. Utilisez la messagerie.</span>
+                    <span>L&apos;appel téléphonique n&apos;est pas encore disponible. Utilisez la messagerie.</span>
                     <button onClick={() => setPhoneUnavailable(false)} className="p-1 hover:bg-amber-100 rounded"><X size={14} /></button>
                   </div>
                 )}
 
-                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#FAFAF8]/30">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-surface/30">
                   {messages.length === 0 && (
                     <div className="flex-1 flex flex-col items-center justify-center text-text-secondary text-center min-h-[200px]">
                       <MessageSquare size={40} className="text-text-secondary/30 mb-3" />
@@ -282,7 +291,7 @@ export default function CoupleMessagingPage() {
                       <div key={m.id}>
                         {showDate && (
                           <div className="flex items-center justify-center my-4">
-                            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white border border-black/[0.06] px-3 py-1 rounded-full">
+                            <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white border border-black/[0.06] px-3 py-1 rounded-full">
                               {formatDate(m.createdAt)}
                             </span>
                           </div>
@@ -347,7 +356,7 @@ export default function CoupleMessagingPage() {
 
           {/* Info panel */}
           {infoOpen && selected && (
-            <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-[#FAFAF8] w-[300px] shrink-0">
+            <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-surface w-[300px] shrink-0">
               <div className="p-5 border-b border-black/[0.06] text-center">
                 <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-20 w-20 text-xl mx-auto mb-3" online={selected.status === "accepted"} />
                 <h3 className="font-semibold text-text-primary">{selected.vendor?.companyName || "Prestataire"}</h3>

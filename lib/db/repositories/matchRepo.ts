@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { ProjectVendorMatch } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "project_vendor_matches";
 
@@ -15,7 +15,7 @@ export const matchRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const match: ProjectVendorMatch = { ...data, id, createdAt: now, updatedAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, match);
       return match;
     }
@@ -25,14 +25,14 @@ export const matchRepo = {
   },
 
   async list(): Promise<ProjectVendorMatch[]> {
-    if (useLocal()) return localStore.all<ProjectVendorMatch>(COLLECTION);
+    if (isLocalMode()) return localStore.all<ProjectVendorMatch>(COLLECTION);
     const col = await getFirestoreCol();
     const snap = await col.get();
     return snap.docs.map((d) => d.data() as ProjectVendorMatch);
   },
 
   async listByProject(projectId: string): Promise<ProjectVendorMatch[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<ProjectVendorMatch>(COLLECTION);
       return all.filter((m) => m.projectId === projectId);
     }
@@ -42,7 +42,7 @@ export const matchRepo = {
   },
 
   async listByVendor(vendorId: string): Promise<ProjectVendorMatch[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<ProjectVendorMatch>(COLLECTION);
       return all.filter((m) => m.vendorId === vendorId);
     }
@@ -52,7 +52,7 @@ export const matchRepo = {
   },
 
   async get(id: string): Promise<ProjectVendorMatch | null> {
-    if (useLocal()) return localStore.get<ProjectVendorMatch>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<ProjectVendorMatch>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as ProjectVendorMatch) : null;
@@ -60,7 +60,7 @@ export const matchRepo = {
 
   async update(id: string, data: Partial<ProjectVendorMatch>): Promise<ProjectVendorMatch> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<ProjectVendorMatch>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();
@@ -70,7 +70,7 @@ export const matchRepo = {
   },
 
   async deleteByProject(projectId: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<ProjectVendorMatch>(COLLECTION);
       const toDelete = all.filter((m) => m.projectId === projectId);
       await Promise.all(toDelete.map((m) => localStore.delete(COLLECTION, m.id)));

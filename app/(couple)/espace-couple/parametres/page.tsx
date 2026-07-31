@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import PageHeader from "@/components/couple/PageHeader";
+import Image from "next/image";
 import { Save, Bell, Shield, User, Loader2, Camera, X } from "lucide-react";
 
 export default function CoupleSettingsPage() {
@@ -89,24 +91,23 @@ export default function CoupleSettingsPage() {
 
   const initials = `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase();
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      <h1 className="font-serif text-3xl font-bold tracking-tight mb-2">Paramètres</h1>
-      <p className="text-text-secondary mb-8">Gérez votre compte et vos préférences.</p>
+      <PageHeader eyebrow="Compte" title="Paramètres" description="Gérez votre compte et vos préférences." />
 
       <div className="space-y-6">
         <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(11,15,26,0.06)]">
           <div className="flex items-center gap-3 mb-4">
             <User size={20} className="text-primary" />
-            <h2 className="font-serif text-xl font-semibold">Compte</h2>
+            <h2 className="font-display text-xl font-semibold">Compte</h2>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
-            <div className="relative">
+            <div className="relative h-24 w-24">
               {avatarUrl ? (
-                <img src={avatarUrl} alt="Photo de profil" className="h-24 w-24 rounded-full object-cover border border-black/10" />
+                <Image src={avatarUrl} alt="Photo de profil" fill sizes="96px" className="rounded-full object-cover border border-black/10" unoptimized />
               ) : (
                 <span className="h-24 w-24 rounded-full bg-primary text-white text-2xl font-semibold flex items-center justify-center">
                   {initials || "·"}
@@ -164,7 +165,7 @@ export default function CoupleSettingsPage() {
         <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(11,15,26,0.06)]">
           <div className="flex items-center gap-3 mb-4">
             <Bell size={20} className="text-primary" />
-            <h2 className="font-serif text-xl font-semibold">Notifications</h2>
+            <h2 className="font-display text-xl font-semibold">Notifications</h2>
           </div>
           <div className="space-y-4">
             <label className="flex items-center justify-between">
@@ -191,7 +192,7 @@ export default function CoupleSettingsPage() {
         <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(11,15,26,0.06)]">
           <div className="flex items-center gap-3 mb-4">
             <Shield size={20} className="text-primary" />
-            <h2 className="font-serif text-xl font-semibold">Sécurité</h2>
+            <h2 className="font-display text-xl font-semibold">Sécurité</h2>
           </div>
           <div className="space-y-3">
             <input type="password" placeholder="Mot de passe actuel" className="w-full rounded-xl border border-black/10 px-4 py-3" />

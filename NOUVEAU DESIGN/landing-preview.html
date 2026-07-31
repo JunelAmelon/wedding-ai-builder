@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créer mon profil professionnel — Mariage Facile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --ink:#0E0E10;
+    --grey:#6B6B72;
+    --grey-light:#9A9AA1;
+    --line:#EDEDF0;
+    --surface:#F7F7F9;
+    --yellow:#F4D93E;
+    --lavender:#E4DBFB;
+    --lavender-deep:#8B7BD8;
+    --coral:#F2704A;
+    --sage-chip:#D8ECD9;
+    --sage:#3C8552;
+    --rose-chip:#FBE1E6;
+    --bordeaux:#8C2F39;
+    --r-lg:28px;
+    --r-md:20px;
+    --r-sm:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif;background:var(--surface);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  img{max-width:100%;display:block;}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  @media (max-width:860px){.wrap{padding:0 20px;}}
+
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.02em;line-height:1.1;color:var(--ink);}
+  p{color:var(--grey);line-height:1.6;font-size:14.5px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.02em;}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 24px;border-radius:999px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s;border:1.5px solid var(--ink);}
+  .btn-solid{background:var(--ink);color:#fff;}
+  .btn-solid:hover{background:#000;}
+  .btn-solid:disabled{opacity:.35;cursor:not-allowed;}
+  .btn-outline{background:transparent;color:var(--ink);}
+  .btn-outline:hover{background:var(--bg);}
+
+  /* ----- top bar retour ----- */
+  .topbar{background:#fff;border-bottom:1px solid var(--line);}
+  .topbar .wrap{height:64px;display:flex;align-items:center;justify-content:space-between;}
+  .back-link{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--grey);}
+  .back-link:hover{color:var(--ink);}
+
+  .eyebrow-pill{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 15px;border-radius:999px;background:var(--lavender);font-size:11.5px;font-weight:700;color:var(--ink);margin-bottom:16px;}
+
+  /* ===== NOUVEAU FORMULAIRE — accordéon + fiche en direct ===== */
+  .builder{padding:52px 0 70px;}
+  .builder-head{max-width:640px;margin:0 auto 34px;text-align:center;}
+  .builder-head h2{font-size:28px;margin-bottom:10px;}
+  @media (max-width:600px){.builder-head h2{font-size:22px;}}
+
+  .builder-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:32px;align-items:start;}
+  @media (max-width:960px){.builder-grid{grid-template-columns:1fr;}}
+
+  /* ----- accordéon ----- */
+  .accordion{display:flex;flex-direction:column;gap:12px;}
+  .acc-item{background:#fff;border:1.5px solid var(--line);border-radius:var(--r-md);overflow:hidden;transition:border-color .2s;}
+  .acc-item.open{border-color:var(--ink);}
+  .acc-item.complete{border-color:var(--sage);}
+  .acc-head{display:flex;align-items:center;gap:14px;padding:18px 20px;cursor:pointer;}
+  .acc-num{
+    width:32px;height:32px;border-radius:999px;background:var(--surface);border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:var(--grey);
+    flex-shrink:0;transition:.2s;
+  }
+  .acc-item.complete .acc-num{background:var(--sage);border-color:var(--sage);color:#fff;}
+  .acc-item.open .acc-num{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .acc-titles{flex:1;}
+  .acc-titles .t{font-size:14.5px;font-weight:700;}
+  .acc-titles .s{font-size:11.5px;color:var(--grey-light);}
+  .acc-chev{color:var(--grey-light);transition:transform .25s ease;flex-shrink:0;}
+  .acc-item.open .acc-chev{transform:rotate(180deg);}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .acc-body-inner{padding:0 20px 22px;}
+  .acc-done-btn{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:6px;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:600px){.grid2{grid-template-columns:1fr;}}
+  .field{margin-bottom:14px;}
+  .field.span2{grid-column:1/-1;}
+  .field label{display:block;font-size:12px;font-weight:600;margin-bottom:6px;}
+  .field input, .field select, .field textarea{
+    width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-family:'Inter',sans-serif;
+    font-size:13px;color:var(--ink);background:#fff;transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none;border-color:var(--bordeaux);}
+  .field textarea{resize:vertical;min-height:80px;}
+  .hint{font-size:11px;color:var(--grey-light);margin-top:4px;}
+
+  .pill-toggle{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:600;color:var(--grey);cursor:pointer;transition:.15s;}
+  .pill-toggle.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .pill-group{display:flex;flex-wrap:wrap;gap:7px;}
+
+  .tier-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:500px){.tier-mini-grid{grid-template-columns:1fr;}}
+  .tier-mini{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;transition:.15s;background:#fff;}
+  .tier-mini.on{border-color:var(--bordeaux);background:var(--rose-chip);}
+  .tier-mini b{display:block;font-size:12.5px;}
+  .tier-mini span{font-size:10.5px;color:var(--grey-light);}
+
+  .upload-zone{border:1.5px dashed var(--line);border-radius:var(--r-md);padding:24px;text-align:center;color:var(--grey-light);font-size:12.5px;}
+  .upload-zone svg{color:var(--grey-light);margin-bottom:8px;}
+
+  .terms-box{background:var(--surface);border-radius:var(--r-md);padding:16px;display:flex;gap:10px;align-items:flex-start;margin-top:16px;}
+  .terms-box input{margin-top:3px;}
+  .terms-box span{font-size:12px;color:var(--grey);}
+
+  .builder-submit{max-width:1180px;margin:26px auto 0;display:flex;justify-content:center;}
+
+  /* ----- fiche en direct (sticky) ----- */
+  .preview-sticky{position:sticky;top:88px;}
+  .live-fiche{
+    background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;
+    box-shadow:0 24px 60px rgba(14,14,16,.08);position:relative;overflow:hidden;
+  }
+  .live-fiche .lf-badge{
+    position:absolute;top:16px;right:16px;background:var(--yellow);color:var(--ink);font-size:10px;font-weight:800;
+    padding:5px 10px;border-radius:999px;
+  }
+  .lf-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .lf-avatar{width:44px;height:44px;border-radius:999px;background:var(--surface);border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--grey-light);flex-shrink:0;}
+  .lf-name{font-size:15px;font-weight:700;}
+  .lf-cat{font-size:11.5px;color:var(--grey-light);}
+
+  .lf-score-row{display:flex;align-items:center;gap:14px;background:var(--surface);border-radius:var(--r-sm);padding:14px 16px;margin-bottom:16px;}
+  .lf-score{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:800;color:var(--bordeaux);line-height:1;}
+  .lf-score-lbl{font-size:10.5px;color:var(--grey);line-height:1.3;}
+
+  .lf-rows{display:flex;flex-direction:column;gap:9px;margin-bottom:16px;}
+  .lf-row{display:flex;justify-content:space-between;font-size:12.5px;}
+  .lf-row .k{color:var(--grey-light);}
+  .lf-row .v{font-weight:700;}
+  .lf-row .v.empty{color:var(--grey-light);font-weight:500;font-style:italic;}
+
+  .lf-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
+  .lf-tags span{background:var(--surface);border-radius:999px;padding:4px 10px;font-size:10.5px;font-weight:600;color:var(--grey);}
+  .lf-tags span.empty{color:var(--grey-light);font-style:italic;font-weight:500;}
+
+  .lf-progress-lbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--grey-light);margin:18px 0 6px;}
+  .lf-progress-track{height:5px;border-radius:99px;background:var(--line);overflow:hidden;}
+  .lf-progress-fill{height:100%;background:linear-gradient(90deg, var(--bordeaux), var(--coral));border-radius:99px;transition:width .4s ease;}
+
+  .live-tip{background:var(--surface);border-radius:var(--r-md);padding:16px;margin-top:14px;font-size:11.5px;color:var(--grey);display:flex;gap:10px;}
+  .live-tip svg{color:var(--bordeaux);flex-shrink:0;}
+
+  .security-note{
+    max-width:1180px;margin:32px auto 0;background:var(--rose-chip);border-radius:var(--r-md);
+    padding:20px 22px;display:flex;gap:14px;align-items:flex-start;
+  }
+  .security-note svg{color:var(--bordeaux);flex-shrink:0;margin-top:2px;}
+  .security-note h3{font-size:14px;margin-bottom:3px;}
+  .security-note p{font-size:12.5px;margin:0;}
+
+  /* ----- écran de succès ----- */
+  .success-screen{display:none;min-height:70vh;align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
+  .success-screen.active{display:flex;flex-direction:column;}
+  .success-screen .check-badge{width:76px;height:76px;border-radius:22px;background:var(--sage-chip);display:flex;align-items:center;justify-content:center;color:var(--sage);margin:0 auto 22px;}
+  .success-screen h1{font-size:28px;margin-bottom:10px;}
+  .success-screen p{max-width:420px;margin:0 auto 24px;}
+
+  /* =====================================================================
+     HERO D'ACCROCHE — inspiré du langage "badge confiance + mockup flottant"
+  ===================================================================== */
+  .join-hero{background:#fff;border-bottom:1px solid var(--line);padding:56px 0 48px;}
+  .join-hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;}
+  @media (max-width:960px){.join-hero-grid{grid-template-columns:1fr;gap:36px;}}
+
+  .trust-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--grey);margin-bottom:16px;}
+  .trust-badge .stars{color:var(--yellow-deep,#B8960C);}
+  .trust-badge b{color:var(--ink);}
+
+  .join-hero h1{font-family:'Space Grotesk',sans-serif;font-size:42px;line-height:1.06;margin-bottom:14px;}
+  @media (max-width:600px){.join-hero h1{font-size:30px;}}
+  .join-hero p.lead{font-size:14.5px;max-width:440px;margin-bottom:26px;}
+  .join-hero .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:0;}
+
+  .join-visual{position:relative;display:flex;justify-content:center;}
+  .join-photo{width:280px;border-radius:26px;overflow:hidden;box-shadow:0 30px 70px rgba(14,14,16,.18);position:relative;}
+  .join-photo img{width:100%;display:block;}
+  .join-photo::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 30% 100%, rgba(140,47,57,.18), transparent 60%);}
+
+  .float-badge{
+    position:absolute;background:#fff;border-radius:999px;padding:8px 14px;box-shadow:0 14px 30px rgba(14,14,16,.14);
+    display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--ink);z-index:2;
+  }
+  .float-badge svg{color:var(--sage);}
+  .fb-1{top:14%;left:-8%;}
+  .fb-2{top:44%;right:-10%;}
+
+  .stat-corner-badge{
+    position:absolute;bottom:10%;right:-6%;background:var(--yellow);color:var(--ink);border-radius:var(--r-sm);
+    padding:14px 16px;text-align:center;box-shadow:0 16px 34px rgba(14,14,16,.16);z-index:2;
+  }
+  .stat-corner-badge b{display:block;font-family:'Space Grotesk',sans-serif;font-size:22px;line-height:1;}
+  .stat-corner-badge span{font-size:9px;text-transform:uppercase;letter-spacing:.04em;}
+
+  .join-logos{display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;opacity:.5;margin-top:44px;}
+  .join-logos span{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.01em;}
+
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:36px;}
+  @media (max-width:700px){.stat-row{grid-template-columns:1fr;}}
+  .stat-row .box{background:var(--surface);border-radius:var(--r-md);padding:24px;text-align:center;}
+  .stat-row .box b{display:block;font-family:'Space Grotesk',sans-serif;font-size:32px;color:var(--ink);}
+  .stat-row .box span{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.04em;}
+
+  /* ----- bloc sombre "gros chiffre" ----- */
+  .dark-stats{background:var(--ink);color:#fff;padding:56px 0;}
+  .dark-stats .eyebrow-pill{background:rgba(255,255,255,.08);color:rgba(255,255,255,.75);}
+  .dark-stats h2{color:#fff;font-size:26px;margin-bottom:28px;}
+  .dark-big-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(42px,9vw,84px);font-weight:800;letter-spacing:-0.02em;line-height:1;}
+  .dark-stats .cap{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+  .dark-stats-grid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;}
+  @media (max-width:760px){.dark-stats-grid{grid-template-columns:1fr;}}
+  .dark-testi{background:rgba(255,255,255,.06);border-radius:var(--r-md);padding:22px;max-width:320px;}
+  .dark-testi p{color:rgba(255,255,255,.85);font-size:13px;margin-bottom:14px;}
+  .dark-testi .who{display:flex;align-items:center;gap:10px;}
+  .dark-testi img{width:32px;height:32px;border-radius:999px;object-fit:cover;}
+  .dark-testi .n{font-size:12px;font-weight:700;color:#fff;}
+  .dark-testi .r{font-size:10.5px;color:rgba(255,255,255,.5);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a href="index.html" class="logo">Mariage Facile</a>
+    <a href="pro.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Retour à la page professionnels
+    </a>
+  </div>
+</div>
+
+<section class="join-hero">
+  <div class="wrap">
+    <div class="join-hero-grid">
+      <div>
+        <div class="trust-badge">
+          <span class="stars">★★★★★</span>
+          <b>4.9</b> · avis des professionnels inscrits
+        </div>
+        <h1>Recevez des demandes qui vous correspondent vraiment</h1>
+        <p class="lead">Créez votre profil intelligent, laissez notre IA analyser chaque projet et ne recevez que les couples compatibles avec votre activité.</p>
+        <div class="btn-row">
+          <a href="#formCard" class="btn btn-solid">Commencer mon inscription</a>
+          <a href="pro.html" class="btn btn-outline">Comment ça marche</a>
+        </div>
+
+        <div class="stat-row">
+          <div class="box"><b>0€</b><span>Coût d'inscription</span></div>
+          <div class="box"><b>2-4x</b><span>Demandes plus qualifiées</span></div>
+          <div class="box"><b>48h</b><span>Délai de validation</span></div>
+        </div>
+      </div>
+
+      <div class="join-visual">
+        <div class="join-photo">
+          <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=560&h=760&q=85" alt="">
+        </div>
+        <div class="float-badge fb-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+          97% compatibilité
+        </div>
+        <div class="float-badge fb-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+          Répondre · 2 roses
+        </div>
+        <div class="stat-corner-badge"><b>3x</b><span>Moins de démarchage</span></div>
+      </div>
+    </div>
+
+    <div class="join-logos">
+      <span>Château d'Or</span>
+      <span>Belle Fleur</span>
+      <span>Lumière Studio</span>
+      <span>Maison Rosé</span>
+      <span>Douce Table</span>
+    </div>
+  </div>
+</section>
+
+<section class="dark-stats">
+  <div class="wrap">
+    <span class="eyebrow-pill">Ils nous ont rejoint</span>
+    <h2>Un réseau qui grandit chaque semaine</h2>
+    <div class="dark-stats-grid">
+      <div>
+        <div class="cap">Professionnels inscrits</div>
+        <div class="dark-big-num">2 847</div>
+      </div>
+      <div class="dark-testi">
+        <p>« En deux semaines, j'ai reçu plus de demandes qualifiées qu'en trois mois sur les autres plateformes. »</p>
+        <div class="who">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&w=96&h=96&q=80" alt="">
+          <div><div class="n">Martin, Photographe</div><div class="r">Bordeaux</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="formScreen">
+  <section class="builder">
+    <div class="wrap">
+      <div class="builder-head">
+        <span class="eyebrow-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z"/></svg>
+          Inscription professionnelle
+        </span>
+        <h2>Construisez votre profil, section par section</h2>
+        <p>Ouvrez chaque bloc à votre rythme. Votre fiche se construit en direct à droite.</p>
+      </div>
+
+      <div class="builder-grid">
+        <!-- ===== ACCORDEON ===== -->
+        <div class="accordion" id="accordion">
+
+          <div class="acc-item open" data-acc="0">
+            <div class="acc-head" onclick="toggleAcc(0)">
+              <div class="acc-num">1</div>
+              <div class="acc-titles"><div class="t">Identité</div><div class="s">Entreprise et contact référent</div></div>
+              <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <div class="grid2">
+                  <div class="field span2"><label>Nom de l'entreprise *</label><input type="text" id="f-company" placeholder="Ex. Studio Lumière" oninput="syncPreview()"></div>
+                  <div class="field"><label>SIRET *</label><input type="text" placeholder="123 456 789 00012"></div>
+                  <div class="field"><label>Nom du contact référent *</label><input type="text" placeholder="Ex. Camille Roy"></div>
+                  <div class="field span2"><label>Email *</label><input type="email" placeholder="vous@studio.fr"></div>
+                  <div class="field"><label>Téléphone *</label><input type="tel" placeholder="06 00 00 00 00"></div>
+                  <div class="field"><label>Ville *</label><input type="text" id="f-city" placeholder="Bordeaux" oninput="syncPreview()"></div>
+                </div>
+                <div class="acc-done-btn"><button class="btn btn-solid" onclick="completeAcc(0)">Continuer</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item" data-acc="1">
+            <div class="acc-head" onclick="toggleAcc(1)">
+              <div class="acc-num">2</div>
+              <div class="acc-titles"><div class="t">Activité</div><div class="s">Catégorie, expérience, description</div></div>
+              <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <div class="grid2">
+                  <div class="field span2">
+                    <label>Catégorie *</label>
+                    <select id="f-category" onchange="syncPreview()">
+                      <option value="">Choisir une catégorie</option>
+                      <option>Photographe / Vidéaste</option>
+                      <option>Traiteur</option>
+                      <option>Lieu de réception</option>
+                      <option>Décoration / Fleuriste</option>
+                      <option>Wedding planner</option>
+                      <option>DJ / Musique</option>
+                      <option>Autre</option>
+                    </select>
+                  </div>
+                  <div class="field"><label>Années d'expérience *</label><input type="number" placeholder="5"></div>
+                  <div class="field"><label>Date de certification</label><input type="date"></div>
+                  <div class="field span2"><label>Description de votre activité *</label><textarea placeholder="Ce qui fait votre différence, votre approche..."></textarea></div>
+                </div>
+                <div class="acc-done-btn"><button class="btn btn-solid" onclick="completeAcc(1)">Continuer</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item" data-acc="2">
+            <div class="acc-head" onclick="toggleAcc(2)">
+              <div class="acc-num">3</div>
+              <div class="acc-titles"><div class="t">Style &amp; tarifs</div><div class="s">Univers artistique et gamme de prix</div></div>
+              <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <label style="display:block;font-size:12px;font-weight:600;margin-bottom:8px;">Styles de mariage que vous accompagnez *</label>
+                <div class="pill-group" id="styleTags">
+                  <span class="pill-toggle" onclick="toggleStyle(this)">Bohème</span>
+                  <span class="pill-toggle on" onclick="toggleStyle(this)">Classique &amp; élégant</span>
+                  <span class="pill-toggle" onclick="toggleStyle(this)">Moderne &amp; minimaliste</span>
+                  <span class="pill-toggle" onclick="toggleStyle(this)">Champêtre</span>
+                  <span class="pill-toggle on" onclick="toggleStyle(this)">Luxe &amp; raffiné</span>
+                  <span class="pill-toggle" onclick="toggleStyle(this)">Vintage</span>
+                </div>
+                <div class="grid2" style="margin-top:16px;">
+                  <div class="field"><label>Prix minimum (€) *</label><input type="number" id="f-min" placeholder="1200" oninput="syncPreview()"></div>
+                  <div class="field"><label>Prix maximum (€) *</label><input type="number" id="f-max" placeholder="4500" oninput="syncPreview()"></div>
+                </div>
+                <div class="acc-done-btn"><button class="btn btn-solid" onclick="completeAcc(2)">Continuer</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item" data-acc="3">
+            <div class="acc-head" onclick="toggleAcc(3)">
+              <div class="acc-num">4</div>
+              <div class="acc-titles"><div class="t">Zone d'intervention</div><div class="s">Où vous acceptez des mariages</div></div>
+              <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <div class="grid2">
+                  <div class="field span2"><label>Régions d'intervention</label><input type="text" placeholder="Ex. Nouvelle-Aquitaine, Île-de-France"></div>
+                  <div class="field"><label>Rayon d'intervention (km)</label><input type="number" id="f-radius" placeholder="80" oninput="syncPreview()"></div>
+                  <div class="field"><label>Délai de réponse / préavis</label><input type="text" placeholder="Ex. 2 semaines"></div>
+                </div>
+                <div class="acc-done-btn"><button class="btn btn-solid" onclick="completeAcc(3)">Continuer</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item" data-acc="4">
+            <div class="acc-head" onclick="toggleAcc(4)">
+              <div class="acc-num">5</div>
+              <div class="acc-titles"><div class="t">Portfolio</div><div class="s">Vos plus belles réalisations</div></div>
+              <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <div class="field span2">
+                  <label>Photos de votre travail</label>
+                  <p class="hint" style="margin-bottom:10px;">Ajoutez 3 à 10 photos pour montrer votre style aux futurs mariés.</p>
+                  <div class="upload-zone">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></svg>
+                    <div>Glissez vos photos ici, ou cliquez pour parcourir</div>
+                  </div>
+                </div>
+                <div class="grid2">
+                  <div class="field"><label>Site portfolio</label><input type="url" placeholder="https://..."></div>
+                  <div class="field"><label>Instagram</label><input type="text" placeholder="@votrecompte"></div>
+                </div>
+                <div class="acc-done-btn"><button class="btn btn-solid" onclick="completeAcc(4)">Continuer</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="acc-item" data-acc="5">
+            <div class="acc-head" onclick="toggleAcc(5)">
+              <div class="acc-num">6</div>
+              <div class="acc-titles"><div class="t">Gamme &amp; validation</div><div class="s">Dernière étape avant l'envoi</div></div>
+              <svg class="acc-chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <label style="display:block;font-size:12px;font-weight:600;margin-bottom:8px;">Niveau de gamme ciblé *</label>
+                <div class="tier-mini-grid" id="tierGrid">
+                  <div class="tier-mini" onclick="selectTier(this)"><b>Économique</b><span>Budgets serrés</span></div>
+                  <div class="tier-mini on" onclick="selectTier(this)"><b>Standard</b><span>Bon rapport qualité-prix</span></div>
+                  <div class="tier-mini" onclick="selectTier(this)"><b>Premium</b><span>Haut de gamme</span></div>
+                  <div class="tier-mini" onclick="selectTier(this)"><b>Luxe</b><span>Sur-mesure</span></div>
+                </div>
+
+                <div class="field span2" style="margin-top:16px;">
+                  <label>Documents justificatifs</label>
+                  <p class="hint" style="margin-bottom:10px;">Kbis, attestation d'assurance ou diplôme. Non visibles par les couples.</p>
+                  <div class="upload-zone">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3v5h5M6 3h8l6 6v11a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/></svg>
+                    <div>Glissez vos documents ici, ou cliquez pour parcourir</div>
+                  </div>
+                </div>
+
+                <div class="terms-box">
+                  <input type="checkbox" id="terms">
+                  <span>J'accepte que mes données soient traitées dans le cadre de mon inscription et je certifie l'exactitude des informations fournies. *</span>
+                </div>
+                <div class="acc-done-btn"><button class="btn btn-solid" onclick="completeAcc(5)">Terminer</button></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ===== FICHE EN DIRECT ===== -->
+        <div class="preview-sticky">
+          <div class="live-fiche">
+            <span class="lf-badge">Aperçu en direct</span>
+            <div class="lf-head">
+              <div class="lf-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v12H3z"/></svg>
+              </div>
+              <div>
+                <div class="lf-name" id="lfName">Votre entreprise</div>
+                <div class="lf-cat" id="lfCat">Catégorie à définir</div>
+              </div>
+            </div>
+
+            <div class="lf-score-row">
+              <div class="lf-score" id="lfScore">0%</div>
+              <div class="lf-score-lbl">Profil complété.<br>Plus il est rempli, plus vos futures demandes seront précises.</div>
+            </div>
+
+            <div class="lf-rows">
+              <div class="lf-row"><span class="k">Ville</span><span class="v empty" id="lfCity">à renseigner</span></div>
+              <div class="lf-row"><span class="k">Budget cible</span><span class="v empty" id="lfBudget">à renseigner</span></div>
+              <div class="lf-row"><span class="k">Rayon</span><span class="v empty" id="lfRadius">à renseigner</span></div>
+              <div class="lf-row"><span class="k">Gamme</span><span class="v" id="lfTier">Standard</span></div>
+            </div>
+
+            <div class="lf-tags" id="lfTags"><span class="empty">aucun style sélectionné</span></div>
+
+            <div class="lf-progress-lbl"><span>Complétion</span><span id="lfPct">0%</span></div>
+            <div class="lf-progress-track"><div class="lf-progress-fill" id="lfFill" style="width:0%;"></div></div>
+          </div>
+
+          <div class="live-tip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            Un profil complet reçoit en moyenne 3x plus de demandes compatibles.
+          </div>
+        </div>
+      </div>
+
+      <div class="builder-submit">
+        <button class="btn btn-solid" onclick="submitProfile()">Envoyer mon profil
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="security-note">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>
+        <div>
+          <h3>Votre profil est sécurisé</h3>
+          <p>Chaque dossier est relu manuellement. Vous serez contacté par email ou par téléphone sous 48h ouvrées pour valider votre inscription.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<div class="success-screen" id="successScreen">
+  <div class="check-badge">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+  </div>
+  <h1>Profil envoyé !</h1>
+  <p>Merci pour votre inscription. Notre équipe étudie votre dossier et vous contactera par email ou par téléphone dès que votre profil sera validé.</p>
+  <a href="pro.html" class="btn btn-solid" style="margin:0 auto;">Retour à la page professionnels</a>
+</div>
+
+<script>
+  const TOTAL_SECTIONS = 6;
+  let completed = new Set();
+  let openSection = 0;
+
+  function toggleAcc(i) {
+    openSection = openSection === i ? -1 : i;
+    document.querySelectorAll('.acc-item').forEach(item => {
+      const idx = Number(item.dataset.acc);
+      const body = item.querySelector('.acc-body');
+      const isOpen = idx === openSection;
+      item.classList.toggle('open', isOpen);
+      body.style.maxHeight = isOpen ? body.scrollHeight + 'px' : '0px';
+    });
+  }
+
+  function completeAcc(i) {
+    completed.add(i);
+    document.querySelector(`.acc-item[data-acc="${i}"]`).classList.add('complete');
+    syncPreview();
+    if (i < TOTAL_SECTIONS - 1) {
+      toggleAcc(i + 1);
+    } else {
+      toggleAcc(-1);
+    }
+  }
+
+  function toggleStyle(el) {
+    el.classList.toggle('on');
+    syncPreview();
+  }
+
+  function selectTier(el) {
+    el.parentElement.querySelectorAll('.tier-mini').forEach(c => c.classList.remove('on'));
+    el.classList.add('on');
+    syncPreview();
+  }
+
+  function syncPreview() {
+    const company = document.getElementById('f-company').value.trim();
+    const category = document.getElementById('f-category').value;
+    const city = document.getElementById('f-city').value.trim();
+    const min = document.getElementById('f-min').value;
+    const max = document.getElementById('f-max').value;
+    const radius = document.getElementById('f-radius').value;
+    const tier = document.querySelector('.tier-mini.on b')?.textContent || 'Standard';
+    const styles = Array.from(document.querySelectorAll('#styleTags .pill-toggle.on')).map(s => s.textContent);
+
+    document.getElementById('lfName').textContent = company || 'Votre entreprise';
+    document.getElementById('lfCat').textContent = category || 'Catégorie à définir';
+
+    const cityEl = document.getElementById('lfCity');
+    cityEl.textContent = city || 'à renseigner';
+    cityEl.classList.toggle('empty', !city);
+
+    const budgetEl = document.getElementById('lfBudget');
+    if (min && max) { budgetEl.textContent = `${min} € – ${max} €`; budgetEl.classList.remove('empty'); }
+    else { budgetEl.textContent = 'à renseigner'; budgetEl.classList.add('empty'); }
+
+    const radiusEl = document.getElementById('lfRadius');
+    if (radius) { radiusEl.textContent = radius + ' km'; radiusEl.classList.remove('empty'); }
+    else { radiusEl.textContent = 'à renseigner'; radiusEl.classList.add('empty'); }
+
+    document.getElementById('lfTier').textContent = tier;
+
+    const tagsEl = document.getElementById('lfTags');
+    tagsEl.innerHTML = styles.length ? styles.map(s => `<span>${s}</span>`).join('') : '<span class="empty">aucun style sélectionné</span>';
+
+    // score = complétion des sections + un petit bonus si champs clés remplis
+    let filled = completed.size;
+    if (company) filled += 0.4;
+    if (category) filled += 0.3;
+    if (city) filled += 0.3;
+    const pct = Math.min(100, Math.round((filled / TOTAL_SECTIONS) * 100));
+    document.getElementById('lfScore').textContent = pct + '%';
+    document.getElementById('lfPct').textContent = pct + '%';
+    document.getElementById('lfFill').style.width = pct + '%';
+  }
+
+  function submitProfile() {
+    document.getElementById('formScreen').style.display = 'none';
+    document.getElementById('successScreen').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ouvre la première section au chargement
+  toggleAcc(0);
+  syncPreview();
+</script>
+
+</body>
+</html>

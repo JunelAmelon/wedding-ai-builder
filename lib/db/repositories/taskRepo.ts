@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import type { TimelineTask } from "@/types/marketplace";
 import type { Timeline } from "@/types/domain";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "timeline_tasks";
 
@@ -16,7 +16,7 @@ export const taskRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const task: TimelineTask = { ...data, id, createdAt: now, updatedAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, task);
       return task;
     }
@@ -26,7 +26,7 @@ export const taskRepo = {
   },
 
   async listByProject(projectId: string): Promise<TimelineTask[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<TimelineTask>(COLLECTION);
       return all.filter((t) => t.projectId === projectId).sort((a, b) => b.monthsBeforeWedding - a.monthsBeforeWedding);
     }
@@ -36,7 +36,7 @@ export const taskRepo = {
   },
 
   async get(id: string): Promise<TimelineTask | null> {
-    if (useLocal()) return localStore.get<TimelineTask>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<TimelineTask>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as TimelineTask) : null;
@@ -44,7 +44,7 @@ export const taskRepo = {
 
   async update(id: string, data: Partial<TimelineTask>): Promise<TimelineTask> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<TimelineTask>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();
@@ -54,7 +54,7 @@ export const taskRepo = {
   },
 
   async deleteByProject(projectId: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<TimelineTask>(COLLECTION);
       const toDelete = all.filter((t) => t.projectId === projectId);
       await Promise.all(toDelete.map((t) => localStore.delete(COLLECTION, t.id)));
@@ -68,7 +68,7 @@ export const taskRepo = {
   },
 
   async delete(id: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.delete(COLLECTION, id);
       return;
     }
@@ -76,7 +76,7 @@ export const taskRepo = {
     await col.doc(id).delete();
   },
 
-  async createFromTimeline(projectId: string, timeline: Timeline, weddingDate?: string | null): Promise<TimelineTask[]> {
+  async createFromTimeline(projectId: string, timeline: Timeline): Promise<TimelineTask[]> {
     await this.deleteByProject(projectId);
     const now = new Date().toISOString();
     const tasks: TimelineTask[] = [];
@@ -94,7 +94,7 @@ export const taskRepo = {
         tasks.push(task);
       }
     }
-    if (useLocal()) {
+    if (isLocalMode()) {
       await Promise.all(tasks.map((t) => localStore.set(COLLECTION, t.id, t)));
       return tasks;
     }

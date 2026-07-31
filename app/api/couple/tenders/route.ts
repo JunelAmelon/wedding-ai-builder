@@ -8,7 +8,7 @@ import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
 import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { findTopMatches } from "@/lib/matching/engine";
-import type { Proposal } from "@/types/marketplace";
+import type { Tender } from "@/types/marketplace";
 
 const CreateSchema = z.object({
   projectId: z.string().min(1),
@@ -28,7 +28,7 @@ const AcceptSchema = z.object({
   proposalId: z.string().min(1),
 });
 
-async function enrichTender(tender: any) {
+async function enrichTender(tender: Tender) {
   const matches = await matchRepo.listByProject(tender.projectId);
   const tenderMatches = matches.filter((m) => m.tenderId === tender.id || tender.matchIds.includes(m.id));
   const proposals = await proposalRepo.listByTender(tender.id);
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
       guestCount: guestCount ?? project.guestCount ?? null,
       location: location ?? project.location ?? null,
       weddingDate: weddingDate ?? project.weddingDate ?? null,
-      style: (style ?? project.style) as any,
+      style: (style ?? project.style) as Tender["style"],
       customStyle: customStyle ?? project.customStyle ?? null,
       requirements: requirements ?? [],
       priority: priority ?? null,

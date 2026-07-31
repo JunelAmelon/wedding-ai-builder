@@ -13,6 +13,7 @@ const RegisterSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   phone: z.string().optional(),
+  address: z.string().optional(),
   role: z.enum(["couple", "vendor"]),
   source: z.enum(["quiz", "vendor_landing", "direct"]).default("direct"),
   sessionId: z.string().optional(),
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Données invalides", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { firstName, lastName, email, password, phone, role, source, sessionId } = parsed.data;
+    const { firstName, lastName, email, password, phone, address, role, sessionId } = parsed.data;
     const existing = await userRepo.getByEmail(email);
     if (existing) {
       return NextResponse.json({ error: "Un compte existe déjà avec cet email" }, { status: 409 });
@@ -40,7 +41,10 @@ export async function POST(req: Request) {
       lastName,
       avatarUrl: null,
       phone: phone || null,
+      address: address || null,
       role,
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
       emailVerified: false,
     });
 
@@ -119,9 +123,9 @@ export async function POST(req: Request) {
     }
 
     const token = createSession(user);
-    setSessionCookie(token);
-
-    return NextResponse.json({ user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role } }, { status: 201 });
+    const response = NextResponse.json({ user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role } }, { status: 201 });
+    setSessionCookie(response, token);
+    return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur lors de l'inscription";
     return NextResponse.json({ error: message }, { status: 500 });

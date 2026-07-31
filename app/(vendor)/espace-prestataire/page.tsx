@@ -13,47 +13,53 @@ import {
   Megaphone,
   Images,
   UserCircle,
+  CreditCard,
 } from "lucide-react";
 import { Card } from "./_ui";
+import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
 
 export default function VendorDashboardPage() {
   const router = useRouter();
-  const [data, setData] = useState<{
-    stats: {
-      credits: number;
-      newOpportunities: number;
-      sentProposals: number;
-      activeProposals: number;
-      pendingProposals: number;
-      declinedProposals: number;
-      archivedProposals: number;
-      responseRate: number;
-      averageCompatibility: number;
-      wonContracts: number;
-      profileCompletion: number;
-      verified: boolean;
-    };
-    matches: any[];
-    proposals: any[];
-    notifications: any[];
-  } | null>(null);
+  interface DashboardStats {
+    credits: number;
+    newOpportunities: number;
+    sentProposals: number;
+    activeProposals: number;
+    pendingProposals: number;
+    declinedProposals: number;
+    archivedProposals: number;
+    responseRate: number;
+    averageCompatibility: number;
+    wonContracts: number;
+    profileCompletion: number;
+    verified: boolean;
+  }
+
+  interface EnrichedMatch extends ProjectVendorMatch {
+    project: WeddingProject | null;
+  }
+
+  const [data, setData] = useState<{ stats: DashboardStats; matches: EnrichedMatch[] } | null>(null);
+  const [me, setMe] = useState<{ stripeSubscriptionId: string | null; stripeCustomerId: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/vendor/dashboard");
-        if (res.status === 401) {
+        const [dashRes, meRes] = await Promise.all([fetch("/api/vendor/dashboard"), fetch("/api/auth/me")]);
+        if (dashRes.status === 401) {
           router.push("/login?role=vendor");
           return;
         }
-        if (!res.ok) {
-          const json = await res.json().catch(() => ({}));
-          console.error("Dashboard API error", json.error || res.statusText);
+        if (!dashRes.ok) {
+          const json = await dashRes.json().catch(() => ({}));
+          console.error("Dashboard API error", json.error || dashRes.statusText);
           setData(null);
           return;
         }
-        setData(await res.json());
+        setData(await dashRes.json());
+        const meJson = await meRes.json().catch(() => ({}));
+        if (meJson.user) setMe(meJson.user);
       } catch {
         setData(null);
       } finally {
@@ -93,7 +99,7 @@ export default function VendorDashboardPage() {
             Aperçu
           </h1>
           <p className="text-text-secondary mt-2 max-w-md">
-            Suivez votre activité, vos opportunités et vos performances en un coup d'œil.
+            Suivez votre activité, vos opportunités et vos performances en un coup d&apos;œil.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -110,6 +116,23 @@ export default function VendorDashboardPage() {
               {s?.credits ?? 0} roses
             </Button>
           </Link>
+          {me?.stripeSubscriptionId ? (
+            <Button variant="secondary" iconLeft={<CreditCard size={18} />} onClick={async () => {
+              const res = await fetch("/api/stripe/portal", { method: "POST" });
+              const data = await res.json();
+              if (data.url) window.location.href = data.url;
+            }}>
+              Abonnement
+            </Button>
+          ) : (
+            <Button variant="primary" iconLeft={<CreditCard size={18} />} onClick={async () => {
+              const res = await fetch("/api/stripe/checkout", { method: "POST" });
+              const data = await res.json();
+              if (data.url) window.location.href = data.url;
+            }}>
+              S&apos;abonner 39€/mois
+            </Button>
+          )}
         </div>
       </div>
 
@@ -140,7 +163,7 @@ export default function VendorDashboardPage() {
               </div>
               <p className="text-text-secondary font-medium mb-1">Aucune opportunité pour le moment</p>
               <p className="text-sm text-text-secondary/70 max-w-xs mx-auto">
-                Les nouveaux appels d'offres correspondant à votre profil apparaîtront ici.
+                Les nouveaux appels d&apos;offres correspondant à votre profil apparaîtront ici.
               </p>
             </div>
           ) : (

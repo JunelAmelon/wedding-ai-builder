@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, Check, Loader2 } from "lucide-react";
+import { Bell, Check } from "lucide-react";
+import type { Notification } from "@/types/marketplace";
 import { PageHeader, Card } from "../_ui";
 
 export default function VendorNotificationsPage() {
   const router = useRouter();
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,13 +34,6 @@ export default function VendorNotificationsPage() {
     });
     if (res.ok) {
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
-    }
-  }
-
-  async function markAllRead() {
-    const res = await fetch("/api/notifications", { method: "PUT" });
-    if (res.ok) {
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     }
   }
 
@@ -69,7 +63,7 @@ export default function VendorNotificationsPage() {
             >
               <div>
                 <div className="font-medium text-text-primary">{n.title}</div>
-                <div className="text-sm text-text-secondary">{n.message}</div>
+                <div className="text-sm text-text-secondary">{n.content}</div>
                 <div className="font-sans text-[10px] uppercase tracking-[0.08em] text-text-secondary mt-1">
                   {new Date(n.createdAt).toLocaleDateString("fr-FR")}
                 </div>

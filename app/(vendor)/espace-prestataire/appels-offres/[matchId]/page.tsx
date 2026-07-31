@@ -18,11 +18,27 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/Dialog";
+import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
+
+interface MatchSummary {
+  style?: string;
+  whatTheyNeed?: string;
+  coupleStory?: string;
+  date?: string;
+  location?: string;
+  guestCount?: number;
+}
+
+interface OpportunityDetail {
+  match: ProjectVendorMatch;
+  project: WeddingProject | null;
+  summary: MatchSummary | null;
+}
 
 export default function VendorProjectDetailPage() {
   const router = useRouter();
   const { matchId } = useParams();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<OpportunityDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -115,6 +131,18 @@ export default function VendorProjectDetailPage() {
 
   const { match, project, summary } = data;
   const isContacted = match.status === "contacted";
+
+  if (!project) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-16 text-center">
+        <h1 className="font-serif text-xl font-semibold mb-2">Projet introuvable</h1>
+        <p className="text-text-secondary mb-6">Cette opportunité n&apos;est plus disponible.</p>
+        <Button variant="primary" onClick={() => router.push("/espace-prestataire/appels-offres")}>
+          Retour aux opportunités
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8 md:py-12">
@@ -235,7 +263,7 @@ export default function VendorProjectDetailPage() {
       <Dialog open={showDialog} onOpenChange={() => setShowDialog(false)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-serif">Répondre à l'appel d'offres</DialogTitle>
+            <DialogTitle className="font-serif">Répondre à l&apos;appel d&apos;offres</DialogTitle>
             <DialogDescription className="text-text-secondary">
               Cette réponse consomme 2 roses. Rédigez un message personnalisé.
             </DialogDescription>
@@ -281,7 +309,7 @@ export default function VendorProjectDetailPage() {
             </div>
             <DialogTitle className="font-serif">Proposition envoyée</DialogTitle>
             <DialogDescription className="text-text-secondary">
-              Votre message a bien été transmis au couple. Vous serez notifié dès qu'il le consultera.
+              Votre message a bien été transmis au couple. Vous serez notifié dès qu&apos;il le consultera.
               <br />
               <span className="inline-flex items-center gap-1.5 mt-3 text-primary font-medium">
                 <Flower2 size={14} className="text-rose-500" />

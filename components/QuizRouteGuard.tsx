@@ -15,9 +15,9 @@ export function QuizRouteGuard({ children }: { children: React.ReactNode }) {
 
     if (
       previous &&
-      (previous === "/gate" || previous.startsWith("/quiz/")) &&
-      current !== "/gate" &&
-      !current?.startsWith("/quiz/") &&
+      (previous === QUIZ_PATHS[1] || previous.startsWith(QUIZ_PATHS[0])) &&
+      current !== QUIZ_PATHS[1] &&
+      !current?.startsWith(QUIZ_PATHS[0]) &&
       !current?.startsWith("/espace-couple")
     ) {
       window.localStorage.removeItem("wab_quiz_state");

@@ -2,6 +2,7 @@
 
 import { ReactNode, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import {
   LayoutGrid,
@@ -75,9 +76,9 @@ export default function VendorLayoutClient({
   const logoUrl = safeUser.logo?.url;
 
   const Avatar = () => (
-    <span className="h-8 w-8 rounded-full bg-primary text-white text-xs font-semibold flex items-center justify-center overflow-hidden border border-white/20">
+    <span className="relative h-8 w-8 rounded-full bg-primary text-white text-xs font-semibold flex items-center justify-center overflow-hidden border border-white/20">
       {logoUrl ? (
-        <img src={logoUrl} alt={displayName} className="h-full w-full object-cover" />
+        <Image src={logoUrl} alt={displayName} fill sizes="32px" className="object-cover" unoptimized />
       ) : (
         initials || "·"
       )}
@@ -200,9 +201,9 @@ export default function VendorLayoutClient({
               </button>
             </div>
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-black/[0.06]">
-              <span className="h-10 w-10 rounded-full bg-primary text-white text-sm font-semibold flex items-center justify-center overflow-hidden border border-white/20">
+              <span className="relative h-10 w-10 rounded-full bg-primary text-white text-sm font-semibold flex items-center justify-center overflow-hidden border border-white/20">
                 {logoUrl ? (
-                  <img src={logoUrl} alt={displayName} className="h-full w-full object-cover" />
+                  <Image src={logoUrl} alt={displayName} fill sizes="40px" className="object-cover" unoptimized />
                 ) : (
                   initials || "·"
                 )}

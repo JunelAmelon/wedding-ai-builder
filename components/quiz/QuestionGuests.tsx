@@ -19,7 +19,7 @@ export function QuestionGuests({ onAnswer }: { onAnswer: (value: number) => void
         value={count}
         onChange={(e) => setCount(e.target.value ? Number(e.target.value) : "")}
         placeholder="Ex: 120"
-        className="w-full rounded-xl bg-white border border-black/10 px-4 py-4 text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full rounded-r-md bg-surface border border-line px-4 py-4 text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
       />
     </QuestionShell>
   );

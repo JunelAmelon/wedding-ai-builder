@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { CreditTransaction } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "credit_transactions";
 
@@ -15,7 +15,7 @@ export const creditRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const transaction: CreditTransaction = { ...data, id, createdAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, transaction);
       return transaction;
     }
@@ -25,7 +25,7 @@ export const creditRepo = {
   },
 
   async listByVendor(vendorId: string): Promise<CreditTransaction[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<CreditTransaction>(COLLECTION);
       return all.filter((t) => t.vendorId === vendorId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     }
@@ -35,7 +35,7 @@ export const creditRepo = {
   },
 
   async get(id: string): Promise<CreditTransaction | null> {
-    if (useLocal()) return localStore.get<CreditTransaction>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<CreditTransaction>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as CreditTransaction) : null;

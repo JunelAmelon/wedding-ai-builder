@@ -328,7 +328,7 @@ const OMISSION_CATALOG: OmissionCatalogItem[] = [
   { label: "Recontact des prestataires J-48", category: "Organisation", priority: "high", suggestion: "Confirmez horaires, adresses et contacts de chaque prestataire 48h avant." },
 ];
 
-export function computeOmissions(answers: QuizAnswers, _aiOutput: AIOutput): OmissionItem[] {
+export function computeOmissions(answers: QuizAnswers): OmissionItem[] {
   const omitted: OmissionItem[] = [];
   let id = 1;
 

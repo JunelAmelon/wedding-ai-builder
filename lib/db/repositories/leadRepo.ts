@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { Lead } from "@/types/domain";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "leads";
 
@@ -28,7 +28,7 @@ export const leadRepo = {
       ctaClicked: [],
       consentMarketing: input.consentMarketing,
     };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, lead.id, lead);
     } else {
       const col = await getFirestoreCol();
@@ -38,14 +38,14 @@ export const leadRepo = {
   },
 
   async get(id: string): Promise<Lead | null> {
-    if (useLocal()) return localStore.get<Lead>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<Lead>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as Lead) : null;
   },
 
   async findByEmail(email: string): Promise<Lead | null> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.findOne<Lead>(COLLECTION, (l) => l.email === email);
     }
     const col = await getFirestoreCol();
@@ -54,7 +54,7 @@ export const leadRepo = {
   },
 
   async list(): Promise<Lead[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.all<Lead>(COLLECTION);
     }
     const col = await getFirestoreCol();
@@ -63,7 +63,7 @@ export const leadRepo = {
   },
 
   async addCtaClick(id: string, ctaLabel: string): Promise<void> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const lead = await localStore.get<Lead>(COLLECTION, id);
       if (!lead) return;
       const updated = [...new Set([...lead.ctaClicked, ctaLabel])];

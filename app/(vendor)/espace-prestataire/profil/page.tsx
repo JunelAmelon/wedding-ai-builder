@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Loader2, Check, UserCircle, Upload, X } from "lucide-react";
+import type { VendorProfile } from "@/types/marketplace";
 import { PageHeader, Card } from "../_ui";
 
 interface CloudinaryAsset {
@@ -14,7 +16,7 @@ interface CloudinaryAsset {
 
 export default function VendorProfilePage() {
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<VendorProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -41,6 +43,7 @@ export default function VendorProfilePage() {
   }, [router]);
 
   async function save() {
+    if (!profile) return;
     setSaving(true);
     try {
       const res = await fetch("/api/vendor/profile", {
@@ -76,17 +79,27 @@ export default function VendorProfilePage() {
   if (loading) return <div className="min-h-[80dvh] bg-background" />;
   if (!profile) return <div className="p-6">Profil introuvable.</div>;
 
-  const updateField = (field: string, value: unknown) => setProfile({ ...profile, [field]: value });
+  const updateField = (field: string, value: unknown) => {
+    if (!profile) return;
+    setProfile({ ...profile, [field]: value } as VendorProfile);
+  };
   const updateNested = (path: string, value: unknown) => {
+    if (!profile) return;
     const keys = path.split(".");
-    const updated = { ...profile };
-    let target: any = updated;
-    for (let i = 0; i < keys.length - 1; i++) target = target[keys[i]];
+    const updated = { ...profile } as unknown as Record<string, unknown>;
+    let target: Record<string, unknown> = updated;
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+      const next = (target[key] as Record<string, unknown> | undefined) ?? {};
+      target[key] = { ...next };
+      target = target[key] as Record<string, unknown>;
+    }
     target[keys[keys.length - 1]] = value;
-    setProfile(updated);
+    setProfile(updated as unknown as VendorProfile);
   };
 
   async function handleLogoUpload(file: File) {
+    if (!profile) return;
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
     if (!cloudName || !uploadPreset) {
@@ -107,7 +120,7 @@ export default function VendorProfilePage() {
       if (!res.ok) throw new Error("Échec de l'upload");
       const data = await res.json();
       const asset: CloudinaryAsset = { url: data.secure_url, publicId: data.public_id, filename: file.name };
-      setProfile({ ...profile, logo: asset });
+      setProfile({ ...profile, logo: asset } as VendorProfile);
     } catch (err) {
       setLogoError(err instanceof Error ? err.message : "Échec de l'upload");
     } finally {
@@ -116,7 +129,8 @@ export default function VendorProfilePage() {
   }
 
   function removeLogo() {
-    setProfile({ ...profile, logo: null });
+    if (!profile) return;
+    setProfile({ ...profile, logo: null } as VendorProfile);
   }
 
   return (
@@ -130,9 +144,9 @@ export default function VendorProfilePage() {
       <Card className="p-6">
         <div className="flex items-center gap-6 mb-8">
           <div className="relative">
-            <div className="h-24 w-24 rounded-2xl border border-black/10 bg-surface overflow-hidden flex items-center justify-center">
+            <div className="relative h-24 w-24 rounded-2xl border border-black/10 bg-surface overflow-hidden flex items-center justify-center">
               {profile.logo?.url ? (
-                <img src={profile.logo.url} alt="Logo" className="h-full w-full object-cover" />
+                <Image src={profile.logo.url} alt="Logo" fill sizes="96px" className="object-cover" unoptimized />
               ) : (
                 <UserCircle size={36} className="text-text-secondary" />
               )}
@@ -231,7 +245,7 @@ export default function VendorProfilePage() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Années d'expérience</label>
+            <label className="block text-sm font-medium text-text-primary mb-1">Années d&apos;expérience</label>
             <input
               type="number"
               value={profile.yearsOfExperience || ""}
@@ -319,7 +333,7 @@ export default function VendorProfilePage() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Villes d'intervention</label>
+            <label className="block text-sm font-medium text-text-primary mb-1">Villes d&apos;intervention</label>
             <input
               value={(profile.serviceArea?.cities || []).join(", ")}
               onChange={(e) => updateNested("serviceArea.cities", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
@@ -327,7 +341,7 @@ export default function VendorProfilePage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Régions d'intervention</label>
+            <label className="block text-sm font-medium text-text-primary mb-1">Régions d&apos;intervention</label>
             <input
               value={(profile.serviceArea?.regions || []).join(", ")}
               onChange={(e) => updateNested("serviceArea.regions", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "crypto";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { hashPassword } from "@/lib/auth";
-import type { UserAccount } from "@/types/marketplace";
 
 function generatePassword(length = 12): string {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

@@ -29,14 +29,21 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
   const [customStyle, setCustomStyle] = useState("");
   const [customStyleDescription, setCustomStyleDescription] = useState("");
 
-  const options: { value: WeddingStyle; label: string; icon: LucideIcon }[] = [
-    { value: "boheme", label: "Bohème", icon: Leaf },
-    { value: "classique", label: "Classique & élégant", icon: Crown },
-    { value: "moderne", label: "Moderne & minimaliste", icon: Sparkles },
-    { value: "destination", label: "Destination wedding", icon: Plane },
-    { value: "rustique", label: "Rustique & champêtre", icon: Trees },
-    { value: "luxe", label: "Luxe & raffiné", icon: Gem },
-    { value: "autre", label: "Autre thème", icon: PenTool },
+  const options: {
+    value: WeddingStyle;
+    label: string;
+    icon: LucideIcon;
+    bg: string;
+    iconColor: string;
+    text: string;
+  }[] = [
+    { value: "boheme", label: "Bohème", icon: Leaf, bg: "#D8ECD9", iconColor: "#3C8552", text: "#0E0E10" },
+    { value: "classique", label: "Classique", icon: Crown, bg: "#FBE1E6", iconColor: "#8C2F39", text: "#0E0E10" },
+    { value: "moderne", label: "Moderne", icon: Sparkles, bg: "#E4DBFB", iconColor: "#8B7BD8", text: "#0E0E10" },
+    { value: "destination", label: "Destination", icon: Plane, bg: "#F4D93E", iconColor: "#0E0E10", text: "#0E0E10" },
+    { value: "rustique", label: "Rustique", icon: Trees, bg: "#F2704A", iconColor: "#fff", text: "#fff" },
+    { value: "luxe", label: "Luxe", icon: Gem, bg: "#8B7BD8", iconColor: "#fff", text: "#fff" },
+    { value: "autre", label: "Autre", icon: PenTool, bg: "#F7F7F9", iconColor: "#6B6B72", text: "#0E0E10" },
   ];
 
   const isOther = style === "autre";
@@ -56,7 +63,7 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
       }}
       nextDisabled={!canProceed}
     >
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {options.map((opt) => {
           const Icon = opt.icon;
           const selected = style === opt.value;
@@ -66,30 +73,24 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
               key={opt.value}
               onClick={() => setStyle(opt.value)}
               type="button"
-              className={
-                "rounded-2xl border bg-white px-4 py-4 text-left transition shadow-[0_12px_40px_rgba(11,15,26,0.06)] " +
-                (selected
-                  ? "border-primary ring-2 ring-primary/20"
-                  : "border-black/10 hover:border-black/20")
-              }
+              className="rounded-none border border-ink/10 px-3 py-4 text-left transition hover:opacity-95"
+              style={{
+                backgroundColor: opt.bg,
+                color: opt.text,
+                boxShadow: selected ? `inset 0 0 0 2px ${opt.text}` : "0 12px 40px rgba(11,15,26,0.05)",
+              }}
             >
-              <div className="flex items-start gap-3">
-                <div
-                  className={
-                    "h-10 w-10 rounded-xl border flex items-center justify-center shrink-0 " +
-                    (selected
-                      ? "bg-primary/10 border-primary/15 text-primary"
-                      : "bg-surface border-black/10 text-text-secondary")
-                  }
-                >
-                  <Icon size={18} />
-                </div>
-                <div className="min-w-0">
-                  <div className="font-semibold leading-tight text-text-primary truncate">{opt.label}</div>
-                  <div className="text-xs text-text-secondary mt-1">
-                    {selected ? "Sélectionné" : "Choisir"}
-                  </div>
-                </div>
+              <div
+                className="h-10 w-10 mb-3 flex items-center justify-center rounded-none"
+                style={{ backgroundColor: selected ? (opt.text === "#fff" ? "rgba(14,14,16,0.25)" : "rgba(255,255,255,0.75)") : "rgba(255,255,255,0.55)" }}
+              >
+                <Icon size={20} color={selected ? opt.text : opt.iconColor} />
+              </div>
+              <div className="font-semibold leading-tight text-sm" style={{ color: opt.text }}>
+                {opt.label}
+              </div>
+              <div className="text-[11px] mt-1 opacity-75" style={{ color: opt.text }}>
+                {selected ? "Sélectionné" : "Choisir"}
               </div>
             </button>
           );
@@ -97,14 +98,14 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
       </div>
 
       {isOther && (
-        <div className="mt-6 space-y-4 rounded-2xl border border-black/10 bg-surface p-4">
+        <div className="mt-6 space-y-4 rounded-r-lg border border-line bg-surface p-4">
           <div>
             <label className="block text-sm font-medium text-text-primary mb-1">Votre thème *</label>
             <input
               value={customStyle}
               onChange={(e) => setCustomStyle(e.target.value)}
               placeholder="Ex. Gatsby, Tropical, années 20..."
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-r-md bg-white border border-line px-4 py-3 text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
             />
           </div>
           <div>
@@ -114,7 +115,7 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
               onChange={(e) => setCustomStyleDescription(e.target.value)}
               placeholder="Ex. Doré, art déco, champagne, jazz live..."
               rows={3}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-r-md bg-white border border-line px-4 py-3 text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
             />
           </div>
         </div>

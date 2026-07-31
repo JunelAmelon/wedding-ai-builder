@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { Proposal } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal } from "./utils";
+import { isLocalMode } from "./utils";
 
 const COLLECTION = "proposals";
 
@@ -15,7 +15,7 @@ export const proposalRepo = {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const proposal: Proposal = { ...data, id, createdAt: now, updatedAt: now };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, id, proposal);
       return proposal;
     }
@@ -25,14 +25,14 @@ export const proposalRepo = {
   },
 
   async list(): Promise<Proposal[]> {
-    if (useLocal()) return localStore.all<Proposal>(COLLECTION);
+    if (isLocalMode()) return localStore.all<Proposal>(COLLECTION);
     const col = await getFirestoreCol();
     const snap = await col.get();
     return snap.docs.map((d) => d.data() as Proposal);
   },
 
   async listByProject(projectId: string): Promise<Proposal[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Proposal>(COLLECTION);
       return all.filter((p) => p.projectId === projectId);
     }
@@ -42,7 +42,7 @@ export const proposalRepo = {
   },
 
   async listByVendor(vendorId: string): Promise<Proposal[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Proposal>(COLLECTION);
       return all.filter((p) => p.vendorId === vendorId);
     }
@@ -52,7 +52,7 @@ export const proposalRepo = {
   },
 
   async listByTender(tenderId: string): Promise<Proposal[]> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const all = await localStore.all<Proposal>(COLLECTION);
       return all.filter((p) => p.tenderId === tenderId);
     }
@@ -62,7 +62,7 @@ export const proposalRepo = {
   },
 
   async get(id: string): Promise<Proposal | null> {
-    if (useLocal()) return localStore.get<Proposal>(COLLECTION, id);
+    if (isLocalMode()) return localStore.get<Proposal>(COLLECTION, id);
     const col = await getFirestoreCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as Proposal) : null;
@@ -70,7 +70,7 @@ export const proposalRepo = {
 
   async update(id: string, data: Partial<Proposal>): Promise<Proposal> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<Proposal>(COLLECTION, id, { ...data, updatedAt: now });
     }
     const col = await getFirestoreCol();

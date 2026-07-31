@@ -5,7 +5,6 @@ import { Lightbulb, AlertCircle } from "lucide-react";
 
 interface BlueprintSectionProps {
   blueprint: WeddingBlueprint;
-  styleLabel: string;
   customStyle?: string;
   customStyleDescription?: string;
   isCustomStyle: boolean;
@@ -30,7 +29,6 @@ function StyleBar({ label, value }: { label: string; value: number }) {
 
 export default function BlueprintSection({
   blueprint,
-  styleLabel,
   customStyle,
   customStyleDescription,
   isCustomStyle,

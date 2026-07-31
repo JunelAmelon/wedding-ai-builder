@@ -16,12 +16,11 @@ import {
   MapPin,
   Users,
   Banknote,
-  TrendingUp,
   CheckCircle2,
   Clock,
-  Trash2,
   ArrowUpRight,
 } from "lucide-react";
+import type { ProposalDetail, DashboardStats } from "@/types/marketplace";
 import { PageHeader } from "../_ui";
 
 const FILTERS = [
@@ -58,8 +57,8 @@ function StatTile({ label, value, icon, accent = "primary" }: { label: string; v
 
 export default function VendorProposalsPage() {
   const router = useRouter();
-  const [proposals, setProposals] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [proposals, setProposals] = useState<ProposalDetail[]>([]);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [updating, setUpdating] = useState<string | null>(null);
@@ -115,10 +114,13 @@ export default function VendorProposalsPage() {
       if (!res.ok) throw new Error(json.error || "Erreur");
       setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: json.proposal.status } : p)));
       if (stats) {
-        setStats((prev: any) => ({
-          ...prev,
-          archivedProposals: status === "archived" ? (prev.archivedProposals || 0) + 1 : Math.max(0, (prev.archivedProposals || 0) - 1),
-        }));
+        setStats((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            archivedProposals: status === "archived" ? (prev.archivedProposals || 0) + 1 : Math.max(0, (prev.archivedProposals || 0) - 1),
+          };
+        });
       }
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
@@ -151,9 +153,9 @@ export default function VendorProposalsPage() {
             <Send size={28} className="text-primary" />
           </div>
           <h2 className="font-serif text-xl font-semibold mb-2">Aucune proposition envoyée</h2>
-          <p className="text-text-secondary mb-8 max-w-md mx-auto">Découvrez les opportunités compatibles avec votre profil et répondez aux appels d'offres.</p>
+          <p className="text-text-secondary mb-8 max-w-md mx-auto">Découvrez les opportunités compatibles avec votre profil et répondez aux appels d&apos;offres.</p>
           <Link href="/espace-prestataire/appels-offres">
-            <Button variant="primary" iconLeft={<ArrowUpRight size={16} />}>Voir les appels d'offres</Button>
+            <Button variant="primary" iconLeft={<ArrowUpRight size={16} />}>Voir les appels d&apos;offres</Button>
           </Link>
         </div>
       ) : (

@@ -39,11 +39,11 @@ export async function POST(req: Request) {
     }
 
     const token = createSession(user);
-    setSessionCookie(token);
-
-    return NextResponse.json({
+    const response = NextResponse.json({
       user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
     });
+    setSessionCookie(response, token);
+    return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur lors de la connexion";
     return NextResponse.json({ error: message }, { status: 500 });

@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import type { WeddingSession, QuizAnswers, AIOutput } from "@/types/domain";
 import { localStore } from "@/lib/db/localStore";
-import { useLocal, getStoreBackend } from "./utils";
+import { isLocalMode, getStoreBackend } from "./utils";
 
 const COLLECTION = "sessions";
 
@@ -25,7 +25,7 @@ export const sessionRepo = {
       leadId: null,
       userId: null,
     };
-    if (useLocal()) {
+    if (isLocalMode()) {
       await localStore.set(COLLECTION, session.id, session);
     } else {
       const col = await getFirestoreCol();
@@ -35,7 +35,7 @@ export const sessionRepo = {
   },
 
   async get(id: string): Promise<WeddingSession | null> {
-    if (useLocal()) {
+    if (isLocalMode()) {
       const session = await localStore.get<WeddingSession>(COLLECTION, id);
       if (!session) {
         console.warn(`[sessionRepo] Session ${id} introuvable dans le store local`);
@@ -52,7 +52,7 @@ export const sessionRepo = {
 
   async updateAnswers(id: string, partialAnswers: Partial<QuizAnswers>): Promise<WeddingSession> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       const existing = await localStore.get<WeddingSession>(COLLECTION, id);
       if (!existing) throw new Error("Session introuvable");
       const merged: WeddingSession = {
@@ -82,7 +82,7 @@ export const sessionRepo = {
 
   async setStatus(id: string, status: WeddingSession["status"]): Promise<WeddingSession> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<WeddingSession>(COLLECTION, id, { status, updatedAt: now });
     }
     const col = await getFirestoreCol();
@@ -93,7 +93,7 @@ export const sessionRepo = {
 
   async setAIOutput(id: string, aiOutput: AIOutput): Promise<WeddingSession> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<WeddingSession>(COLLECTION, id, { aiOutput, updatedAt: now });
     }
     const col = await getFirestoreCol();
@@ -104,7 +104,7 @@ export const sessionRepo = {
 
   async linkLead(id: string, leadId: string): Promise<WeddingSession> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<WeddingSession>(COLLECTION, id, { leadId, updatedAt: now });
     }
     const col = await getFirestoreCol();
@@ -115,7 +115,7 @@ export const sessionRepo = {
 
   async setUserId(id: string, userId: string): Promise<WeddingSession> {
     const now = new Date().toISOString();
-    if (useLocal()) {
+    if (isLocalMode()) {
       return localStore.update<WeddingSession>(COLLECTION, id, { userId, updatedAt: now });
     }
     const col = await getFirestoreCol();

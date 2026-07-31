@@ -1,6 +1,8 @@
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createHmac, randomBytes, pbkdf2Sync } from "crypto";
 import type { UserAccount } from "@/types/marketplace";
+import type { AdminRole } from "@/types/admin";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 
 const JWT_SECRET = process.env.JWT_SECRET || "wedding-ai-builder-secret";
@@ -12,6 +14,7 @@ export interface SessionUser {
   firstName: string;
   lastName: string;
   role: UserAccount["role"];
+  adminRole?: AdminRole;
 }
 
 export function hashPassword(password: string): string {
@@ -52,6 +55,7 @@ export function createSession(user: UserAccount): string {
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role,
+    adminRole: user.adminRole,
   });
 }
 
@@ -62,9 +66,8 @@ export function getSessionUser(): SessionUser | null {
   return verifySession(token);
 }
 
-export function setSessionCookie(token: string) {
-  const cookieStore = cookies();
-  cookieStore.set(COOKIE_NAME, token, {
+export function setSessionCookie(response: NextResponse, token: string) {
+  response.cookies.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -73,9 +76,8 @@ export function setSessionCookie(token: string) {
   });
 }
 
-export function clearSessionCookie() {
-  const cookieStore = cookies();
-  cookieStore.delete(COOKIE_NAME);
+export function clearSessionCookie(response: NextResponse) {
+  response.cookies.delete(COOKIE_NAME);
 }
 
 export async function requireAuth(): Promise<SessionUser> {
@@ -86,4 +88,17 @@ export async function requireAuth(): Promise<SessionUser> {
 
 export async function getFullUser(userId: string): Promise<UserAccount | null> {
   return userRepo.get(userId);
+}
+
+export async function requireAdmin(minRole?: "superadmin" | "moderator" | "support" | "commercial") {
+  const sessionUser = getSessionUser();
+  if (!sessionUser) throw new Error("Unauthorized");
+  const user = await userRepo.get(sessionUser.id);
+  if (!user || user.role !== "admin") throw new Error("Forbidden");
+  if (!minRole) return user;
+  const hierarchy: Record<string, number> = { commercial: 1, support: 2, moderator: 3, superadmin: 4 };
+  const userLevel = hierarchy[user.adminRole || "commercial"];
+  const requiredLevel = hierarchy[minRole];
+  if (userLevel < requiredLevel) throw new Error("Forbidden");
+  return user;
 }
