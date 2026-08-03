@@ -18,6 +18,8 @@ export interface UserAccount {
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
   emailVerified: boolean;
+  resetToken: string | null;
+  resetTokenExpiry: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -294,4 +296,48 @@ export interface Witness {
   notes: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Wishlist {
+  id: string;
+  coupleId: string;
+  weddingId: string;
+  title: string;
+  description: string;
+  coverImage?: { url: string; publicId: string; filename: string };
+  shareToken: string;
+  isPublic: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WishlistItem {
+  id: string;
+  wishlistId: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl?: string;
+  vendorId?: string;
+  vendorName?: string;
+  purchased: boolean;
+  purchasedBy?: string;
+  purchasedAt?: string;
+  quantity: number;
+  remaining: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WishlistPurchase {
+  id: string;
+  wishlistId: string;
+  itemId?: string;
+  itemName?: string;
+  guestName: string;
+  guestEmail: string;
+  amount: number;
+  message?: string;
+  stripePaymentIntentId?: string;
+  createdAt: string;
 }

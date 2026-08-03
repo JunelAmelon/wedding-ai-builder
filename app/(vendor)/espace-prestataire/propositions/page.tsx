@@ -3,25 +3,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 import {
   BadgeCheck,
   X,
   MessageSquare,
   Send,
   Archive,
-  RotateCcw,
+  Clock,
   Filter,
   Calendar,
   MapPin,
   Users,
   Banknote,
   CheckCircle2,
-  Clock,
   ArrowUpRight,
 } from "lucide-react";
 import type { ProposalDetail, DashboardStats } from "@/types/marketplace";
-import { PageHeader } from "../_ui";
 
 const FILTERS = [
   { id: "all", label: "Tout" },
@@ -32,28 +29,11 @@ const FILTERS = [
 ];
 
 const STATUS_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending: { label: "En attente", color: "bg-amber-100 text-amber-700", icon: <Clock size={13} /> },
-  accepted: { label: "Validée", color: "bg-emerald-100 text-emerald-700", icon: <BadgeCheck size={13} /> },
-  declined: { label: "Refusée", color: "bg-rose-100 text-rose-700", icon: <X size={13} /> },
-  archived: { label: "Archivée", color: "bg-slate-200 text-slate-600", icon: <Archive size={13} /> },
+  pending: { label: "En attente", color: "bg-[#ffedd5] text-[#7c2d12]", icon: <Clock size={13} /> },
+  accepted: { label: "Validée", color: "bg-[#dcfce7] text-[#14532d]", icon: <BadgeCheck size={13} /> },
+  declined: { label: "Refusée", color: "bg-[#fce7f3] text-[#831843]", icon: <X size={13} /> },
+  archived: { label: "Archivée", color: "bg-[#f1f0eb] text-[#8b8b86]", icon: <Archive size={13} /> },
 };
-
-function StatTile({ label, value, icon, accent = "primary" }: { label: string; value: number; icon: React.ReactNode; accent?: string }) {
-  const accentMap: Record<string, string> = {
-    primary: "bg-primary/10 text-primary",
-    amber: "bg-amber-100 text-amber-700",
-    emerald: "bg-emerald-100 text-emerald-700",
-    rose: "bg-rose-100 text-rose-700",
-    slate: "bg-slate-200 text-slate-600",
-  };
-  return (
-    <div className="bg-white border border-black/[0.06] rounded-2xl p-5 shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
-      <div className={`h-10 w-10 rounded-xl ${accentMap[accent]} flex items-center justify-center mb-3`}>{icon}</div>
-      <div className="font-serif text-2xl font-semibold text-text-primary">{value}</div>
-      <div className="text-sm text-text-secondary">{label}</div>
-    </div>
-  );
-}
 
 export default function VendorProposalsPage() {
   const router = useRouter();
@@ -102,26 +82,16 @@ export default function VendorProposalsPage() {
     };
   }, [proposals]);
 
-  async function setStatus(proposalId: string, status: string) {
+  async function updateStatus(proposalId: string, newStatus: string) {
     setUpdating(proposalId);
     try {
       const res = await fetch("/api/vendor/proposals", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proposalId, status }),
+        body: JSON.stringify({ proposalId, status: newStatus }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Erreur");
-      setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: json.proposal.status } : p)));
-      if (stats) {
-        setStats((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            archivedProposals: status === "archived" ? (prev.archivedProposals || 0) + 1 : Math.max(0, (prev.archivedProposals || 0) - 1),
-          };
-        });
-      }
+      if (!res.ok) throw new Error("Échec de la mise à jour");
+      setProposals((prev) => prev.map((p) => (p.id === proposalId ? { ...p, status: newStatus as any } : p)));
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
     } finally {
@@ -129,133 +99,165 @@ export default function VendorProposalsPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-      <PageHeader
-        label="Propositions"
-        title="Centre de propositions"
-        subtitle="Suivez, filtrez et archivez vos réponses aux appels d'offres."
-      />
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <StatTile label="Envoyées" value={stats?.sentProposals ?? counts.all} icon={<Send size={18} />} accent="primary" />
-        <StatTile label="En attente" value={stats?.pendingProposals ?? counts.pending} icon={<Clock size={18} />} accent="amber" />
-        <StatTile label="Validées" value={stats?.wonContracts ?? counts.accepted} icon={<CheckCircle2 size={18} />} accent="emerald" />
-        <StatTile label="Archivées" value={stats?.archivedProposals ?? counts.archived} icon={<Archive size={18} />} accent="slate" />
+    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Propositions</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
+            Mes matches
+          </h1>
+          <p className="text-[#8b8b86] mt-2">
+            Gérez vos matches avec les couples.
+          </p>
+        </div>
       </div>
 
-      {proposals.length === 0 ? (
-        <div className="bg-white border border-black/[0.06] rounded-2xl p-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-5 bg-primary/10">
-            <Send size={28} className="text-primary" />
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="rounded-[20px] bg-white border border-[#e6e4dd] p-5 shadow-[0_8px_24px_rgba(14,14,16,0.04)]">
+          <div className="h-10 w-10 rounded-xl bg-[#dff05a] flex items-center justify-center mb-4">
+            <Send size={20} strokeWidth={1.8} />
           </div>
-          <h2 className="font-serif text-xl font-semibold mb-2">Aucune proposition envoyée</h2>
-          <p className="text-text-secondary mb-8 max-w-md mx-auto">Découvrez les opportunités compatibles avec votre profil et répondez aux appels d&apos;offres.</p>
-          <Link href="/espace-prestataire/appels-offres">
-            <Button variant="primary" iconLeft={<ArrowUpRight size={16} />}>Voir les appels d&apos;offres</Button>
-          </Link>
+          <p className="font-display text-3xl font-bold text-[#1c1c1c]">{stats?.sentProposals ?? 0}</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-[#8b8b86] mt-1">Envoyées</p>
+        </div>
+        <div className="rounded-[20px] bg-white border border-[#e6e4dd] p-5 shadow-[0_8px_24px_rgba(14,14,16,0.04)]">
+          <div className="h-10 w-10 rounded-xl bg-[#dbeafe] flex items-center justify-center mb-4">
+            <Clock size={20} strokeWidth={1.8} />
+          </div>
+          <p className="font-display text-3xl font-bold text-[#1c1c1c]">{stats?.pendingProposals ?? 0}</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-[#8b8b86] mt-1">En attente</p>
+        </div>
+        <div className="rounded-[20px] bg-white border border-[#e6e4dd] p-5 shadow-[0_8px_24px_rgba(14,14,16,0.04)]">
+          <div className="h-10 w-10 rounded-xl bg-[#dcfce7] flex items-center justify-center mb-4">
+            <BadgeCheck size={20} strokeWidth={1.8} />
+          </div>
+          <p className="font-display text-3xl font-bold text-[#1c1c1c]">{stats?.activeProposals ?? 0}</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-[#8b8b86] mt-1">Validées</p>
+        </div>
+        <div className="rounded-[20px] bg-white border border-[#e6e4dd] p-5 shadow-[0_8px_24px_rgba(14,14,16,0.04)]">
+          <div className="h-10 w-10 rounded-xl bg-[#fce7f3] flex items-center justify-center mb-4">
+            <CheckCircle2 size={20} strokeWidth={1.8} />
+          </div>
+          <p className="font-display text-3xl font-bold text-[#1c1c1c]">{stats?.wonContracts ?? 0}</p>
+          <p className="text-[11px] uppercase tracking-[0.12em] text-[#8b8b86] mt-1">Contrats</p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+        {FILTERS.map((f) => (
+          <button
+            key={f.id}
+            onClick={() => setFilter(f.id)}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+              filter === f.id
+                ? "bg-[#1c1c1c] text-white"
+                : "bg-white border border-[#e6e4dd] text-[#8b8b86] hover:text-[#1c1c1c]"
+            }`}
+          >
+            <Filter size={15} />
+            {f.label} ({counts[f.id as keyof typeof counts]})
+          </button>
+        ))}
+      </div>
+
+      {/* List */}
+      {filteredProposals.length === 0 ? (
+        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#dff05a]">
+            <Send size={22} className="text-[#1c1c1c]" />
+          </div>
+          <h2 className="font-display text-xl font-bold mb-2 text-[#1c1c1c]">Aucun match</h2>
+          <p className="text-[#8b8b86]">Vous n'avez pas encore matché avec des couples.</p>
         </div>
       ) : (
-        <div>
-          {/* Filtres */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="inline-flex items-center gap-1 rounded-full bg-surface p-1 border border-black/[0.06] overflow-x-auto">
-              {FILTERS.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setFilter(f.id)}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
-                    filter === f.id
-                      ? "bg-white text-text-primary shadow-[0_1px_2px_rgba(11,15,26,0.08)]"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {f.label}
-                  <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-full bg-black/[0.06] text-text-secondary">{counts[f.id as keyof typeof counts]}</span>
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-2 text-sm text-text-secondary">
-              <Filter size={14} />
-              <span className="font-mono text-[10px] uppercase tracking-[0.12em]">{filteredProposals.length} résultat{filteredProposals.length > 1 ? "s" : ""}</span>
-            </div>
-          </div>
-
-          {/* Liste */}
-          <div className="grid gap-5">
-            {filteredProposals.map((p) => {
-              const status = STATUS_META[p.status] || STATUS_META.pending;
-              const canArchive = p.status === "declined" || p.status === "accepted";
-              const canRestore = p.status === "archived";
-              return (
-                <div
-                  key={p.id}
-                  className={`relative bg-white border border-black/[0.06] rounded-2xl p-6 shadow-[0_8px_24px_rgba(11,15,26,0.04)] transition-all hover:shadow-[0_12px_32px_rgba(11,15,26,0.08)] ${p.status === "archived" ? "opacity-70" : ""}`}
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-start gap-5">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap mb-2">
-                        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${status.color}`}>
-                          {status.icon}
-                          {status.label}
-                        </span>
-                        <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-secondary">
-                          {new Date(p.createdAt).toLocaleDateString("fr-FR")}
-                        </span>
-                      </div>
-                      <h3 className="font-serif text-xl font-semibold text-text-primary mb-1">{p.project?.name || "Mariage"}</h3>
-                      <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary mb-4">
-                        {p.project?.location?.city && (
-                          <span className="flex items-center gap-1"><MapPin size={13} /> {p.project.location.city}</span>
-                        )}
-                        {p.project?.weddingDate && (
-                          <span className="flex items-center gap-1"><Calendar size={13} /> {new Date(p.project.weddingDate).toLocaleDateString("fr-FR")}</span>
-                        )}
-                        {p.project?.guestCount && (
-                          <span className="flex items-center gap-1"><Users size={13} /> {p.project.guestCount} invités</span>
-                        )}
-                        {p.amount && (
-                          <span className="flex items-center gap-1 text-text-primary font-medium"><Banknote size={13} /> {p.amount} {p.currency || "EUR"}</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-text-secondary leading-relaxed line-clamp-3">{p.message}</p>
+        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] overflow-hidden">
+          {filteredProposals.map((proposal) => (
+            <div key={proposal.id} className="p-6 border-b border-[#e6e4dd] last:border-b-0">
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium uppercase tracking-[0.06em] ${STATUS_META[proposal.status]?.color}`}>
+                      {STATUS_META[proposal.status]?.icon}
+                      {STATUS_META[proposal.status]?.label}
+                    </span>
+                  </div>
+                  <h3 className="font-display text-lg font-bold text-[#1c1c1c] mb-2">
+                    {proposal.project?.name || "Projet sans nom"}
+                  </h3>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+                      <MapPin size={16} />
+                      {proposal.project?.location?.city || "Lieu non précisé"}
                     </div>
-
-                    <div className="flex flex-row lg:flex-col gap-2 shrink-0">
-                      <Link href={`/espace-prestataire/messagerie?proposal=${p.id}`} className="flex-1 lg:flex-initial">
-                        <Button variant="secondary" className="w-full" iconLeft={<MessageSquare size={16} />}>Messagerie</Button>
-                      </Link>
-                      {canArchive && (
-                        <Button
-                          variant="secondary"
-                          className="w-full"
-                          iconLeft={<Archive size={16} />}
-                          onClick={() => setStatus(p.id, "archived")}
-                          disabled={updating === p.id}
-                        >
-                          Archiver
-                        </Button>
-                      )}
-                      {canRestore && (
-                        <Button
-                          variant="secondary"
-                          className="w-full"
-                          iconLeft={<RotateCcw size={16} />}
-                          onClick={() => setStatus(p.id, "pending")}
-                          disabled={updating === p.id}
-                        >
-                          Restaurer
-                        </Button>
-                      )}
+                    <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+                      <Calendar size={16} />
+                      {proposal.project?.weddingDate ? new Date(proposal.project.weddingDate).toLocaleDateString("fr-FR") : "Date non précisée"}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+                      <Banknote size={16} />
+                      Budget {proposal.project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {proposal.project?.budget?.currency || "EUR"}
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link
+                    href={`/espace-prestataire/appels-offres/${proposal.tenderId || ""}`}
+                    className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]"
+                  >
+                    <ArrowUpRight size={18} />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex-1 p-3 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
+                  <p className="text-sm text-[#8b8b86] line-clamp-2">{proposal.message}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {proposal.status === "pending" && (
+                    <>
+                      <button
+                        onClick={() => updateStatus(proposal.id, "accepted")}
+                        disabled={updating === proposal.id}
+                        className="p-2 rounded-full bg-[#dcfce7] hover:bg-[#c0e6c0] text-[#14532d] disabled:opacity-50 transition"
+                      >
+                        <BadgeCheck size={18} />
+                      </button>
+                      <button
+                        onClick={() => updateStatus(proposal.id, "declined")}
+                        disabled={updating === proposal.id}
+                        className="p-2 rounded-full bg-[#fce7f3] hover:bg-[#f0d0d8] text-[#831843] disabled:opacity-50 transition"
+                      >
+                        <X size={18} />
+                      </button>
+                    </>
+                  )}
+                  {proposal.status === "accepted" && (
+                    <Link
+                      href={`/espace-prestataire/messagerie`}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1c1c1c] text-white hover:bg-[#333] transition"
+                    >
+                      <MessageSquare size={16} /> Discuter
+                    </Link>
+                  )}
+                  {proposal.status !== "archived" && (
+                    <button
+                      onClick={() => updateStatus(proposal.id, "archived")}
+                      disabled={updating === proposal.id}
+                      className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86] disabled:opacity-50 transition"
+                    >
+                      <Archive size={18} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

@@ -177,7 +177,7 @@ function LoginPageInner() {
       </div>
 
       {/* ===== PANNEAU DROIT ===== */}
-      <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-white">
+      <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-[#fbfafa]">
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <LogoShape />
@@ -266,7 +266,13 @@ function LoginPageInner() {
             )}
           </button>
 
-          <div className="flex items-center justify-between mt-4 mb-6">
+          <div className="text-center mt-4 mb-6">
+            <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-gray-800 underline underline-offset-4 transition">
+              Mot de passe oublié ?
+            </Link>
+          </div>
+
+          <div className="flex items-center justify-between mb-6">
             <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer select-none">
               <span className="w-4 h-4 rounded border border-gray-300 flex items-center justify-center" style={{ backgroundColor: rememberMe ? NAVY : "transparent" }}>
                 {rememberMe && <Check size={10} className="text-white" />}
@@ -298,7 +304,7 @@ function LoginPageInner() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-[100dvh] bg-white" />}>
+    <Suspense fallback={<div className="min-h-[100dvh] bg-[#fbfafa]" />}>
       <LoginPageInner />
     </Suspense>
   );

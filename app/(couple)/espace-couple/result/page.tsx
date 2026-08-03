@@ -22,6 +22,8 @@ import {
   Clock,
   Flag,
   Lightbulb,
+  Users,
+  MapPin,
 } from "lucide-react";
 
 function normalizeStyleAnswer(quiz: WeddingSession["quizAnswers"]) {
@@ -299,7 +301,7 @@ export default function CoupleResultPage() {
 
   const metricCards = [
     {
-      label: "Wedding Risk Score",
+      label: "Score de match",
       value: riskEngine.riskScore.toString(),
       hint: riskLabel,
       chip: "#F4D93E",
@@ -329,8 +331,8 @@ export default function CoupleResultPage() {
   ] as const;
 
   const HeroImage = (
-    <div className="relative w-full max-w-[520px] mx-auto">
-      <div className="relative rounded-[34px] overflow-hidden shadow-[0_50px_110px_rgba(14,14,16,0.16)]">
+    <div className="relative w-full max-w-[520px] mx-auto pb-16">
+      <div className="relative rounded-[34px] overflow-visible shadow-[0_50px_110px_rgba(14,14,16,0.16)]">
         <div className="relative w-full aspect-[1/1.15] rounded-[28px] overflow-hidden">
           <Image
             src="/hero-result.png"
@@ -343,41 +345,58 @@ export default function CoupleResultPage() {
           />
         </div>
 
-        <div className="absolute left-4 right-4 sm:left-6 sm:right-6 -bottom-6 rounded-[24px] bg-white border border-black/10 shadow-[0_18px_40px_rgba(14,14,16,0.14)] p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-grey">Résumé</div>
-              <div className="mt-1 font-display text-lg font-bold text-ink leading-snug break-words">{displayStyle}</div>
+        <div className="absolute left-4 right-4 sm:left-6 sm:right-6 -bottom-12 rounded-[24px] bg-white border border-black/10 shadow-[0_18px_40px_rgba(14,14,16,0.14)] p-4 sm:p-5 z-20">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-grey mb-4">Résumé</div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] uppercase tracking-wider text-grey/70">Style</div>
+                <div className="font-display text-sm font-bold text-ink leading-snug break-words">{displayStyle}</div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="h-7 w-7 rounded-full flex items-center justify-center" style={{ backgroundColor: riskTone }}>
+                  <Sparkles size={13} color="#0E0E10" />
+                </span>
+                <div>
+                  <div className="font-display text-base font-bold text-ink leading-none">{riskEngine.riskScore}</div>
+                  <div className="text-[9px] text-text-secondary">score</div>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: riskTone }}>
-                <Sparkles size={15} color="#0E0E10" />
-              </span>
+            <div className="grid grid-cols-2 gap-4 pt-3 border-t border-line">
               <div>
-                <div className="font-display text-lg font-bold text-ink leading-none">{riskEngine.riskScore}</div>
-                <div className="text-[10px] text-text-secondary">score</div>
+                <div className="text-[10px] uppercase tracking-wider text-grey/70">Budget</div>
+                <div className="font-display text-sm font-bold text-ink">{formatAmount(totalBudget)}</div>
+                <div className="text-[9px] text-text-secondary">enveloppe totale</div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] uppercase tracking-wider text-grey/70">Délai</div>
+                <div className="font-display text-sm font-bold text-ink">
+                  {weddingDate ? `${Math.max(0, Math.round(monthsBetween(new Date(), weddingDate)))} mois` : "—"}
+                </div>
+                <div className="text-[9px] text-text-secondary">avant le jour J</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute -top-6 left-4 sm:-top-8 sm:-left-6 bg-white rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-line w-[160px] sm:w-[190px]">
+      <div className="absolute -top-6 left-4 sm:-top-8 sm:-left-6 bg-white rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-line w-[160px] sm:w-[190px] z-10">
         <div className="flex items-center gap-2 mb-2">
-          <span className="h-2 w-2 rounded-full bg-sage" />
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Budget</span>
+          <Users size={14} className="text-ink" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Invités</span>
         </div>
-        <div className="font-display text-xl font-bold text-ink truncate">{formatAmount(totalBudget)}</div>
-        <div className="text-[10px] text-text-secondary mt-1">enveloppe totale</div>
+        <div className="font-display text-xl font-bold text-ink">{session?.quizAnswers?.guestCount ?? "—"}</div>
+        <div className="text-[10px] text-text-secondary mt-1">personnes</div>
       </div>
 
-      <div className="absolute top-6 right-4 sm:top-10 sm:-right-7 bg-yellow rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-white/60 w-[160px] sm:w-[190px]">
+      <div className="absolute top-6 right-4 sm:top-10 sm:-right-7 bg-lavender rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-white/60 w-[160px] sm:w-[190px] z-10">
         <div className="flex items-center gap-2 mb-2">
-          <CalendarDays size={14} className="text-ink" />
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-ink/70">Date</span>
+          <MapPin size={14} className="text-ink" />
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-ink/70">Lieu</span>
         </div>
-        <div className="font-display text-sm font-bold text-ink leading-snug">
-          {weddingDate && !Number.isNaN(weddingDate.getTime()) ? formatDateFr(weddingDate) : "Non définie"}
+        <div className="font-display text-sm font-bold text-ink leading-snug truncate">
+          {session?.quizAnswers?.location?.city ?? "Non défini"}
         </div>
       </div>
     </div>
@@ -433,44 +452,118 @@ export default function CoupleResultPage() {
       {/* ============================== SCORE RIBBON ============================== */}
       <section className="px-6 pb-16">
         <div className="max-w-6xl mx-auto">
-          <div className="rounded-[32px] bg-ink text-white overflow-hidden shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
+          <div className="rounded-[32px] bg-white overflow-hidden shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
             <div className="p-6 sm:p-8">
-              <div className="flex items-start justify-between gap-6 flex-wrap">
+              <div className="flex items-start justify-between gap-6 flex-wrap mb-8">
                 <div>
-                  <div className="text-xs uppercase tracking-[0.22em] text-white/60">Synthèse</div>
-                  <div className="font-display text-2xl sm:text-3xl font-bold mt-2 leading-tight">Vos repères en un coup d&apos;œil</div>
-                  <div className="text-sm text-white/65 mt-2 max-w-xl text-justify">
+                  <div className="text-xs uppercase tracking-[0.22em] text-ink/60">Synthèse</div>
+                  <div className="font-display text-2xl sm:text-3xl font-bold mt-2 leading-tight text-ink">Vos repères en un coup d&apos;œil</div>
+                  <div className="text-sm text-ink/65 mt-2 max-w-xl">
                     Des indicateurs rapides, inspirés d&apos;un dashboard, pour savoir où vous êtes et où concentrer votre énergie.
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: riskTone }} />
-                  <span className="text-xs text-white/70">{riskLabel}</span>
+                  <span className="text-xs text-ink/70">{riskLabel}</span>
                 </div>
               </div>
 
-              <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {metricCards.map((m) => {
+              {/* Stat cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {metricCards.map((m, idx) => {
                   const Icon = m.icon;
+                  const gradients = [
+                    "linear-gradient(135deg, #3B8CFF 0%, #2F6BFF 100%)",
+                    "linear-gradient(135deg, #8B7CF6 0%, #6F5CF0 100%)",
+                    "linear-gradient(135deg, #34D399 0%, #22B573 100%)",
+                    "linear-gradient(135deg, #8F86F3 0%, #6C63E8 100%)",
+                  ];
                   return (
                     <div
                       key={m.label}
-                      className="rounded-[26px] bg-white/[0.06] border border-white/[0.10] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                      className="rounded-[20px] p-5 text-white min-h-[150px] flex flex-col justify-between overflow-hidden"
+                      style={{ background: gradients[idx % gradients.length] }}
                     >
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="min-w-0">
-                          <div className="text-[11px] uppercase tracking-[0.18em] text-white/60">{m.label}</div>
-                          <div className={`font-display text-2xl font-bold mt-2 leading-snug ${m.label === "Style" ? "break-words" : "truncate"}`}>{m.value}</div>
-                        </div>
-                        <span className="h-10 w-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: m.chip }}>
-                          <Icon size={18} color="#0E0E10" />
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium opacity-95 uppercase tracking-wide">{m.label}</span>
+                        <span className="w-8 h-8 rounded-full flex items-center justify-center bg-white/25 shrink-0">
+                          <Icon size={16} color="#fff" />
                         </span>
                       </div>
-                      <div className="text-xs text-white/60 mt-2 leading-snug">{m.hint}</div>
+                      <div className="flex flex-col gap-2 mt-4">
+                        <span className="text-xl font-bold leading-tight break-words">{m.value}</span>
+                        <span className="text-xs font-semibold opacity-90 leading-snug">{m.hint}</span>
+                      </div>
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Ambiance tags centered */}
+              <div className="rounded-[20px] bg-surface border border-line p-6 flex items-center justify-center gap-8 text-sm font-medium text-ink flex-wrap">
+                {aiOutput?.blueprint.ambiance?.slice(0, 5).map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <span className="text-lg">✨</span>
+                    {item}
+                  </div>
+                ))}
+              </div>
+
+              {/* Risk gauge panel */}
+              <div className="rounded-[20px] bg-white border border-line p-6 sm:p-8 min-h-[340px] relative mt-4">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="text-lg font-bold" style={{ color: riskTone }}>
+                    Niveau de maîtrise
+                  </div>
+                  <button className="w-8 h-8 rounded-[10px] bg-surface flex items-center justify-center text-ink font-bold text-sm tracking-widest">
+                    •••
+                  </button>
+                </div>
+
+                <svg viewBox="0 0 300 170" width="100%" style={{ overflow: "visible", marginTop: "8px" }}>
+                  <path
+                    d="M 40 150 A 110 110 0 0 1 55 100"
+                    fill="none"
+                    stroke="#D9DEE7"
+                    strokeWidth="26"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M 55 100 A 110 110 0 0 1 150 40"
+                    fill="none"
+                    stroke={riskEngine.riskScore >= 60 ? "#22C55E" : "#F2704A"}
+                    strokeWidth="26"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M 150 40 A 110 110 0 0 1 260 150"
+                    fill="none"
+                    stroke={riskEngine.riskScore >= 80 ? "#2F6BFF" : "#22C55E"}
+                    strokeWidth="26"
+                    strokeLinecap="round"
+                  />
+                </svg>
+
+                <div className="flex flex-col items-center mt-[-95px]">
+                  <div className="text-sm text-ink/60 font-medium">Score</div>
+                  <div className="text-3xl font-bold text-ink">{riskEngine.riskScore}</div>
+                </div>
+
+                <div className="flex justify-center gap-6 mt-4 text-sm text-ink">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#2F6BFF]" />
+                    Élevé
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#22C55E]" />
+                    Moyen
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#CBD5E1]" />
+                    Faible
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -701,9 +794,9 @@ export default function CoupleResultPage() {
                 <span className="inline-flex items-center h-[26px] px-3.5 rounded-full bg-white/65 border-none text-[11px] font-semibold uppercase tracking-[0.04em] text-grey mb-5">
                   Matching
                 </span>
-                <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-ink">Des prestataires alignés avec votre budget</h2>
+                <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-ink">Des prestataires avec qui vous allez matcher</h2>
                 <p className="text-text-secondary mt-4 leading-relaxed max-w-md text-justify">
-                  On vous met en relation avec des professionnels vérifiés, adaptés à votre style, votre date et votre enveloppe exacte.
+                  Notre IA trouve vos âmes sœurs professionnelles : des pros vérifiés, adaptés à votre style, votre date et votre enveloppe exacte.
                 </p>
                 <div className="mt-8">
                   <Link href="/espace-couple/prestataires">

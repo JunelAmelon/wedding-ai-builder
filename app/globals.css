@@ -7,7 +7,7 @@
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-serif: "Space Grotesk", ui-serif, Georgia, serif;
 
-  --bg: #FFFFFF;
+  --bg: #fbfafa;
   --ink: #0E0E10;
   --grey: #6B6B72;
   --grey-light: #9A9AA1;
@@ -30,7 +30,7 @@
 
 html,
 body {
-  background-color: var(--bg);
+  background-color: #fbfafa;
   color: var(--ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;

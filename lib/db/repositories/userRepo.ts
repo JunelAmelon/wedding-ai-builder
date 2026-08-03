@@ -31,6 +31,10 @@ export const userRepo = {
     return snap.docs.map((d) => d.data() as UserAccount);
   },
 
+  async listAll(): Promise<UserAccount[]> {
+    return this.list();
+  },
+
   async get(id: string): Promise<UserAccount | null> {
     if (isLocalMode()) return localStore.get<UserAccount>(COLLECTION, id);
     const col = await getFirestoreCol();

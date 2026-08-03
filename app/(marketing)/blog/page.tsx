@@ -22,7 +22,7 @@ const ARTICLES = [
   {
     img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&h=380&q=85",
     cat: "Prestataires",
-    title: "5 questions à poser avant de choisir son traiteur",
+    title: "5 questions à poser avant de matcher avec votre traiteur",
   },
   {
     img: "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=500&h=380&q=85",
@@ -32,7 +32,7 @@ const ARTICLES = [
   {
     img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&h=380&q=85",
     cat: "Prestataires",
-    title: "Comment lire un devis de photographe sans se faire piéger",
+    title: "Comment lire un devis de photographe : c'est un match ou non ?",
   },
   {
     img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&h=380&q=85",

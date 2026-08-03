@@ -244,7 +244,7 @@ export default function ProfessionalRegistrationPage() {
             <CheckCircle2 size={40} />
           </div>
           <h1>Profil envoyé !</h1>
-          <p>Merci pour votre inscription. Notre équipe étudie votre dossier et vous contactera dès que votre profil sera validé.</p>
+          <p>Merci pour votre inscription. Notre équipe étudie votre dossier et vous contactera dès que votre profil sera validé. Prêt à matcher avec vos premiers couples !</p>
           <Link href="/prestataires" className="btn btn-solid">Retour à la page professionnels <ArrowRight size={18} /></Link>
         </main>
       </>
@@ -333,7 +333,7 @@ export default function ProfessionalRegistrationPage() {
     },
     {
       title: "Style & tarifs",
-      subtitle: "Univers artistique et gamme de prix",
+      subtitle: "Univers artistique et gamme de prix pour optimiser votre matching",
       icon: Palette,
       body: (
         <>
@@ -387,13 +387,13 @@ export default function ProfessionalRegistrationPage() {
     },
     {
       title: "Portfolio",
-      subtitle: "Vos plus belles réalisations",
+      subtitle: "Vos plus belles réalisations pour maximiser vos matches",
       icon: ImageIcon,
       body: (
         <>
           <div className="field span2">
             <label>Photos de votre travail</label>
-            <p className="hint" style={{ marginBottom: 10 }}>Ajoutez 3 à 10 photos pour montrer votre style aux futurs mariés.</p>
+            <p className="hint" style={{ marginBottom: 10 }}>Ajoutez 3 à 10 photos pour montrer votre style aux futurs couples et optimiser votre matching.</p>
             <CloudinaryUpload onUpload={setPortfolioImages} uploaded={portfolioImages} accept="image/*" maxFiles={10} />
           </div>
           <div className="grid2">
@@ -474,9 +474,9 @@ export default function ProfessionalRegistrationPage() {
                   <Star size={14} className="stars" style={{ color: "#B8960C", fill: "#B8960C" }} />
                   <b>4.9</b> · avis des professionnels inscrits
                 </div>
-                <h1>Recevez des demandes qui vous correspondent vraiment</h1>
+                <h1>Recevez des couples avec qui vous allez matcher</h1>
                 <p className="lead">
-                  Créez votre profil intelligent, laissez notre IA analyser chaque projet et ne recevez que les couples compatibles avec votre activité.
+                  Créez votre profil intelligent, laissez notre IA analyser chaque projet et ne recevez que les couples avec un score de match élevé.
                 </p>
               </div>
 

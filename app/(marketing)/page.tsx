@@ -7,10 +7,10 @@ import { Header, Footer } from "@/components/layout";
 import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const FAQS = [
-  { q: "Le plan est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et recevez immédiatement un budget réparti, un planning et une liste de prestataires compatibles." },
-  { q: "Mes données sont-elles utilisées à des fins commerciales ?", a: "Non. Nous ne revendons aucune donnée. Le plan peut être généré sans créer de compte." },
-  { q: "Comment sont choisis les prestataires ?", a: "Notre IA croise votre budget, votre style, votre date et votre zone géographique avec les profils vérifiés." },
-  { q: "Puis-je modifier mon plan après l'avoir reçu ?", a: "Oui, vous pouvez ajuster chaque poste et synchroniser les modifications avec votre espace couple." },
+  { q: "Le matching est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et notre IA trouve vos âmes sœurs professionnelles instantanément." },
+  { q: "Comment fonctionne le score de match ?", a: "Notre algorithme analyse votre budget, votre style, votre date et votre zone géographique pour calculer votre compatibilité avec chaque pro." },
+  { q: "Puis-je refuser un match ?", a: "Bien sûr. Vous pouvez swipez à gauche sur les pros qui ne vous conviennent pas. Notre IA apprend de vos préférences." },
+  { q: "Les pros sont-ils vérifiés ?", a: "Oui. Tous les prestataires sont vérifiés par notre équipe avant d'être disponibles sur la plateforme." },
 ];
 
 export default function LandingPage() {
@@ -70,19 +70,19 @@ export default function LandingPage() {
 
   return (
     <>
-      <Header ctaHref="/quiz" ctaLabel="Créer mon plan" />
+      <Header ctaHref="/quiz" ctaLabel="Trouver mes matches" />
 
       <main>
         {/* HERO */}
         <section className="hero">
           <div className="wrap">
-            <h1>Rencontrez le planificateur de mariage le plus rapide</h1>
+            <h1>Votre mariage prêt en 5 minutes.</h1>
             <p className="lead">
-              Budget, planning et prestataires générés par IA, avec des mises en relation en direct — 3x plus rapide qu&apos;une organisation classique.
+              Avec les bons pros. Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère un plan complet et trouve votre âme sœur professionnelle.
             </p>
             <div className="btn-row">
-              <Link href="/quiz" className="btn btn-solid">Créer mon plan — Gratuit ! <ArrowRight size={16} /></Link>
-              <Link href="#how" className="btn btn-outline">Voir une démo</Link>
+              <Link href="/quiz" className="btn btn-solid">Trouver mes matches — Gratuit ! <ArrowRight size={16} /></Link>
+              <Link href="#how" className="btn btn-outline">Voir comment ça marche</Link>
             </div>
 
             <div className="hero-stage-outer" ref={heroStageOuterRef}>
@@ -99,8 +99,15 @@ export default function LandingPage() {
                   <button className="btn btn-solid">Copier le lien</button>
                 </div>
 
-                <div className="stage-phone reveal">
-                  <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=420&h=800&q=85" alt="" width={420} height={800} className="w-full h-full object-cover" unoptimized />
+                <div className="">
+                  <Image
+                    src="/mockup mariage facile.png"
+                    alt="Mockup application Mariage Facile"
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 90vw, 420px"
+                    priority
+                  />
                 </div>
 
                 <div className="product-card reveal">
@@ -132,20 +139,20 @@ export default function LandingPage() {
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">Comment ça marche</span>
-              <h2 style={{ marginTop: 16 }}>Un plan conçu pour avancer, pas pour stresser</h2>
-              <p>Cinq questions simples, une IA qui fait le tri, et un plan complet prêt à suivre jusqu&apos;au jour J.</p>
+              <h2 style={{ marginTop: 16 }}>L'IA qui trouve votre âme sœur professionnelle</h2>
+              <p>Cinq questions simples, un algorithme de compatibilité, et vos matches parfaits en quelques secondes.</p>
             </div>
             <div className="promo-duo">
               <div className="promo-card yellow reveal">
                 <div className="promo-visual">
                   <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&h=400&q=85" alt="" width={300} height={400} className="w-full h-full object-cover" unoptimized />
-                  <span className="promo-badge">60%</span>
+                  <span className="promo-badge">92%</span>
                 </div>
                 <div className="promo-text">
                   <span className="eyebrow-pill">Étape 1</span>
-                  <h3>Quiz éclair, plan complet</h3>
-                  <p>Cinq questions, une par écran, sans jargon ni tableur à remplir.</p>
-                  <Link href="/quiz" className="btn btn-outline">Commencer</Link>
+                  <h3>Quiz éclair, matching instantané</h3>
+                  <p>Cinq questions, une par écran. Notre IA calcule votre score de compatibilité avec chaque pro.</p>
+                  <Link href="/quiz" className="btn btn-outline">Trouver mes matches</Link>
                 </div>
               </div>
 
@@ -167,9 +174,9 @@ export default function LandingPage() {
                 </div>
                 <div className="promo-text">
                   <span className="eyebrow-pill">Étape 2</span>
-                  <h3>Matching en direct</h3>
-                  <p>Des prestataires filtrés selon votre budget réel, disponibles tout de suite.</p>
-                  <Link href="/prestataires" className="btn btn-outline">Découvrir</Link>
+                  <h3>C'est un match ? Swipez à droite</h3>
+                  <p>Des prestataires compatibles avec votre mariage, triés par score de match. Plus de perte de temps avec les mauvais pros.</p>
+                  <Link href="/prestataires" className="btn btn-outline">Voir mes pros</Link>
                 </div>
               </div>
             </div>
@@ -202,7 +209,7 @@ export default function LandingPage() {
         <section>
           <div className="wrap">
             <span className="eyebrow-pill">Nos prestataires</span>
-            <h2 style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des équipes déjà notées par des centaines de couples</h2>
+            <h2 style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des pros avec qui vous allez matcher</h2>
             <div className="video-grid reveal">
               <div className="vc vc1">
                 <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&h=650&q=85" alt="" width={500} height={650} className="w-full h-full object-cover" unoptimized />
@@ -239,16 +246,16 @@ export default function LandingPage() {
             <div className="side-hero">
               <div>
                 <span className="eyebrow-pill">Nos valeurs</span>
-                <h2 style={{ marginTop: 18, marginBottom: 22 }}>On vous aide à célébrer, sans le stress logistique</h2>
+                <h2 style={{ marginTop: 18, marginBottom: 22 }}>Plus de perte de temps avec les mauvais pros</h2>
                 <div className="accordion-mini">
-                  <div className="row">Un budget réaliste, pas une estimation vague <ChevronDown size={16} className="chev" /></div>
-                  <div className="row">Des prestataires vérifiés, pas une liste au hasard <ChevronDown size={16} className="chev" /></div>
-                  <div className="row">Un plan qui évolue avec vous <ChevronDown size={16} className="chev" /></div>
+                  <div className="row">Un algorithme de compatibilité précis <ChevronDown size={16} className="chev" /></div>
+                  <div className="row">Des scores de match transparents <ChevronDown size={16} className="chev" /></div>
+                  <div className="row">Un matching qui apprend de vos goûts <ChevronDown size={16} className="chev" /></div>
                 </div>
               </div>
               <div className="sh-visual reveal">
                 <div className="sh-phone">
-                  <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=460&h=760&q=85" alt="" width={460} height={760} className="w-full h-full object-cover" unoptimized />
+                  <Image src="nos valeurs mariage facile.png" alt="" width={460} height={760} className="w-full h-full object-cover" unoptimized />
                   <div className="sh-guarantee"><b>0€</b>garanti</div>
                   <div className="sh-caption">
                     <Image src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&w=96&h=96&q=80" alt="" width={96} height={96} className="w-full h-full object-cover" unoptimized />

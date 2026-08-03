@@ -31,8 +31,10 @@ export const taskRepo = {
       return all.filter((t) => t.projectId === projectId).sort((a, b) => b.monthsBeforeWedding - a.monthsBeforeWedding);
     }
     const col = await getFirestoreCol();
-    const snap = await col.where("projectId", "==", projectId).orderBy("monthsBeforeWedding", "desc").get();
-    return snap.docs.map((d) => d.data() as TimelineTask);
+    const snap = await col.where("projectId", "==", projectId).get();
+    return snap.docs
+      .map((d) => d.data() as TimelineTask)
+      .sort((a, b) => b.monthsBeforeWedding - a.monthsBeforeWedding);
   },
 
   async get(id: string): Promise<TimelineTask | null> {

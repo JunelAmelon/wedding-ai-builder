@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bell, Check } from "lucide-react";
+import { Bell, Check, Megaphone, Heart, Wallet, Star } from "lucide-react";
 import type { Notification } from "@/types/marketplace";
-import { PageHeader, Card } from "../_ui";
 
 export default function VendorNotificationsPage() {
   const router = useRouter();
@@ -37,47 +36,88 @@ export default function VendorNotificationsPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  function getNotificationIcon(type: string) {
+    switch (type) {
+      case "proposal":
+        return <Megaphone size={20} />;
+      case "match":
+        return <Heart size={20} />;
+      case "payment":
+        return <Wallet size={20} />;
+      case "review":
+        return <Star size={20} />;
+      default:
+        return <Bell size={20} />;
+    }
+  }
+
+  function getNotificationColor(type: string) {
+    switch (type) {
+      case "proposal":
+        return "bg-[#dff05a] text-[#1c1c1c]";
+      case "match":
+        return "bg-[#fce7f3] text-[#831843]";
+      case "payment":
+        return "bg-[#dbeafe] text-[#1e3a8a]";
+      case "review":
+        return "bg-[#ffedd5] text-[#7c2d12]";
+      default:
+        return "bg-[#f1f0eb] text-[#8b8b86]";
+    }
+  }
+
+  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-      <PageHeader
-        label="Notifications"
-        title="Notifications"
-        subtitle="Restez informé de vos opportunités."
-      />
+    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Notifications</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
+            Notifications
+          </h1>
+          <p className="text-[#8b8b86] mt-2">
+            Restez informé de vos opportunités.
+          </p>
+        </div>
+      </div>
 
       {notifications.length === 0 ? (
-        <Card className="p-12 text-center">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-sky-100">
-            <Bell size={24} className="text-sky-600" />
+        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#dff05a]">
+            <Bell size={24} className="text-[#1c1c1c]" />
           </div>
-          <p className="text-text-secondary italic">Aucune notification pour le moment.</p>
-        </Card>
+          <p className="text-[#8b8b86] italic">Aucune notification pour le moment.</p>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] overflow-hidden">
           {notifications.map((n) => (
-            <Card
+            <div
               key={n.id}
-              className={`flex items-start justify-between p-4 ${n.read ? "opacity-70" : ""}`}
+              className={`flex items-start justify-between p-4 border-b border-[#e6e4dd] last:border-b-0 ${n.read ? "opacity-70" : ""}`}
             >
-              <div>
-                <div className="font-medium text-text-primary">{n.title}</div>
-                <div className="text-sm text-text-secondary">{n.content}</div>
-                <div className="font-sans text-[10px] uppercase tracking-[0.08em] text-text-secondary mt-1">
-                  {new Date(n.createdAt).toLocaleDateString("fr-FR")}
+              <div className="flex items-start gap-4">
+                <div className={`h-10 w-10 rounded-full flex items-center justify-center shrink-0 ${getNotificationColor(n.type)}`}>
+                  {getNotificationIcon(n.type)}
+                </div>
+                <div>
+                  <div className="font-medium text-[#1c1c1c]">{n.title}</div>
+                  <div className="text-sm text-[#8b8b86]">{n.content}</div>
+                  <div className="font-display text-[10px] uppercase tracking-[0.08em] text-[#8b8b86] mt-1">
+                    {new Date(n.createdAt).toLocaleDateString("fr-FR")}
+                  </div>
                 </div>
               </div>
               {!n.read && (
                 <button
                   onClick={() => markRead(n.id)}
-                  className="p-2 rounded-xl hover:bg-emerald-100 text-emerald-700 transition"
+                  className="p-2 rounded-xl hover:bg-[#dcfce7] text-[#14532d] transition"
                   aria-label="Marquer comme lu"
                 >
                   <Check size={18} />
                 </button>
               )}
-            </Card>
+            </div>
           ))}
         </div>
       )}

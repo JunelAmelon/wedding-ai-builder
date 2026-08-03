@@ -2,14 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/Dialog";
 import {
   MapPin,
   Calendar,
@@ -18,18 +10,16 @@ import {
   Check,
   X,
   Send,
-  Flower2,
   Loader2,
   Megaphone,
   LayoutGrid,
   Rows3,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
-import { PageHeader, Card } from "../_ui";
 
 type ViewMode = "dossier" | "liste";
 
@@ -130,27 +120,29 @@ export default function VendorOpportunitiesPage() {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-2">
-        <PageHeader
-          label="Opportunités"
-          title="Appels d&apos;offres"
-          subtitle="Uniquement les mariages compatibles avec votre profil."
-        />
+    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Opportunités</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
+            Vos matches
+          </h1>
+          <p className="text-[#8b8b86] mt-2">
+            Uniquement les couples avec qui vous allez matcher.
+          </p>
+        </div>
 
-        {/* Floating pill view switch */}
-        <div className="inline-flex items-center gap-1 rounded-full bg-surface p-1 border border-black/[0.06] self-start sm:self-auto shrink-0">
+        <div className="inline-flex items-center gap-1 rounded-full bg-white p-1 border border-[#e6e4dd] self-start sm:self-auto shrink-0">
           <button
             type="button"
             onClick={() => setView("dossier")}
-            aria-pressed={view === "dossier"}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               view === "dossier"
-                ? "bg-white text-text-primary shadow-[0_1px_2px_rgba(11,15,26,0.08)]"
-                : "text-text-secondary hover:text-text-primary"
+                ? "bg-[#dff05a] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
+                : "text-[#8b8b86] hover:text-[#1c1c1c]"
             }`}
           >
             <LayoutGrid size={15} />
@@ -159,11 +151,10 @@ export default function VendorOpportunitiesPage() {
           <button
             type="button"
             onClick={() => setView("liste")}
-            aria-pressed={view === "liste"}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               view === "liste"
-                ? "bg-white text-text-primary shadow-[0_1px_2px_rgba(11,15,26,0.08)]"
-                : "text-text-secondary hover:text-text-primary"
+                ? "bg-[#dff05a] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
+                : "text-[#8b8b86] hover:text-[#1c1c1c]"
             }`}
           >
             <Rows3 size={15} />
@@ -173,13 +164,13 @@ export default function VendorOpportunitiesPage() {
       </div>
 
       {sorted.length === 0 ? (
-        <Card className="p-12 text-center mt-8">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-surface border border-black/[0.06]">
-            <Megaphone size={22} className="text-primary" />
+        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center mt-8">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#dff05a]">
+            <Megaphone size={22} className="text-[#1c1c1c]" />
           </div>
-          <h2 className="font-serif text-xl font-semibold mb-2">Aucune opportunité pour le moment</h2>
-          <p className="text-text-secondary">Nous vous notifierons dès qu&apos;un couple compatible publiera un appel d&apos;offres.</p>
-        </Card>
+          <h2 className="font-display text-xl font-bold mb-2 text-[#1c1c1c]">Aucun match pour le moment</h2>
+          <p className="text-[#8b8b86]">Nous vous notifierons dès qu&apos;un couple compatible publiera un projet.</p>
+        </div>
       ) : view === "dossier" ? (
         <div className="grid gap-6 mt-8 lg:grid-cols-2">
           {paginated.map(({ match, project }) => (
@@ -187,21 +178,21 @@ export default function VendorOpportunitiesPage() {
               key={match.id}
               match={match}
               project={project}
-              onView={() => router.push(`/espace-prestataire/appels-offres/${match.id}`)}
+              onView={() => router.push(`/espace-prestataire/appels-offres/${match.tenderId}`)}
               onRespond={() => setSelected({ match, project })}
               onIgnore={() => ignore(match.id)}
             />
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-2xl border border-black/[0.06] bg-white overflow-hidden">
+        <div className="mt-8 rounded-[32px] border border-[#e6e4dd] bg-white overflow-hidden shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
           {paginated.map(({ match, project }, i) => (
             <OpportunityRow
               key={match.id}
               match={match}
               project={project}
-              isLast={i === paginated.length - 1}
-              onView={() => router.push(`/espace-prestataire/appels-offres/${match.id}`)}
+              isFirst={i === 0}
+              onView={() => router.push(`/espace-prestataire/appels-offres/${match.tenderId}`)}
               onRespond={() => setSelected({ match, project })}
               onIgnore={() => ignore(match.id)}
             />
@@ -209,136 +200,111 @@ export default function VendorOpportunitiesPage() {
         </div>
       )}
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-10">
+        <div className="flex items-center justify-center gap-2 mt-8">
           <button
-            type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/[0.06] bg-white text-text-secondary hover:text-text-primary hover:bg-surface disabled:opacity-40 disabled:pointer-events-none transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f1f0eb] disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             <ChevronLeft size={16} />
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
-              type="button"
               onClick={() => setPage(p)}
-              className={`inline-flex items-center justify-center h-9 w-9 rounded-lg text-sm font-medium transition-colors ${
-                p === page
-                  ? "bg-primary text-white"
-                  : "border border-black/[0.06] bg-white text-text-secondary hover:text-text-primary hover:bg-surface"
+              className={`w-8 h-8 rounded-lg border border-[#e6e4dd] flex items-center justify-center text-sm font-medium transition ${
+                page === p
+                  ? "bg-[#dff05a] text-[#1c1c1c] border-[#dff05a]"
+                  : "bg-white text-[#8b8b86] hover:bg-[#f1f0eb]"
               }`}
             >
               {p}
             </button>
           ))}
           <button
-            type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/[0.06] bg-white text-text-secondary hover:text-text-primary hover:bg-surface disabled:opacity-40 disabled:pointer-events-none transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f1f0eb] disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             <ChevronRight size={16} />
           </button>
         </div>
       )}
 
-      <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="font-serif">Répondre à l&apos;appel d&apos;offres</DialogTitle>
-            <DialogDescription className="text-text-secondary">
-              Cette réponse consomme 2 roses. Rédigez un message personnalisé.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 mt-2">
-            <div>
-              <label className="block text-sm font-medium text-text-primary mb-1">Message personnalisé</label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={5}
-                placeholder="Bonjour, je suis intéressé par votre projet..."
-                className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-              />
+      {/* Response Modal */}
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setSelected(null)} />
+          <div className="relative bg-white rounded-[32px] border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8 max-w-lg w-full">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-display text-xl font-bold text-[#1c1c1c]">Répondre à l'appel d'offres</h3>
+              <button onClick={() => setSelected(null)} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f1f0eb]">
+                <X size={18} />
+              </button>
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-text-secondary">
-                <Flower2 size={16} className="text-rose-500" />
-                Coût : 2 roses
-              </span>
-              <span className="text-text-secondary">
-                Roses restantes après envoi : <strong className="text-text-primary">{roses > 0 ? roses - 2 : "—"}</strong>
-              </span>
-            </div>
-            <Button
-              variant="primary"
-              className="w-full"
-              onClick={respond}
-              disabled={submitting || !message.trim()}
-              iconLeft={submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-            >
-              {submitting ? "Envoi..." : "Envoyer ma proposition"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      <Dialog open={success} onOpenChange={() => setSuccess(false)}>
-        <DialogContent className="sm:max-w-md text-center">
-          <DialogHeader>
-            <div className="h-14 w-14 rounded-full mx-auto mb-4 flex items-center justify-center shadow-[inset_0_0_4px_rgba(0,0,0,0.35)]" style={{ background: "radial-gradient(circle at 35% 30%, #A9C7AC, #3f5c44 65%)" }}>
-              <CheckCircle2 size={24} className="text-white" />
+            <div className="mb-6 p-4 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center rounded-full bg-[#dff05a] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
+                  {selected.match.category}
+                </span>
+                <span className="text-sm text-[#8b8b86]">
+                  Score : {selected.match.score}
+                </span>
+              </div>
+              <div className="text-sm text-[#8b8b86]">
+                Budget : {selected.project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {selected.project?.budget?.currency || "EUR"}
+              </div>
             </div>
-            <DialogTitle className="font-serif">Proposition envoyée</DialogTitle>
-            <DialogDescription className="text-text-secondary">
-              Votre message a bien été transmis au couple. Vous serez notifié dès qu&apos;il le consultera.
-              <br />
-              <span className="inline-flex items-center gap-1.5 mt-3 text-primary font-medium">
-                <Flower2 size={14} className="text-rose-500" />
-                Roses restantes : {roses}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 mt-4">
-            <Button variant="primary" onClick={() => setSuccess(false)}>
-              Continuer
-            </Button>
-            <Button variant="secondary" onClick={() => router.push("/espace-prestataire/propositions")}>
-              Voir mes propositions
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      <Dialog open={needsRoses} onOpenChange={() => setNeedsRoses(false)}>
-        <DialogContent className="sm:max-w-md text-center">
-          <DialogHeader>
-            <DialogTitle className="font-serif">Roses insuffisantes</DialogTitle>
-            <DialogDescription className="text-text-secondary">
-              Vous avez besoin de roses pour répondre à cette opportunité.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 mt-4">
-            <Button variant="primary" onClick={() => router.push("/espace-prestataire/credits")}>
-              Créditer mon solde
-            </Button>
-            <Button variant="secondary" onClick={() => setNeedsRoses(false)}>
-              Revenir aux opportunités
-            </Button>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Votre message de réponse..."
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[120px] resize-none"
+            />
+
+            <div className="flex items-center justify-between mt-4">
+              <div className="text-sm text-[#8b8b86]">
+                Coût : 2 crédits (Solde : {roses})
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSelected(null)}
+                  className="px-4 py-2 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={respond}
+                  disabled={submitting || !message.trim()}
+                  className="px-4 py-2 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {submitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                  Envoyer
+                </button>
+              </div>
+            </div>
+
+            {needsRoses && (
+              <div className="mt-4 p-4 rounded-xl bg-[#F2704A]/10 border border-[#F2704A]/20">
+                <p className="text-sm text-[#F2704A]">Crédits insuffisants. Veuillez acheter des crédits pour continuer.</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="mt-4 p-4 rounded-xl bg-[#dcfce7] border border-[#dcfce7]/20">
+                <p className="text-sm text-[#14532d]">Proposition envoyée avec succès !</p>
+              </div>
+            )}
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   );
 }
-
-/* ---------------------------------------------------------------------- */
-/* Dossier card — the tender read as a physical case file, with a wax-style
-   stamp for the match score and a perforated stub that holds the actions,
-   like a tear-off coupon attached to the dossier.                        */
-/* ---------------------------------------------------------------------- */
 
 function DossierCard({
   match,
@@ -353,218 +319,105 @@ function DossierCard({
   onRespond: () => void;
   onIgnore: () => void;
 }) {
-  const isContacted = match.status === "contacted";
-  if (!project) return null;
-
   return (
-    <div className="relative rounded-2xl bg-white border border-black/[0.06] shadow-[0_18px_44px_rgba(11,15,26,0.06)] overflow-visible">
-      {/* Stamp: match score, rotated like a case-file stamp */}
-      <div className="absolute -top-3 -right-3 z-10 rotate-[-6deg] select-none">
-        <div className="flex flex-col items-center justify-center h-16 w-16 rounded-md bg-white border-2 border-dashed border-primary/60 text-primary">
-          <span className="font-mono text-base font-bold leading-none">{match.score}%</span>
-          <span className="font-mono text-[8px] uppercase tracking-wider leading-none mt-1">match</span>
+    <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center rounded-full bg-[#dff05a] text-[#1c1c1c] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.06em]">
+            {match.category}
+          </span>
+          <div className="flex items-center gap-1 bg-[#f7f7f9] px-3 py-1 rounded-full">
+            <Sparkles size={14} className="text-[#1c1c1c]" />
+            <span className="text-sm font-semibold text-[#1c1c1c]">{match.score}</span>
+          </div>
+        </div>
+        <button onClick={onIgnore} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f1f0eb] text-[#8b8b86]">
+          <X size={16} />
+        </button>
+      </div>
+
+      <div className="space-y-3 mb-6">
+        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+          <MapPin size={16} />
+          {project?.location?.city || "Lieu non précisé"}
+        </div>
+        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+          <Calendar size={16} />
+          {project?.weddingDate ? new Date(project.weddingDate).toLocaleDateString("fr-FR") : "Date non précisée"}
+        </div>
+        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+          <Users size={16} />
+          {project?.guestCount || "—"} invités
+        </div>
+        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+          <Banknote size={16} />
+          Budget {project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {project?.budget?.currency || "EUR"}
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row">
-        {/* Main dossier body */}
-        <div className="flex-1 min-w-0 p-6 md:p-7">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-secondary">
-              {match.category}
-            </span>
-            {isContacted && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 text-[11px] px-2 py-0.5 font-medium">
-                <Check size={10} /> Répondu
-              </span>
-            )}
-          </div>
-
-          <h3 className="font-serif text-xl md:text-2xl font-semibold text-text-primary leading-tight pr-10 mb-4">
-            {project.name || "Mariage à venir"}
-          </h3>
-
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-text-secondary mb-5">
-            {project.weddingDate && (
-              <div className="flex items-center gap-2 min-w-0">
-                <Calendar size={14} className="text-primary shrink-0" />
-                <span className="truncate">{new Date(project.weddingDate).toLocaleDateString("fr-FR")}</span>
-              </div>
-            )}
-            {project.location?.city && (
-              <div className="flex items-center gap-2 min-w-0">
-                <MapPin size={14} className="text-primary shrink-0" />
-                <span className="truncate">{project.location.city}</span>
-              </div>
-            )}
-            {project.guestCount && (
-              <div className="flex items-center gap-2 min-w-0">
-                <Users size={14} className="text-primary shrink-0" />
-                <span className="truncate">{project.guestCount} invités</span>
-              </div>
-            )}
-            {project.budget?.amount && (
-              <div className="flex items-center gap-2 min-w-0">
-                <Banknote size={14} className="text-primary shrink-0" />
-                <span className="truncate">
-                  {project.budget.amount} {project.budget.currency || "EUR"}
-                </span>
-              </div>
-            )}
-          </dl>
-
-          <p className="text-sm text-text-secondary leading-relaxed border-l-2 border-primary/30 pl-3">
-            {match.summary || (
-              <>
-                <span className="font-medium text-text-primary">Analyse en cours.</span>{" "}
-                Revenez dans quelques instants pour découvrir notre conseil sur cette opportunité.
-              </>
-            )}
-          </p>
-        </div>
-
-        {/* Simple action bar — compact, consistent with list view */}
-        <div className="relative shrink-0 md:w-40">
-          <div className="absolute md:top-0 md:bottom-0 md:left-0 md:h-full top-0 left-0 right-0 md:w-px h-px border-t md:border-t-0 md:border-l border-black/[0.06]" aria-hidden />
-          <div className="flex md:flex-col gap-2 p-4 md:p-5 md:h-full md:justify-center">
-            <Button
-              variant="primary"
-              className="flex-1 md:w-full !py-1.5 !text-xs"
-              iconLeft={<Send size={14} />}
-              onClick={onRespond}
-              disabled={isContacted}
-            >
-              Répondre
-            </Button>
-            <Button
-              variant="secondary"
-              className="flex-1 md:w-full !py-1.5 !text-xs"
-              onClick={onView}
-            >
-              Voir
-            </Button>
-            <button
-              type="button"
-              onClick={onIgnore}
-              disabled={isContacted}
-              className="flex-1 md:w-full inline-flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-surface transition-colors disabled:opacity-40 disabled:pointer-events-none"
-            >
-              <X size={13} />
-              Ignorer
-            </button>
-          </div>
-        </div>
+      <div className="flex gap-3">
+        <button
+          onClick={onView}
+          className="flex-1 py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+        >
+          Voir détails
+        </button>
+        <button
+          onClick={onRespond}
+          className="flex-1 py-3 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition flex items-center justify-center gap-2"
+        >
+          <Send size={16} /> Répondre
+        </button>
       </div>
     </div>
   );
 }
 
-/* ---------------------------------------------------------------------- */
-/* Compact list row — dense, scannable alternative to the dossier grid    */
-/* ---------------------------------------------------------------------- */
-
 function OpportunityRow({
   match,
   project,
-  isLast,
+  isFirst,
   onView,
   onRespond,
   onIgnore,
 }: {
   match: ProjectVendorMatch;
   project: WeddingProject | null;
-  isLast: boolean;
+  isFirst: boolean;
   onView: () => void;
   onRespond: () => void;
   onIgnore: () => void;
 }) {
-  const isContacted = match.status === "contacted";
-  if (!project) return null;
-
   return (
-    <div
-      className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 px-5 py-5 ${
-        isLast ? "" : "border-b border-black/[0.06]"
-      } hover:bg-surface/60 transition-colors`}
-    >
-      <div className="flex items-center gap-2 shrink-0 w-20 font-mono text-base font-bold text-primary">
-        {match.score}%
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <h4 className="font-serif text-lg font-semibold text-text-primary truncate">
-            {project.name || "Mariage à venir"}
-          </h4>
-          <span className="font-mono text-xs uppercase tracking-wider text-text-secondary">
+    <div className={`flex items-center justify-between gap-4 p-4 sm:p-6 border-b border-[#e6e4dd] last:border-b-0 ${!isFirst ? "bg-[#f7f7f9]" : "bg-white"}`}>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="inline-flex items-center rounded-full bg-[#dff05a] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
             {match.category}
           </span>
-          {isContacted && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 font-medium">
-              <Check size={11} /> Répondu
-            </span>
-          )}
+          <span className="text-[11px] text-[#8b8b86]">
+            {project?.location?.city || "Lieu non précisé"}
+          </span>
         </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-secondary mt-1">
-          {project.weddingDate && (
-            <span className="inline-flex items-center gap-1">
-              <Calendar size={14} className="text-primary" />
-              {new Date(project.weddingDate).toLocaleDateString("fr-FR")}
-            </span>
-          )}
-          {project.location?.city && (
-            <span className="inline-flex items-center gap-1">
-              <MapPin size={14} className="text-primary" />
-              {project.location.city}
-            </span>
-          )}
-          {project.guestCount && (
-            <span className="inline-flex items-center gap-1">
-              <Users size={14} className="text-primary" />
-              {project.guestCount}
-            </span>
-          )}
-          {project.budget?.amount && (
-            <span className="inline-flex items-center gap-1">
-              <Banknote size={14} className="text-primary" />
-              {project.budget.amount} {project.budget.currency || "EUR"}
-            </span>
-          )}
-        </div>
-
-        <div className="mt-3 flex items-start gap-2 text-sm text-text-secondary bg-surface/60 rounded-lg p-3">
-          <Sparkles size={14} className="text-primary shrink-0 mt-0.5" />
-          <p className="leading-relaxed line-clamp-2">
-            {match.summary || (
-              <>
-                <span className="font-medium text-text-primary">Analyse en cours.</span> Revenez dans quelques instants pour découvrir notre conseil.
-              </>
-            )}
-          </p>
+        <div className="text-sm text-[#8b8b86]">
+          Budget {project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {project?.budget?.currency || "EUR"}
         </div>
       </div>
-
-      <div className="flex items-center gap-2 shrink-0 self-stretch sm:self-auto">
-        <Button variant="secondary" className="flex-1 sm:flex-none !py-2 !text-sm" onClick={onView}>
-          Voir
-        </Button>
-        <Button
-          variant="primary"
-          className="flex-1 sm:flex-none !py-2 !text-sm"
-          iconLeft={<Send size={14} />}
-          onClick={onRespond}
-          disabled={isContacted}
-        >
-          Répondre
-        </Button>
-        <button
-          type="button"
-          onClick={onIgnore}
-          disabled={isContacted}
-          aria-label="Ignorer"
-          className="inline-flex items-center justify-center h-9 w-9 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors disabled:opacity-40 disabled:pointer-events-none"
-        >
-          <X size={16} />
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 bg-[#f7f7f9] px-3 py-1 rounded-full">
+          <Sparkles size={14} className="text-[#1c1c1c]" />
+          <span className="text-sm font-semibold text-[#1c1c1c]">{match.score}</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <button onClick={onView} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
+          <CheckCircle2 size={18} />
+        </button>
+        <button onClick={onRespond} className="p-2 rounded-full bg-[#dff05a] hover:bg-[#c9d94a] text-[#1c1c1c]">
+          <Send size={18} />
+        </button>
+        <button onClick={onIgnore} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
+          <X size={18} />
         </button>
       </div>
     </div>

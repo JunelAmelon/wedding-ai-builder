@@ -3,8 +3,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { EmojiPicker } from "@/components/ui/EmojiPicker";
 import {
   Send,
   Loader2,
@@ -46,13 +44,13 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
   return (
     <div className={`relative shrink-0 ${className}`}>
       {src ? (
-        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-black/[0.06]" unoptimized />
+        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-[#e6e4dd]" unoptimized />
       ) : (
-        <div className="rounded-full bg-primary/10 text-primary font-serif font-semibold flex items-center justify-center h-full w-full">
+        <div className="rounded-full bg-[#dff05a] text-[#1c1c1c] font-display font-semibold flex items-center justify-center h-full w-full">
           {initials}
         </div>
       )}
-      {online && <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-white" />}
+      {online && <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#3C8552] border-2 border-white" />}
     </div>
   );
 }
@@ -62,6 +60,7 @@ type EnrichedProject = WeddingProject & { email?: string; phone?: string };
 interface ProposalWithDetails extends Proposal {
   project: EnrichedProject | null;
   couple: CoupleInfo | null;
+  lastMessageAt?: string;
 }
 
 export default function VendorMessagingPage() {
@@ -100,28 +99,19 @@ export default function VendorMessagingPage() {
         setLoading(false);
       }
     }
-    async function loadVendor() {
-      try {
-        const res = await fetch("/api/vendor/profile");
-        if (res.ok) {
-          const json = await res.json();
-          setVendorLogo(json.profile?.logo?.url || null);
-        }
-      } catch {
-        // ignore
-      }
-    }
     loadProposals();
-    loadVendor();
   }, [router, proposalId]);
 
   useEffect(() => {
-    if (!selected) return;
-    const id = selected.id;
     async function loadMessages() {
-      const res = await fetch(`/api/messages?proposalId=${id}`);
-      const json = await res.json();
-      setMessages(json.messages || []);
+      if (!selected) return;
+      try {
+        const res = await fetch(`/api/vendor/messages?proposalId=${selected.id}`);
+        const json = await res.json();
+        setMessages(json.messages || []);
+      } catch {
+        // ignore
+      }
     }
     loadMessages();
   }, [selected]);
@@ -130,309 +120,242 @@ export default function VendorMessagingPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const filteredProposals = useMemo(() => {
+    if (!search) return proposals;
+    const lower = search.toLowerCase();
+    return proposals.filter(
+      (p) =>
+        p.couple?.firstName?.toLowerCase().includes(lower) ||
+        p.couple?.lastName?.toLowerCase().includes(lower) ||
+        p.project?.name?.toLowerCase().includes(lower)
+    );
+  }, [proposals, search]);
+
   async function sendMessage() {
     if (!selected || !message.trim()) return;
     setSending(true);
     try {
-      const res = await fetch("/api/messages", {
+      const res = await fetch("/api/vendor/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proposalId: selected.id, content: message }),
+        body: JSON.stringify({
+          proposalId: selected.id,
+          content: message,
+        }),
       });
+      if (!res.ok) throw new Error("Échec de l'envoi");
       const json = await res.json();
-      if (res.ok) {
-        setMessages((prev) => [...prev, json.message]);
-        setMessage("");
-      }
+      setMessages([...messages, json.message]);
+      setMessage("");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erreur");
     } finally {
       setSending(false);
     }
   }
 
-  const filteredProposals = useMemo(() => {
-    if (!search.trim()) return proposals;
-    return proposals.filter((p) =>
-      (p.project?.name || "").toLowerCase().includes(search.toLowerCase()) ||
-      (p.project?.location?.city || "").toLowerCase().includes(search.toLowerCase())
-    );
-  }, [proposals, search]);
-
-  const lastMessage = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id).pop() || null;
-  const unreadCount = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id && m.senderRole !== "vendor" && !m.readAt).length;
-
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
 
   return (
-    <div className="h-[calc(100dvh-4rem)]">
-      {proposals.length === 0 ? (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <div className="bg-white border border-black/[0.06] rounded-2xl p-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-5 bg-primary/10">
-              <Inbox size={28} className="text-primary" />
-            </div>
-            <h2 className="font-serif text-xl font-semibold mb-2">Aucune conversation</h2>
-            <p className="text-text-secondary max-w-md mx-auto">Vos conversations apparaîtront ici une fois vos propositions acceptées ou en cours de discussion.</p>
-          </div>
+    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Messagerie</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
+            Vos conversations
+          </h1>
+          <p className="text-[#8b8b86] mt-2">
+            Discutez avec vos matches.
+          </p>
         </div>
-      ) : (
-        <div className={`grid h-full ${mobileOpen ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-[300px_1fr]"} ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
-          {/* Sidebar conversations */}
-          <div className={`flex flex-col border-r border-black/[0.06] bg-[#FAFAF8] ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
-            <div className="p-4 border-b border-black/[0.06]">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-serif text-xl font-semibold">Messages</h2>
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white px-2 py-1 rounded-full border border-black/[0.06]">
-                  {proposals.length}
-                </span>
-              </div>
+      </div>
+
+      <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] overflow-hidden min-h-[600px]">
+        {/* List View */}
+        <div className="flex h-full">
+          {/* Sidebar */}
+          <div className="w-full sm:w-80 border-r border-[#e6e4dd] flex flex-col">
+            <div className="p-4 border-b border-[#e6e4dd]">
               <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
                 <input
+                  type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full rounded-full bg-white border border-black/[0.08] pl-9 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="w-full pl-10 pr-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
                 />
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 space-y-1">
-              {filteredProposals.map((p) => {
-                const isActive = selected?.id === p.id;
-                const lm = lastMessage(p);
-                const unread = unreadCount(p);
-                return (
+            <div className="flex-1 overflow-y-auto">
+              {filteredProposals.length === 0 ? (
+                <div className="p-8 text-center">
+                  <Inbox size={32} className="text-[#8b8b86] mx-auto mb-2" />
+                  <p className="text-sm text-[#8b8b86]">Aucune conversation</p>
+                </div>
+              ) : (
+                filteredProposals.map((proposal) => (
                   <button
-                    key={p.id}
+                    key={proposal.id}
                     onClick={() => {
-                      setSelected(p);
-                      setMobileOpen(true);
-                      setInfoOpen(false);
+                      setSelected(proposal);
+                      setMobileOpen(false);
                     }}
-                    className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
-                      isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
+                    className={`w-full p-4 border-b border-[#e6e4dd] text-left hover:bg-[#f7f7f9] transition ${
+                      selected?.id === proposal.id ? "bg-[#f7f7f9]" : ""
                     }`}
                   >
-                    <Avatar name={`${p.couple?.firstName || ""} ${p.couple?.lastName || ""}`} src={p.couple?.avatarUrl || undefined} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-text-primary truncate text-sm">{p.project?.name || "Mariage"}</span>
-                        {lm && <span className="font-mono text-[10px] text-text-secondary shrink-0">{formatDate(lm.createdAt)}</span>}
-                      </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className={`text-xs truncate ${unread ? "text-text-primary font-medium" : "text-text-secondary"}`}>
-                          {lm ? (lm.senderRole === "vendor" ? "Vous : " : "") + lm.content : "Pas encore de message"}
-                        </span>
-                        {unread > 0 && (
-                          <span className="h-5 min-w-[20px] rounded-full bg-primary text-white text-[10px] font-semibold flex items-center justify-center px-1.5">
-                            {unread}
+                    <div className="flex items-center gap-3">
+                      <Avatar
+                        name={`${proposal.couple?.firstName || ""} ${proposal.couple?.lastName || ""}`}
+                        src={proposal.couple?.avatarUrl || undefined}
+                        className="h-10 w-10"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-[#1c1c1c] truncate">
+                            {proposal.couple?.firstName} {proposal.couple?.lastName}
                           </span>
-                        )}
+                          {proposal.lastMessageAt && (
+                            <span className="text-[10px] text-[#8b8b86]">{formatDate(proposal.lastMessageAt)}</span>
+                          )}
+                        </div>
+                        <p className="text-sm text-[#8b8b86] truncate">{proposal.project?.name || "Projet sans nom"}</p>
                       </div>
                     </div>
                   </button>
-                );
-              })}
+                ))
+              )}
             </div>
           </div>
 
-          {/* Chat area */}
-          <div className={`flex flex-col bg-white ${mobileOpen ? "flex" : "hidden lg:flex"}`}>
-            {selected ? (
-              <>
-                <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-[#FAFAF8]/50">
-                  <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
-                    <ChevronLeft size={20} className="text-text-secondary" />
-                  </button>
-                  <Avatar name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`} src={selected.couple?.avatarUrl || undefined} className="h-11 w-11 text-base" online={selected.status === "accepted"} />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-text-primary truncate">{selected.project?.name || "Mariage"}</div>
-                    <div className="text-xs text-text-secondary">
-                      {selected.project?.location?.city && <span className="inline-flex items-center gap-1 mr-3"><MapPin size={11} /> {selected.project.location.city}</span>}
-                      {selected.project?.weddingDate && <span className="inline-flex items-center gap-1"><Calendar size={11} /> {formatDate(selected.project.weddingDate)}</span>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      className="p-2 hover:bg-black/[0.06] rounded-full text-text-secondary relative"
-                      onClick={() => setPhoneUnavailable(true)}
-                      title="Appel téléphonique"
-                    >
-                      {phoneUnavailable ? <PhoneOff size={20} className="text-rose-500" /> : <Phone size={20} />}
-                    </button>
-                    <button
-                      className="hidden xl:flex p-2 hover:bg-black/[0.06] rounded-full text-text-secondary"
-                      onClick={() => setInfoOpen((v) => !v)}
-                      title="Informations"
-                    >
-                      <Info size={20} />
-                    </button>
-                    <button className="p-2 hover:bg-black/[0.06] rounded-full text-text-secondary"><MoreVertical size={20} /></button>
+          {/* Chat View */}
+          {selected ? (
+            <div className="flex-1 flex flex-col hidden sm:flex">
+              {/* Header */}
+              <div className="p-4 border-b border-[#e6e4dd] flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar
+                    name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`}
+                    src={selected.couple?.avatarUrl || undefined}
+                    className="h-10 w-10"
+                  />
+                  <div>
+                    <h3 className="font-medium text-[#1c1c1c]">
+                      {selected.couple?.firstName} {selected.couple?.lastName}
+                    </h3>
+                    <p className="text-sm text-[#8b8b86]">{selected.project?.name || "Projet sans nom"}</p>
                   </div>
                 </div>
+                <button
+                  onClick={() => setInfoOpen(!infoOpen)}
+                  className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]"
+                >
+                  <Info size={18} />
+                </button>
+              </div>
 
-                {phoneUnavailable && (
-                  <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center justify-between">
-                    <span>L&apos;appel téléphonique n&apos;est pas encore disponible. Utilisez la messagerie.</span>
-                    <button onClick={() => setPhoneUnavailable(false)} className="p-1 hover:bg-amber-100 rounded"><X size={14} /></button>
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messages.length === 0 ? (
+                  <div className="text-center py-8">
+                    <MessageSquare size={32} className="text-[#8b8b86] mx-auto mb-2" />
+                    <p className="text-sm text-[#8b8b86]">Aucun message</p>
                   </div>
-                )}
-
-                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#FAFAF8]/30">
-                  {messages.length === 0 && (
-                    <div className="flex-1 flex flex-col items-center justify-center text-text-secondary text-center min-h-[200px]">
-                      <MessageSquare size={40} className="text-text-secondary/30 mb-3" />
-                      <p className="text-sm">Démarrez la conversation avec le couple.</p>
-                    </div>
-                  )}
-                  {messages.map((m, idx) => {
-                    const isMe = m.senderRole === "vendor";
-                    const showDate = idx === 0 || new Date(m.createdAt).toDateString() !== new Date(messages[idx - 1].createdAt).toDateString();
-                    return (
-                      <div key={m.id}>
-                        {showDate && (
-                          <div className="flex items-center justify-center my-4">
-                            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white border border-black/[0.06] px-3 py-1 rounded-full">
-                              {formatDate(m.createdAt)}
-                            </span>
-                          </div>
-                        )}
-                        <div className={`flex ${isMe ? "justify-end" : "justify-start"} gap-2`}>
-                          {isMe ? (
-                            <Avatar name="Vous" src={vendorLogo || undefined} className="h-8 w-8 text-[10px] self-end mb-1" />
-                          ) : (
-                            <Avatar name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`} src={selected.couple?.avatarUrl || undefined} className="h-8 w-8 text-[10px] self-end mb-1" />
+                ) : (
+                  messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex ${msg.senderId === "vendor" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`max-w-[70%] p-3 rounded-2xl ${
+                          msg.senderId === "vendor"
+                            ? "bg-[#1c1c1c] text-white"
+                            : "bg-[#f7f7f9] text-[#1c1c1c]"
+                        }`}
+                      >
+                        <p className="text-sm">{msg.content}</p>
+                        <div className="flex items-center justify-end gap-1 mt-1">
+                          <span className="text-[10px] opacity-70">{formatTime(msg.createdAt)}</span>
+                          {msg.senderId === "vendor" && (
+                            <CheckCheck size={12} className="opacity-70" />
                           )}
-                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-primary text-white rounded-br-md" : "bg-white text-text-primary border border-black/[0.06] rounded-bl-md"}`}>
-                            <p className="leading-relaxed">{m.content}</p>
-                            <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-text-secondary"}`}>
-                              <span>{formatTime(m.createdAt)}</span>
-                              {isMe && (
-                                <span>{m.readAt ? <CheckCheck size={11} /> : <Check size={11} />}</span>
-                              )}
-                            </div>
-                          </div>
                         </div>
                       </div>
-                    );
-                  })}
-                  <div ref={bottomRef} />
-                </div>
-
-                <div className="p-3 sm:p-4 border-t border-black/[0.06] bg-white">
-                  <div className="flex items-center gap-2 rounded-full border border-black/[0.08] bg-surface px-2 py-1.5">
-                    <button className="p-2 text-text-secondary hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
-                    <input
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                      placeholder="Écrivez votre message..."
-                      className="flex-1 bg-transparent px-2 py-2 text-sm text-text-primary focus:outline-none"
-                    />
-                    <EmojiPicker onEmojiSelect={(emoji) => setMessage((prev) => prev + emoji)} />
-                    <Button
-                      variant="primary"
-                      onClick={sendMessage}
-                      disabled={sending || !message.trim()}
-                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center"
-                      iconLeft={sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                    />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-text-secondary p-8 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                  <MessageSquare size={32} className="text-primary" />
-                </div>
-                <p className="font-medium text-text-primary">Sélectionnez une conversation</p>
-                <p className="text-sm">Échangez avec les couples et gérez vos prestations.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Info panel */}
-          {infoOpen && selected && (
-            <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-[#FAFAF8] w-[300px] shrink-0">
-              <div className="p-5 border-b border-black/[0.06] text-center">
-                <Avatar name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`} src={selected.couple?.avatarUrl || undefined} className="h-20 w-20 text-xl mx-auto mb-3" online={selected.status === "accepted"} />
-                <h3 className="font-semibold text-text-primary">{selected.project?.name || "Mariage"}</h3>
-                <p className="text-sm text-text-secondary">{selected.project?.location?.city}</p>
+                    </div>
+                  ))
+                )}
+                <div ref={bottomRef} />
               </div>
 
-              <div className="flex-1 overflow-y-auto p-4 space-y-5">
-                <div>
-                  <h4 className="text-xs uppercase tracking-[0.14em] text-text-secondary font-medium mb-2">Statut</h4>
-                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                    {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
-                  </div>
+              {/* Input */}
+              <div className="p-4 border-t border-[#e6e4dd]">
+                <div className="flex items-center gap-2">
+                  <button className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
+                    <Paperclip size={18} />
+                  </button>
+                  <input
+                    type="text"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                    placeholder="Écrivez votre message..."
+                    className="flex-1 px-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-full text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  />
+                  <button
+                    onClick={sendMessage}
+                    disabled={sending || !message.trim()}
+                    className="p-2 rounded-full bg-[#dff05a] hover:bg-[#c9d94a] text-[#1c1c1c] disabled:opacity-50 transition"
+                  >
+                    {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                  </button>
                 </div>
+              </div>
 
-                <div>
-                  <h4 className="text-xs uppercase tracking-[0.14em] text-text-secondary font-medium mb-2">Détails du mariage</h4>
-                  <div className="space-y-2 text-sm">
-                    {selected.project?.weddingDate && (
-                      <div className="flex items-center gap-2 text-text-secondary">
-                        <Calendar size={14} className="text-primary" />
-                        <span>{formatFullDate(selected.project.weddingDate)}</span>
-                      </div>
-                    )}
-                    {selected.project?.location?.city && (
-                      <div className="flex items-center gap-2 text-text-secondary">
-                        <MapPin size={14} className="text-primary" />
-                        <span>{selected.project.location.city}</span>
-                      </div>
-                    )}
-                    {selected.project?.budget?.amount && (
-                      <div className="flex items-center gap-2 text-text-secondary">
-                        <Wallet size={14} className="text-primary" />
-                        <span>Budget {selected.project.budget.amount.toLocaleString("fr-FR")} {selected.project.budget.currency}</span>
-                      </div>
-                    )}
-                    {selected.project?.guestCount && (
-                      <div className="flex items-center gap-2 text-text-secondary">
-                        <Users size={14} className="text-primary" />
-                        <span>{selected.project.guestCount} invités</span>
-                      </div>
-                    )}
-                    {selected.project?.style && (
-                      <div className="flex items-center gap-2 text-text-secondary">
-                        <Star size={14} className="text-primary" />
-                        <span className="capitalize">
-                          Style {selected.project.style}
-                          {selected.project.customStyleDescription && ` — ${selected.project.customStyleDescription}`}
-                        </span>
-                      </div>
-                    )}
+              {/* Info Panel */}
+              {infoOpen && (
+                <div className="absolute right-0 top-0 bottom-0 w-80 bg-white border-l border-[#e6e4dd] p-4 overflow-y-auto">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-display text-lg font-bold text-[#1c1c1c]">Détails du projet</h3>
+                    <button onClick={() => setInfoOpen(false)} className="p-2 rounded-full hover:bg-[#f1f0eb]">
+                      <X size={18} />
+                    </button>
                   </div>
+                  {selected.project && (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+                        <Calendar size={16} />
+                        {selected.project.weddingDate ? formatFullDate(selected.project.weddingDate) : "Date non précisée"}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+                        <MapPin size={16} />
+                        {selected.project.location?.city || "Lieu non précisé"}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+                        <Users size={16} />
+                        {selected.project.guestCount || "—"} invités
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
+                        <Wallet size={16} />
+                        Budget {selected.project.budget?.amount?.toLocaleString("fr-FR") || "—"} {selected.project.budget?.currency || "EUR"}
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-                <div>
-                  <h4 className="text-xs uppercase tracking-[0.14em] text-text-secondary font-medium mb-2">Contact</h4>
-                  <div className="space-y-2">
-                    {selected.project?.email && (
-                      <a href={`mailto:${selected.project.email}`} className="flex items-center gap-2 text-sm text-text-primary hover:text-primary">
-                        <FileText size={14} /> {selected.project.email}
-                      </a>
-                    )}
-                    {selected.project?.phone && (
-                      <a href={`tel:${selected.project.phone}`} className="flex items-center gap-2 text-sm text-text-primary hover:text-primary">
-                        <Phone size={14} /> {selected.project.phone}
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <Link href={`/espace-prestataire/propositions?proposal=${selected.id}`} className="block">
-                  <Button variant="secondary" className="w-full text-sm" iconRight={<ExternalLink size={14} />}>
-                    Voir la proposition
-                  </Button>
-                </Link>
+              )}
+            </div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <MessageSquare size={48} className="text-[#8b8b86] mx-auto mb-4" />
+                <p className="text-[#8b8b86]">Sélectionnez une conversation</p>
               </div>
             </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

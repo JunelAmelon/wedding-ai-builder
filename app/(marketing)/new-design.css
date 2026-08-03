@@ -1260,19 +1260,19 @@ footer { padding: 64px 0 32px; }
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 260px;
-  height: 480px;
+  width: 420px;
+  height: 520px;
   border-radius: 38px;
   overflow: hidden;
   box-shadow: 0 30px 70px rgba(14, 14, 16, .2);
   z-index: 2;
-  background: #000;
+  background: transparent;
 }
 
 .stage-phone img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -2020,8 +2020,7 @@ footer { padding: 64px 0 32px; }
 .sh-phone {
   width: 230px;
   max-width: 70vw;
-  border-radius: 30px;
-  box-shadow: 0 26px 60px rgba(14, 14, 16, .18);
+ 
   position: relative;
 }
 .sh-phone img { width: 100%; display: block; border-radius: 30px; }

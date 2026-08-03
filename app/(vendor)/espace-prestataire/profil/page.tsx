@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button";
-import { Loader2, Check, UserCircle, Upload, X } from "lucide-react";
+import { Loader2, Check, UserCircle, Upload, X, Globe, Instagram, MapPin, Phone, Calendar, Star } from "lucide-react";
 import type { VendorProfile } from "@/types/marketplace";
-import { PageHeader, Card } from "../_ui";
 
 interface CloudinaryAsset {
   url: string;
@@ -76,8 +74,8 @@ export default function VendorProfilePage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
-  if (!profile) return <div className="p-6">Profil introuvable.</div>;
+  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
+  if (!profile) return <div className="p-6 text-[#8b8b86]">Profil introuvable.</div>;
 
   const updateField = (field: string, value: unknown) => {
     if (!profile) return;
@@ -98,300 +96,348 @@ export default function VendorProfilePage() {
     setProfile(updated as unknown as VendorProfile);
   };
 
-  async function handleLogoUpload(file: File) {
-    if (!profile) return;
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-    if (!cloudName || !uploadPreset) {
-      setLogoError("Cloudinary n'est pas configuré.");
-      return;
-    }
-    setLogoUploading(true);
-    setLogoError(null);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", uploadPreset);
-      formData.append("folder", "wedding-ai-builder/vendor-logos");
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) throw new Error("Échec de l'upload");
-      const data = await res.json();
-      const asset: CloudinaryAsset = { url: data.secure_url, publicId: data.public_id, filename: file.name };
-      setProfile({ ...profile, logo: asset } as VendorProfile);
-    } catch (err) {
-      setLogoError(err instanceof Error ? err.message : "Échec de l'upload");
-    } finally {
-      setLogoUploading(false);
-    }
-  }
-
-  function removeLogo() {
-    if (!profile) return;
-    setProfile({ ...profile, logo: null } as VendorProfile);
-  }
-
   return (
-    <div className="max-w-6xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-      <PageHeader
-        label="Mon compte"
-        title="Mon profil"
-        subtitle="Complétez vos informations pour maximiser votre visibilité."
-      />
+    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Profil</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
+            Mon profil
+          </h1>
+          <p className="text-[#8b8b86] mt-2">
+            Complétez vos informations pour attirer plus de couples.
+          </p>
+        </div>
+        <button
+          onClick={save}
+          disabled={saving}
+          className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
+        >
+          {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+          {saving ? "Enregistrement..." : "Enregistrer"}
+        </button>
+      </div>
 
-      <Card className="p-6">
-        <div className="flex items-center gap-6 mb-8">
-          <div className="relative">
-            <div className="relative h-24 w-24 rounded-2xl border border-black/10 bg-surface overflow-hidden flex items-center justify-center">
+      {saved && (
+        <div className="mb-6 p-4 rounded-xl bg-[#dcfce7] border border-[#dcfce7]/20 flex items-center gap-3">
+          <Check size={20} className="text-[#14532d]" />
+          <span className="text-sm text-[#14532d]">Profil enregistré avec succès !</span>
+        </div>
+      )}
+
+      <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
+        {/* Logo */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Logo</h2>
+          <div className="flex items-center gap-6">
+            <div className="relative h-24 w-24 rounded-full bg-[#f7f7f9] border border-[#e6e4dd] flex items-center justify-center overflow-hidden">
               {profile.logo?.url ? (
                 <Image src={profile.logo.url} alt="Logo" fill sizes="96px" className="object-cover" unoptimized />
               ) : (
-                <UserCircle size={36} className="text-text-secondary" />
+                <UserCircle size={32} className="text-[#8b8b86]" />
               )}
             </div>
-            <label
-              htmlFor="logo-upload"
-              className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center cursor-pointer hover:bg-primary/90 transition shadow"
-            >
-              {logoUploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
-            </label>
-            <input
-              id="logo-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleLogoUpload(file);
-              }}
-            />
-          </div>
-          <div className="flex-1">
-            <p className="font-serif text-lg font-semibold text-text-primary mb-1">Logo / Photo de profil</p>
-            <p className="text-sm text-text-secondary mb-3">Visible par les couples sur votre profil public.</p>
-            <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Téléverser un logo</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setLogoUploading(true);
+                  setLogoError(null);
+                  try {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    const res = await fetch("/api/vendor/upload-logo", {
+                      method: "POST",
+                      body: formData,
+                    });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.error || "Échec du téléversement");
+                    updateField("logo", json.logo);
+                  } catch (err) {
+                    setLogoError(err instanceof Error ? err.message : "Erreur");
+                  } finally {
+                    setLogoUploading(false);
+                  }
+                }}
+                disabled={logoUploading}
+                className="hidden"
+                id="logo-upload"
+              />
               <label
-                htmlFor="logo-upload-alt"
-                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-primary border-b border-primary/40 pb-0.5 cursor-pointer"
+                htmlFor="logo-upload"
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition cursor-pointer disabled:opacity-50"
               >
-                {logoUploading ? "Envoi..." : profile.logo?.url ? "Changer le logo" : "Ajouter un logo"}
+                {logoUploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+                {logoUploading ? "Téléversement..." : "Choisir un fichier"}
               </label>
-              <input id="logo-upload-alt" type="file" accept="image/*" className="hidden" onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleLogoUpload(file);
-              }} />
-              {profile.logo?.url && (
-                <button
-                  onClick={removeLogo}
-                  className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-text-secondary hover:text-error border-b border-black/10 pb-0.5 transition-colors"
-                >
-                  <X size={12} /> Supprimer
-                </button>
-              )}
+              {logoError && <p className="text-sm text-[#F2704A] mt-2">{logoError}</p>}
             </div>
-            {logoError && <p className="text-xs text-red-600 mt-2">{logoError}</p>}
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Nom de la société</label>
-            <input
-              value={profile.companyName || ""}
-              onChange={(e) => updateField("companyName", e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Nom commercial</label>
-            <input
-              value={profile.brandName || ""}
-              onChange={(e) => updateField("brandName", e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+        {/* Company Info */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Informations entreprise</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Nom de l'entreprise</label>
+              <input
+                type="text"
+                value={profile.companyName}
+                onChange={(e) => updateField("companyName", e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Nom de marque</label>
+              <input
+                type="text"
+                value={profile.brandName || ""}
+                onChange={(e) => updateField("brandName", e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">SIRET</label>
+              <input
+                type="text"
+                value={profile.siret}
+                onChange={(e) => updateField("siret", e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Catégorie</label>
+              <select
+                value={profile.serviceCategory}
+                onChange={(e) => updateField("serviceCategory", e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              >
+                <option value="">Sélectionner...</option>
+                <option value="lieu">Lieu de réception</option>
+                <option value="traiteur">Traiteur</option>
+                <option value="photographie">Photographie</option>
+                <option value="video">Vidéo</option>
+                <option value="musique">Musique</option>
+                <option value="decoration">Décoration</option>
+                <option value="fleurs">Fleurs</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-text-primary mb-1">Présentation</label>
+        {/* Contact */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Contact</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Nom du contact</label>
+              <input
+                type="text"
+                value={profile.contactName}
+                onChange={(e) => updateField("contactName", e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Rôle</label>
+              <input
+                type="text"
+                value={profile.contactRole}
+                onChange={(e) => updateField("contactRole", e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Téléphone</label>
+              <input
+                type="tel"
+                value={profile.phone}
+                onChange={(e) => updateField("phone", e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Email</label>
+              <input
+                type="email"
+                value={profile.email}
+                disabled
+                className="w-full px-4 py-3 bg-[#f7f7f9] border border-[#e6e4dd] rounded-xl text-[14px] text-[#8b8b86] disabled:opacity-50"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Links */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Liens</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Site web</label>
+              <div className="relative">
+                <Globe size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                <input
+                  type="url"
+                  value={profile.website || ""}
+                  onChange={(e) => updateField("website", e.target.value)}
+                  placeholder="https://votre-site.com"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Instagram</label>
+              <div className="relative">
+                <Instagram size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                <input
+                  type="text"
+                  value={profile.portfolio?.instagram || ""}
+                  onChange={(e) => updateNested("portfolio.instagram", e.target.value)}
+                  placeholder="@votre_compte"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Description</h2>
           <textarea
-            value={profile.description || ""}
+            value={profile.description}
             onChange={(e) => updateField("description", e.target.value)}
-            rows={4}
-            className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Décrivez votre entreprise et vos services..."
+            className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[120px] resize-none"
           />
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Contact</label>
-            <input
-              value={profile.contactName || ""}
-              onChange={(e) => updateField("contactName", e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+        {/* Styles */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Styles</h2>
+          <div className="flex flex-wrap gap-2">
+            {["bohème", "classique", "moderne", "rustique", "luxe", "destination"].map((style) => (
+              <button
+                key={style}
+                onClick={() => {
+                  const current = profile.styles || [];
+                  updateField(
+                    "styles",
+                    current.includes(style) ? current.filter((s) => s !== style) : [...current, style]
+                  );
+                }}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                  profile.styles?.includes(style)
+                    ? "bg-[#dff05a] text-[#1c1c1c]"
+                    : "bg-white border border-[#e6e4dd] text-[#8b8b86] hover:bg-[#f1f0eb]"
+                }`}
+              >
+                {style.charAt(0).toUpperCase() + style.slice(1)}
+              </button>
+            ))}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Téléphone</label>
-            <input
-              value={profile.phone || ""}
-              onChange={(e) => updateField("phone", e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+        </div>
+
+        {/* Experience */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Expérience</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Années d'expérience</label>
+              <input
+                type="number"
+                value={profile.yearsOfExperience}
+                onChange={(e) => updateField("yearsOfExperience", parseInt(e.target.value) || 0)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Formation</label>
+              <textarea
+                value={profile.trainingDescription || ""}
+                onChange={(e) => updateField("trainingDescription", e.target.value)}
+                placeholder="Vos formations et certifications..."
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Pricing */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Tarifs</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Prix minimum</label>
+              <input
+                type="number"
+                value={profile.priceRange?.min || 0}
+                onChange={(e) => updateNested("priceRange.min", parseInt(e.target.value) || 0)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Prix maximum</label>
+              <input
+                type="number"
+                value={profile.priceRange?.max || 0}
+                onChange={(e) => updateNested("priceRange.max", parseInt(e.target.value) || 0)}
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              />
+            </div>
+          </div>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-[[1c1c1c] mb-2">Détails de tarification</label>
+            <textarea
+              value={profile.pricingDetails || ""}
+              onChange={(e) => updateField("pricingDetails", e.target.value)}
+              placeholder="Expliquez votre structure de prix..."
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
             />
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Années d&apos;expérience</label>
-            <input
-              type="number"
-              value={profile.yearsOfExperience || ""}
-              onChange={(e) => updateField("yearsOfExperience", Number(e.target.value))}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Délai de réponse habituel</label>
-            <input
-              value={profile.availability?.noticePeriod || ""}
-              onChange={(e) => updateNested("availability.noticePeriod", e.target.value)}
-              placeholder="Ex. 24h, 48h"
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-        </div>
-
+        {/* Service Area */}
         <div>
-          <label className="block text-sm font-medium text-text-primary mb-1">Formation / Parcours</label>
-          <textarea
-            value={profile.trainingDescription || ""}
-            onChange={(e) => updateField("trainingDescription", e.target.value)}
-            rows={3}
-            className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Site web</label>
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Zone d'intervention</h2>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Régions</label>
             <input
-              value={profile.website || ""}
-              onChange={(e) => updateField("website", e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+              type="text"
+              value={profile.serviceArea?.regions?.join(", ") || ""}
+              onChange={(e) => updateNested("serviceArea.regions", e.target.value.split(", "))}
+              placeholder="Île-de-France, PACA, Auvergne..."
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Villes</label>
+            <input
+              type="text"
+              value={profile.serviceArea?.cities?.join(", ") || ""}
+              onChange={(e) => updateNested("serviceArea.cities", e.target.value.split(", "))}
+              placeholder="Paris, Lyon, Marseille..."
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Instagram</label>
-            <input
-              value={profile.portfolio?.instagram || ""}
-              onChange={(e) => updateNested("portfolio.instagram", e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-text-primary mb-1">Styles (séparés par des virgules)</label>
-          <input
-            value={(profile.styles || []).join(", ")}
-            onChange={(e) => updateField("styles", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
-            className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Tarif min (€)</label>
+            <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Rayon d'intervention (km)</label>
             <input
               type="number"
-              value={profile.priceRange?.min || ""}
-              onChange={(e) => updateNested("priceRange.min", Number(e.target.value))}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Tarif max (€)</label>
-            <input
-              type="number"
-              value={profile.priceRange?.max || ""}
-              onChange={(e) => updateNested("priceRange.max", Number(e.target.value))}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Devise</label>
-            <input
-              value={profile.priceRange?.currency || "EUR"}
-              onChange={(e) => updateNested("priceRange.currency", e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+              value={profile.serviceArea?.radius || 0}
+              onChange={(e) => updateNested("serviceArea.radius", parseInt(e.target.value) || 0)}
+              placeholder="50"
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
             />
           </div>
         </div>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Villes d&apos;intervention</label>
-            <input
-              value={(profile.serviceArea?.cities || []).join(", ")}
-              onChange={(e) => updateNested("serviceArea.cities", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Régions d&apos;intervention</label>
-            <input
-              value={(profile.serviceArea?.regions || []).join(", ")}
-              onChange={(e) => updateNested("serviceArea.regions", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Rayon (km)</label>
-            <input
-              type="number"
-              value={profile.serviceArea?.radius || ""}
-              onChange={(e) => updateNested("serviceArea.radius", Number(e.target.value))}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Politique de déplacement</label>
-            <input
-              value={profile.serviceArea?.travelPolicy || ""}
-              onChange={(e) => updateNested("serviceArea.travelPolicy", e.target.value)}
-              placeholder="Ex. inclus, sur devis, facturé"
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-text-primary mb-1">Détails sur les tarifs</label>
-          <textarea
-            value={profile.pricingDetails || ""}
-            onChange={(e) => updateField("pricingDetails", e.target.value)}
-            rows={3}
-            placeholder="Ce qui est inclus, options, conditions..."
-            className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-
-        <Button
-          variant="primary"
-          className="w-full"
-          onClick={save}
-          disabled={saving}
-          iconLeft={saving ? <Loader2 size={18} className="animate-spin" /> : saved ? <Check size={18} /> : undefined}
-        >
-          {saving ? "Enregistrement..." : saved ? "Enregistré" : "Enregistrer les modifications"}
-        </Button>
-      </Card>
+      </div>
     </div>
   );
 }

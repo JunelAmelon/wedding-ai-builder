@@ -7,9 +7,9 @@ import { Header, Footer } from "@/components/layout";
 import { ArrowRight, Check, MessageCircle, BarChart3 } from "lucide-react";
 
 const FAQS = [
-  { q: "Combien coûte l'inscription ?", a: "L'inscription est gratuite. Vous ne payez aucun abonnement pour recevoir des demandes qualifiées." },
-  { q: "Comment fonctionne le score de compatibilité ?", a: "Notre IA croise le profil du couple (budget, style, date, localisation) avec votre activité pour ne vous envoyer que les projets qui vous correspondent vraiment." },
-  { q: "Puis-je refuser une demande ?", a: "Oui, vous restez maître de vos disponibilités. Vous indiquez simplement si vous êtes intéressé ou non." },
+  { q: "Combien coûte l'inscription ?", a: "L'inscription est gratuite. Vous ne payez aucun abonnement pour recevoir des matches qualifiés." },
+  { q: "Comment fonctionne le score de match ?", a: "Notre IA croise le profil du couple (budget, style, date, localisation) avec votre activité pour ne vous envoyer que les couples avec qui vous allez matcher." },
+  { q: "Puis-je refuser un match ?", a: "Oui, vous restez maître de vos disponibilités. Swipez à gauche sur les couples qui ne vous conviennent pas." },
   { q: "Quand suis-je facturé ?", a: "Vous n'êtes facturé qu'à la signature effective d'un contrat avec un couple, selon un pourcentage prévu au préalable." },
 ];
 
@@ -45,7 +45,7 @@ export default function ProfessionalMarketingPage() {
 
   return (
     <>
-      <Header ctaHref="/devenir-professionnel" ctaLabel="Créer mon profil" />
+      <Header ctaHref="/devenir-professionnel" ctaLabel="Trouver mes couples" />
 
       <main>
         {/* HERO */}
@@ -57,9 +57,9 @@ export default function ProfessionalMarketingPage() {
                   <span className="stars">★★★★★</span>
                   <b>4.9</b> · avis des professionnels inscrits
                 </div>
-                <h1>Des couples réellement compatibles, pas des demandes en masse</h1>
+                <h1>Des couples avec qui vous allez matcher</h1>
                 <p className="lead">
-                  Mariage Facile analyse chaque projet avant de le transmettre — vous recevez moins de demandes, mais de bien meilleure qualité.
+                  Mariage Facile analyse chaque projet avant de le transmettre — vous recevez moins de demandes, mais des couples avec un score de match élevé.
                 </p>
               </div>
 
@@ -78,7 +78,7 @@ export default function ProfessionalMarketingPage() {
                 </div>
 
                 <div className="badge-pill bp-top-right">
-                  <Check size={12} /> 97% compatibilité
+                  <Check size={12} /> 97% match
                 </div>
                 <div className="badge-pill bp-mid-right">
                   <MessageCircle size={12} /> 2 roses
@@ -109,10 +109,10 @@ export default function ProfessionalMarketingPage() {
               <div className="hero-cta">
                 <div className="btn-row">
                   <Link href="/devenir-professionnel" className="btn btn-solid">
-                    Créer mon profil gratuitement <ArrowRight size={16} />
+                    Trouver mes couples <ArrowRight size={16} />
                   </Link>
                   <Link href="#workflow" className="btn btn-outline">
-                    Découvrir le fonctionnement
+                    Découvrir le matching
                   </Link>
                 </div>
               </div>
@@ -125,9 +125,9 @@ export default function ProfessionalMarketingPage() {
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">Workflows IA</span>
-              <h2 style={{ marginTop: 18 }}>Comment notre IA travaille pour vous</h2>
+              <h2 style={{ marginTop: 18 }}>Comment notre algorithme de match travaille pour vous</h2>
               <p style={{ marginTop: 10 }}>
-                Du premier message à la signature, sans effort supplémentaire — de 0 à 100 % automatisé.
+                Du premier match à la signature, sans effort supplémentaire — de 0 à 100 % automatisé.
               </p>
             </div>
 
@@ -136,7 +136,7 @@ export default function ProfessionalMarketingPage() {
                 <span className="wf-tag">Matching intelligent</span>
                 <h3>Une sélection affinée à chaque échange</h3>
                 <p>
-                  Chaque échange avec un couple affine le score de compatibilité en temps réel : budget, style, disponibilité, localisation. Vous ne recevez que ce qui a une vraie chance d&apos;aboutir.
+                  Chaque échange avec un couple affine le score de match en temps réel : budget, style, disponibilité, localisation. Vous ne recevez que les couples avec qui vous allez vraiment matcher.
                 </p>
                 <Link href="#dashboard" className="wf-link">
                   En savoir plus <ArrowRight size={14} />
@@ -218,9 +218,9 @@ export default function ProfessionalMarketingPage() {
               </div>
               <div>
                 <span className="eyebrow-pill">Tableau de bord</span>
-                <h3>Suivez vos opportunités en direct</h3>
+                <h3>Suivez vos matches en direct</h3>
                 <p>
-                  Chaque demande arrive avec un score de compatibilité, un budget, un style et une estimation de probabilité de signature — vous savez immédiatement si ça vaut le coup.
+                  Chaque couple arrive avec un score de match, un budget, un style et une estimation de probabilité de signature — vous savez immédiatement si c'est un match parfait.
                 </p>
                 <Link href="/devenir-professionnel" className="wf-link">
                   Voir un exemple <ArrowRight size={14} />
@@ -234,7 +234,7 @@ export default function ProfessionalMarketingPage() {
         <section className="proof-section">
           <div className="wrap">
             <div className="proof-head">
-              <h2>Ils ne le disent pas qu&apos;une fois — ils reviennent.</h2>
+              <h2>Ils ne matchent pas qu'une fois — ils reviennent.</h2>
             </div>
 
             <div className="proof-divider">

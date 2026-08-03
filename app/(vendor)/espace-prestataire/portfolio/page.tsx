@@ -3,11 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button";
-import { CloudinaryUpload } from "@/components/vendor/CloudinaryUpload";
-import { Upload, Trash2, Plus, Star, MessageCircleQuestion } from "lucide-react";
+import { Upload, Trash2, Plus, Globe, Instagram, MessageCircleQuestion, Star } from "lucide-react";
 import type { VendorProfile } from "@/types/marketplace";
-import { PageHeader, Card } from "../_ui";
 
 interface CloudinaryAsset {
   url: string;
@@ -80,165 +77,212 @@ export default function VendorPortfolioPage() {
     setImages((prev) => prev.filter((img) => img.publicId !== publicId));
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-background" />;
+  function addFaqItem() {
+    setFaq([...faq, { question: "", answer: "" }]);
+  }
+
+  function updateFaqItem(index: number, field: "question" | "answer", value: string) {
+    const updated = [...faq];
+    updated[index][field] = value;
+    setFaq(updated);
+  }
+
+  function removeFaqItem(index: number) {
+    setFaq(faq.filter((_, i) => i !== index));
+  }
+
+  function addReviewItem() {
+    setReviews([...reviews, { author: "", rating: 5, text: "", date: new Date().toISOString() }]);
+  }
+
+  function updateReviewItem(index: number, field: string, value: string | number) {
+    const updated = [...reviews];
+    if (field === "author" || field === "text" || field === "date") {
+      updated[index] = { ...updated[index], [field]: value as string };
+    } else if (field === "rating") {
+      updated[index] = { ...updated[index], rating: value as number };
+    }
+    setReviews(updated);
+  }
+
+  function removeReviewItem(index: number) {
+    setReviews(reviews.filter((_, i) => i !== index));
+  }
+
+  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
 
   return (
-    <div className="max-w-6xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-      <PageHeader
-        label="Portfolio"
-        title="Portfolio"
-        subtitle="Mettez en avant vos plus belles réalisations."
-      />
-
-      <Card className="p-8">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          {images.map((img) => (
-            <div key={img.publicId} className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-surface border border-black/10 group">
-              <Image src={img.url} alt={img.filename} fill sizes="(max-width: 1024px) 50vw, 33vw" className="object-cover" unoptimized />
-              <button
-                onClick={() => removeImage(img.publicId)}
-                className="absolute top-2 right-2 p-2 rounded-xl bg-white/90 text-error opacity-0 group-hover:opacity-100 transition"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          ))}
-
-          {images.length < 5 && (
-            <div className="aspect-[4/3] rounded-2xl border-2 border-dashed border-black/20 flex flex-col items-center justify-center gap-2 text-text-secondary hover:border-primary hover:text-primary transition">
-              <CloudinaryUpload onUpload={setImages} uploaded={images} accept="image/*" maxFiles={5 - images.length} />
-            </div>
-          )}
+    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Portfolio</p>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
+            Portfolio
+          </h1>
+          <p className="text-[#8b8b86] mt-2">
+            Mettez en avant vos plus belles réalisations.
+          </p>
         </div>
+        <button
+          onClick={save}
+          disabled={saving}
+          className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
+        >
+          {saving ? "Enregistrement..." : "Enregistrer"}
+        </button>
+      </div>
 
-        <p className="text-sm text-text-secondary mb-6">{images.length}/5 photos</p>
-
-        <div className="grid sm:grid-cols-2 gap-4 mb-8">
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Site web</label>
-            <input
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
-              placeholder="https://..."
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1">Instagram</label>
-            <input
-              value={instagram}
-              onChange={(e) => setInstagram(e.target.value)}
-              placeholder="@votrecompte"
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary"
-            />
+      <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
+        {/* Images */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Galerie photos</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {images.map((img) => (
+              <div key={img.publicId} className="relative aspect-[4/3] rounded-[20px] overflow-hidden bg-[#f7f7f9] border border-[#e6e4dd] group">
+                <Image src={img.url} alt={img.filename} fill sizes="(max-width: 1024px) 50vw, 33vw" className="object-cover" unoptimized />
+                <button
+                  onClick={() => removeImage(img.publicId)}
+                  className="absolute top-2 right-2 p-2 rounded-xl bg-white/90 text-[#F2704A] opacity-0 group-hover:opacity-100 transition"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+            <div className="aspect-[4/3] rounded-[20px] border-2 border-dashed border-[#e6e4dd] flex flex-col items-center justify-center bg-[#f7f7f9] hover:bg-[#f1f0eb] transition cursor-pointer">
+              <Upload size={24} className="text-[#8b8b86] mb-2" />
+              <span className="text-sm text-[#8b8b86]">Ajouter une photo</span>
+            </div>
           </div>
         </div>
 
-        <div className="border-t border-black/[0.06] pt-8 mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <MessageCircleQuestion size={18} className="text-primary" />
-            <h2 className="font-serif text-lg font-semibold text-text-primary">FAQ</h2>
-          </div>
-          <p className="text-sm text-text-secondary mb-4">Anticipez les questions des couples pour rassurer et convertir.</p>
-          <div className="space-y-3 mb-4">
-            {faq.map((item, i) => (
-              <div key={i} className="grid gap-2 rounded-xl border border-black/[0.06] p-4 bg-surface/50">
+        {/* Links */}
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Liens</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Site web</label>
+              <div className="relative">
+                <Globe size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
                 <input
-                  value={item.question}
-                  onChange={(e) => setFaq((prev) => prev.map((f, idx) => idx === i ? { ...f, question: e.target.value } : f))}
-                  placeholder="Question"
-                  className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-text-primary"
+                  type="url"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  placeholder="https://votre-site.com"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
                 />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Instagram</label>
+              <div className="relative">
+                <Instagram size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                <input
+                  type="text"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                  placeholder="@votre_compte"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-xl font-bold text-[#1c1c1c]">FAQ</h2>
+            <button
+              onClick={addFaqItem}
+              className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-[#dff05a] text-sm font-semibold text-[#1c1c1c] hover:bg-[#c9d94a] transition"
+            >
+              <Plus size={16} /> Ajouter
+            </button>
+          </div>
+          <div className="space-y-4">
+            {faq.map((item, index) => (
+              <div key={index} className="p-4 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={item.question}
+                      onChange={(e) => updateFaqItem(index, "question", e.target.value)}
+                      placeholder="Question"
+                      className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeFaqItem(index)}
+                    className="p-2 rounded-full hover:bg-[#fce7f3] text-[#831843] transition"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
                 <textarea
                   value={item.answer}
-                  onChange={(e) => setFaq((prev) => prev.map((f, idx) => idx === i ? { ...f, answer: e.target.value } : f))}
+                  onChange={(e) => updateFaqItem(index, "answer", e.target.value)}
                   placeholder="Réponse"
-                  rows={2}
-                  className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-text-primary"
+                  className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
                 />
-                <button
-                  type="button"
-                  onClick={() => setFaq((prev) => prev.filter((_, idx) => idx !== i))}
-                  className="self-end text-xs text-rose-600 hover:text-rose-700"
-                >
-                  Supprimer
-                </button>
               </div>
             ))}
           </div>
-          <Button
-            variant="secondary"
-            className="!text-xs"
-            iconLeft={<Plus size={14} />}
-            onClick={() => setFaq((prev) => [...prev, { question: "", answer: "" }])}
-          >
-            Ajouter une question
-          </Button>
         </div>
 
-        <div className="border-t border-black/[0.06] pt-8 mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Star size={18} className="text-primary" />
-            <h2 className="font-serif text-lg font-semibold text-text-primary">Avis clients</h2>
+        {/* Reviews */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-xl font-bold text-[#1c1c1c]">Témoignages</h2>
+            <button
+              onClick={addReviewItem}
+              className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-[#dff05a] text-sm font-semibold text-[#1c1c1c] hover:bg-[#c9d94a] transition"
+            >
+              <Plus size={16} /> Ajouter
+            </button>
           </div>
-          <p className="text-sm text-text-secondary mb-4">Partagez les témoignages de vos précédents mariés.</p>
-          <div className="space-y-3 mb-4">
-            {reviews.map((review, i) => (
-              <div key={i} className="grid gap-2 rounded-xl border border-black/[0.06] p-4 bg-surface/50">
-                <div className="grid sm:grid-cols-2 gap-2">
-                  <input
-                    value={review.author}
-                    onChange={(e) => setReviews((prev) => prev.map((r, idx) => idx === i ? { ...r, author: e.target.value } : r))}
-                    placeholder="Prénom du marié(e)"
-                    className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-text-primary"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={5}
-                    value={review.rating || ""}
-                    onChange={(e) => setReviews((prev) => prev.map((r, idx) => idx === i ? { ...r, rating: Number(e.target.value) } : r))}
-                    placeholder="Note /5"
-                    className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-text-primary"
-                  />
+          <div className="space-y-4">
+            {reviews.map((item, index) => (
+              <div key={index} className="p-4 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      value={item.author}
+                      onChange={(e) => updateReviewItem(index, "author", e.target.value)}
+                      placeholder="Nom du client"
+                      className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    />
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => updateReviewItem(index, "rating", star)}
+                          className={`text-lg ${star <= item.rating ? "text-[#F2704A]" : "text-[#e6e4dd]"}`}
+                        >
+                          <Star size={18} fill={star <= item.rating ? "currentColor" : "none"} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => removeReviewItem(index)}
+                    className="p-2 rounded-full hover:bg-[#fce7f3] text-[#831843] transition"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
-                <input
-                  type="date"
-                  value={review.date?.slice(0, 10) || ""}
-                  onChange={(e) => setReviews((prev) => prev.map((r, idx) => idx === i ? { ...r, date: e.target.value } : r))}
-                  className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-text-primary"
-                />
                 <textarea
-                  value={review.text}
-                  onChange={(e) => setReviews((prev) => prev.map((r, idx) => idx === i ? { ...r, text: e.target.value } : r))}
-                  placeholder="Témoignage"
-                  rows={2}
-                  className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-text-primary"
+                  value={item.text}
+                  onChange={(e) => updateReviewItem(index, "text", e.target.value)}
+                  placeholder="Témoignage du client"
+                  className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
                 />
-                <button
-                  type="button"
-                  onClick={() => setReviews((prev) => prev.filter((_, idx) => idx !== i))}
-                  className="self-end text-xs text-rose-600 hover:text-rose-700"
-                >
-                  Supprimer
-                </button>
               </div>
             ))}
           </div>
-          <Button
-            variant="secondary"
-            className="!text-xs"
-            iconLeft={<Plus size={14} />}
-            onClick={() => setReviews((prev) => [...prev, { author: "", rating: 5, text: "", date: "" }])}
-          >
-            Ajouter un avis
-          </Button>
         </div>
-
-        <Button variant="primary" iconLeft={<Upload size={18} />} onClick={save} disabled={saving}>
-          {saving ? "Enregistrement..." : "Enregistrer le portfolio"}
-        </Button>
-      </Card>
+      </div>
     </div>
   );
 }
