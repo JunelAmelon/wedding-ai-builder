@@ -16,7 +16,6 @@ import {
   Menu,
   X,
   LogOut,
-  Gift,
 } from "lucide-react";
 
 const VENDOR_NAV = [
@@ -30,7 +29,6 @@ const VENDOR_NAV = [
 const VENDOR_NAV_SECONDARY = [
   { href: "/espace-prestataire/profil", label: "Profil", icon: UserCircle },
   { href: "/espace-prestataire/credits", label: "Crédits", icon: LayoutGrid },
-  { href: "/espace-prestataire/cadeaux", label: "Cadeaux", icon: Gift },
   { href: "/espace-prestataire/notifications", label: "Notifications", icon: Bell },
   { href: "/espace-prestataire/parametres", label: "Paramètres", icon: SlidersHorizontal },
 ];
@@ -40,7 +38,6 @@ const MOBILE_TABS = [
   { href: "/espace-prestataire/propositions", label: "Offres", icon: Send },
   { href: "/espace-prestataire/appels-offres", label: "Appels", icon: Megaphone, primary: true },
   { href: "/espace-prestataire/portfolio", label: "Portfolio", icon: Images },
-  { href: "/espace-prestataire/cadeaux", label: "Cadeaux", icon: Gift },
   { href: "/espace-prestataire/messagerie", label: "Messages", icon: MessageCircle },
 ];
 

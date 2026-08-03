@@ -1,11 +1,12 @@
 import { nanoid } from "nanoid";
-import type { Wishlist, WishlistItem, WishlistPurchase } from "@/types/marketplace";
+import type { Wishlist, WishlistItem, WishlistPurchase, WishlistPayout } from "@/types/marketplace";
 import { localStore } from "@/lib/db/localStore";
 import { isLocalMode } from "./utils";
 
 const WISHLIST_COLLECTION = "wishlists";
 const WISHLIST_ITEMS_COLLECTION = "wishlistItems";
 const WISHLIST_PURCHASES_COLLECTION = "wishlistPurchases";
+const WISHLIST_PAYOUTS_COLLECTION = "wishlistPayouts";
 
 async function getWishlistCol() {
   const { getDb } = await import("@/lib/db/firebase");
@@ -22,6 +23,11 @@ async function getWishlistPurchasesCol() {
   return getDb().collection(WISHLIST_PURCHASES_COLLECTION);
 }
 
+async function getWishlistPayoutsCol() {
+  const { getDb } = await import("@/lib/db/firebase");
+  return getDb().collection(WISHLIST_PAYOUTS_COLLECTION);
+}
+
 export const wishlistRepo = {
   async create(data: Omit<Wishlist, "id" | "shareToken" | "createdAt" | "updatedAt">): Promise<Wishlist> {
     const id = nanoid(12);
@@ -35,6 +41,16 @@ export const wishlistRepo = {
     const col = await getWishlistCol();
     await col.doc(id).set(wishlist);
     return wishlist;
+  },
+
+  async listAll(): Promise<Wishlist[]> {
+    if (isLocalMode()) {
+      const all = await localStore.all<Wishlist>(WISHLIST_COLLECTION);
+      return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    }
+    const col = await getWishlistCol();
+    const snap = await col.orderBy("createdAt", "desc").get();
+    return snap.docs.map((d) => d.data() as Wishlist);
   },
 
   async getByCouple(coupleId: string): Promise<Wishlist[]> {
@@ -176,5 +192,57 @@ export const wishlistPurchaseRepo = {
     const col = await getWishlistPurchasesCol();
     const doc = await col.doc(id).get();
     return doc.exists ? (doc.data() as WishlistPurchase) : null;
+  },
+
+  async getByStripeSessionId(stripeSessionId: string): Promise<WishlistPurchase | null> {
+    if (isLocalMode()) {
+      const all = await localStore.all<WishlistPurchase>(WISHLIST_PURCHASES_COLLECTION);
+      return all.find((p) => p.stripeSessionId === stripeSessionId) || null;
+    }
+    const col = await getWishlistPurchasesCol();
+    const snap = await col.where("stripeSessionId", "==", stripeSessionId).limit(1).get();
+    return snap.empty ? null : (snap.docs[0].data() as WishlistPurchase);
+  },
+};
+
+export const wishlistPayoutRepo = {
+  async create(data: Omit<WishlistPayout, "id" | "createdAt">): Promise<WishlistPayout> {
+    const id = nanoid(12);
+    const now = new Date().toISOString();
+    const payout: WishlistPayout = { ...data, id, createdAt: now };
+    if (isLocalMode()) {
+      await localStore.set(WISHLIST_PAYOUTS_COLLECTION, id, payout);
+      return payout;
+    }
+    const col = await getWishlistPayoutsCol();
+    await col.doc(id).set(payout);
+    return payout;
+  },
+
+  async getByWishlist(wishlistId: string): Promise<WishlistPayout[]> {
+    if (isLocalMode()) {
+      const all = await localStore.all<WishlistPayout>(WISHLIST_PAYOUTS_COLLECTION);
+      return all.filter((p) => p.wishlistId === wishlistId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    }
+    const col = await getWishlistPayoutsCol();
+    const snap = await col.where("wishlistId", "==", wishlistId).orderBy("createdAt", "desc").get();
+    return snap.docs.map((d) => d.data() as WishlistPayout);
+  },
+
+  async listAll(): Promise<WishlistPayout[]> {
+    if (isLocalMode()) {
+      const all = await localStore.all<WishlistPayout>(WISHLIST_PAYOUTS_COLLECTION);
+      return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    }
+    const col = await getWishlistPayoutsCol();
+    const snap = await col.orderBy("createdAt", "desc").get();
+    return snap.docs.map((d) => d.data() as WishlistPayout);
+  },
+
+  async get(id: string): Promise<WishlistPayout | null> {
+    if (isLocalMode()) return localStore.get<WishlistPayout>(WISHLIST_PAYOUTS_COLLECTION, id);
+    const col = await getWishlistPayoutsCol();
+    const doc = await col.doc(id).get();
+    return doc.exists ? (doc.data() as WishlistPayout) : null;
   },
 };

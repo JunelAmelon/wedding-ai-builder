@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Upload, Trash2, Plus, Globe, Instagram, MessageCircleQuestion, Star } from "lucide-react";
+import { Upload, Trash2, Plus, Globe, Instagram, MessageCircleQuestion, Star, Eye } from "lucide-react";
 import type { VendorProfile } from "@/types/marketplace";
 
 interface CloudinaryAsset {
@@ -123,13 +123,25 @@ export default function VendorPortfolioPage() {
             Mettez en avant vos plus belles réalisations.
           </p>
         </div>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
-        >
-          {saving ? "Enregistrement..." : "Enregistrer"}
-        </button>
+        <div className="flex items-center gap-3">
+          {profile?.id && (
+            <a
+              href={`/prestataires/preview/${profile.id}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#1c1c1c] text-sm font-semibold text-[#1c1c1c] hover:bg-[#1c1c1c] hover:text-white transition"
+            >
+              <Eye size={18} /> Prévisualiser
+            </a>
+          )}
+          <button
+            onClick={save}
+            disabled={saving}
+            className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
+          >
+            {saving ? "Enregistrement..." : "Enregistrer"}
+          </button>
+        </div>
       </div>
 
       <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">

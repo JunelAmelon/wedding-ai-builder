@@ -76,7 +76,9 @@ export default function CoupleMessagingPage() {
   const [infoOpen, setInfoOpen] = useState(false);
   const [phoneUnavailable, setPhoneUnavailable] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ firstName?: string; lastName?: string; avatarUrl?: string | null }>({});
+  const [attachments, setAttachments] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function loadProposals() {
@@ -130,20 +132,48 @@ export default function CoupleMessagingPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files) return;
+    const arr: string[] = [];
+    for (const file of Array.from(files)) {
+      const base64 = await new Promise<string>((res) => {
+        const reader = new FileReader();
+        reader.onloadend = () => res(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      arr.push(base64);
+    }
+    setAttachments((prev) => [...prev, ...arr]);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
   async function sendMessage() {
-    if (!selected || !message.trim()) return;
+    if (!selected) return;
+    const text = message.trim();
+    if (!text && attachments.length === 0) return;
     setSending(true);
     try {
-      const res = await fetch("/api/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proposalId: selected.id, content: message }),
-      });
-      const json = await res.json();
-      if (res.ok) {
-        setMessages((prev) => [...prev, json.message]);
-        setMessage("");
+      if (text) {
+        const res = await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ proposalId: selected.id, content: text }),
+        });
+        const json = await res.json();
+        if (res.ok) setMessages((prev) => [...prev, json.message]);
       }
+      for (const att of attachments) {
+        const res = await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ proposalId: selected.id, content: att }),
+        });
+        const json = await res.json();
+        if (res.ok) setMessages((prev) => [...prev, json.message]);
+      }
+      setMessage("");
+      setAttachments([]);
     } finally {
       setSending(false);
     }
@@ -207,7 +237,6 @@ export default function CoupleMessagingPage() {
                     onClick={() => {
                       setSelected(p);
                       setMobileOpen(true);
-                      setInfoOpen(false);
                     }}
                     className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
                       isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
@@ -307,7 +336,13 @@ export default function CoupleMessagingPage() {
                             />
                           )}
                           <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-primary text-white rounded-br-md" : "bg-white text-text-primary border border-black/[0.06] rounded-bl-md"}`}>
-                            <p className="leading-relaxed">{m.content}</p>
+                            {m.content.startsWith("data:image") ? (
+                              <img src={m.content} alt="Pièce jointe" className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover" />
+                            ) : m.content.startsWith("data:") ? (
+                              <a href={m.content} target="_blank" rel="noreferrer" className="underline text-inherit">Voir le document</a>
+                            ) : (
+                              <p className="leading-relaxed">{m.content}</p>
+                            )}
                             <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-text-secondary"}`}>
                               <span>{formatTime(m.createdAt)}</span>
                               {isMe && (
@@ -323,8 +358,32 @@ export default function CoupleMessagingPage() {
                 </div>
 
                 <div className="p-3 sm:p-4 border-t border-black/[0.06] bg-white">
+                  {attachments.length > 0 && (
+                    <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
+                      {attachments.map((att, i) => (
+                        <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-black/[0.08] shrink-0">
+                          {att.startsWith("data:image") ? (
+                            <img src={att} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-surface flex items-center justify-center text-[10px] text-text-secondary text-center p-1">Fichier</div>
+                          )}
+                          <button
+                            onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
+                            className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center text-[10px]"
+                          >×</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <div className="flex items-center gap-2 rounded-full border border-black/[0.08] bg-surface px-2 py-1.5">
-                    <button className="p-2 text-text-secondary hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
+                    <input
+                      type="file"
+                      multiple
+                      hidden
+                      ref={fileRef}
+                      onChange={handleFiles}
+                    />
+                    <button onClick={() => fileRef.current?.click()} className="p-2 text-text-secondary hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
                     <input
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
@@ -333,13 +392,13 @@ export default function CoupleMessagingPage() {
                       className="flex-1 bg-transparent px-2 py-2 text-sm text-text-primary focus:outline-none"
                     />
                     <EmojiPicker onEmojiSelect={(emoji) => setMessage((prev) => prev + emoji)} />
-                    <Button
-                      variant="primary"
+                    <button
                       onClick={sendMessage}
-                      disabled={sending || !message.trim()}
-                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center"
-                      iconLeft={sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                    />
+                      disabled={sending || (!message.trim() && attachments.length === 0)}
+                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center bg-[#1c1c1c] text-white hover:bg-[#333] disabled:opacity-50 transition"
+                    >
+                      {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                    </button>
                   </div>
                 </div>
               </>

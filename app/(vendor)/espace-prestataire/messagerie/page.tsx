@@ -78,7 +78,9 @@ export default function VendorMessagingPage() {
   const [infoOpen, setInfoOpen] = useState(false);
   const [phoneUnavailable, setPhoneUnavailable] = useState(false);
   const [vendorLogo, setVendorLogo] = useState<string | null>(null);
+  const [attachments, setAttachments] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function loadProposals() {
@@ -131,22 +133,55 @@ export default function VendorMessagingPage() {
     );
   }, [proposals, search]);
 
+  async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files) return;
+    const arr: string[] = [];
+    for (const file of Array.from(files)) {
+      const base64 = await new Promise<string>((res) => {
+        const reader = new FileReader();
+        reader.onloadend = () => res(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      arr.push(base64);
+    }
+    setAttachments((prev) => [...prev, ...arr]);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
   async function sendMessage() {
-    if (!selected || !message.trim()) return;
+    if (!selected) return;
+    const text = message.trim();
+    if (!text && attachments.length === 0) return;
     setSending(true);
     try {
-      const res = await fetch("/api/vendor/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          proposalId: selected.id,
-          content: message,
-        }),
-      });
-      if (!res.ok) throw new Error("Échec de l'envoi");
-      const json = await res.json();
-      setMessages([...messages, json.message]);
+      if (text) {
+        const res = await fetch("/api/vendor/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            proposalId: selected.id,
+            content: message,
+          }),
+        });
+        if (!res.ok) throw new Error("Échec de l'envoi");
+        const json = await res.json();
+        setMessages([...messages, json.message]);
+      }
+      for (const att of attachments) {
+        const res = await fetch("/api/vendor/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            proposalId: selected.id,
+            content: att,
+          }),
+        });
+        const json = await res.json();
+        if (res.ok) setMessages((prev) => [...prev, json.message]);
+      }
       setMessage("");
+      setAttachments([]);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
     } finally {
@@ -276,7 +311,13 @@ export default function VendorMessagingPage() {
                             : "bg-[#f7f7f9] text-[#1c1c1c]"
                         }`}
                       >
-                        <p className="text-sm">{msg.content}</p>
+                        {msg.content.startsWith("data:image") ? (
+                          <img src={msg.content} alt="Pièce jointe" className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover" />
+                        ) : msg.content.startsWith("data:") ? (
+                          <a href={msg.content} target="_blank" rel="noreferrer" className="underline text-inherit text-sm">Voir le document</a>
+                        ) : (
+                          <p className="text-sm">{msg.content}</p>
+                        )}
                         <div className="flex items-center justify-end gap-1 mt-1">
                           <span className="text-[10px] opacity-70">{formatTime(msg.createdAt)}</span>
                           {msg.senderId === "vendor" && (
@@ -292,8 +333,32 @@ export default function VendorMessagingPage() {
 
               {/* Input */}
               <div className="p-4 border-t border-[#e6e4dd]">
+                {attachments.length > 0 && (
+                  <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
+                    {attachments.map((att, i) => (
+                      <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#e6e4dd] shrink-0">
+                        {att.startsWith("data:image") ? (
+                          <img src={att} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full bg-[#f7f7f9] flex items-center justify-center text-[10px] text-[#8b8b86] text-center p-1">Fichier</div>
+                        )}
+                        <button
+                          onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
+                          className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center text-[10px]"
+                        >×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
-                  <button className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
+                  <input
+                    type="file"
+                    multiple
+                    hidden
+                    ref={fileRef}
+                    onChange={handleFiles}
+                  />
+                  <button onClick={() => fileRef.current?.click()} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
                     <Paperclip size={18} />
                   </button>
                   <input
@@ -306,8 +371,8 @@ export default function VendorMessagingPage() {
                   />
                   <button
                     onClick={sendMessage}
-                    disabled={sending || !message.trim()}
-                    className="p-2 rounded-full bg-[#dff05a] hover:bg-[#c9d94a] text-[#1c1c1c] disabled:opacity-50 transition"
+                    disabled={sending || (!message.trim() && attachments.length === 0)}
+                    className="p-2 rounded-full bg-[#1c1c1c] hover:bg-[#333] text-white disabled:opacity-50 transition"
                   >
                     {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                   </button>

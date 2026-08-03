@@ -16,6 +16,7 @@ import {
   X,
   LogOut,
   Gift,
+  ShoppingBag,
 } from "lucide-react";
 
 const COUPLE_NAV = [
@@ -24,11 +25,12 @@ const COUPLE_NAV = [
   { href: "/espace-couple/budget", label: "Budget", icon: Wallet },
   { href: "/espace-couple/planning", label: "Planning", icon: CalendarRange },
   { href: "/espace-couple/prestataires", label: "Prestataires", icon: Users2 },
-  { href: "/espace-couple/liste-souhaits", label: "Liste de mariage", icon: Gift },
   { href: "/espace-couple/messagerie", label: "Messages", icon: MessageSquare },
 ];
 
 const COUPLE_NAV_SECONDARY = [
+  { href: "/espace-couple/liste-souhaits", label: "Liste de mariage", icon: Gift },
+  { href: "/espace-couple/boutique", label: "Boutique", icon: ShoppingBag },
   { href: "/espace-couple/parametres", label: "Paramètres", icon: SlidersHorizontal },
 ];
 
@@ -43,6 +45,7 @@ const MOBILE_MORE = [
   { href: "/espace-couple/budget", label: "Budget", icon: Wallet },
   { href: "/espace-couple/prestataires", label: "Prestataires", icon: Users2 },
   { href: "/espace-couple/liste-souhaits", label: "Liste de mariage", icon: Gift },
+  { href: "/espace-couple/boutique", label: "Boutique", icon: ShoppingBag },
 ];
 
 export default function CoupleLayoutClient({

@@ -1,18 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Gift, Heart, Share2, Check, Users, MessageSquare, Eye, X } from "lucide-react";
 import type { Wishlist, WishlistItem, WishlistPurchase } from "@/types/marketplace";
 
 export default function WishlistPublicPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const shareToken = Array.isArray(params.shareToken) ? params.shareToken[0] : params.shareToken;
   const [wishlist, setWishlist] = useState<Wishlist | null>(null);
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [purchases, setPurchases] = useState<WishlistPurchase[]>([]);
+  const [couple, setCouple] = useState<{ firstName: string; lastName: string; avatarUrl: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [flash, setFlash] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Modal de contribution : soit lié à un cadeau précis, soit une contribution libre (Participer)
   const [modalOpen, setModalOpen] = useState(false);
@@ -37,6 +41,7 @@ export default function WishlistPublicPage() {
       setWishlist(data.wishlist);
       setItems(data.items || []);
       setPurchases(data.purchases || []);
+      setCouple(data.couple || null);
     } catch (error) {
       console.error("Error loading wishlist:", error);
       router.push("/404");
@@ -49,6 +54,32 @@ export default function WishlistPublicPage() {
     loadWishlist();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shareToken]);
+
+  useEffect(() => {
+    const success = searchParams.get("success");
+    const canceled = searchParams.get("canceled");
+    const sessionId = searchParams.get("session_id");
+
+    if (canceled) {
+      setFlash({ type: "error", text: "Le paiement a été annulé." });
+    } else if (success && sessionId) {
+      setFlash({ type: "success", text: "Paiement confirmé, enregistrement en cours…" });
+      fetch(`/api/wishlist/session?session_id=${sessionId}`)
+        .then(async (res) => {
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Erreur");
+          }
+          setFlash({ type: "success", text: "Merci pour votre contribution ! 🎉" });
+          await loadWishlist();
+        })
+        .catch(() => {
+          setFlash({ type: "success", text: "Merci ! La page va se mettre à jour dès que le paiement sera finalisé." });
+          loadWishlist();
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, shareToken]);
 
   function openGeneralContribution() {
     setSelectedItem(null);
@@ -81,11 +112,11 @@ export default function WishlistPublicPage() {
     setPurchasing(true);
     setPurchaseError("");
     try {
-      const res = await fetch("/api/wishlist/purchases", {
+      const res = await fetch("/api/wishlist/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wishlistId: wishlist.id,
+          shareToken,
           itemId: selectedItem?.id,
           guestName,
           guestEmail,
@@ -96,19 +127,17 @@ export default function WishlistPublicPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Erreur lors de la contribution");
+        throw new Error(data.error || "Erreur lors de la préparation du paiement");
       }
 
-      setSuccess(true);
-      setGuestName("");
-      setGuestEmail("");
-      setAmount("");
-      setMessage("");
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
 
-      // Recharger les données pour voir la contribution et le message en temps réel
-      await loadWishlist();
+      throw new Error("Aucun lien de paiement reçu");
     } catch (error) {
-      setPurchaseError(error instanceof Error ? error.message : "Erreur lors de la contribution");
+      setPurchaseError(error instanceof Error ? error.message : "Erreur lors de la préparation du paiement");
     } finally {
       setPurchasing(false);
     }
@@ -165,8 +194,57 @@ export default function WishlistPublicPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#fbfafa] p-6">
-      <div className="max-w-[1220px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start">
+    <div className="min-h-[100dvh] bg-[#fbfafa]">
+      <header className="bg-white border-b border-[#e6e4dd] sticky top-0 z-30">
+        <div className="max-w-[1220px] mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="font-display text-xl font-semibold text-[#1c1c1c]">
+            Mariage Facile
+          </Link>
+          <Link
+            href="/"
+            className="hidden sm:inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#1c1c1c] text-white hover:bg-[#333] transition"
+          >
+            Nous découvrir
+          </Link>
+        </div>
+      </header>
+
+      {flash && (
+        <div
+          className={`max-w-[1220px] mx-auto mt-4 px-6 ${
+            flash.type === "success" ? "text-emerald-700 bg-emerald-50 border-emerald-100" : "text-rose-700 bg-rose-50 border-rose-100"
+          } rounded-xl border p-4 text-sm font-medium`}
+        >
+          {flash.text}
+        </div>
+      )}
+
+      <section className="py-10 sm:py-14 px-6 bg-white border-b border-[#e6e4dd]">
+        <div className="max-w-[1220px] mx-auto">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D8ECD9] text-[#1c1c1c] text-xs font-medium mb-4">
+              <Gift size={14} /> Liste de mariage
+            </div>
+            {couple ? (
+              <>
+                <h1 className="font-display text-3xl sm:text-5xl font-bold text-[#1c1c1c] mb-4">
+                  {couple.firstName} et {couple.lastName} vous invitent…
+                </h1>
+                <p className="text-lg text-[#8b8b86] max-w-2xl mx-auto leading-relaxed">
+                  Hello ! {couple.firstName} et {couple.lastName} vous invitent à célébrer leur mariage et à faire partie de cette belle histoire. Votre geste, petit ou grand, compte énormément pour eux.
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="font-display text-3xl sm:text-5xl font-bold text-[#1c1c1c] mb-4">Liste de mariage</h1>
+                <p className="text-lg text-[#8b8b86] max-w-2xl mx-auto">Participez à cette belle aventure.</p>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-[1220px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start p-6">
 
         {/* LEFT COLUMN */}
         <div className="flex flex-col gap-6">
