@@ -33,7 +33,7 @@ export function SealTag({ ok }: { ok: boolean }) {
   return (
     <div
       className={`inline-flex items-center gap-2 rounded-full px-4 py-2 font-sans text-[10.5px] uppercase tracking-[0.1em] ${
-        ok ? "bg-[#88b7b5]/20 text-[#1c1c1c]" : "bg-sky-100 text-sky-700"
+        ok ? "bg-[#f4f1f7]/20 text-[#1c1c1c]" : "bg-sky-100 text-sky-700"
       }`}
     >
       <span

@@ -55,7 +55,7 @@ export default function AdminSupportPage() {
                 <td className="px-4 py-3"><p className="font-medium" style={{ color: INK }}>{t.userEmail}</p><p className="text-xs capitalize" style={{ color: `${INK}99` }}>{t.userRole}</p></td>
                 <td className="px-4 py-3 max-w-xs"><p className="font-medium truncate" style={{ color: INK }}>{t.subject}</p><p className="text-xs truncate" style={{ color: `${INK}99` }}>{t.message}</p></td>
                 <td className="px-4 py-3">
-                  <select value={t.status} onChange={(e) => updateTicket(t.id, { status: e.target.value as SupportTicket["status"] })} className="rounded-lg border border-[#1c1c1c]/10 px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60">
+                  <select value={t.status} onChange={(e) => updateTicket(t.id, { status: e.target.value as SupportTicket["status"] })} className="rounded-lg border border-[#1c1c1c]/10 px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60">
                     <option value="open">Ouvert</option>
                     <option value="in_progress">En cours</option>
                     <option value="resolved">Résolu</option>
@@ -63,13 +63,13 @@ export default function AdminSupportPage() {
                   </select>
                 </td>
                 <td className="px-4 py-3">
-                  <select value={t.priority} onChange={(e) => updateTicket(t.id, { priority: e.target.value as SupportTicket["priority"] })} className="rounded-lg border border-[#1c1c1c]/10 px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60">
+                  <select value={t.priority} onChange={(e) => updateTicket(t.id, { priority: e.target.value as SupportTicket["priority"] })} className="rounded-lg border border-[#1c1c1c]/10 px-2 py-1 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60">
                     <option value="low">Basse</option>
                     <option value="medium">Moyenne</option>
                     <option value="high">Haute</option>
                   </select>
                 </td>
-                <td className="px-4 py-3"><input value={t.assignedTo || ""} onBlur={(e) => updateTicket(t.id, { assignedTo: e.target.value || null })} placeholder="Admin ID" className="w-full rounded-lg border border-[#1c1c1c]/10 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60" /></td>
+                <td className="px-4 py-3"><input value={t.assignedTo || ""} onBlur={(e) => updateTicket(t.id, { assignedTo: e.target.value || null })} placeholder="Admin ID" className="w-full rounded-lg border border-[#1c1c1c]/10 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60" /></td>
                 <td className="px-4 py-3 text-right text-xs" style={{ color: `${INK}99` }}>{new Date(t.createdAt).toLocaleDateString()}</td>
               </tr>
             ))}

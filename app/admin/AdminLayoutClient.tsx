@@ -24,7 +24,7 @@ import {
 import type { AdminRole } from "@/types/admin";
 
 const SAGE = "#D8ECD9";
-const LIME = "#dff05a";
+const LIME = "#f4f1f7";
 const INK = "#1c1c1c";
 const SURFACE = "#ffbfca1a";
 

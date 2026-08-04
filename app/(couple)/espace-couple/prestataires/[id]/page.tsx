@@ -56,9 +56,9 @@ function DashIcon({ size = 14, className = "" }: { size?: number; className?: st
 }
 
 const STATUS_META: Record<string, { label: string; Icon: (p: { size?: number; className?: string }) => ReactElement; chip: string }> = {
-  searching: { label: "En recherche", Icon: HourglassIcon, chip: "bg-[#88b7b5]/20 text-[#1c1c1c]" },
+  searching: { label: "En recherche", Icon: HourglassIcon, chip: "bg-[#f4f1f7]/20 text-[#1c1c1c]" },
   responded: { label: "Réponses reçues", Icon: EnvelopeOpenIcon, chip: "bg-[#dbeafe] text-[#1e3a8a]" },
-  closed: { label: "Clôturé", Icon: SealCheckIcon, chip: "bg-[#88b7b5] text-[#1c1c1c]" },
+  closed: { label: "Clôturé", Icon: SealCheckIcon, chip: "bg-[#f4f1f7] text-[#1c1c1c]" },
 };
 
 const TOTAL_SLOTS = 3;
@@ -184,7 +184,7 @@ export default function TenderDetailPage() {
         <div
           className="relative h-[140px] sm:h-[190px] rounded-[22px] overflow-hidden mx-0 lg:mx-0"
           style={{
-            background: "repeating-linear-gradient(100deg, #88b7b5 0px, #88b7b5 42px, #88b7b5 42px, #88b7b5 84px)",
+            background: "repeating-linear-gradient(100deg, #f4f1f7 0px, #f4f1f7 42px, #f4f1f7 42px, #f4f1f7 84px)",
           }}
         />
 
@@ -297,7 +297,7 @@ export default function TenderDetailPage() {
         {/* ================= CONTENT ================= */}
         {proposals.length === 0 ? (
           <div className="mx-0 sm:mx-2 bg-white border border-[#ececef] rounded-[18px] px-6 sm:px-8 py-16 text-center">
-            <div className="h-12 w-12 rounded-full border border-[#88b7b5] flex items-center justify-center mx-auto mb-5">
+            <div className="h-12 w-12 rounded-full border border-[#f4f1f7] flex items-center justify-center mx-auto mb-5">
               <HourglassIcon size={20} className="text-[#1c1c1c]" />
             </div>
             <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#1c1c1c] mb-3">En attente</p>
@@ -420,7 +420,7 @@ export default function TenderDetailPage() {
                           </Button>
                         )}
                         {isSelected && (
-                          <span className="flex-1 text-center rounded-full bg-[#88b7b5] text-[#1c1c1c] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
+                          <span className="flex-1 text-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
                             <SealCheckIcon size={14} /> Validé
                           </span>
                         )}

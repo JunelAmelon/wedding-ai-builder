@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Gift, Plus, Trash2, Edit, Upload, Image as ImageIcon } from "lucide-react";
+import { Gift, Plus, Trash2, Edit, Upload, X, Image as ImageIcon } from "lucide-react";
 import type { WishlistItem } from "@/types/marketplace";
 
 export default function VendorGiftsPage() {
@@ -169,72 +169,88 @@ export default function VendorGiftsPage() {
 
         {/* Add Gift Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowAddModal(false)} />
-            <div className="relative bg-white rounded-[32px] border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,18,0.18)] p-6 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
-              <h3 className="font-display text-xl font-bold text-[#1c1c1c] mb-6">Nouveau cadeau</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="absolute inset-0" onClick={() => setShowAddModal(false)} />
+            <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+                aria-label="Fermer"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#fde68a] flex items-center justify-center">
+                  <Gift size={26} className="text-[#15181c]" />
+                </div>
+                <div>
+                  <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Cadeau</p>
+                  <h3 className="font-display text-2xl font-bold text-[#15181c]">Nouveau cadeau</h3>
+                </div>
+              </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Nom du cadeau</label>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">Nom du cadeau</label>
                   <input
                     type="text"
                     value={newItem.name}
                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                     placeholder="Ex: Pack photo complet"
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Description</label>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">Description</label>
                   <textarea
                     value={newItem.description}
                     onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                     placeholder="Description du cadeau..."
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition min-h-[80px] resize-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Prix (€)</label>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">Prix (€)</label>
                   <input
                     type="number"
                     value={newItem.price}
                     onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                     placeholder="Ex: 890"
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Image URL (optionnel)</label>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">Image URL (optionnel)</label>
                   <input
                     type="url"
                     value={newItem.imageUrl}
                     onChange={(e) => setNewItem({ ...newItem, imageUrl: e.target.value })}
                     placeholder="https://..."
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Quantité</label>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">Quantité</label>
                   <input
                     type="number"
                     value={newItem.quantity}
                     onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
                     placeholder="1"
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
               </div>
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3 mt-8">
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+                  className="flex-1 py-3.5 px-4 rounded-full border-2 border-[#ececec] bg-[#ffffff] text-sm font-bold font-sans text-[#15181c] hover:bg-[#ececec] transition"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={addGift}
                   disabled={!newItem.name || !newItem.price}
-                  className="flex-1 py-3 px-4 rounded-full bg-[#1c1c1c] text-white font-semibold hover:bg-[#333] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Ajouter
                 </button>

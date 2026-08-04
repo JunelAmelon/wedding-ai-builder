@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
           </div>
 
           <div className="bg-white rounded-[32px] p-8 shadow-[0_40px_120px_rgba(14,14,16,0.18)] text-center">
-            <div className="w-16 h-16 rounded-full bg-[#dff05a] flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 rounded-full bg-[#f4f1f7] flex items-center justify-center mx-auto mb-6">
               <CheckCircle size={32} color="#1c1c1c" />
             </div>
             <h1 className="font-display text-2xl font-bold text-[#1c1c1c] mb-3">Mot de passe réinitialisé</h1>
@@ -100,7 +100,7 @@ export default function ResetPasswordPage() {
 
         <div className="bg-white rounded-[32px] p-8 shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-[#dff05a] flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
               <Lock size={32} color="#1c1c1c" />
             </div>
             <h1 className="font-display text-2xl font-bold text-[#1c1c1c] mb-2">Réinitialiser le mot de passe</h1>
@@ -121,7 +121,7 @@ export default function ResetPasswordPage() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                 placeholder="Au moins 8 caractères"
                 disabled={loading || !token}
               />
@@ -133,7 +133,7 @@ export default function ResetPasswordPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                 placeholder="Répétez le mot de passe"
                 disabled={loading || !token}
               />

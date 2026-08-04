@@ -179,7 +179,7 @@ export default function VendorCalendarPage() {
                           <h3 className="font-semibold text-[#1c1c1c]">{event.coupleName}</h3>
                           {getStatusBadge(event.status)}
                           {event.source === "platform" && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#88b7b5] text-[#1c1c1c] rounded-full text-xs font-medium">
+                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-[#f4f1f7] text-[#1c1c1c] rounded-full text-xs font-medium">
                               Via Mariage Facile
                             </span>
                           )}
@@ -212,21 +212,29 @@ export default function VendorCalendarPage() {
 
         {/* Add Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-[#1c1c1c]">Ajouter un mariage</h2>
-                <button
-                  onClick={() => setShowAddModal(false)}
-                  className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-                >
-                  <XCircle size={16} />
-                </button>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+                aria-label="Fermer"
+              >
+                <XCircle size={18} />
+              </button>
+
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-14 h-14 rounded-2xl bg-[#cbd5e1] flex items-center justify-center">
+                  <Calendar size={26} className="text-[#15181c]" />
+                </div>
+                <div>
+                  <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Calendrier</p>
+                  <h2 className="font-display text-2xl font-bold text-[#15181c]">Ajouter un mariage</h2>
+                </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Noms des mariés *
                   </label>
                   <input
@@ -234,24 +242,24 @@ export default function VendorCalendarPage() {
                     value={newEvent.coupleName}
                     onChange={(e) => setNewEvent({ ...newEvent, coupleName: e.target.value })}
                     placeholder="Ex. Marie & Pierre"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Date du mariage *
                   </label>
                   <input
                     type="date"
                     value={newEvent.date}
                     onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Lieu *
                   </label>
                   <input
@@ -259,12 +267,12 @@ export default function VendorCalendarPage() {
                     value={newEvent.location}
                     onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
                     placeholder="Ex. Château de Versailles"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Budget (optionnel)
                   </label>
                   <input
@@ -272,12 +280,12 @@ export default function VendorCalendarPage() {
                     value={newEvent.budget}
                     onChange={(e) => setNewEvent({ ...newEvent, budget: e.target.value })}
                     placeholder="Ex. 15000"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Notes (optionnel)
                   </label>
                   <textarea
@@ -285,22 +293,22 @@ export default function VendorCalendarPage() {
                     onChange={(e) => setNewEvent({ ...newEvent, notes: e.target.value })}
                     rows={3}
                     placeholder="Détails supplémentaires..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#88b7b5] resize-none"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition min-h-[80px] resize-none"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3 mt-8">
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                  className="flex-1 py-3.5 px-4 rounded-full border-2 border-[#ececec] bg-[#ffffff] text-sm font-bold font-sans text-[#15181c] hover:bg-[#ececec] transition"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={addExternalEvent}
                   disabled={!newEvent.coupleName || !newEvent.date}
-                  className="flex-1 px-4 py-2 bg-[#1c1c1c] text-white rounded-lg font-medium hover:bg-[#333] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Ajouter
                 </button>

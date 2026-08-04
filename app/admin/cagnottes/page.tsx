@@ -143,7 +143,7 @@ export default function AdminCagnottesPage() {
               placeholder="Rechercher..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 w-full sm:w-64"
+              className="pl-9 pr-4 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 w-full sm:w-64"
             />
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function AdminCagnottesPage() {
                   max={selected.remaining}
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60"
+                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60"
                 />
               </div>
 
@@ -248,7 +248,7 @@ export default function AdminCagnottesPage() {
                   type="text"
                   value={method}
                   onChange={(e) => setMethod(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60"
+                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60"
                 />
               </div>
 
@@ -257,7 +257,7 @@ export default function AdminCagnottesPage() {
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as "pending" | "completed")}
-                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 bg-white"
+                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 bg-white"
                 >
                   <option value="completed">Virement effectué</option>
                   <option value="pending">Virement en attente</option>
@@ -270,7 +270,7 @@ export default function AdminCagnottesPage() {
                   type="date"
                   value={paidAt}
                   onChange={(e) => setPaidAt(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60"
+                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60"
                 />
               </div>
 
@@ -280,7 +280,7 @@ export default function AdminCagnottesPage() {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 resize-none"
+                  className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 resize-none"
                 />
               </div>
 

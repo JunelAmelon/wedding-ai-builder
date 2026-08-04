@@ -54,7 +54,7 @@ export default function VendorNotificationsPage() {
   function getNotificationColor(type: string) {
     switch (type) {
       case "proposal":
-        return "bg-[#88b7b5] text-[#1c1c1c]";
+        return "bg-[#f4f1f7] text-[#1c1c1c]";
       case "match":
         return "bg-[#fce7f3] text-[#831843]";
       case "payment":
@@ -62,7 +62,7 @@ export default function VendorNotificationsPage() {
       case "review":
         return "bg-[#ffedd5] text-[#7c2d12]";
       default:
-        return "bg-[#f1f0eb] text-[#8b8b86]";
+        return "bg-[#f4f1f7] text-[#8b8b86]";
     }
   }
 
@@ -84,7 +84,7 @@ export default function VendorNotificationsPage() {
 
       {notifications.length === 0 ? (
         <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#88b7b5]">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#f4f1f7]">
             <Bell size={24} className="text-[#1c1c1c]" />
           </div>
           <p className="text-[#8b8b86] italic">Aucune notification pour le moment.</p>
@@ -111,7 +111,7 @@ export default function VendorNotificationsPage() {
               {!n.read && (
                 <button
                   onClick={() => markRead(n.id)}
-                  className="p-2 rounded-xl hover:bg-[#88b7b5] text-[#1c1c1c] transition"
+                  className="p-2 rounded-xl hover:bg-[#f4f1f7] text-[#1c1c1c] transition"
                   aria-label="Marquer comme lu"
                 >
                   <Check size={18} />

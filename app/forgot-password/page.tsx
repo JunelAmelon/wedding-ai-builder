@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
 
           <div className="bg-white rounded-[32px] p-8 shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 rounded-full bg-[#dff05a] flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 rounded-full bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
                 <CheckCircle size={32} color="#1c1c1c" />
               </div>
               <h1 className="font-display text-2xl font-bold text-[#1c1c1c] mb-2">Email envoyé</h1>
@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
             </div>
 
             {resetToken && (
-              <div className="mb-6 p-4 rounded-xl bg-[#dff05a]/10 border border-[#dff05a]/20">
+              <div className="mb-6 p-4 rounded-xl bg-[#f4f1f7]/10 border border-[#f4f1f7]/20">
                 <p className="text-xs text-[#1c1c1c] font-medium mb-2">Mode développement - Token généré :</p>
                 <code className="text-xs text-[#1c1c1c] break-all">{resetToken}</code>
                 {resetLink && (
@@ -126,7 +126,7 @@ export default function ForgotPasswordPage() {
                   placeholder="vous@exemple.fr"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                   disabled={loading}
                 />
               </div>

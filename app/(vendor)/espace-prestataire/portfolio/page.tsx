@@ -160,7 +160,7 @@ export default function VendorPortfolioPage() {
                 </button>
               </div>
             ))}
-            <div className="aspect-[4/3] rounded-[20px] border-2 border-dashed border-[#e6e4dd] flex flex-col items-center justify-center bg-[#f7f7f9] hover:bg-[#f1f0eb] transition cursor-pointer">
+            <div className="aspect-[4/3] rounded-[20px] border-2 border-dashed border-[#e6e4dd] flex flex-col items-center justify-center bg-[#f7f7f9] hover:bg-[#f4f1f7] transition cursor-pointer">
               <Upload size={24} className="text-[#8b8b86] mb-2" />
               <span className="text-sm text-[#8b8b86]">Ajouter une photo</span>
             </div>
@@ -180,7 +180,7 @@ export default function VendorPortfolioPage() {
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
                   placeholder="https://votre-site.com"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                 />
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function VendorPortfolioPage() {
                   value={instagram}
                   onChange={(e) => setInstagram(e.target.value)}
                   placeholder="@votre_compte"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                 />
               </div>
             </div>
@@ -206,7 +206,7 @@ export default function VendorPortfolioPage() {
             <h2 className="font-display text-xl font-bold text-[#1c1c1c]">FAQ</h2>
             <button
               onClick={addFaqItem}
-              className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-[#88b7b5] text-sm font-semibold text-[#1c1c1c] hover:bg-[#c9d94a] transition"
+              className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-[#f4f1f7] text-sm font-semibold text-[#1c1c1c] hover:bg-[#c9d94a] transition"
             >
               <Plus size={16} /> Ajouter
             </button>
@@ -221,7 +221,7 @@ export default function VendorPortfolioPage() {
                       value={item.question}
                       onChange={(e) => updateFaqItem(index, "question", e.target.value)}
                       placeholder="Question"
-                      className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                      className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                     />
                   </div>
                   <button
@@ -235,7 +235,7 @@ export default function VendorPortfolioPage() {
                   value={item.answer}
                   onChange={(e) => updateFaqItem(index, "answer", e.target.value)}
                   placeholder="Réponse"
-                  className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
+                  className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7] min-h-[80px] resize-none"
                 />
               </div>
             ))}
@@ -248,7 +248,7 @@ export default function VendorPortfolioPage() {
             <h2 className="font-display text-xl font-bold text-[#1c1c1c]">Témoignages</h2>
             <button
               onClick={addReviewItem}
-              className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-[#88b7b5] text-sm font-semibold text-[#1c1c1c] hover:bg-[#c9d94a] transition"
+              className="inline-flex items-center gap-2 h-8 px-3 rounded-full bg-[#f4f1f7] text-sm font-semibold text-[#1c1c1c] hover:bg-[#c9d94a] transition"
             >
               <Plus size={16} /> Ajouter
             </button>
@@ -263,7 +263,7 @@ export default function VendorPortfolioPage() {
                       value={item.author}
                       onChange={(e) => updateReviewItem(index, "author", e.target.value)}
                       placeholder="Nom du client"
-                      className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                      className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                     />
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -288,7 +288,7 @@ export default function VendorPortfolioPage() {
                   value={item.text}
                   onChange={(e) => updateReviewItem(index, "text", e.target.value)}
                   placeholder="Témoignage du client"
-                  className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
+                  className="w-full px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7] min-h-[80px] resize-none"
                 />
               </div>
             ))}

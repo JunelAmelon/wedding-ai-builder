@@ -250,7 +250,7 @@ export default function VendorProjectDetailPage() {
               </Button>
 
               {isContacted && (
-                <div className="flex items-center gap-2 rounded-xl bg-[#88b7b5]/20 text-[#1c1c1c] text-sm px-4 py-3 mt-3">
+                <div className="flex items-center gap-2 rounded-xl bg-[#f4f1f7]/20 text-[#1c1c1c] text-sm px-4 py-3 mt-3">
                   <Check size={16} />
                   Vous avez déjà répondu.
                 </div>

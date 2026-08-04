@@ -557,7 +557,7 @@ export default function WishlistPublicPage() {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={closeModal}
-                  className="flex-1 py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+                  className="flex-1 py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
                 >
                   Annuler
                 </button>

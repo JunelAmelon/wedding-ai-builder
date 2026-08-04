@@ -236,7 +236,7 @@ export default function CoupleBudgetPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Rechercher une dépense..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+              className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
             />
           </div>
         </div>
@@ -245,7 +245,7 @@ export default function CoupleBudgetPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-2xl p-5 border border-[#e6e4dd]">
             <div className="flex items-center justify-between mb-3">
-              <div className="p-2.5 bg-[#f1f0eb] rounded-xl">
+              <div className="p-2.5 bg-[#f4f1f7] rounded-xl">
                 <Wallet size={20} className="text-[#1c1c1c]" />
               </div>
               <span className="text-xs text-[#8b8b86]">Total</span>
@@ -294,7 +294,7 @@ export default function CoupleBudgetPage() {
 
         {/* AI Budget Suggestion - Jaune DA */}
         {aiBudget && expenses.length === 0 && (
-          <div className="mb-8 bg-[#88b7b5] rounded-2xl p-6">
+          <div className="mb-8 bg-[#f4f1f7] rounded-2xl p-6">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-[#1c1c1c]/10 rounded-xl">
                 <Sparkles size={24} className="text-[#1c1c1c]" />
@@ -337,7 +337,7 @@ export default function CoupleBudgetPage() {
 
               {filteredExpenses.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-[#f1f0eb] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-[#f4f1f7] rounded-full flex items-center justify-center mx-auto mb-4">
                     <Receipt size={24} className="text-[#8b8b86]" />
                   </div>
                   <p className="text-[#8b8b86] mb-3">Aucune dépense enregistrée</p>
@@ -356,7 +356,7 @@ export default function CoupleBudgetPage() {
                     return (
                       <div
                         key={cat}
-                        className="flex items-center gap-4 p-3 rounded-xl hover:bg-[#f1f0eb] transition-colors cursor-pointer"
+                        className="flex items-center gap-4 p-3 rounded-xl hover:bg-[#f4f1f7] transition-colors cursor-pointer"
                         onClick={() => {
                           const expense = data.items[0];
                           if (expense) openEditExpense(expense);
@@ -374,7 +374,7 @@ export default function CoupleBudgetPage() {
                             <span className="text-sm font-semibold text-[#1c1c1c]">{fmt(data.actual)} {currency}</span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <div className="flex-1 h-1.5 bg-[#f1f0eb] rounded-full overflow-hidden">
+                            <div className="flex-1 h-1.5 bg-[#f4f1f7] rounded-full overflow-hidden">
                               <div
                                 className="h-full rounded-full transition-all duration-500"
                                 style={{
@@ -411,7 +411,7 @@ export default function CoupleBudgetPage() {
                     return (
                       <div
                         key={expense.id}
-                        className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#f1f0eb] transition-colors cursor-pointer"
+                        className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#f4f1f7] transition-colors cursor-pointer"
                         onClick={() => openEditExpense(expense)}
                       >
                         <div
@@ -447,10 +447,10 @@ export default function CoupleBudgetPage() {
               <h3 className="text-sm font-bold text-[#1c1c1c] mb-4">Progression du budget</h3>
               <div className="relative w-full aspect-square max-w-[160px] mx-auto">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="42" fill="none" stroke="#f1f0eb" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="#f4f1f7" strokeWidth="8" />
                   <circle
                     cx="50" cy="50" r="42" fill="none"
-                    stroke="#88b7b5" strokeWidth="8" strokeLinecap="round"
+                    stroke="#f4f1f7" strokeWidth="8" strokeLinecap="round"
                     strokeDasharray={`${spentPct * 2.64} 264`}
                   />
                 </svg>
@@ -463,7 +463,7 @@ export default function CoupleBudgetPage() {
 
             {/* Quick Stats */}
             <div className="bg-white rounded-2xl p-6 border border-[#e6e4dd] space-y-3">
-              <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
+              <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-emerald-100 rounded-lg">
                     <TrendingUp size={16} className="text-emerald-600" />
@@ -474,18 +474,18 @@ export default function CoupleBudgetPage() {
                   {remaining > 0 ? `+${fmt(remaining)}` : "0"} {currency}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
+              <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#88b7b5] rounded-lg">
+                  <div className="p-2 bg-[#f4f1f7] rounded-lg">
                     <Receipt size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Transactions</span>
                 </div>
                 <span className="text-sm font-semibold text-[#1c1c1c]">{expenses.length}</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
+              <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#88b7b5] rounded-lg">
+                  <div className="p-2 bg-[#f4f1f7] rounded-lg">
                     <Target size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Catégories</span>
@@ -500,9 +500,9 @@ export default function CoupleBudgetPage() {
               <div className="space-y-2">
                 <button
                   onClick={openNewExpense}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition-colors text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition-colors text-left"
                 >
-                  <div className="p-2 bg-[#88b7b5] rounded-lg">
+                  <div className="p-2 bg-[#f4f1f7] rounded-lg">
                     <Plus size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Ajouter une dépense</span>
@@ -511,9 +511,9 @@ export default function CoupleBudgetPage() {
                   <button
                     onClick={importAiBudget}
                     disabled={importing}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition-colors text-left disabled:opacity-50"
+                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition-colors text-left disabled:opacity-50"
                   >
-                    <div className="p-2 bg-[#88b7b5] rounded-lg">
+                    <div className="p-2 bg-[#f4f1f7] rounded-lg">
                       <Sparkles size={16} className="text-[#1c1c1c]" />
                     </div>
                     <span className="text-sm text-[#1c1c1c]">Importer plan IA</span>
@@ -539,30 +539,30 @@ export default function CoupleBudgetPage() {
       {/* Modal Add/Edit Expense - Style témoin */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
-              className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#88b7b5] flex items-center justify-center">
-                <Wallet size={20} className="text-[#1c1c1c]" />
+              <div className="w-14 h-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center">
+                <Wallet size={26} className="text-[#15181c]" />
               </div>
               <div>
-                <h2 className="font-bold text-xl text-[#1c1c1c]">
+                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Budget</p>
+                <h2 className="font-display text-2xl font-bold text-[#15181c]">
                   {editingExpense ? "Modifier la dépense" : "Nouvelle dépense"}
                 </h2>
-                <p className="text-[#8b8b86] text-sm">Gérez vos dépenses de mariage</p>
               </div>
             </div>
 
             <div className="space-y-5">
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Libellé *
                 </label>
                 <input
@@ -570,18 +570,18 @@ export default function CoupleBudgetPage() {
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
                   placeholder="Ex. Acompte traiteur"
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Catégorie
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5] cursor-pointer"
+                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition cursor-pointer"
                 >
                   {CATEGORIES.map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -591,7 +591,7 @@ export default function CoupleBudgetPage() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Montant prévu
                   </label>
                   <input
@@ -599,11 +599,11 @@ export default function CoupleBudgetPage() {
                     value={planned}
                     onChange={(e) => setPlanned(e.target.value)}
                     placeholder="0"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Montant réel
                   </label>
                   <input
@@ -611,7 +611,7 @@ export default function CoupleBudgetPage() {
                     value={actual}
                     onChange={(e) => setActual(e.target.value)}
                     placeholder="0"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
               </div>
@@ -619,7 +619,7 @@ export default function CoupleBudgetPage() {
               {editingExpense && (
                 <button
                   onClick={() => deleteExpense(editingExpense.id)}
-                  className="w-full flex items-center justify-center gap-2 text-red-600 bg-red-50 rounded-xl py-3 font-semibold text-[14px] hover:bg-red-100 transition"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-full border-2 border-red-200 bg-red-50 text-sm font-bold font-sans text-red-600 hover:bg-red-100 transition"
                 >
                   <Trash2 size={16} />
                   Supprimer cette dépense
@@ -629,7 +629,7 @@ export default function CoupleBudgetPage() {
               <button
                 onClick={saveExpense}
                 disabled={saving || !label.trim()}
-                className="w-full bg-[#1c1c1c] text-white rounded-xl py-3 font-semibold text-[14px] hover:bg-[#333] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <>

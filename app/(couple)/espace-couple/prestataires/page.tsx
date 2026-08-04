@@ -63,8 +63,8 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
 
 // Chips colorés pour les 5 catégories principales (style Connectify)
 const CHIP_CATEGORIES = [
-  { category: "Photographe / Vidéaste", emoji: "📸", bg: "#88b7b5", color: "#1c1c1c" },
-  { category: "Traiteur", emoji: "🥐", bg: "#88b7b5", color: "#1c1c1c" },
+  { category: "Photographe / Vidéaste", emoji: "📸", bg: "#f4f1f7", color: "#1c1c1c" },
+  { category: "Traiteur", emoji: "🥐", bg: "#f7e2b8", color: "#1c1c1c" },
   { category: "Décoration / Fleuriste", emoji: "💐", bg: "#a9c9f5", color: "#1c1c1c" },
   { category: "Musique / DJ / Orchestre", emoji: "🎵", bg: "#c9b6ee", color: "#fff" },
   { category: "Lieu de réception", emoji: "🏰", bg: "#b9b3ba", color: "#fff" },
@@ -93,7 +93,7 @@ const CONTACT_COLORS = [
   "linear-gradient(135deg,#f7c6c6,#e89aa0)",
   "linear-gradient(135deg,#c7d9f7,#9db8e8)",
   "linear-gradient(135deg,#f7e2b8,#e8b98a)",
-  "linear-gradient(135deg,#88b7b5,#88b7b5)",
+  "linear-gradient(135deg,#f4f1f7,#f4f1f7)",
 ];
 
 interface VendorPreview {
@@ -310,16 +310,25 @@ export default function CoupleVendorsPage() {
                 {tenders.slice(0, 6).map((tender) => {
                   const proposals = tender.proposals || [];
                   const Icon = CATEGORY_ICON[tender.category] || Sparkle;
+                  const firstVendorLogo = proposals[0]
+                    ? (typeof proposals[0].vendor?.logo === "string"
+                        ? proposals[0].vendor.logo
+                        : proposals[0].vendor?.logo?.url)
+                    : null;
+                  const bgImage =
+                    tender.status === "responded" && firstVendorLogo
+                      ? firstVendorLogo
+                      : (CATEGORY_IMAGES[tender.category] || CATEGORY_IMAGES["Autre"]);
                   return (
                     <Link
                       key={tender.id}
                       href={`/espace-couple/prestataires/${tender.id}`}
                       className="relative rounded-2xl overflow-hidden aspect-square flex flex-col justify-end p-4 text-white group"
                     >
-                      {/* Image de fond par catégorie */}
+                      {/* Image de fond par catégorie ou prestataire */}
                       <div
                         className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${CATEGORY_IMAGES[tender.category] || CATEGORY_IMAGES["Autre"]})` }}
+                        style={{ backgroundImage: `url(${bgImage})` }}
                       />
                       {/* Overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 z-0" />
@@ -369,7 +378,7 @@ export default function CoupleVendorsPage() {
 
             {tenders.length === 0 && (
               <div className="rounded-2xl bg-white border border-[#e4e2db] p-8 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-[#88b7b5] flex items-center justify-center mx-auto mb-4">
+                <div className="h-14 w-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
                   <Sparkles size={22} className="text-[#1c1c1c]" />
                 </div>
                 <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-2">
@@ -457,30 +466,37 @@ export default function CoupleVendorsPage() {
       {/* ===== MODALE — formulaire de nouvelle demande ===== */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-xl bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-7 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => {
                 setShowForm(false);
                 setCategory("");
                 setTenderError(null);
               }}
-              className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
-            <h2 className="font-display text-xl font-semibold text-[#1c1c1c] mb-1">Nouvel appel d&apos;offres</h2>
-            <p className="text-[#8b8b86] text-sm mb-6">Décrivez ce que vous cherchez, nous faisons le reste.</p>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center">
+                <Sparkles size={26} className="text-[#15181c]" />
+              </div>
+              <div>
+                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Appel d&apos;offres</p>
+                <h2 className="font-display text-2xl font-bold text-[#15181c]">Nouvel appel d&apos;offres</h2>
+              </div>
+            </div>
 
             <div className="space-y-5">
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Type de prestataire
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] text-[15px] py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition cursor-pointer"
                 >
                   <option value="">Choisir une catégorie</option>
                   {CATEGORIES.map((cat) => (
@@ -490,7 +506,7 @@ export default function CoupleVendorsPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Tranche de budget
                 </label>
                 <div className="flex items-center gap-3">
@@ -501,7 +517,7 @@ export default function CoupleVendorsPage() {
                       value={budgetMin}
                       onChange={(e) => setBudgetMin(e.target.value)}
                       placeholder="Min"
-                      className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                      className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                     />
                   </div>
                   <span className="text-[#8b8b86]">—</span>
@@ -510,14 +526,14 @@ export default function CoupleVendorsPage() {
                     value={budgetMax}
                     onChange={(e) => setBudgetMax(e.target.value)}
                     placeholder="Max"
-                    className="flex-1 bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="flex-1 bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                   <span className="text-xs text-[#8b8b86]">EUR</span>
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Exigences spécifiques
                 </label>
                 <input
@@ -525,12 +541,12 @@ export default function CoupleVendorsPage() {
                   value={requirements}
                   onChange={(e) => setRequirements(e.target.value)}
                   placeholder="Ex. : vegan, photographe discret, anglais courant..."
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Priorité principale
                 </label>
                 <input
@@ -538,7 +554,7 @@ export default function CoupleVendorsPage() {
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
                   placeholder="Ex. : rapport qualité/prix, créativité, disponibilité..."
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                 />
               </div>
 
@@ -549,7 +565,7 @@ export default function CoupleVendorsPage() {
                 disabled={launching}
                 loading={launching}
                 variant="primary"
-                className="w-full"
+                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50"
                 iconLeft={launching ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
               >
                 {launching ? "Lancement en cours..." : "Lancer la demande"}
@@ -562,15 +578,22 @@ export default function CoupleVendorsPage() {
       {/* ===== MODALE — confirmation ===== */}
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-sm bg-white rounded-3xl p-8 text-center shadow-2xl">
-            <div className="h-14 w-14 rounded-full mx-auto mb-5 flex items-center justify-center bg-[#88b7b5]">
-              <CheckCircle2 size={24} className="text-[#1c1c1c]" />
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto text-center">
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              aria-label="Fermer"
+            >
+              <X size={18} />
+            </button>
+            <div className="w-14 h-14 rounded-2xl bg-[#fde68a] flex items-center justify-center mx-auto mb-5">
+              <CheckCircle2 size={26} className="text-[#15181c]" />
             </div>
-            <h3 className="font-display text-xl font-semibold text-[#1c1c1c] mb-3">C&apos;est envoyé !</h3>
-            <p className="text-[#8b8b86] text-sm mb-7 leading-relaxed">
+            <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C&apos;est envoyé !</h3>
+            <p className="text-[#6b7076] text-sm mb-7 leading-relaxed">
               Votre demande est en route. Les prestataires les plus adaptés à votre budget et votre style vous répondront sous peu.
             </p>
-            <Button onClick={() => setShowSuccess(false)} variant="primary" className="w-full">
+            <Button onClick={() => setShowSuccess(false)} variant="primary" className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition">
               Parfait
             </Button>
           </div>

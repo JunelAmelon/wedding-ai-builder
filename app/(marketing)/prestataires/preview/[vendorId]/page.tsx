@@ -135,7 +135,7 @@ export default function VendorPreviewPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
-        <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-[#dff05a] text-[#1c1c1c] text-xs font-semibold">
+        <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-[#f4f1f7] text-[#1c1c1c] text-xs font-semibold">
           Aperçu prestataire
         </div>
 
@@ -168,7 +168,7 @@ export default function VendorPreviewPage() {
                     key={img.publicId || i}
                     onClick={() => setSelectedImage(img.url)}
                     className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                      selectedImage === img.url ? "border-[#dff05a]" : "border-transparent"
+                      selectedImage === img.url ? "border-[#f4f1f7]" : "border-transparent"
                     }`}
                   >
                     <Image src={img.url} alt={`Portfolio ${i + 1}`} fill className="object-cover" sizes="120px" unoptimized />
@@ -319,7 +319,7 @@ export default function VendorPreviewPage() {
 
               <div className="grid sm:grid-cols-2 gap-4 mb-8">
                 <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                  <div className="h-9 w-9 rounded-full bg-[#dff05a] flex items-center justify-center text-[#1c1c1c] shrink-0">
+                  <div className="h-9 w-9 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
                     <ExperienceIcon className="h-5 w-5" />
                   </div>
                   <div>
@@ -330,7 +330,7 @@ export default function VendorPreviewPage() {
                   </div>
                 </div>
                 <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                  <div className="h-9 w-9 rounded-full bg-[#dff05a] flex items-center justify-center text-[#1c1c1c] shrink-0">
+                  <div className="h-9 w-9 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
                     <ZoneIcon className="h-5 w-5" />
                   </div>
                   <div>
@@ -389,7 +389,7 @@ export default function VendorPreviewPage() {
                   {reviews.map((review, i) => (
                     <div key={i} className="rounded-xl bg-white border border-black/[0.06] p-5">
                       <div className="flex items-center gap-2 mb-3">
-                        <div className="h-8 w-8 rounded-full bg-[#dff05a] flex items-center justify-center text-[#1c1c1c] font-semibold text-xs">
+                        <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] font-semibold text-xs">
                           {review.author.slice(0, 1).toUpperCase()}
                         </div>
                         <div>

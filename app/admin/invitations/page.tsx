@@ -51,11 +51,11 @@ export default function AdminInvitationsPage() {
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-[#1c1c1c]/10 p-5 shadow-[0_8px_30px_rgba(11,15,26,0.04)] flex flex-col sm:flex-row items-end gap-4">
         <div className="flex-1 w-full">
           <label className="block text-sm font-medium mb-1.5" style={{ color: INK }}>Email</label>
-          <input type="email" required value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="w-full rounded-xl border border-[#1c1c1c]/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60" placeholder="admin@example.com" />
+          <input type="email" required value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="w-full rounded-xl border border-[#1c1c1c]/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60" placeholder="admin@example.com" />
         </div>
         <div className="w-full sm:w-44">
           <label className="block text-sm font-medium mb-1.5" style={{ color: INK }}>Rôle</label>
-          <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value as AdminRole }))} className="w-full rounded-xl border border-[#1c1c1c]/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 bg-white">
+          <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value as AdminRole }))} className="w-full rounded-xl border border-[#1c1c1c]/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 bg-white">
             <option value="commercial">Commercial</option>
             <option value="support">Support</option>
             <option value="moderator">Modérateur</option>

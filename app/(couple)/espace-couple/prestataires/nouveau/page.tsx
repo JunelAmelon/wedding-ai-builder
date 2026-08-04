@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2, CheckCircle2, ArrowLeft, Wallet, Sparkles } from "lucide-react";
+import { Loader2, CheckCircle2, ArrowLeft, Wallet, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import PageHeader from "@/components/couple/PageHeader";
 import type { WeddingProject } from "@/types/marketplace";
@@ -274,8 +274,15 @@ export default function NewTenderPage() {
       </div>
 
       {showSuccess && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#2B2620]/50 backdrop-blur-sm">
-          <div className="relative w-full max-w-md bg-gradient-to-b from-white to-surface p-8 sm:p-10 text-center shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto text-center">
+            <button
+              onClick={() => setShowSuccess(false)}
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition z-10"
+              aria-label="Fermer"
+            >
+              <X size={18} />
+            </button>
             <div className="absolute inset-[10px] border border-primary/20 pointer-events-none" />
             <CornerFlourish className="top-3 left-3" />
             <CornerFlourish className="top-3 right-3 -scale-x-100" />
@@ -283,18 +290,17 @@ export default function NewTenderPage() {
             <CornerFlourish className="bottom-3 right-3 scale-[-1]" />
 
             <div className="relative">
-              <div className="h-14 w-14 rounded-full mx-auto mb-5 flex items-center justify-center shadow-[inset_0_0_4px_rgba(0,0,0,0.35)]"
-                   style={{ background: "radial-gradient(circle at 35% 30%, #A9C7AC, #3f5c44 65%)" }}>
-                <CheckCircle2 size={22} className="text-white" />
+              <div className="w-14 h-14 rounded-2xl bg-[#cbd5e1] flex items-center justify-center mx-auto mb-5">
+                <CheckCircle2 size={26} className="text-[#15181c]" />
               </div>
-              <h3 className="font-display text-xl font-semibold text-text-primary mb-3">C&apos;est scellé.</h3>
-              <p className="text-text-secondary text-sm mb-8 leading-relaxed">
+              <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C&apos;est scellé.</h3>
+              <p className="text-[#6b7076] text-sm mb-8 leading-relaxed">
                 Votre faire-part est en route. Dans quelques instants, les trois prestataires les plus proches de
                 votre univers vous contacteront pour que vous puissiez choisir en toute sérénité.
               </p>
               <button
                 onClick={() => router.push("/espace-couple/prestataires")}
-                className="w-full bg-primary text-white font-semibold text-xs uppercase tracking-[0.14em] py-4"
+                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition"
               >
                 Voir mes appels
               </button>

@@ -36,9 +36,9 @@ type PlanningTask = TimelineTask & { dueDate?: string };
 const DAYS_SHORT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const TASK_COLORS = [
-  { bg: "#88b7b5", text: "#1c1c1c" },      // jaune DA
+  { bg: "#f4f1f7", text: "#1c1c1c" },      // jaune DA
   { bg: "#dbeafe", text: "#1e3a8a" },      // bleu
-  { bg: "#88b7b5", text: "#1c1c1c" },      // vert
+  { bg: "#f4f1f7", text: "#1c1c1c" },      // vert
   { bg: "#fce7f3", text: "#831843" },      // rose
   { bg: "#ffedd5", text: "#7c2d12" },      // orange
   { bg: "#ede9fe", text: "#4c1d95" },      // violet
@@ -338,7 +338,7 @@ export default function CouplePlanningPage() {
           <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate(-1)} 
-              className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+              className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
             >
               <ChevronLeft size={16} />
             </button>
@@ -347,7 +347,7 @@ export default function CouplePlanningPage() {
             </div>
             <button 
               onClick={() => navigate(1)} 
-              className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+              className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
             >
               <ChevronRight size={16} />
             </button>
@@ -370,7 +370,7 @@ export default function CouplePlanningPage() {
                     {filteredTasks.map((task) => (
                       <div
                         key={task.id}
-                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition cursor-pointer"
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition cursor-pointer"
                         onClick={() => openEditTask(task)}
                       >
                         <button
@@ -415,7 +415,7 @@ export default function CouplePlanningPage() {
                       <div
                         key={idx}
                         className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#e6e4dd] relative ${
-                          isCurrentMonth ? "bg-white" : "bg-[#f1f0eb]/50"
+                          isCurrentMonth ? "bg-white" : "bg-[#f4f1f7]/50"
                         } ${isToday ? "ring-2 ring-inset ring-[#ffbfca]" : ""}`}
                       >
                         <div className={`text-xs font-medium mb-1 ${isToday ? "text-[#1c1c1c]" : "text-[#8b8b86]"}`}>
@@ -424,7 +424,7 @@ export default function CouplePlanningPage() {
                         <div className="space-y-1">
                           {dayTasks.slice(0, 3).map((task) => {
                             const color = task.completed
-                              ? { bg: "#f1f0eb", text: "#8b8b86" }
+                              ? { bg: "#f4f1f7", text: "#8b8b86" }
                               : getTaskColor(task.id || task.title);
                             return (
                               <button
@@ -465,7 +465,7 @@ export default function CouplePlanningPage() {
                 Cette semaine
               </h4>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg">
                       <ListChecks size={16} className="text-[#1c1c1c]" />
@@ -474,7 +474,7 @@ export default function CouplePlanningPage() {
                   </div>
                   <span className="text-sm font-semibold text-[#1c1c1c]">{done}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg">
                       <Target size={16} className="text-[#1c1c1c]" />
@@ -483,7 +483,7 @@ export default function CouplePlanningPage() {
                   </div>
                   <span className="text-sm font-semibold text-[#1c1c1c]">{total - done}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg">
                       <Clock size={16} className="text-[#1c1c1c]" />
@@ -505,7 +505,7 @@ export default function CouplePlanningPage() {
                   return (
                     <div
                       key={month}
-                      className="p-3 bg-[#f1f0eb] rounded-xl cursor-pointer hover:bg-[#e6e4dd] transition"
+                      className="p-3 bg-[#f4f1f7] rounded-xl cursor-pointer hover:bg-[#e6e4dd] transition"
                       onClick={() => openEditTask(monthTasks[0])}
                     >
                       <div className="text-[13px] font-bold text-[#1c1c1c] mb-1">
@@ -526,7 +526,7 @@ export default function CouplePlanningPage() {
               <div className="space-y-2">
                 <button
                   onClick={openNewTask}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition text-left"
                 >
                   <div className="p-2 bg-white rounded-lg">
                     <CalendarPlus size={16} className="text-[#1c1c1c]" />
@@ -535,7 +535,7 @@ export default function CouplePlanningPage() {
                 </button>
                 <button
                   onClick={openNewTask}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition text-left"
                 >
                   <div className="p-2 bg-white rounded-lg">
                     <Plus size={16} className="text-[#1c1c1c]" />
@@ -569,30 +569,30 @@ export default function CouplePlanningPage() {
       {/* Modal - Style témoin */}
       {showTaskModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
-              className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                <Calendar size={20} className="text-[#1c1c1c]" />
+              <div className="w-14 h-14 rounded-2xl bg-[#fde68a] flex items-center justify-center">
+                <Calendar size={26} className="text-[#15181c]" />
               </div>
               <div>
-                <h2 className="font-bold text-xl text-[#1c1c1c]">
+                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Planning</p>
+                <h2 className="font-display text-2xl font-bold text-[#15181c]">
                   {selectedTask ? "Modifier l&apos;étape" : "Nouvelle étape"}
                 </h2>
-                <p className="text-[#8b8b86] text-sm">Planifiez votre mariage</p>
               </div>
             </div>
 
             <div className="space-y-5">
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Titre de l&apos;étape *
                 </label>
                 <input
@@ -600,18 +600,18 @@ export default function CouplePlanningPage() {
                   value={taskForm.title}
                   onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
                   placeholder="Ex: Réserver le lieu de réception"
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
+                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Mois avant le mariage
                 </label>
                 <select
                   value={taskForm.monthsBeforeWedding}
                   onChange={(e) => setTaskForm({ ...taskForm, monthsBeforeWedding: Number(e.target.value) })}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca] cursor-pointer"
+                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition cursor-pointer"
                 >
                   {[...Array(25)].map((_, i) => (
                     <option key={i} value={i}>
@@ -640,7 +640,7 @@ export default function CouplePlanningPage() {
               {selectedTask && (
                 <button
                   onClick={() => deleteTask(selectedTask.id)}
-                  className="w-full flex items-center justify-center gap-2 text-red-600 bg-red-50 rounded-xl py-3 font-semibold text-[14px] hover:bg-red-100 transition"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-full border-2 border-red-200 bg-red-50 text-sm font-bold font-sans text-red-600 hover:bg-red-100 transition"
                 >
                   <Trash2 size={16} />
                   Supprimer cette étape
@@ -650,7 +650,7 @@ export default function CouplePlanningPage() {
               <button
                 onClick={saveTask}
                 disabled={saving || !taskForm.title.trim()}
-                className="w-full bg-[#1c1c1c] text-white rounded-xl py-3 font-semibold text-[14px] hover:bg-[#333] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <>

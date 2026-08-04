@@ -44,7 +44,7 @@ export default function VendorSettingsPage() {
         {/* Notifications */}
         <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
           <div className="flex items-center gap-2.5 mb-5">
-            <div className="h-9 w-9 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c]">
+            <div className="h-9 w-9 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
               <Bell size={18} />
             </div>
             <h2 className="font-display text-xl font-bold text-[#1c1c1c]">Notifications</h2>
@@ -56,7 +56,7 @@ export default function VendorSettingsPage() {
                 type="checkbox"
                 checked={emailNotifications}
                 onChange={(e) => setEmailNotifications(e.target.checked)}
-                className="h-5 w-5 accent-[#88b7b5]"
+                className="h-5 w-5 accent-[#f4f1f7]"
               />
             </label>
             <label className="flex items-center justify-between">
@@ -65,7 +65,7 @@ export default function VendorSettingsPage() {
                 type="checkbox"
                 checked={opportunityAlerts}
                 onChange={(e) => setOpportunityAlerts(e.target.checked)}
-                className="h-5 w-5 accent-[#88b7b5]"
+                className="h-5 w-5 accent-[#f4f1f7]"
               />
             </label>
           </div>
@@ -85,17 +85,17 @@ export default function VendorSettingsPage() {
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               placeholder="Mot de passe actuel"
-              className="w-full rounded-xl border border-[#e6e4dd] px-4 py-3 text-sm bg-white text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+              className="w-full rounded-xl border border-[#e6e4dd] px-4 py-3 text-sm bg-white text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
             />
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Nouveau mot de passe"
-              className="w-full rounded-xl border border-[#e6e4dd] px-4 py-3 text-sm bg-white text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+              className="w-full rounded-xl border border-[#e6e4dd] px-4 py-3 text-sm bg-white text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
             />
             <button
-              className="w-full py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+              className="w-full py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
             >
               Changer le mot de passe
             </button>
@@ -116,7 +116,7 @@ export default function VendorSettingsPage() {
         </p>
         <Link
           href="/forgot-password"
-          className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+          className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
         >
           <Key size={16} /> Demander un lien de réinitialisation
         </Link>

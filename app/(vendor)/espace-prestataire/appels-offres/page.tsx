@@ -141,7 +141,7 @@ export default function VendorOpportunitiesPage() {
             onClick={() => setView("dossier")}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               view === "dossier"
-                ? "bg-[#88b7b5] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
+                ? "bg-[#f4f1f7] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
                 : "text-[#8b8b86] hover:text-[#1c1c1c]"
             }`}
           >
@@ -153,7 +153,7 @@ export default function VendorOpportunitiesPage() {
             onClick={() => setView("liste")}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               view === "liste"
-                ? "bg-[#88b7b5] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
+                ? "bg-[#f4f1f7] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
                 : "text-[#8b8b86] hover:text-[#1c1c1c]"
             }`}
           >
@@ -165,7 +165,7 @@ export default function VendorOpportunitiesPage() {
 
       {sorted.length === 0 ? (
         <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center mt-8">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#88b7b5]">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#f4f1f7]">
             <Megaphone size={22} className="text-[#1c1c1c]" />
           </div>
           <h2 className="font-display text-xl font-bold mb-2 text-[#1c1c1c]">Aucun match pour le moment</h2>
@@ -206,7 +206,7 @@ export default function VendorOpportunitiesPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f1f0eb] disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             <ChevronLeft size={16} />
           </button>
@@ -216,8 +216,8 @@ export default function VendorOpportunitiesPage() {
               onClick={() => setPage(p)}
               className={`w-8 h-8 rounded-lg border border-[#e6e4dd] flex items-center justify-center text-sm font-medium transition ${
                 page === p
-                  ? "bg-[#88b7b5] text-[#1c1c1c] border-[#88b7b5]"
-                  : "bg-white text-[#8b8b86] hover:bg-[#f1f0eb]"
+                  ? "bg-[#f4f1f7] text-[#1c1c1c] border-[#f4f1f7]"
+                  : "bg-white text-[#8b8b86] hover:bg-[#f4f1f7]"
               }`}
             >
               {p}
@@ -226,7 +226,7 @@ export default function VendorOpportunitiesPage() {
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f1f0eb] disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             <ChevronRight size={16} />
           </button>
@@ -235,19 +235,26 @@ export default function VendorOpportunitiesPage() {
 
       {/* Response Modal */}
       {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setSelected(null)} />
-          <div className="relative bg-white rounded-[32px] border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8 max-w-lg w-full">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-display text-xl font-bold text-[#1c1c1c]">Répondre à l'appel d'offres</h3>
-              <button onClick={() => setSelected(null)} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f1f0eb]">
-                <X size={18} />
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="absolute inset-0" onClick={() => setSelected(null)} />
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onClick={() => setSelected(null)} className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition" aria-label="Fermer">
+              <X size={18} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center">
+                <Send size={26} className="text-[#15181c]" />
+              </div>
+              <div>
+                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Réponse</p>
+                <h3 className="font-display text-2xl font-bold text-[#15181c]">Répondre à l'appel d'offres</h3>
+              </div>
             </div>
 
             <div className="mb-6 p-4 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
               <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center rounded-full bg-[#88b7b5] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
+                <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
                   {selected.match.category}
                 </span>
                 <span className="text-sm text-[#8b8b86]">
@@ -259,28 +266,31 @@ export default function VendorOpportunitiesPage() {
               </div>
             </div>
 
+            <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
+              Votre message
+            </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Votre message de réponse..."
-              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[120px] resize-none"
+              className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition min-h-[80px] resize-none"
             />
 
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-sm text-[#8b8b86]">
+            <div className="flex items-center justify-between mt-6">
+              <div className="text-sm text-[#6b7076]">
                 Coût : 2 crédits (Solde : {roses})
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   onClick={() => setSelected(null)}
-                  className="px-4 py-2 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+                  className="py-3.5 px-4 rounded-full border-2 border-[#ececec] bg-[#ffffff] text-sm font-bold font-sans text-[#15181c] hover:bg-[#ececec] transition"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={respond}
                   disabled={submitting || !message.trim()}
-                  className="px-4 py-2 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {submitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                   Envoyer
@@ -295,7 +305,7 @@ export default function VendorOpportunitiesPage() {
             )}
 
             {success && (
-              <div className="mt-4 p-4 rounded-xl bg-[#88b7b5] border border-[#88b7b5]/20">
+              <div className="mt-4 p-4 rounded-xl bg-[#f4f1f7] border border-[#f4f1f7]/20">
                 <p className="text-sm text-[#1c1c1c]">Proposition envoyée avec succès !</p>
               </div>
             )}
@@ -323,7 +333,7 @@ function DossierCard({
     <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center rounded-full bg-[#88b7b5] text-[#1c1c1c] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.06em]">
+          <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.06em]">
             {match.category}
           </span>
           <div className="flex items-center gap-1 bg-[#f7f7f9] px-3 py-1 rounded-full">
@@ -331,7 +341,7 @@ function DossierCard({
             <span className="text-sm font-semibold text-[#1c1c1c]">{match.score}</span>
           </div>
         </div>
-        <button onClick={onIgnore} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f1f0eb] text-[#8b8b86]">
+        <button onClick={onIgnore} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f4f1f7] text-[#8b8b86]">
           <X size={16} />
         </button>
       </div>
@@ -358,7 +368,7 @@ function DossierCard({
       <div className="flex gap-3">
         <button
           onClick={onView}
-          className="flex-1 py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+          className="flex-1 py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
         >
           Voir détails
         </button>
@@ -392,7 +402,7 @@ function OpportunityRow({
     <div className={`flex items-center justify-between gap-4 p-4 sm:p-6 border-b border-[#e6e4dd] last:border-b-0 ${!isFirst ? "bg-[#f7f7f9]" : "bg-white"}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-2">
-          <span className="inline-flex items-center rounded-full bg-[#88b7b5] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
+          <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
             {match.category}
           </span>
           <span className="text-[11px] text-[#8b8b86]">
@@ -410,13 +420,13 @@ function OpportunityRow({
         </div>
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <button onClick={onView} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
+        <button onClick={onView} className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]">
           <CheckCircle2 size={18} />
         </button>
-        <button onClick={onRespond} className="p-2 rounded-full bg-[#88b7b5] hover:bg-[#c9d94a] text-[#1c1c1c]">
+        <button onClick={onRespond} className="p-2 rounded-full bg-[#f4f1f7] hover:bg-[#c9d94a] text-[#1c1c1c]">
           <Send size={18} />
         </button>
-        <button onClick={onIgnore} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
+        <button onClick={onIgnore} className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]">
           <X size={18} />
         </button>
       </div>

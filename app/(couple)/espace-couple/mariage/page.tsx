@@ -346,7 +346,7 @@ export default function CoupleWeddingPage() {
                     background: "radial-gradient(circle at 40% 30%, #e8a06b 0%, #d9713f 55%, #b85630 100%)",
                   }}
                 >
-                  💑
+                  👩‍❤️‍👨
                 </div>
               </div>
 
@@ -423,7 +423,7 @@ export default function CoupleWeddingPage() {
 
                 {/* Date & invités */}
                 <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
-                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f4f1f7] flex items-center justify-center shrink-0 text-[#555]">
                     <CalendarDays size={16} />
                   </span>
                   <div className="flex-1 grid sm:grid-cols-2 gap-x-6 gap-y-4">
@@ -451,7 +451,7 @@ export default function CoupleWeddingPage() {
 
                 {/* Lieu */}
                 <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
-                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f4f1f7] flex items-center justify-center shrink-0 text-[#555]">
                     <MapPin size={16} />
                   </span>
                   <div className="flex-1 grid sm:grid-cols-2 gap-x-6 gap-y-4">
@@ -480,7 +480,7 @@ export default function CoupleWeddingPage() {
 
                 {/* Budget */}
                 <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
-                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f4f1f7] flex items-center justify-center shrink-0 text-[#555]">
                     <Wallet size={16} />
                   </span>
                   <div className="flex-1 grid sm:grid-cols-2 gap-x-6 gap-y-4">
@@ -508,7 +508,7 @@ export default function CoupleWeddingPage() {
 
                 {/* Style */}
                 <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
-                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f4f1f7] flex items-center justify-center shrink-0 text-[#555]">
                     <Palette size={16} />
                   </span>
                   <div className="flex-1">
@@ -554,7 +554,7 @@ export default function CoupleWeddingPage() {
 
                 {/* Priorité */}
                 <div className="flex items-start gap-3.5 py-4 border-b border-black/[0.06]">
-                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f4f1f7] flex items-center justify-center shrink-0 text-[#555]">
                     <Compass size={16} />
                   </span>
                   <div className="flex-1">
@@ -574,7 +574,7 @@ export default function CoupleWeddingPage() {
 
                 {/* Stress */}
                 <div className="flex items-start gap-3.5 py-4">
-                  <span className="w-9 h-9 rounded-xl bg-[#f1f0eb] flex items-center justify-center shrink-0 text-[#555]">
+                  <span className="w-9 h-9 rounded-xl bg-[#f4f1f7] flex items-center justify-center shrink-0 text-[#555]">
                     <Gauge size={16} />
                   </span>
                   <div className="flex-1">
@@ -601,35 +601,35 @@ export default function CoupleWeddingPage() {
                 <h3 className="text-[15px] font-bold text-[#1c1c1c] mb-4">Récapitulatif</h3>
 
                 <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
-                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f4f1f7] flex items-center justify-center shrink-0">
                     <CalendarDays size={14} />
                   </span>
                   Date : <b className="text-[#1c1c1c] font-semibold">{formattedDate}</b>
                 </div>
 
                 <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
-                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f4f1f7] flex items-center justify-center shrink-0">
                     <MapPin size={14} />
                   </span>
                   Lieu : <b className="text-[#1c1c1c] font-semibold">{formattedLocation}</b>
                 </div>
 
                 <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
-                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f4f1f7] flex items-center justify-center shrink-0">
                     <Wallet size={14} />
                   </span>
                   Budget : <b className="text-[#1c1c1c] font-semibold">{formattedBudget}</b>
                 </div>
 
                 <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86] mb-3.5">
-                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f4f1f7] flex items-center justify-center shrink-0">
                     <Palette size={14} />
                   </span>
                   Style : <b className="text-[#1c1c1c] font-semibold">{styleLabel}</b>
                 </div>
 
                 <div className="flex items-center gap-3 text-[12.5px] text-[#8b8b86]">
-                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f1f0eb] flex items-center justify-center shrink-0">
+                  <span className="w-[30px] h-[30px] rounded-[9px] bg-[#f4f1f7] flex items-center justify-center shrink-0">
                     <Compass size={14} />
                   </span>
                   Priorité : <b className="text-[#1c1c1c] font-semibold">{priorityLabel}</b>
@@ -656,7 +656,7 @@ export default function CoupleWeddingPage() {
                           c.done ? "bg-[#1c1c1c]" : "bg-[#1c1c1c]/10 border border-[#1c1c1c]/20"
                         }`}
                       >
-                        {c.done && <Check size={10} className="text-[#88b7b5]" />}
+                        {c.done && <Check size={10} className="text-[#f4f1f7]" />}
                       </span>
                       <span className={c.done ? "text-[#1c1c1c] font-medium" : "text-[#1c1c1c]/60"}>{c.label}</span>
                     </div>
@@ -684,7 +684,7 @@ export default function CoupleWeddingPage() {
                 <p className="mb-3">Aucun témoin ou personne de confiance enregistré.</p>
                 <button
                   onClick={openAddWitness}
-                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#1c1c1c] bg-[#f1f0eb] hover:bg-[#e6e4dd] px-3 py-1.5 rounded-full transition"
+                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#1c1c1c] bg-[#f4f1f7] hover:bg-[#e6e4dd] px-3 py-1.5 rounded-full transition"
                 >
                   <Plus size={12} />
                   Ajouter un témoin
@@ -718,7 +718,7 @@ export default function CoupleWeddingPage() {
                     </div>
                     <button
                       onClick={() => setWitnessMenuOpen(witnessMenuOpen === witness.id ? null : witness.id)}
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[#8b8b86] hover:bg-[#f1f0eb] opacity-0 group-hover:opacity-100 transition"
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[#8b8b86] hover:bg-[#f4f1f7] opacity-0 group-hover:opacity-100 transition"
                     >
                       <MoreHorizontal size={14} />
                     </button>
@@ -728,7 +728,7 @@ export default function CoupleWeddingPage() {
                       <div className="absolute right-0 top-8 z-10 bg-white rounded-xl shadow-lg border border-[#e6e4dd] py-1.5 min-w-[120px]">
                         <button
                           onClick={() => openEditWitness(witness)}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[#1c1c1c] hover:bg-[#f1f0eb] transition"
+                          className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
                         >
                           <Pencil size={12} />
                           Modifier
@@ -753,31 +753,31 @@ export default function CoupleWeddingPage() {
       {/* ===== MODAL AJOUT/ÉDITION TÉMOIN ===== */}
       {showWitnessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowWitnessModal(false)}
-              className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                <Users size={20} className="text-[#1c1c1c]" />
+              <div className="w-14 h-14 rounded-2xl bg-[#cbd5e1] flex items-center justify-center">
+                <Users size={26} className="text-[#15181c]" />
               </div>
               <div>
-                <h2 className="font-bold text-xl text-[#1c1c1c]">
+                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Témoins</p>
+                <h2 className="font-display text-2xl font-bold text-[#15181c]">
                   {editingWitness ? "Modifier le témoin" : "Ajouter un témoin"}
                 </h2>
-                <p className="text-[#8b8b86] text-sm">Personne de confiance pour le jour J</p>
               </div>
             </div>
 
             <div className="space-y-5">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Prénom *
                   </label>
                   <div className="relative">
@@ -787,12 +787,12 @@ export default function CoupleWeddingPage() {
                       value={witnessForm.firstName}
                       onChange={(e) => setWitnessForm({ ...witnessForm, firstName: e.target.value })}
                       placeholder="Marie"
-                      className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
+                      className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                     Nom *
                   </label>
                   <input
@@ -800,13 +800,13 @@ export default function CoupleWeddingPage() {
                     value={witnessForm.lastName}
                     onChange={(e) => setWitnessForm({ ...witnessForm, lastName: e.target.value })}
                     placeholder="Dupont"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Email *
                 </label>
                 <div className="relative">
@@ -816,13 +816,13 @@ export default function CoupleWeddingPage() {
                     value={witnessForm.email}
                     onChange={(e) => setWitnessForm({ ...witnessForm, email: e.target.value })}
                     placeholder="marie@exemple.com"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Téléphone *
                 </label>
                 <div className="relative">
@@ -832,13 +832,13 @@ export default function CoupleWeddingPage() {
                     value={witnessForm.phone}
                     onChange={(e) => setWitnessForm({ ...witnessForm, phone: e.target.value })}
                     placeholder="+33 6 12 34 56 78"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Photo (optionnel)
                 </label>
                 <div className="flex items-center gap-4">
@@ -860,7 +860,7 @@ export default function CoupleWeddingPage() {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-[#f1f0eb] border-2 border-dashed border-[#e4e2db] flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-[#f4f1f7] border-2 border-dashed border-[#e4e2db] flex items-center justify-center">
                       <ImageIcon size={24} className="text-[#8b8b86]" />
                     </div>
                   )}
@@ -872,7 +872,7 @@ export default function CoupleWeddingPage() {
                       className="hidden"
                       disabled={uploadingPhoto}
                     />
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] text-sm font-medium hover:bg-[#f1f0eb] transition cursor-pointer">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] text-sm font-medium hover:bg-[#f4f1f7] transition cursor-pointer">
                       {uploadingPhoto ? (
                         <>
                           <Loader2 size={14} className="animate-spin" />
@@ -890,13 +890,13 @@ export default function CoupleWeddingPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Rôle
                 </label>
                 <select
                   value={witnessForm.role}
                   onChange={(e) => setWitnessForm({ ...witnessForm, role: e.target.value })}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca] cursor-pointer"
+                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition cursor-pointer"
                 >
                   {WITNESS_ROLES.map((role) => (
                     <option key={role} value={role}>{role}</option>
@@ -905,7 +905,7 @@ export default function CoupleWeddingPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
                   Notes (optionnel)
                 </label>
                 <textarea
@@ -913,14 +913,14 @@ export default function CoupleWeddingPage() {
                   onChange={(e) => setWitnessForm({ ...witnessForm, notes: e.target.value })}
                   placeholder="Informations supplémentaires..."
                   rows={3}
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca] resize-none"
+                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition min-h-[80px] resize-none"
                 />
               </div>
 
               <button
                 onClick={saveWitness}
                 disabled={savingWitness || !witnessForm.firstName || !witnessForm.lastName || !witnessForm.email || !witnessForm.phone}
-                className="w-full bg-[#1c1c1c] text-white rounded-xl py-3 font-semibold text-[14px] hover:bg-[#333] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {savingWitness ? (
                   <>

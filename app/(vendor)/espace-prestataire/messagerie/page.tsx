@@ -46,7 +46,7 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
       {src ? (
         <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-[#e6e4dd]" unoptimized />
       ) : (
-        <div className="rounded-full bg-[#88b7b5] text-[#1c1c1c] font-display font-semibold flex items-center justify-center h-full w-full">
+        <div className="rounded-full bg-[#f4f1f7] text-[#1c1c1c] font-display font-semibold flex items-center justify-center h-full w-full">
           {initials}
         </div>
       )}
@@ -218,7 +218,7 @@ export default function VendorMessagingPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full pl-10 pr-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                  className="w-full pl-10 pr-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                 />
               </div>
             </div>
@@ -285,7 +285,7 @@ export default function VendorMessagingPage() {
                 </div>
                 <button
                   onClick={() => setInfoOpen(!infoOpen)}
-                  className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]"
+                  className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]"
                 >
                   <Info size={18} />
                 </button>
@@ -358,7 +358,7 @@ export default function VendorMessagingPage() {
                     ref={fileRef}
                     onChange={handleFiles}
                   />
-                  <button onClick={() => fileRef.current?.click()} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
+                  <button onClick={() => fileRef.current?.click()} className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]">
                     <Paperclip size={18} />
                   </button>
                   <input
@@ -367,7 +367,7 @@ export default function VendorMessagingPage() {
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                     placeholder="Écrivez votre message..."
-                    className="flex-1 px-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-full text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
+                    className="flex-1 px-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-full text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
                   />
                   <button
                     onClick={sendMessage}
@@ -384,7 +384,7 @@ export default function VendorMessagingPage() {
                 <div className="absolute right-0 top-0 bottom-0 w-80 bg-white border-l border-[#e6e4dd] p-4 overflow-y-auto">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-display text-lg font-bold text-[#1c1c1c]">Détails du projet</h3>
-                    <button onClick={() => setInfoOpen(false)} className="p-2 rounded-full hover:bg-[#f1f0eb]">
+                    <button onClick={() => setInfoOpen(false)} className="p-2 rounded-full hover:bg-[#f4f1f7]">
                       <X size={18} />
                     </button>
                   </div>

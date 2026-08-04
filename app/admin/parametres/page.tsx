@@ -70,11 +70,11 @@ export default function AdminSettingsPage() {
       <form onSubmit={handleCreate} className="bg-white rounded-2xl border border-[#1c1c1c]/10 shadow-sm p-6 space-y-4">
         <h2 className="font-semibold" style={{ color: INK }}>Nouveau plan</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input required value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Nom" className="rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60" />
-          <input required type="number" min={1} value={form.price} onChange={(e) => setForm(f => ({ ...f, price: Number(e.target.value) }))} placeholder="Prix (€)" className="rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60" />
-          <input required type="number" min={1} value={form.commitmentMonths} onChange={(e) => setForm(f => ({ ...f, commitmentMonths: Number(e.target.value) }))} placeholder="Mois d'engagement" className="rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60" />
+          <input required value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Nom" className="rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60" />
+          <input required type="number" min={1} value={form.price} onChange={(e) => setForm(f => ({ ...f, price: Number(e.target.value) }))} placeholder="Prix (€)" className="rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60" />
+          <input required type="number" min={1} value={form.commitmentMonths} onChange={(e) => setForm(f => ({ ...f, commitmentMonths: Number(e.target.value) }))} placeholder="Mois d'engagement" className="rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60" />
         </div>
-        <textarea value={form.features} onChange={(e) => setForm(f => ({ ...f, features: e.target.value }))} placeholder="Fonctionnalités (une par ligne)" rows={3} className="w-full rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60" />
+        <textarea value={form.features} onChange={(e) => setForm(f => ({ ...f, features: e.target.value }))} placeholder="Fonctionnalités (une par ligne)" rows={3} className="w-full rounded-lg border border-[#1c1c1c]/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60" />
         <button type="submit" disabled={creating} className="inline-flex items-center gap-2 rounded-xl text-white px-4 py-2.5 text-sm font-medium disabled:opacity-60" style={{ backgroundColor: INK }}><Plus size={18}/>Créer</button>
       </form>
     </div>

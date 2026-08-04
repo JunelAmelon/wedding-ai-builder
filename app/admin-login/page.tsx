@@ -8,7 +8,7 @@ import { ArrowUpRight, Shield, Eye, EyeOff, Loader2 } from "lucide-react";
 
 const SAGE_CHIP = "#D8ECD9";
 const INK = "#1c1c1c";
-const LIME = "#dff05a";
+const LIME = "#f4f1f7";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -151,7 +151,7 @@ export default function AdminLoginPage() {
                 placeholder="admin@exemple.fr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl bg-[#ffbfca1a] border border-black/10 px-4 py-3.5 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 focus:border-[#dff05a] transition"
+                className="w-full rounded-xl bg-[#ffbfca1a] border border-black/10 px-4 py-3.5 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 focus:border-[#f4f1f7] transition"
               />
             </div>
 
@@ -163,7 +163,7 @@ export default function AdminLoginPage() {
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl bg-[#ffbfca1a] border border-black/10 pl-4 pr-11 py-3.5 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 focus:border-[#dff05a] transition"
+                  className="w-full rounded-xl bg-[#ffbfca1a] border border-black/10 pl-4 pr-11 py-3.5 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 focus:border-[#f4f1f7] transition"
                 />
                 <button
                   type="button"

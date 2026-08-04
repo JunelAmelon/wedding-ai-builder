@@ -111,7 +111,7 @@ export default function VendorLayoutClient({
                   key={item.href}
                   href={item.href}
                   className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-colors ${
-                    active ? "bg-[#1c1c1c] text-white" : "text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f1f0eb]"
+                    active ? "bg-[#1c1c1c] text-white" : "text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f4f1f7]"
                   }`}
                 >
                   <item.icon size={15} strokeWidth={1.9} className={active ? "text-white" : "text-[#8b8b86]/70"} />
@@ -124,7 +124,7 @@ export default function VendorLayoutClient({
               <button
                 onClick={() => setMoreOpen((v) => !v)}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-colors ${
-                  moreOpen ? "bg-[#f1f0eb] text-[#1c1c1c]" : "text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f1f0eb]"
+                  moreOpen ? "bg-[#f4f1f7] text-[#1c1c1c]" : "text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f4f1f7]"
                 }`}
               >
                 <SlidersHorizontal size={15} strokeWidth={1.9} />
@@ -138,7 +138,7 @@ export default function VendorLayoutClient({
                       key={item.href}
                       href={item.href}
                       onClick={() => setMoreOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f1f0eb] transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f4f1f7] transition-colors"
                     >
                       <item.icon size={16} strokeWidth={1.75} />
                       {item.label}
@@ -190,7 +190,7 @@ export default function VendorLayoutClient({
           <div className="relative ml-auto h-full w-72 bg-white p-5 flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <span className="font-display text-base font-semibold">Menu</span>
-              <button onClick={() => setMoreOpen(false)} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f1f0eb]">
+              <button onClick={() => setMoreOpen(false)} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f4f1f7]">
                 <X size={18} />
               </button>
             </div>
@@ -208,7 +208,7 @@ export default function VendorLayoutClient({
                   href={item.href}
                   onClick={() => setMoreOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    isActive(item.href) ? "bg-[#1c1c1c] text-white" : "text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f1f0eb]"
+                    isActive(item.href) ? "bg-[#1c1c1c] text-white" : "text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f4f1f7]"
                   }`}
                 >
                   <item.icon size={18} strokeWidth={1.8} />
@@ -220,7 +220,7 @@ export default function VendorLayoutClient({
                   key={item.href}
                   href={item.href}
                   onClick={() => setMoreOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f1f0eb] transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-[#8b8b86] hover:text-[#1c1c1c] hover:bg-[#f4f1f7] transition-colors"
                 >
                   <item.icon size={18} strokeWidth={1.8} />
                   {item.label}
@@ -253,7 +253,7 @@ export default function VendorLayoutClient({
                   active ? "text-[#1c1c1c]" : "text-[#8b8b86]"
                 }`}
               >
-                <div className={`relative ${item.primary ? "bg-[#88b7b5] text-[#1c1c1c]" : ""} rounded-full p-1.5`}>
+                <div className={`relative ${item.primary ? "bg-[#f4f1f7] text-[#1c1c1c]" : ""} rounded-full p-1.5`}>
                   <item.icon size={18} strokeWidth={1.8} />
                 </div>
                 <span className="text-[10px] font-medium">{item.label}</span>

@@ -58,7 +58,7 @@ export default function AdminProsPage() {
             placeholder="Rechercher..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="pl-9 pr-4 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 w-full sm:w-64"
+            className="pl-9 pr-4 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 w-full sm:w-64"
           />
         </div>
       </div>

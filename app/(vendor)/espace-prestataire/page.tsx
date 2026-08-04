@@ -74,10 +74,10 @@ export default function VendorDashboardPage() {
   const matches = data.matches || [];
 
   const statCards = [
-    { label: "Opportunités", value: s?.newOpportunities ?? 0, icon: Target, color: "bg-[#88b7b5] text-[#1c1c1c]" },
+    { label: "Opportunités", value: s?.newOpportunities ?? 0, icon: Target, color: "bg-[#f4f1f7] text-[#1c1c1c]" },
     { label: "Propositions", value: s?.sentProposals ?? 0, icon: Send, color: "bg-[#dbeafe] text-[#1e3a8a]" },
-    { label: "Contrats gagnés", value: s?.wonContracts ?? 0, icon: CheckCircle2, color: "bg-[#88b7b5] text-[#1c1c1c]" },
-    { label: "Taux de réponse", value: `${s?.responseRate ?? 0}%`, icon: TrendingUp, color: s?.responseRate > 50 ? "bg-[#88b7b5] text-[#1c1c1c]" : "bg-[#ffedd5] text-[#7c2d12]" },
+    { label: "Contrats gagnés", value: s?.wonContracts ?? 0, icon: CheckCircle2, color: "bg-[#f4f1f7] text-[#1c1c1c]" },
+    { label: "Taux de réponse", value: `${s?.responseRate ?? 0}%`, icon: TrendingUp, color: s?.responseRate > 50 ? "bg-[#f4f1f7] text-[#1c1c1c]" : "bg-[#ffedd5] text-[#7c2d12]" },
   ];
 
   return (
@@ -96,19 +96,19 @@ export default function VendorDashboardPage() {
         <div className="flex items-center gap-3">
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.08em] ${
-              s?.verified ? "bg-[#88b7b5] text-[#1c1c1c]" : "bg-[#ffedd5] text-[#7c2d12]"
+              s?.verified ? "bg-[#f4f1f7] text-[#1c1c1c]" : "bg-[#ffedd5] text-[#7c2d12]"
             }`}
           >
             <span className={`h-2 w-2 rounded-full ${s?.verified ? "bg-[#3C8552]" : "bg-[#F2704A]"}`} />
             {s?.verified ? "Profil vérifié" : "Profil en attente"}
           </span>
           <Link href="/espace-prestataire/credits">
-            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition">
+            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition">
               <Wallet size={15} strokeWidth={1.75} /> {s?.credits ?? 0} crédits
             </button>
           </Link>
           {me?.stripeSubscriptionId ? (
-            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f1f0eb] transition" onClick={async () => {
+            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition" onClick={async () => {
               const res = await fetch("/api/stripe/portal", { method: "POST" });
               const data = await res.json();
               if (data.url) window.location.href = data.url;
@@ -155,7 +155,7 @@ export default function VendorDashboardPage() {
           </div>
           {matches.length === 0 ? (
             <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-[#88b7b5] mb-4">
+              <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-[#f4f1f7] mb-4">
                 <Target size={24} className="text-[#1c1c1c]" />
               </div>
               <p className="text-[#8b8b86] font-medium mb-1">Aucun match pour le moment</p>
@@ -173,7 +173,7 @@ export default function VendorDashboardPage() {
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="inline-flex items-center rounded-full bg-[#88b7b5] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
+                      <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
                         {match.category}
                       </span>
                       <span className="text-[11px] text-[#8b8b86]">
@@ -198,7 +198,7 @@ export default function VendorDashboardPage() {
         <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
           <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-6">Complétion du profil pour optimiser vos matches</h2>
           <div className="flex items-center gap-4 mb-6">
-            <div className="relative h-16 w-16 rounded-full bg-[#88b7b5] flex items-center justify-center">
+            <div className="relative h-16 w-16 rounded-full bg-[#f4f1f7] flex items-center justify-center">
               <UserCircle size={32} className="text-[#1c1c1c]" />
             </div>
             <div>
@@ -208,7 +208,7 @@ export default function VendorDashboardPage() {
           </div>
           <div className="w-full h-2 bg-[#f7f7f9] rounded-full overflow-hidden mb-6">
             <div
-              className="h-full bg-[#88b7b5] transition-all duration-500"
+              className="h-full bg-[#f4f1f7] transition-all duration-500"
               style={{ width: `${s?.profileCompletion ?? 0}%` }}
             />
           </div>

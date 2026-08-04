@@ -68,7 +68,7 @@ export default function VendorCreditsPage() {
 
       <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8 mb-8">
         <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c]">
+          <div className="h-14 w-14 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
             <Flower2 size={28} />
           </div>
           <div>
@@ -82,7 +82,7 @@ export default function VendorCreditsPage() {
         {PACKS.map((pack) => (
           <div
             key={pack.amount}
-            className={`relative rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8 ${pack.popular ? "ring-2 ring-[#88b7b5]" : ""}`}
+            className={`relative rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8 ${pack.popular ? "ring-2 ring-[#f4f1f7]" : ""}`}
           >
             {pack.popular && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#1c1c1c] px-3 py-1 text-xs text-white font-medium flex items-center gap-1">
@@ -100,7 +100,7 @@ export default function VendorCreditsPage() {
                 className={`w-full py-3 px-4 rounded-full text-sm font-semibold transition ${
                   pack.popular
                     ? "bg-[#1c1c1c] text-white hover:bg-[#333]"
-                    : "bg-white border border-[#e6e4dd] text-[#1c1c1c] hover:bg-[#f1f0eb]"
+                    : "bg-white border border-[#e6e4dd] text-[#1c1c1c] hover:bg-[#f4f1f7]"
                 } disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
               >
                 {purchasing === pack.amount ? <Loader2 size={18} className="animate-spin" /> : <CreditCard size={18} />}
@@ -115,7 +115,7 @@ export default function VendorCreditsPage() {
         <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-4">Comment ça marche ?</h2>
         <div className="space-y-4">
           <div className="flex items-start gap-4">
-            <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c] shrink-0">
+            <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
               <span className="font-display font-bold">1</span>
             </div>
             <div>
@@ -124,7 +124,7 @@ export default function VendorCreditsPage() {
             </div>
           </div>
           <div className="flex items-start gap-4">
-            <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c] shrink-0">
+            <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
               <span className="font-display font-bold">2</span>
             </div>
             <div>
@@ -133,7 +133,7 @@ export default function VendorCreditsPage() {
             </div>
           </div>
           <div className="flex items-start gap-4">
-            <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c] shrink-0">
+            <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
               <span className="font-display font-bold">3</span>
             </div>
             <div>

@@ -264,7 +264,7 @@ export default function VendorProfileForCouplePage() {
                   key={img.publicId || i}
                   onClick={() => setSelectedImage(img.url)}
                   className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                    selectedImage === img.url ? "border-[#88b7b5]" : "border-transparent"
+                    selectedImage === img.url ? "border-[#f4f1f7]" : "border-transparent"
                   }`}
                 >
                   <Image
@@ -508,7 +508,7 @@ export default function VendorProfileForCouplePage() {
 
             <div className="grid sm:grid-cols-2 gap-4 mb-8">
               <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c] shrink-0">
+                <div className="h-9 w-9 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
                   <ExperienceIcon className="h-5 w-5" />
                 </div>
                 <div>
@@ -521,7 +521,7 @@ export default function VendorProfileForCouplePage() {
                 </div>
               </div>
               <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c] shrink-0">
+                <div className="h-9 w-9 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
                   <ZoneIcon className="h-5 w-5" />
                 </div>
                 <div>
@@ -604,7 +604,7 @@ export default function VendorProfileForCouplePage() {
                 {reviews.map((review, i) => (
                   <div key={i} className="rounded-xl bg-white border border-black/[0.06] p-5">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c] font-semibold text-xs">
+                      <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] font-semibold text-xs">
                         {(review.author || "A").slice(0, 1).toUpperCase()}
                       </div>
                       <div>
@@ -634,7 +634,7 @@ export default function VendorProfileForCouplePage() {
                 {faq.map((item, i) => (
                   <div key={i} className="rounded-xl bg-white border border-black/[0.06] p-5">
                     <div className="flex items-start gap-3">
-                      <div className="h-7 w-7 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c] font-display text-sm shrink-0 mt-0.5">
+                      <div className="h-7 w-7 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] font-display text-sm shrink-0 mt-0.5">
                         {i + 1}
                       </div>
                       <div>
@@ -692,20 +692,20 @@ export default function VendorProfileForCouplePage() {
                   <div className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#8b8b86] mb-3">Coordonnées</div>
                   <div className="space-y-3">
                     <a href={`tel:${vendor.phone}`} className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                      <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c]">
+                      <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
                         <Phone size={15} />
                       </div>
                       <span className="font-medium">{vendor.phone || "Non renseigné"}</span>
                     </a>
                     <a href={`mailto:${vendor.email}`} className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                      <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c]">
+                      <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
                         <Mail size={15} />
                       </div>
                       <span className="font-medium">{vendor.email || "Non renseigné"}</span>
                     </a>
                     {website && (
                       <a href={website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                        <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c]">
+                        <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
                           <Globe size={15} />
                         </div>
                         <span className="font-medium">Site web</span>
@@ -713,7 +713,7 @@ export default function VendorProfileForCouplePage() {
                     )}
                     {instagram && (
                       <a href={`https://instagram.com/${instagram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                        <div className="h-8 w-8 rounded-full bg-[#88b7b5] flex items-center justify-center text-[#1c1c1c]">
+                        <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
                           <Instagram size={15} />
                         </div>
                         <span className="font-medium">@{instagram.replace(/^@/, "")}</span>
@@ -729,7 +729,7 @@ export default function VendorProfileForCouplePage() {
                     onChange={(e) => setContactMessage(e.target.value)}
                     rows={4}
                     placeholder="Bonjour, je suis intéressé(e) par votre profil pour notre mariage..."
-                    className="w-full rounded-xl border border-black/[0.08] bg-white px-4 py-3 text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] focus:border-[#88b7b5]"
+                    className="w-full rounded-xl border border-black/[0.08] bg-white px-4 py-3 text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7] focus:border-[#f4f1f7]"
                   />
                 </div>
                 <Button

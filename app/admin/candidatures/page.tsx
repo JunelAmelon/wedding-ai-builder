@@ -36,7 +36,7 @@ export default function AdminCandidaturesPage() {
           <p className="text-sm mt-1" style={{ color: `${INK}99` }}>{filtered.length} candidature(s)</p>
         </div>
         <div className="flex items-center gap-3">
-          <select value={filter} onChange={e => setFilter(e.target.value as VendorApplication["status"] | "all")} className="rounded-xl border border-[#1c1c1c]/10 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60">
+          <select value={filter} onChange={e => setFilter(e.target.value as VendorApplication["status"] | "all")} className="rounded-xl border border-[#1c1c1c]/10 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60">
             <option value="all">Tous</option>
             <option value="pending">En attente</option>
             <option value="approved">Approuvés</option>
@@ -44,7 +44,7 @@ export default function AdminCandidaturesPage() {
           </select>
           <div className="relative">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: `${INK}99` }} />
-            <input type="text" placeholder="Rechercher..." value={query} onChange={e => setQuery(e.target.value)} className="pl-9 pr-4 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#dff05a]/60 w-full sm:w-64" />
+            <input type="text" placeholder="Rechercher..." value={query} onChange={e => setQuery(e.target.value)} className="pl-9 pr-4 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 w-full sm:w-64" />
           </div>
         </div>
       </div>
