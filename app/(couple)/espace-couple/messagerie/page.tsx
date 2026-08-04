@@ -56,7 +56,7 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
           {name.slice(0, 2).toUpperCase()}
         </div>
       )}
-      {online && <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-white" />}
+      {online && <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-white border-2 border-white" />}
     </div>
   );
 }
@@ -190,7 +190,7 @@ export default function CoupleMessagingPage() {
   const lastMessage = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id).pop() || null;
   const unreadCount = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id && m.senderRole !== "couple" && !m.readAt).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
     <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
@@ -207,7 +207,7 @@ export default function CoupleMessagingPage() {
       ) : (
         <div className={`grid h-full ${mobileOpen ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-[300px_1fr]"} ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
           {/* Sidebar */}
-          <div className={`flex flex-col border-r border-black/[0.06] bg-surface ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
+          <div className={`flex flex-col border-r border-black/[0.06] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
             <div className="p-4 border-b border-black/[0.06]">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-display text-xl font-semibold">Messages</h2>
@@ -269,7 +269,7 @@ export default function CoupleMessagingPage() {
           <div className={`flex flex-col bg-white ${mobileOpen ? "flex" : "hidden lg:flex"}`}>
             {selected ? (
               <>
-                <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-surface/50">
+                <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-white/50">
                   <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
                     <ChevronLeft size={20} className="text-text-secondary" />
                   </button>
@@ -306,7 +306,7 @@ export default function CoupleMessagingPage() {
                   </div>
                 )}
 
-                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-surface/30">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-white/30">
                   {messages.length === 0 && (
                     <div className="flex-1 flex flex-col items-center justify-center text-text-secondary text-center min-h-[200px]">
                       <MessageSquare size={40} className="text-text-secondary/30 mb-3" />
@@ -365,7 +365,7 @@ export default function CoupleMessagingPage() {
                           {att.startsWith("data:image") ? (
                             <img src={att} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full bg-surface flex items-center justify-center text-[10px] text-text-secondary text-center p-1">Fichier</div>
+                            <div className="w-full h-full bg-white flex items-center justify-center text-[10px] text-text-secondary text-center p-1">Fichier</div>
                           )}
                           <button
                             onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
@@ -375,7 +375,7 @@ export default function CoupleMessagingPage() {
                       ))}
                     </div>
                   )}
-                  <div className="flex items-center gap-2 rounded-full border border-black/[0.08] bg-surface px-2 py-1.5">
+                  <div className="flex items-center gap-2 rounded-full border border-black/[0.08] bg-white px-2 py-1.5">
                     <input
                       type="file"
                       multiple
@@ -415,7 +415,7 @@ export default function CoupleMessagingPage() {
 
           {/* Info panel */}
           {infoOpen && selected && (
-            <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-surface w-[300px] shrink-0">
+            <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-white w-[300px] shrink-0">
               <div className="p-5 border-b border-black/[0.06] text-center">
                 <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-20 w-20 text-xl mx-auto mb-3" online={selected.status === "accepted"} />
                 <h3 className="font-semibold text-text-primary">{selected.vendor?.companyName || "Prestataire"}</h3>
@@ -425,7 +425,7 @@ export default function CoupleMessagingPage() {
               <div className="flex-1 overflow-y-auto p-4 space-y-5">
                 <div>
                   <h4 className="text-xs uppercase tracking-[0.14em] text-text-secondary font-medium mb-2">Statut</h4>
-                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-white/20 text-[#1c1c1c]" : "bg-amber-100 text-amber-700"}`}>
                     {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
                   </div>
                 </div>
@@ -489,3 +489,8 @@ export default function CoupleMessagingPage() {
     </div>
   );
 }
+
+
+
+
+

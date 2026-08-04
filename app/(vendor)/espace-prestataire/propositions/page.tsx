@@ -30,7 +30,7 @@ const FILTERS = [
 
 const STATUS_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pending: { label: "En attente", color: "bg-[#ffedd5] text-[#7c2d12]", icon: <Clock size={13} /> },
-  accepted: { label: "Validée", color: "bg-[#dcfce7] text-[#14532d]", icon: <BadgeCheck size={13} /> },
+  accepted: { label: "Validée", color: "bg-[#88b7b5] text-[#1c1c1c]", icon: <BadgeCheck size={13} /> },
   declined: { label: "Refusée", color: "bg-[#fce7f3] text-[#831843]", icon: <X size={13} /> },
   archived: { label: "Archivée", color: "bg-[#f1f0eb] text-[#8b8b86]", icon: <Archive size={13} /> },
 };
@@ -99,7 +99,7 @@ export default function VendorProposalsPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
     <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
@@ -118,7 +118,7 @@ export default function VendorProposalsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="rounded-[20px] bg-white border border-[#e6e4dd] p-5 shadow-[0_8px_24px_rgba(14,14,16,0.04)]">
-          <div className="h-10 w-10 rounded-xl bg-[#dff05a] flex items-center justify-center mb-4">
+          <div className="h-10 w-10 rounded-xl bg-[#88b7b5] flex items-center justify-center mb-4">
             <Send size={20} strokeWidth={1.8} />
           </div>
           <p className="font-display text-3xl font-bold text-[#1c1c1c]">{stats?.sentProposals ?? 0}</p>
@@ -132,7 +132,7 @@ export default function VendorProposalsPage() {
           <p className="text-[11px] uppercase tracking-[0.12em] text-[#8b8b86] mt-1">En attente</p>
         </div>
         <div className="rounded-[20px] bg-white border border-[#e6e4dd] p-5 shadow-[0_8px_24px_rgba(14,14,16,0.04)]">
-          <div className="h-10 w-10 rounded-xl bg-[#dcfce7] flex items-center justify-center mb-4">
+          <div className="h-10 w-10 rounded-xl bg-[#88b7b5] flex items-center justify-center mb-4">
             <BadgeCheck size={20} strokeWidth={1.8} />
           </div>
           <p className="font-display text-3xl font-bold text-[#1c1c1c]">{stats?.activeProposals ?? 0}</p>
@@ -168,7 +168,7 @@ export default function VendorProposalsPage() {
       {/* List */}
       {filteredProposals.length === 0 ? (
         <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#dff05a]">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#88b7b5]">
             <Send size={22} className="text-[#1c1c1c]" />
           </div>
           <h2 className="font-display text-xl font-bold mb-2 text-[#1c1c1c]">Aucun match</h2>
@@ -224,7 +224,7 @@ export default function VendorProposalsPage() {
                       <button
                         onClick={() => updateStatus(proposal.id, "accepted")}
                         disabled={updating === proposal.id}
-                        className="p-2 rounded-full bg-[#dcfce7] hover:bg-[#c0e6c0] text-[#14532d] disabled:opacity-50 transition"
+                        className="p-2 rounded-full bg-[#88b7b5] hover:bg-[#c0e6c0] text-[#1c1c1c] disabled:opacity-50 transition"
                       >
                         <BadgeCheck size={18} />
                       </button>
@@ -263,3 +263,4 @@ export default function VendorProposalsPage() {
     </div>
   );
 }
+

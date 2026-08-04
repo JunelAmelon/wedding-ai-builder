@@ -59,7 +59,7 @@ const CONTACT_COLORS = [
   "linear-gradient(135deg,#f7c6c6,#e89aa0)",
   "linear-gradient(135deg,#c7d9f7,#9db8e8)",
   "linear-gradient(135deg,#f7e2b8,#e8b98a)",
-  "linear-gradient(135deg,#c6f0d8,#8ad9ae)",
+  "linear-gradient(135deg,#fff0f3,#fff0f3)",
 ];
 
 export default function CoupleWeddingPage() {
@@ -289,7 +289,7 @@ export default function CoupleWeddingPage() {
   }, [project]);
   const doneCount = chapters.filter((c) => c.done).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   // Initiales pour l'avatar
   const initials = (project?.name || "Mon mariage")
@@ -319,7 +319,7 @@ export default function CoupleWeddingPage() {
   const priorityLabel = PRIORITY_OPTIONS.find((p) => p.value === project?.mainPriority)?.label || "À définir";
 
   return (
-    <div className="min-h-screen bg-[#ffbfca1a]">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Mon espace"
@@ -336,7 +336,7 @@ export default function CoupleWeddingPage() {
               <div
                 className="relative h-[180px] sm:h-[230px] overflow-hidden"
                 style={{
-                  background: "repeating-linear-gradient(100deg, #4f6b52 0px, #4f6b52 42px, #56724f 42px, #56724f 84px)",
+                  background: "repeating-linear-gradient(100deg, #e6e4dd 0px, #e6e4dd 42px, #fff0f3 42px, #fff0f3 84px)",
                 }}
               >
                 {/* Figure décorative */}
@@ -386,7 +386,7 @@ export default function CoupleWeddingPage() {
                     onClick={save}
                     disabled={saving}
                     className={`rounded-[20px] px-5 py-2 text-[12.5px] font-semibold transition ${
-                      saved ? "bg-[#7fd6a0] text-[#1c1c1c]" : "bg-[#1c1c1c] text-white"
+                      saved ? "bg-white text-[#1c1c1c]" : "bg-[#1c1c1c] text-white"
                     } disabled:opacity-60`}
                   >
                     {saving ? "Enregistrement..." : saved ? "✅ Enregistré" : "Enregistrer"}
@@ -408,7 +408,7 @@ export default function CoupleWeddingPage() {
                   <div
                     key={tab.label}
                     className={`py-4 shrink-0 cursor-pointer whitespace-nowrap ${
-                      tab.active ? "border-b-[2.5px] border-[#7fd6a0]" : ""
+                      tab.active ? "border-b-[2.5px] border-[#ffbfca]" : ""
                     }`}
                   >
                     <span className="text-[13px] text-[#8b8b86]">{tab.label} </span>
@@ -433,7 +433,7 @@ export default function CoupleWeddingPage() {
                         type="date"
                         value={project?.weddingDate ? new Date(project.weddingDate).toISOString().split("T")[0] : ""}
                         onChange={(e) => updateField("weddingDate", e.target.value || null)}
-                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] focus:border-b focus:border-[#7fd6a0]"
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#1c1c1c] focus:border-b focus:border-[#ffbfca]"
                       />
                     </div>
                     <div>
@@ -526,7 +526,7 @@ export default function CoupleWeddingPage() {
 
                     {/* Champs personnalisés pour "Autre" */}
                     {project?.style === "autre" && (
-                      <div className="mt-3 pl-4 border-l-2 border-[#7fd6a0] space-y-3">
+                      <div className="mt-3 pl-4 border-l-2 border-[#ffbfca] space-y-3">
                         <div>
                           <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Votre thème</div>
                           <input
@@ -586,7 +586,7 @@ export default function CoupleWeddingPage() {
                       value={project?.stressLevel || 0}
                       onChange={(e) => updateField("stressLevel", Number(e.target.value))}
                       className="w-full mt-2"
-                      style={{ accentColor: "#7fd6a0" }}
+                      style={{ accentColor: "#ffbfca" }}
                     />
                     <div className="text-[12px] text-[#8b8b86] mt-1">{project?.stressLevel ?? 0}/10</div>
                   </div>
@@ -637,7 +637,7 @@ export default function CoupleWeddingPage() {
               </div>
 
               {/* Carte Complétion */}
-              <div className="bg-[#dff05a] rounded-[18px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+              <div className="bg-white rounded-[18px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
                 <h3 className="text-[15px] font-bold text-[#1c1c1c] mb-4">Complétion du profil</h3>
                 <div className="text-[28px] font-bold text-[#1c1c1c] mb-2">
                   {doneCount}<span className="text-[16px] font-medium text-[#1c1c1c]/60">/{chapters.length}</span>
@@ -656,7 +656,7 @@ export default function CoupleWeddingPage() {
                           c.done ? "bg-[#1c1c1c]" : "bg-[#1c1c1c]/10 border border-[#1c1c1c]/20"
                         }`}
                       >
-                        {c.done && <Check size={10} className="text-[#dff05a]" />}
+                        {c.done && <Check size={10} className="text-[#88b7b5]" />}
                       </span>
                       <span className={c.done ? "text-[#1c1c1c] font-medium" : "text-[#1c1c1c]/60"}>{c.label}</span>
                     </div>
@@ -672,7 +672,7 @@ export default function CoupleWeddingPage() {
               <h3 className="text-[16px] font-bold text-[#1c1c1c]">Témoins & Contacts</h3>
               <button
                 onClick={openAddWitness}
-                className="w-7 h-7 rounded-full bg-[#dff05a] flex items-center justify-center text-[#1c1c1c] hover:bg-[#d4e54f] transition"
+                className="w-7 h-7 rounded-full bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-white transition"
                 title="Ajouter un témoin"
               >
                 <Plus size={14} />
@@ -753,7 +753,7 @@ export default function CoupleWeddingPage() {
       {/* ===== MODAL AJOUT/ÉDITION TÉMOIN ===== */}
       {showWitnessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowWitnessModal(false)}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
@@ -763,7 +763,7 @@ export default function CoupleWeddingPage() {
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
                 <Users size={20} className="text-[#1c1c1c]" />
               </div>
               <div>
@@ -787,7 +787,7 @@ export default function CoupleWeddingPage() {
                       value={witnessForm.firstName}
                       onChange={(e) => setWitnessForm({ ...witnessForm, firstName: e.target.value })}
                       placeholder="Marie"
-                      className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                      className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
                     />
                   </div>
                 </div>
@@ -800,7 +800,7 @@ export default function CoupleWeddingPage() {
                     value={witnessForm.lastName}
                     onChange={(e) => setWitnessForm({ ...witnessForm, lastName: e.target.value })}
                     placeholder="Dupont"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
                   />
                 </div>
               </div>
@@ -816,7 +816,7 @@ export default function CoupleWeddingPage() {
                     value={witnessForm.email}
                     onChange={(e) => setWitnessForm({ ...witnessForm, email: e.target.value })}
                     placeholder="marie@exemple.com"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
                   />
                 </div>
               </div>
@@ -832,7 +832,7 @@ export default function CoupleWeddingPage() {
                     value={witnessForm.phone}
                     onChange={(e) => setWitnessForm({ ...witnessForm, phone: e.target.value })}
                     placeholder="+33 6 12 34 56 78"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
                   />
                 </div>
               </div>
@@ -849,7 +849,7 @@ export default function CoupleWeddingPage() {
                         alt="Photo témoin"
                         width={64}
                         height={64}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-[#dff05a]"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-[#ffbfca]"
                       />
                       <button
                         type="button"
@@ -896,7 +896,7 @@ export default function CoupleWeddingPage() {
                 <select
                   value={witnessForm.role}
                   onChange={(e) => setWitnessForm({ ...witnessForm, role: e.target.value })}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] cursor-pointer"
+                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca] cursor-pointer"
                 >
                   {WITNESS_ROLES.map((role) => (
                     <option key={role} value={role}>{role}</option>
@@ -913,7 +913,7 @@ export default function CoupleWeddingPage() {
                   onChange={(e) => setWitnessForm({ ...witnessForm, notes: e.target.value })}
                   placeholder="Informations supplémentaires..."
                   rows={3}
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] resize-none"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca] resize-none"
                 />
               </div>
 
@@ -941,3 +941,4 @@ export default function CoupleWeddingPage() {
     </div>
   );
 }
+

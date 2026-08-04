@@ -120,7 +120,7 @@ export default function VendorOpportunitiesPage() {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
     <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
@@ -141,7 +141,7 @@ export default function VendorOpportunitiesPage() {
             onClick={() => setView("dossier")}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               view === "dossier"
-                ? "bg-[#dff05a] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
+                ? "bg-[#88b7b5] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
                 : "text-[#8b8b86] hover:text-[#1c1c1c]"
             }`}
           >
@@ -153,7 +153,7 @@ export default function VendorOpportunitiesPage() {
             onClick={() => setView("liste")}
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               view === "liste"
-                ? "bg-[#dff05a] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
+                ? "bg-[#88b7b5] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
                 : "text-[#8b8b86] hover:text-[#1c1c1c]"
             }`}
           >
@@ -165,7 +165,7 @@ export default function VendorOpportunitiesPage() {
 
       {sorted.length === 0 ? (
         <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center mt-8">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#dff05a]">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#88b7b5]">
             <Megaphone size={22} className="text-[#1c1c1c]" />
           </div>
           <h2 className="font-display text-xl font-bold mb-2 text-[#1c1c1c]">Aucun match pour le moment</h2>
@@ -216,7 +216,7 @@ export default function VendorOpportunitiesPage() {
               onClick={() => setPage(p)}
               className={`w-8 h-8 rounded-lg border border-[#e6e4dd] flex items-center justify-center text-sm font-medium transition ${
                 page === p
-                  ? "bg-[#dff05a] text-[#1c1c1c] border-[#dff05a]"
+                  ? "bg-[#88b7b5] text-[#1c1c1c] border-[#88b7b5]"
                   : "bg-white text-[#8b8b86] hover:bg-[#f1f0eb]"
               }`}
             >
@@ -247,7 +247,7 @@ export default function VendorOpportunitiesPage() {
 
             <div className="mb-6 p-4 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
               <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center rounded-full bg-[#dff05a] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
+                <span className="inline-flex items-center rounded-full bg-[#88b7b5] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
                   {selected.match.category}
                 </span>
                 <span className="text-sm text-[#8b8b86]">
@@ -263,7 +263,7 @@ export default function VendorOpportunitiesPage() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Votre message de réponse..."
-              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[120px] resize-none"
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[120px] resize-none"
             />
 
             <div className="flex items-center justify-between mt-4">
@@ -295,8 +295,8 @@ export default function VendorOpportunitiesPage() {
             )}
 
             {success && (
-              <div className="mt-4 p-4 rounded-xl bg-[#dcfce7] border border-[#dcfce7]/20">
-                <p className="text-sm text-[#14532d]">Proposition envoyée avec succès !</p>
+              <div className="mt-4 p-4 rounded-xl bg-[#88b7b5] border border-[#88b7b5]/20">
+                <p className="text-sm text-[#1c1c1c]">Proposition envoyée avec succès !</p>
               </div>
             )}
           </div>
@@ -323,7 +323,7 @@ function DossierCard({
     <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center rounded-full bg-[#dff05a] text-[#1c1c1c] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.06em]">
+          <span className="inline-flex items-center rounded-full bg-[#88b7b5] text-[#1c1c1c] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.06em]">
             {match.category}
           </span>
           <div className="flex items-center gap-1 bg-[#f7f7f9] px-3 py-1 rounded-full">
@@ -392,7 +392,7 @@ function OpportunityRow({
     <div className={`flex items-center justify-between gap-4 p-4 sm:p-6 border-b border-[#e6e4dd] last:border-b-0 ${!isFirst ? "bg-[#f7f7f9]" : "bg-white"}`}>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-2">
-          <span className="inline-flex items-center rounded-full bg-[#dff05a] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
+          <span className="inline-flex items-center rounded-full bg-[#88b7b5] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
             {match.category}
           </span>
           <span className="text-[11px] text-[#8b8b86]">
@@ -413,7 +413,7 @@ function OpportunityRow({
         <button onClick={onView} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
           <CheckCircle2 size={18} />
         </button>
-        <button onClick={onRespond} className="p-2 rounded-full bg-[#dff05a] hover:bg-[#c9d94a] text-[#1c1c1c]">
+        <button onClick={onRespond} className="p-2 rounded-full bg-[#88b7b5] hover:bg-[#c9d94a] text-[#1c1c1c]">
           <Send size={18} />
         </button>
         <button onClick={onIgnore} className="p-2 rounded-full hover:bg-[#f1f0eb] text-[#8b8b86]">
@@ -423,3 +423,4 @@ function OpportunityRow({
     </div>
   );
 }
+

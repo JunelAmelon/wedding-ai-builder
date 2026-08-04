@@ -53,9 +53,9 @@ export default function ResultPage() {
     if (sessionId) load();
   }, [sessionId, router]);
 
-  if (loading) return <div className="min-h-[100dvh] bg-background" />;
-  if (error) return <div className="min-h-[100dvh] bg-background p-6">{error}</div>;
-  if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-background p-6">Résultat indisponible.</div>;
+  if (loading) return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (error) return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white p-6">{error}</div>;
+  if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white p-6">Résultat indisponible.</div>;
 
   const { aiOutput } = session;
 
@@ -104,7 +104,7 @@ export default function ResultPage() {
   ];
 
   return (
-    <div className="min-h-[100dvh] bg-background text-text-primary">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white text-text-primary">
       <div className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-0">
         <div className="max-w-6xl mx-auto flex items-center justify-between h-20">
           <Link href="/" className="inline-flex items-center h-full overflow-visible">
@@ -266,7 +266,7 @@ export default function ResultPage() {
       <RiskSection riskScore={aiOutput.riskScore} riskEngine={aiOutput.riskEngine} />
       <ExtrasSection answers={session.quizAnswers} aiOutput={aiOutput} />
 
-      <footer className="px-6 py-10 bg-surface border-t border-black/10 print:hidden">
+      <footer className="px-6 py-10 bg-white border-t border-black/10 print:hidden">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-text-secondary">
           <span>Plan généré par Mariage Facile</span>
           <div className="flex items-center gap-4">
@@ -327,19 +327,19 @@ function RiskScoreCard({
         </div>
 
         <div className="mt-7 grid sm:grid-cols-3 gap-3">
-          <div className="rounded-2xl border border-black/10 bg-surface p-4">
+          <div className="rounded-2xl border border-black/10 bg-white p-4">
             <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Budget</div>
             <div className="font-semibold mt-2">
               {budget.totalBudget} {budget.currency}
             </div>
             <div className="text-xs text-text-secondary mt-1">Avec imprévus inclus</div>
           </div>
-          <div className="rounded-2xl border border-black/10 bg-surface p-4">
+          <div className="rounded-2xl border border-black/10 bg-white p-4">
             <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Étapes</div>
             <div className="font-semibold mt-2">{milestones}</div>
             <div className="text-xs text-text-secondary mt-1">Parcours guidé</div>
           </div>
-          <div className="rounded-2xl border border-black/10 bg-surface p-4">
+          <div className="rounded-2xl border border-black/10 bg-white p-4">
             <div className="text-xs uppercase tracking-[0.22em] text-text-secondary">Style</div>
             <div className="font-semibold mt-2">{style}</div>
             <div className="text-xs text-text-secondary mt-1">Ambiance retenue</div>

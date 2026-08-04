@@ -46,7 +46,7 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
       {src ? (
         <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-[#e6e4dd]" unoptimized />
       ) : (
-        <div className="rounded-full bg-[#dff05a] text-[#1c1c1c] font-display font-semibold flex items-center justify-center h-full w-full">
+        <div className="rounded-full bg-[#88b7b5] text-[#1c1c1c] font-display font-semibold flex items-center justify-center h-full w-full">
           {initials}
         </div>
       )}
@@ -189,7 +189,7 @@ export default function VendorMessagingPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
     <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
@@ -218,7 +218,7 @@ export default function VendorMessagingPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full pl-10 pr-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full pl-10 pr-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                 />
               </div>
             </div>
@@ -367,7 +367,7 @@ export default function VendorMessagingPage() {
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && sendMessage()}
                     placeholder="Écrivez votre message..."
-                    className="flex-1 px-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-full text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="flex-1 px-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-full text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                   <button
                     onClick={sendMessage}
@@ -424,3 +424,4 @@ export default function VendorMessagingPage() {
     </div>
   );
 }
+

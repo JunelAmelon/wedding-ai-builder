@@ -63,8 +63,8 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
 
 // Chips colorés pour les 5 catégories principales (style Connectify)
 const CHIP_CATEGORIES = [
-  { category: "Photographe / Vidéaste", emoji: "📸", bg: "#dff05a", color: "#1c1c1c" },
-  { category: "Traiteur", emoji: "🥐", bg: "#8fe3c0", color: "#1c1c1c" },
+  { category: "Photographe / Vidéaste", emoji: "📸", bg: "#88b7b5", color: "#1c1c1c" },
+  { category: "Traiteur", emoji: "🥐", bg: "#88b7b5", color: "#1c1c1c" },
   { category: "Décoration / Fleuriste", emoji: "💐", bg: "#a9c9f5", color: "#1c1c1c" },
   { category: "Musique / DJ / Orchestre", emoji: "🎵", bg: "#c9b6ee", color: "#fff" },
   { category: "Lieu de réception", emoji: "🏰", bg: "#b9b3ba", color: "#fff" },
@@ -93,7 +93,7 @@ const CONTACT_COLORS = [
   "linear-gradient(135deg,#f7c6c6,#e89aa0)",
   "linear-gradient(135deg,#c7d9f7,#9db8e8)",
   "linear-gradient(135deg,#f7e2b8,#e8b98a)",
-  "linear-gradient(135deg,#c6f0d8,#8ad9ae)",
+  "linear-gradient(135deg,#88b7b5,#88b7b5)",
 ];
 
 interface VendorPreview {
@@ -239,10 +239,10 @@ export default function CoupleVendorsPage() {
   // Vérifier si une catégorie a déjà un appel d'offres
   const hasTenderForCategory = (cat: string) => tenders.some((t) => t.category === cat);
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
-    <div className="min-h-screen bg-[#ffbfca1a]">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Appels d'offres"
@@ -369,7 +369,7 @@ export default function CoupleVendorsPage() {
 
             {tenders.length === 0 && (
               <div className="rounded-2xl bg-white border border-[#e4e2db] p-8 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-[#dff05a] flex items-center justify-center mx-auto mb-4">
+                <div className="h-14 w-14 rounded-2xl bg-[#88b7b5] flex items-center justify-center mx-auto mb-4">
                   <Sparkles size={22} className="text-[#1c1c1c]" />
                 </div>
                 <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-2">
@@ -457,7 +457,7 @@ export default function CoupleVendorsPage() {
       {/* ===== MODALE — formulaire de nouvelle demande ===== */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-xl bg-[#ffbfca1a] rounded-3xl p-7 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-xl bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-7 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => {
                 setShowForm(false);
@@ -480,7 +480,7 @@ export default function CoupleVendorsPage() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] text-[15px] py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] text-[15px] py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                 >
                   <option value="">Choisir une catégorie</option>
                   {CATEGORIES.map((cat) => (
@@ -501,7 +501,7 @@ export default function CoupleVendorsPage() {
                       value={budgetMin}
                       onChange={(e) => setBudgetMin(e.target.value)}
                       placeholder="Min"
-                      className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                      className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                     />
                   </div>
                   <span className="text-[#8b8b86]">—</span>
@@ -510,7 +510,7 @@ export default function CoupleVendorsPage() {
                     value={budgetMax}
                     onChange={(e) => setBudgetMax(e.target.value)}
                     placeholder="Max"
-                    className="flex-1 bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="flex-1 bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                   <span className="text-xs text-[#8b8b86]">EUR</span>
                 </div>
@@ -525,7 +525,7 @@ export default function CoupleVendorsPage() {
                   value={requirements}
                   onChange={(e) => setRequirements(e.target.value)}
                   placeholder="Ex. : vegan, photographe discret, anglais courant..."
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                 />
               </div>
 
@@ -538,7 +538,7 @@ export default function CoupleVendorsPage() {
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
                   placeholder="Ex. : rapport qualité/prix, créativité, disponibilité..."
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                 />
               </div>
 
@@ -563,7 +563,7 @@ export default function CoupleVendorsPage() {
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
           <div className="relative w-full max-w-sm bg-white rounded-3xl p-8 text-center shadow-2xl">
-            <div className="h-14 w-14 rounded-full mx-auto mb-5 flex items-center justify-center bg-[#8fe3c0]">
+            <div className="h-14 w-14 rounded-full mx-auto mb-5 flex items-center justify-center bg-[#88b7b5]">
               <CheckCircle2 size={24} className="text-[#1c1c1c]" />
             </div>
             <h3 className="font-display text-xl font-semibold text-[#1c1c1c] mb-3">C&apos;est envoyé !</h3>
@@ -579,3 +579,7 @@ export default function CoupleVendorsPage() {
     </div>
   );
 }
+
+
+
+

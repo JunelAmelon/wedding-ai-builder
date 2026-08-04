@@ -343,3 +343,7 @@ export default function BoutiquePage() {
     </div>
   );
 }
+
+
+
+

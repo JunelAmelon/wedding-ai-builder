@@ -157,5 +157,15 @@
       "cacheHit": false
     },
     "leadId": "cLonOFyaIS_X"
+  },
+  "EDy9PivC5ZM9": {
+    "id": "EDy9PivC5ZM9",
+    "createdAt": "2026-08-04T11:21:26.366Z",
+    "updatedAt": "2026-08-04T11:21:26.366Z",
+    "status": "in_progress",
+    "quizAnswers": {},
+    "aiOutput": null,
+    "leadId": null,
+    "userId": null
   }
 }

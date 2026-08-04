@@ -123,12 +123,8 @@ export default function ProfessionalRegistrationPage() {
       case 1:
         return !!(form.serviceCategory && form.yearsOfExperience && form.description);
       case 2:
-        return !!(form.styles.length > 0 && form.priceMin && form.priceMax);
+        return true;
       case 3:
-        return true;
-      case 4:
-        return true;
-      case 5:
         return form.acceptedTerms;
       default:
         return false;
@@ -138,9 +134,9 @@ export default function ProfessionalRegistrationPage() {
   function goNext(index: number) {
     const valid = validateStep(index);
     markDone(index, valid);
-    if (valid && index < 5) {
+    if (valid && index < 3) {
       setOpenIndex(index + 1);
-    } else if (valid && index === 5) {
+    } else if (valid && index === 3) {
       setOpenIndex(-1);
     }
   }
@@ -154,7 +150,7 @@ export default function ProfessionalRegistrationPage() {
   }, [done, form]);
 
   async function handleSubmit() {
-    const allDone = [0, 1, 2, 3, 4, 5].every((i) => validateStep(i));
+    const allDone = [0, 1, 2, 3].every((i) => validateStep(i));
     if (!allDone) {
       setError("Veuillez compléter toutes les sections obligatoires.");
       return;
@@ -184,10 +180,10 @@ export default function ProfessionalRegistrationPage() {
         trainingDate: form.trainingDate || null,
         trainingDescription: form.trainingDescription || null,
         description: form.description,
-        styles: form.styles,
+        styles: [],
         priceRange: {
-          min: Number(form.priceMin) || 0,
-          max: Number(form.priceMax) || 0,
+          min: 0,
+          max: 0,
           currency: "EUR",
         },
         pricingDetails: "",
@@ -203,10 +199,10 @@ export default function ProfessionalRegistrationPage() {
           unavailableDates: [],
         },
         portfolio: {
-          images: portfolioImages,
-          website: form.portfolioWebsite || null,
-          instagram: form.instagram || null,
-          videos: form.videoUrls.split("\n").map((s) => s.trim()).filter(Boolean),
+          images: [],
+          website: null,
+          instagram: null,
+          videos: [],
           faq: [],
           reviews: [],
         },
@@ -332,39 +328,6 @@ export default function ProfessionalRegistrationPage() {
       ),
     },
     {
-      title: "Style & tarifs",
-      subtitle: "Univers artistique et gamme de prix pour optimiser votre matching",
-      icon: Palette,
-      body: (
-        <>
-          <div className="field span2">
-            <label>Styles de mariage que vous accompagnez *</label>
-            <div className="pill-group" style={{ marginTop: 6 }}>
-              {WEDDING_STYLES.map((style) => {
-                const selected = form.styles.includes(style);
-                return (
-                  <button key={style} type="button" onClick={() => toggleStyle(style)} className={`pill-toggle ${selected ? "on" : ""}`}>
-                    {selected && <Check size={12} />}
-                    {style}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <div className="grid2" style={{ marginTop: 14 }}>
-            <div className="field">
-              <label>Prix minimum (€) *</label>
-              <input type="number" min={0} value={form.priceMin} onChange={(e) => update("priceMin", e.target.value)} placeholder="1200" />
-            </div>
-            <div className="field">
-              <label>Prix maximum (€) *</label>
-              <input type="number" min={0} value={form.priceMax} onChange={(e) => update("priceMax", e.target.value)} placeholder="4500" />
-            </div>
-          </div>
-        </>
-      ),
-    },
-    {
       title: "Zone d'intervention",
       subtitle: "Régions, villes et déplacements",
       icon: Target,
@@ -383,34 +346,6 @@ export default function ProfessionalRegistrationPage() {
             <input value={form.noticePeriod} onChange={(e) => update("noticePeriod", e.target.value)} placeholder="Ex. 2 semaines" />
           </div>
         </div>
-      ),
-    },
-    {
-      title: "Portfolio",
-      subtitle: "Vos plus belles réalisations pour maximiser vos matches",
-      icon: ImageIcon,
-      body: (
-        <>
-          <div className="field span2">
-            <label>Photos de votre travail</label>
-            <p className="hint" style={{ marginBottom: 10 }}>Ajoutez 3 à 10 photos pour montrer votre style aux futurs couples et optimiser votre matching.</p>
-            <CloudinaryUpload onUpload={setPortfolioImages} uploaded={portfolioImages} accept="image/*" maxFiles={10} />
-          </div>
-          <div className="grid2">
-            <div className="field">
-              <label>Site portfolio</label>
-              <input type="url" value={form.portfolioWebsite} onChange={(e) => update("portfolioWebsite", e.target.value)} placeholder="https://..." />
-            </div>
-            <div className="field">
-              <label>Instagram</label>
-              <input value={form.instagram} onChange={(e) => update("instagram", e.target.value)} placeholder="@votrecompte" />
-            </div>
-          </div>
-          <div className="field span2">
-            <label>Vidéos (URLs YouTube/Vimeo, une par ligne)</label>
-            <textarea value={form.videoUrls} onChange={(e) => update("videoUrls", e.target.value)} rows={3} placeholder="https://..." />
-          </div>
-        </>
       ),
     },
     {

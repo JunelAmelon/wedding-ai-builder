@@ -3,6 +3,10 @@
    Couleurs, utilitaires, composants et sections du design fourni.
    ============================================================ */
 
+h1,
+h2,
+h3 { font-family: var(--font-poppins), sans-serif; font-weight: 700; }
+
 /* ----- Utilitaires globaux du design ----- */
 .eyebrow-pill {
   display: inline-flex;
@@ -111,7 +115,7 @@ nav a:hover { opacity: .7; }
   display: block;
   width: 100%;
   height: 2px;
-  background: var(--ink);
+  background: #1c1c1c;
   border-radius: 2px;
   transition: transform .32s cubic-bezier(.65, 0, .35, 1), opacity .2s ease, width .2s ease;
 }
@@ -191,6 +195,7 @@ footer { padding: 64px 0 32px; }
 /* ----- HERO PRO ----- */
 .pro-hero {
   padding: 56px 0 40px;
+  background: linear-gradient(to bottom, #fff0f3, #fff);
 }
 
 .pro-hero-grid {
@@ -1230,12 +1235,15 @@ footer { padding: 64px 0 32px; }
    ============================================================ */
 
 /* ----- Hero ----- */
-.hero { padding-top: 44px; }
+.hero { padding-top: 44px; background: linear-gradient(to bottom, #fff0f3, #fff); }
+main > section { padding: 40px 0; background: linear-gradient(to bottom, #fff0f3, #fff); }
 .hero .wrap { text-align: center; }
 .hero h1 {
   max-width: 600px;
   margin: 0 auto 16px;
-  font-size: 44px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 51px;
+  font-weight: 700;
 }
 .hero p.lead {
   max-width: 460px;
@@ -2180,12 +2188,24 @@ footer { padding: 64px 0 32px; }
 }
 .dark-testi .r { font-size: 10.5px; color: rgba(255, 255, 255, .5); }
 
+#articles {
+  padding: 64px 0;
+}
+
+.explore-section {
+  padding: 64px 0;
+}
+
+#newsletter {
+  padding: 64px 0;
+}
+
 .filter-row {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 36px;
+  margin-bottom: 48px;
 }
 .filter-pill {
   border: 1px solid var(--line);
@@ -2207,17 +2227,25 @@ footer { padding: 64px 0 32px; }
 .blog-grid-big {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  column-gap: 32px;
+  row-gap: 56px;
 }
 @media (max-width: 860px) {
-  .blog-grid-big { grid-template-columns: 1fr; }
+  .blog-grid-big { grid-template-columns: 1fr; row-gap: 40px; }
+}
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 .blog-card img {
   width: 100%;
   aspect-ratio: 4/3;
   object-fit: cover;
   border-radius: var(--r-md);
-  margin-bottom: 14px;
+  margin-bottom: 18px;
+  display: block;
+  flex-shrink: 0;
 }
 .blog-card .cat {
   font-size: 11px;
@@ -2225,13 +2253,21 @@ footer { padding: 64px 0 32px; }
   color: var(--bordeaux);
   text-transform: uppercase;
   letter-spacing: .04em;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 .blog-card h4 {
   font-size: 15px;
   font-weight: 700;
   line-height: 1.35;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  min-height: 3.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1 0 auto;
 }
 .blog-card .read {
   display: flex;
@@ -2241,6 +2277,14 @@ footer { padding: 64px 0 32px; }
   border-top: 1px solid var(--line);
   font-size: 12px;
   font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: auto;
+}
+.blog-card .read:hover {
+  opacity: 0.7;
 }
 .blog-card .read span { color: var(--grey-light); }
 
@@ -2275,6 +2319,7 @@ footer { padding: 64px 0 32px; }
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  margin-top: 32px;
 }
 @media (max-width: 860px) {
   .cat-tags { grid-template-columns: repeat(3, 1fr); }
@@ -2321,7 +2366,7 @@ footer { padding: 64px 0 32px; }
 .back-link:hover { color: var(--ink); }
 
 .join-hero {
-  background: #fff;
+  background: linear-gradient(to bottom, #fff0f3, #fff);
   border-bottom: 1px solid var(--line);
   padding: 56px 0 48px;
 }
@@ -2961,7 +3006,7 @@ footer { padding: 64px 0 32px; }
 
 /* ----- JOIN HERO (registration page) ----- */
 .join-hero {
-  background: #fff;
+  background: linear-gradient(to bottom, #fff0f3, #fff);
   border-bottom: 1px solid var(--line);
   padding: 56px 0 48px;
 }

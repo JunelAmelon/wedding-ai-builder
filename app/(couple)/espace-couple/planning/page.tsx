@@ -36,9 +36,9 @@ type PlanningTask = TimelineTask & { dueDate?: string };
 const DAYS_SHORT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const TASK_COLORS = [
-  { bg: "#dff05a", text: "#1c1c1c" },      // jaune DA
+  { bg: "#88b7b5", text: "#1c1c1c" },      // jaune DA
   { bg: "#dbeafe", text: "#1e3a8a" },      // bleu
-  { bg: "#dcfce7", text: "#14532d" },      // vert
+  { bg: "#88b7b5", text: "#1c1c1c" },      // vert
   { bg: "#fce7f3", text: "#831843" },      // rose
   { bg: "#ffedd5", text: "#7c2d12" },      // orange
   { bg: "#ede9fe", text: "#4c1d95" },      // violet
@@ -294,10 +294,10 @@ export default function CouplePlanningPage() {
     });
   };
 
-  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
-    <div className="min-h-[100dvh] bg-surface">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
         <PageHeader eyebrow="Organisation" title="Mon planning">
           <button
@@ -317,7 +317,7 @@ export default function CouplePlanningPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Rechercher des tâches, étapes..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
             />
           </div>
         </div>
@@ -325,7 +325,7 @@ export default function CouplePlanningPage() {
         {/* Calendar Controls */}
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#dff05a] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
               <Calendar size={20} className="text-[#1c1c1c]" />
             </div>
             <div>
@@ -379,7 +379,7 @@ export default function CouplePlanningPage() {
                             toggleTask(task.id, !task.completed);
                           }}
                           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
-                            task.completed ? "bg-[#dff05a] border-[#dff05a]" : "border-[#8b8b86]"
+                            task.completed ? "bg-white border-[#ffbfca]" : "border-[#8b8b86]"
                           }`}
                         >
                           {task.completed && <Check size={12} className="text-[#1c1c1c]" />}
@@ -416,7 +416,7 @@ export default function CouplePlanningPage() {
                         key={idx}
                         className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#e6e4dd] relative ${
                           isCurrentMonth ? "bg-white" : "bg-[#f1f0eb]/50"
-                        } ${isToday ? "ring-2 ring-inset ring-[#dff05a]" : ""}`}
+                        } ${isToday ? "ring-2 ring-inset ring-[#ffbfca]" : ""}`}
                       >
                         <div className={`text-xs font-medium mb-1 ${isToday ? "text-[#1c1c1c]" : "text-[#8b8b86]"}`}>
                           {day.getDate()}
@@ -467,7 +467,7 @@ export default function CouplePlanningPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#dff05a] rounded-lg">
+                    <div className="p-2 bg-white rounded-lg">
                       <ListChecks size={16} className="text-[#1c1c1c]" />
                     </div>
                     <span className="text-sm text-[#1c1c1c]">Complétées</span>
@@ -476,7 +476,7 @@ export default function CouplePlanningPage() {
                 </div>
                 <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#dff05a] rounded-lg">
+                    <div className="p-2 bg-white rounded-lg">
                       <Target size={16} className="text-[#1c1c1c]" />
                     </div>
                     <span className="text-sm text-[#1c1c1c]">Restantes</span>
@@ -485,7 +485,7 @@ export default function CouplePlanningPage() {
                 </div>
                 <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#dff05a] rounded-lg">
+                    <div className="p-2 bg-white rounded-lg">
                       <Clock size={16} className="text-[#1c1c1c]" />
                     </div>
                     <span className="text-sm text-[#1c1c1c]">Mois restants</span>
@@ -528,7 +528,7 @@ export default function CouplePlanningPage() {
                   onClick={openNewTask}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition text-left"
                 >
-                  <div className="p-2 bg-[#dff05a] rounded-lg">
+                  <div className="p-2 bg-white rounded-lg">
                     <CalendarPlus size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Planifier une étape</span>
@@ -537,7 +537,7 @@ export default function CouplePlanningPage() {
                   onClick={openNewTask}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition text-left"
                 >
-                  <div className="p-2 bg-[#dff05a] rounded-lg">
+                  <div className="p-2 bg-white rounded-lg">
                     <Plus size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Créer une tâche</span>
@@ -546,7 +546,7 @@ export default function CouplePlanningPage() {
             </div>
 
             {/* Progress - Jaune DA sans gradient */}
-            <div className="bg-[#dff05a] rounded-2xl p-6">
+            <div className="bg-white rounded-2xl p-6">
               <h4 className="text-sm font-bold text-[#1c1c1c] mb-3">Progression globale</h4>
               <div className="text-3xl font-bold text-[#1c1c1c] mb-1">
                 {total > 0 ? Math.round((done / total) * 100) : 0}%
@@ -569,7 +569,7 @@ export default function CouplePlanningPage() {
       {/* Modal - Style témoin */}
       {showTaskModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
@@ -579,7 +579,7 @@ export default function CouplePlanningPage() {
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
                 <Calendar size={20} className="text-[#1c1c1c]" />
               </div>
               <div>
@@ -600,7 +600,7 @@ export default function CouplePlanningPage() {
                   value={taskForm.title}
                   onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
                   placeholder="Ex: Réserver le lieu de réception"
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
                 />
               </div>
 
@@ -611,7 +611,7 @@ export default function CouplePlanningPage() {
                 <select
                   value={taskForm.monthsBeforeWedding}
                   onChange={(e) => setTaskForm({ ...taskForm, monthsBeforeWedding: Number(e.target.value) })}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] cursor-pointer"
+                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#ffbfca] cursor-pointer"
                 >
                   {[...Array(25)].map((_, i) => (
                     <option key={i} value={i}>
@@ -626,7 +626,7 @@ export default function CouplePlanningPage() {
                   <button
                     onClick={() => toggleTask(selectedTask.id, !selectedTask.completed)}
                     className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
-                      selectedTask.completed ? "bg-[#dff05a] border-[#dff05a]" : "border-[#8b8b86]"
+                      selectedTask.completed ? "bg-white border-[#ffbfca]" : "border-[#8b8b86]"
                     }`}
                   >
                     {selectedTask.completed && <Check size={10} className="text-[#1c1c1c]" />}
@@ -671,3 +671,8 @@ export default function CouplePlanningPage() {
     </div>
   );
 }
+
+
+
+
+

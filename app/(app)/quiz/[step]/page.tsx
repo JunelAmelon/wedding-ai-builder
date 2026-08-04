@@ -155,12 +155,12 @@ export default function QuizStepPage() {
   }
 
   if (!ready) {
-    return <div className="min-h-[100dvh] bg-background" />;
+    return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
   }
 
   if (error) {
     return (
-      <div className="min-h-[100dvh] bg-background flex items-center justify-center px-6">
+      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
         <div className="max-w-md w-full rounded-3xl border border-black/10 bg-white p-8 shadow-[0_30px_80px_rgba(11,15,26,0.08)] text-center">
           <div className="mx-auto h-16 w-16 rounded-2xl bg-warning/15 border border-warning/25 flex items-center justify-center mb-6">
             <TriangleAlert className="text-warning" size={32} />
@@ -181,7 +181,7 @@ export default function QuizStepPage() {
   const hero = HERO_BY_STEP[step] ?? HERO_BY_STEP.date;
 
   return (
-    <div className="bg-background min-h-[100dvh]">
+    <div className="bg-gradient-to-b from-[#fff0f3] to-white min-h-[100dvh]">
       <ProgressBar current={stepIndex + 1} total={QUIZ_STEPS.length} />
 
       <div className="grid lg:grid-cols-2 min-h-[100dvh]">

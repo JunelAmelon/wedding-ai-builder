@@ -213,10 +213,10 @@ export default function CoupleBudgetPage() {
     setExpenses([]);
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
-    <div className="min-h-[100dvh] bg-surface">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
         <PageHeader eyebrow="Suivi financier" title="Mon budget">
           <button
@@ -236,7 +236,7 @@ export default function CoupleBudgetPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Rechercher une dépense..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
             />
           </div>
         </div>
@@ -294,7 +294,7 @@ export default function CoupleBudgetPage() {
 
         {/* AI Budget Suggestion - Jaune DA */}
         {aiBudget && expenses.length === 0 && (
-          <div className="mb-8 bg-[#dff05a] rounded-2xl p-6">
+          <div className="mb-8 bg-[#88b7b5] rounded-2xl p-6">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-[#1c1c1c]/10 rounded-xl">
                 <Sparkles size={24} className="text-[#1c1c1c]" />
@@ -450,7 +450,7 @@ export default function CoupleBudgetPage() {
                   <circle cx="50" cy="50" r="42" fill="none" stroke="#f1f0eb" strokeWidth="8" />
                   <circle
                     cx="50" cy="50" r="42" fill="none"
-                    stroke="#dff05a" strokeWidth="8" strokeLinecap="round"
+                    stroke="#88b7b5" strokeWidth="8" strokeLinecap="round"
                     strokeDasharray={`${spentPct * 2.64} 264`}
                   />
                 </svg>
@@ -476,7 +476,7 @@ export default function CoupleBudgetPage() {
               </div>
               <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#dff05a] rounded-lg">
+                  <div className="p-2 bg-[#88b7b5] rounded-lg">
                     <Receipt size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Transactions</span>
@@ -485,7 +485,7 @@ export default function CoupleBudgetPage() {
               </div>
               <div className="flex items-center justify-between p-3 bg-[#f1f0eb] rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-[#dff05a] rounded-lg">
+                  <div className="p-2 bg-[#88b7b5] rounded-lg">
                     <Target size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Catégories</span>
@@ -502,7 +502,7 @@ export default function CoupleBudgetPage() {
                   onClick={openNewExpense}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition-colors text-left"
                 >
-                  <div className="p-2 bg-[#dff05a] rounded-lg">
+                  <div className="p-2 bg-[#88b7b5] rounded-lg">
                     <Plus size={16} className="text-[#1c1c1c]" />
                   </div>
                   <span className="text-sm text-[#1c1c1c]">Ajouter une dépense</span>
@@ -513,7 +513,7 @@ export default function CoupleBudgetPage() {
                     disabled={importing}
                     className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f1f0eb] transition-colors text-left disabled:opacity-50"
                   >
-                    <div className="p-2 bg-[#dff05a] rounded-lg">
+                    <div className="p-2 bg-[#88b7b5] rounded-lg">
                       <Sparkles size={16} className="text-[#1c1c1c]" />
                     </div>
                     <span className="text-sm text-[#1c1c1c]">Importer plan IA</span>
@@ -539,7 +539,7 @@ export default function CoupleBudgetPage() {
       {/* Modal Add/Edit Expense - Style témoin */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
@@ -549,7 +549,7 @@ export default function CoupleBudgetPage() {
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-[#88b7b5] flex items-center justify-center">
                 <Wallet size={20} className="text-[#1c1c1c]" />
               </div>
               <div>
@@ -570,7 +570,7 @@ export default function CoupleBudgetPage() {
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
                   placeholder="Ex. Acompte traiteur"
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                 />
               </div>
 
@@ -581,7 +581,7 @@ export default function CoupleBudgetPage() {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] cursor-pointer"
+                  className="w-full appearance-none bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5] cursor-pointer"
                 >
                   {CATEGORIES.map((c) => (
                     <option key={c} value={c}>{c}</option>
@@ -599,7 +599,7 @@ export default function CoupleBudgetPage() {
                     value={planned}
                     onChange={(e) => setPlanned(e.target.value)}
                     placeholder="0"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -611,7 +611,7 @@ export default function CoupleBudgetPage() {
                     value={actual}
                     onChange={(e) => setActual(e.target.value)}
                     placeholder="0"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
               </div>
@@ -650,3 +650,6 @@ export default function CoupleBudgetPage() {
     </div>
   );
 }
+
+
+

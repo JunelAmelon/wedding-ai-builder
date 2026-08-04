@@ -87,14 +87,14 @@ export default function VendorGiftsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] bg-[#ffbfca1a] flex items-center justify-center">
+      <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center">
         <div className="text-[#8b8b86]">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[80dvh] bg-[#ffbfca1a]">
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -181,7 +181,7 @@ export default function VendorGiftsPage() {
                     value={newItem.name}
                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                     placeholder="Ex: Pack photo complet"
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -190,7 +190,7 @@ export default function VendorGiftsPage() {
                     value={newItem.description}
                     onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                     placeholder="Description du cadeau..."
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
+                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
                   />
                 </div>
                 <div>
@@ -200,7 +200,7 @@ export default function VendorGiftsPage() {
                     value={newItem.price}
                     onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                     placeholder="Ex: 890"
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -210,7 +210,7 @@ export default function VendorGiftsPage() {
                     value={newItem.imageUrl}
                     onChange={(e) => setNewItem({ ...newItem, imageUrl: e.target.value })}
                     placeholder="https://..."
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -220,7 +220,7 @@ export default function VendorGiftsPage() {
                     value={newItem.quantity}
                     onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
                     placeholder="1"
-                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
               </div>
@@ -246,3 +246,4 @@ export default function VendorGiftsPage() {
     </div>
   );
 }
+

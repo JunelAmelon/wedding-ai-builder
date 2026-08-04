@@ -33,46 +33,11 @@ body {
   background-color: #ffbfca1a;
   color: var(--ink);
   font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-h1, h2, h3 {
-  font-family: var(--font-display);
+h1,
+h2,
+h3 {
+  font-family: var(--font-poppins), sans-serif;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  color: var(--ink);
-}
-
-section {
-  padding: 56px 0;
-}
-
-@media (max-width: 860px) {
-  section { padding: 36px 0; }
-}
-
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-
-.gradient-surface {
-  background: radial-gradient(circle at top, rgba(124, 58, 237, 0.10), transparent 55%), #ffffff;
 }

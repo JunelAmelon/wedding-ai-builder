@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-[100dvh] bg-[#ffbfca1a] flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
+      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
         <div className="max-w-md w-full">
           <div className="mb-8">
             <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#1c1c1c] hover:text-[#8b8b86] transition">
@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#ffbfca1a] flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
       <div className="max-w-md w-full">
         <div className="mb-8">
           <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#1c1c1c] hover:text-[#8b8b86] transition">

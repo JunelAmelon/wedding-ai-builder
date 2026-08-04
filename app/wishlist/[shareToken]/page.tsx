@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Gift, Heart, Share2, Check, Users, MessageSquare, Eye, X } from "lucide-react";
+import Image from "next/image";
+import { Gift, Heart, Share2, Check, Users, MessageSquare, Eye, X, Car, Globe } from "lucide-react";
 import type { Wishlist, WishlistItem, WishlistPurchase } from "@/types/marketplace";
 
 export default function WishlistPublicPage() {
@@ -29,6 +30,7 @@ export default function WishlistPublicPage() {
   const [success, setSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState("");
   const [linkCopied, setLinkCopied] = useState(false);
+  const [coverSlide, setCoverSlide] = useState(0);
 
   async function loadWishlist() {
     try {
@@ -80,6 +82,14 @@ export default function WishlistPublicPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, shareToken]);
+
+  useEffect(() => {
+    if (wishlist?.coverImage) return;
+    const interval = setInterval(() => {
+      setCoverSlide((s) => (s === 0 ? 1 : 0));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [wishlist?.coverImage]);
 
   function openGeneralContribution() {
     setSelectedItem(null);
@@ -179,7 +189,7 @@ export default function WishlistPublicPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[100dvh] bg-[#ffbfca1a] flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center">
         <div className="text-[#8b8b86]">Chargement...</div>
       </div>
     );
@@ -187,14 +197,14 @@ export default function WishlistPublicPage() {
 
   if (!wishlist) {
     return (
-      <div className="min-h-[100dvh] bg-[#ffbfca1a] flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center">
         <div className="text-[#8b8b86]">Liste de souhaits introuvable</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#ffbfca1a]">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white">
       <header className="bg-white border-b border-[#e6e4dd] sticky top-0 z-30">
         <div className="max-w-[1220px] mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="font-display text-xl font-semibold text-[#1c1c1c]">
@@ -202,9 +212,11 @@ export default function WishlistPublicPage() {
           </Link>
           <Link
             href="/"
-            className="hidden sm:inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#1c1c1c] text-white hover:bg-[#333] transition"
+            className="inline-flex items-center justify-center w-10 h-10 sm:h-auto sm:w-auto sm:px-4 sm:py-2 rounded-full text-sm font-medium bg-[#1c1c1c] text-white hover:bg-[#333] transition"
+            aria-label="Nous découvrir"
           >
-            Nous découvrir
+            <Globe size={20} className="sm:hidden" />
+            <span className="hidden sm:inline">Nous découvrir</span>
           </Link>
         </div>
       </header>
@@ -219,7 +231,7 @@ export default function WishlistPublicPage() {
         </div>
       )}
 
-      <section className="py-10 sm:py-14 px-6 bg-white border-b border-[#e6e4dd]">
+      <section className="py-10 sm:py-14 px-6 bg-gradient-to-b from-[#fff0f3] to-white border-b border-[#e6e4dd]">
         <div className="max-w-[1220px] mx-auto">
           <div className="text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D8ECD9] text-[#1c1c1c] text-xs font-medium mb-4">
@@ -246,22 +258,36 @@ export default function WishlistPublicPage() {
 
       <div className="max-w-[1220px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start p-6">
 
-        {/* LEFT COLUMN */}
-        <div className="flex flex-col gap-6">
-
-          {/* Photo Card */}
+        {/* Photo Card */}
           {wishlist.coverImage ? (
-            <div className="rounded-2xl overflow-hidden h-[430px] bg-black">
+            <div className="rounded-2xl overflow-hidden h-[430px] bg-black lg:col-start-1">
               <img src={wishlist.coverImage.url} alt="Cover" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="rounded-2xl overflow-hidden h-[430px] bg-[#dff05a] flex items-center justify-center">
-              <Gift size={64} className="text-[#1c1c1c]" />
+            <div className="rounded-2xl overflow-hidden h-[430px] bg-black relative group lg:col-start-1">
+              <Image
+                src="/cagnotte-image.jpg"
+                alt="Cagnotte 1"
+                fill
+                className={`object-cover transition-opacity duration-1000 ease-in-out ${coverSlide === 0 ? "opacity-100" : "opacity-0"}`}
+                unoptimized
+              />
+              <Image
+                src="/cagnotte-image (2).jpg"
+                alt="Cagnotte 2"
+                fill
+                className={`object-cover transition-opacity duration-1000 ease-in-out ${coverSlide === 1 ? "opacity-100" : "opacity-0"}`}
+                unoptimized
+              />
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                <span className={`h-2 rounded-full transition-all duration-300 ${coverSlide === 0 ? "w-6 bg-white" : "w-2 bg-white/50"}`} />
+                <span className={`h-2 rounded-full transition-all duration-300 ${coverSlide === 1 ? "w-6 bg-white" : "w-2 bg-white/50"}`} />
+              </div>
             </div>
           )}
 
           {/* Description Card */}
-          <div className="bg-white rounded-2xl p-7 sm:p-8 border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
+          <div className="bg-white rounded-2xl p-7 sm:p-8 border border-t-0 border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] lg:col-start-1">
             <h2 className="text-2xl font-extrabold mb-4 text-[#1c1c1c]">{wishlist.title}</h2>
             <div className="text-[15px] leading-relaxed text-[#1a1a1a] whitespace-pre-line mb-5">
               {wishlist.description}
@@ -271,16 +297,68 @@ export default function WishlistPublicPage() {
             </div>
           </div>
 
+          {/* RIGHT COLUMN */}
+          <div className="bg-white rounded-2xl p-7 lg:p-8 lg:sticky lg:top-6 border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] lg:col-start-2 lg:row-start-1 lg:row-span-4">
+            <div className="text-2xl font-extrabold mb-2 text-[#1c1c1c]">{wishlist.title}</div>
+            <div className="text-2xl font-extrabold text-[#1c1c1c]">
+              {totalPurchased.toLocaleString("fr-FR")} € <span className="text-base font-medium text-[#4b5563] ml-1">récoltés</span>
+            </div>
+
+            <div className="flex justify-between mt-6 mb-6 max-w-[260px]">
+              <div className="flex flex-col items-center gap-1">
+                <Heart size={22} className="text-[#1c1c1c]" />
+                <span className="text-[15px] font-bold text-[#1c1c1c]">{donorCount}</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <MessageSquare size={22} className="text-[#1c1c1c]" />
+                <span className="text-[15px] font-bold text-[#1c1c1c]">{messages.length}</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <Eye size={22} className="text-[#1c1c1c]" />
+                <span className="text-[15px] font-bold text-[#1c1c1c]">{items.length}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 rounded-full bg-[#fff0f3] flex items-center justify-center flex-shrink-0">
+                <Gift size={16} className="text-[#1c1c1c]" />
+              </div>
+              <div className="text-[14px] leading-relaxed text-[#1a1a1a]">
+                <b>Liste de mariage</b> <span className="text-[#D77779] ml-1">✔</span>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={share}
+                className="w-12 h-12 rounded-xl bg-[#1c1c1c] flex items-center justify-center flex-shrink-0 hover:bg-[#333] transition"
+                aria-label="Partager"
+                title="Partager le lien"
+              >
+                {linkCopied ? <Check size={20} className="text-white" /> : <Share2 size={20} className="text-white" />}
+              </button>
+              <button
+                onClick={openGeneralContribution}
+                className="flex-1 bg-[#1c1c1c] text-white font-bold text-base rounded-xl flex items-center justify-center hover:bg-[#333] transition py-3"
+              >
+                Participer
+              </button>
+            </div>
+            {linkCopied && (
+              <p className="text-xs text-[#0F9D6E] font-semibold mt-2 text-center">Lien copié !</p>
+            )}
+          </div>
+
           {/* Messages Card */}
-          <div className="bg-white rounded-2xl p-7 sm:p-8 border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
+          <div className="bg-white rounded-2xl p-7 sm:p-8 border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] lg:col-start-1">
             <div className="text-2xl font-extrabold mb-5 text-[#1c1c1c]">
-              <span className="text-[#dff05a]">{messages.length}</span> Messages
+              <span className="text-[#D77779]">{messages.length}</span> Messages
             </div>
 
             <div className="space-y-6">
               {messages.map((purchase) => (
                 <div key={purchase.id} className="flex gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#dff05a] flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#fff0f3] flex items-center justify-center flex-shrink-0">
                     <Users size={18} className="text-[#1c1c1c]" />
                   </div>
                   <div className="flex-1">
@@ -304,7 +382,7 @@ export default function WishlistPublicPage() {
 
           {/* Items Card */}
           {items.length > 0 && (
-            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
+            <div className="bg-white rounded-2xl p-7 sm:p-8 border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] lg:col-start-1">
               <h2 className="text-2xl font-extrabold mb-5 text-[#1c1c1c]">Cadeaux</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 {items.map((item) => {
@@ -319,9 +397,15 @@ export default function WishlistPublicPage() {
                         isPurchased ? "opacity-50" : ""
                       }`}
                     >
-                      {item.imageUrl && (
+                      {item.imageUrl ? (
                         <div className="h-40 bg-[#f7f7f9]">
                           <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="h-40 bg-[#D8ECD9] flex flex-col items-center justify-center p-4 text-center">
+                          <Car size={40} className="text-[#1c1c1c] mb-2" />
+                          <h4 className="font-bold text-[#1c1c1c] text-sm">{item.name}</h4>
+                          <p className="text-xs text-[#1c1c1c]/70 mt-1 line-clamp-2">{item.description || "Pour notre mariage on souhaiterait recevoir en cadeau..."}</p>
                         </div>
                       )}
                       <div className="p-4">
@@ -359,63 +443,10 @@ export default function WishlistPublicPage() {
           )}
         </div>
 
-        {/* RIGHT COLUMN */}
-        <div className="bg-white rounded-2xl p-7 lg:p-8 lg:sticky lg:top-6 border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
-          <div className="text-2xl font-extrabold mb-2 text-[#1c1c1c]">{wishlist.title}</div>
-          <div className="text-2xl font-extrabold text-[#1c1c1c]">
-            {totalPurchased.toLocaleString("fr-FR")} € <span className="text-base font-medium text-[#4b5563] ml-1">récoltés</span>
-          </div>
-
-          <div className="flex justify-between mt-6 mb-6 max-w-[260px]">
-            <div className="flex flex-col items-center gap-1">
-              <Heart size={22} className="text-[#1c1c1c]" />
-              <span className="text-[15px] font-bold text-[#1c1c1c]">{donorCount}</span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <MessageSquare size={22} className="text-[#1c1c1c]" />
-              <span className="text-[15px] font-bold text-[#1c1c1c]">{messages.length}</span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <Eye size={22} className="text-[#1c1c1c]" />
-              <span className="text-[15px] font-bold text-[#1c1c1c]">{items.length}</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-full bg-[#dff05a] flex items-center justify-center flex-shrink-0">
-              <Gift size={16} className="text-[#1c1c1c]" />
-            </div>
-            <div className="text-[14px] leading-relaxed text-[#1a1a1a]">
-              <b>Liste de mariage</b> <span className="text-[#dff05a] ml-1">✔</span>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={share}
-              className="w-12 h-12 rounded-xl bg-[#1c1c1c] flex items-center justify-center flex-shrink-0 hover:bg-[#333] transition"
-              aria-label="Partager"
-              title="Partager le lien"
-            >
-              {linkCopied ? <Check size={20} className="text-white" /> : <Share2 size={20} className="text-white" />}
-            </button>
-            <button
-              onClick={openGeneralContribution}
-              className="flex-1 bg-[#1c1c1c] text-white font-bold text-base rounded-xl flex items-center justify-center hover:bg-[#333] transition py-3"
-            >
-              Participer
-            </button>
-          </div>
-          {linkCopied && (
-            <p className="text-xs text-[#0F9D6E] font-semibold mt-2 text-center">Lien copié !</p>
-          )}
-        </div>
-      </div>
-
       {/* Contribution Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
@@ -425,24 +456,24 @@ export default function WishlistPublicPage() {
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-[#fff0f3] flex items-center justify-center">
                 <Gift size={20} className="text-[#1c1c1c]" />
               </div>
               <div>
                 <h2 className="font-bold text-xl text-[#1c1c1c]">
                   {selectedItem ? "Offrir ce cadeau" : "Participer à la cagnotte"}
                 </h2>
-                <p className="text-[#8b8b86] text-sm">Contribuez au mariage de {wishlist.title}</p>
+                <p className="text-[#8b8b86] text-sm">Contribuez au mariage de {wishlist?.title}</p>
               </div>
             </div>
 
             {selectedItem ? (
               <div className="mb-6 p-4 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
-                <h4 className="font-bold text-lg text-[#1c1c1c] mb-2">{selectedItem.name}</h4>
-                <p className="text-sm text-[#8b8b86] mb-2">{selectedItem.description}</p>
+                <h4 className="font-bold text-lg text-[#1c1c1c] mb-2">{selectedItem!.name}</h4>
+                <p className="text-sm text-[#8b8b86] mb-2">{selectedItem!.description}</p>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-2xl text-[#1c1c1c]">{selectedItem.price} €</span>
-                  <span className="text-sm text-[#8b8b86]">x{selectedItem.quantity}</span>
+                  <span className="font-bold text-2xl text-[#1c1c1c]">{selectedItem!.price} €</span>
+                  <span className="text-sm text-[#8b8b86]">x{selectedItem!.quantity}</span>
                 </div>
               </div>
             ) : (
@@ -463,7 +494,7 @@ export default function WishlistPublicPage() {
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   placeholder="Votre nom"
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D77779]"
                 />
               </div>
               <div>
@@ -475,7 +506,7 @@ export default function WishlistPublicPage() {
                   value={guestEmail}
                   onChange={(e) => setGuestEmail(e.target.value)}
                   placeholder="votre@email.com"
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D77779]"
                 />
               </div>
               <div>
@@ -487,8 +518,8 @@ export default function WishlistPublicPage() {
                   min="1"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder={selectedItem ? selectedItem.price.toString() : "Ex: 50"}
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  placeholder={selectedItem ? selectedItem!.price.toString() : "Ex: 50"}
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D77779]"
                 />
               </div>
               <div>
@@ -499,7 +530,7 @@ export default function WishlistPublicPage() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Un petit mot pour les mariés..."
-                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
+                  className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D77779] min-h-[80px] resize-none"
                 />
               </div>
             </div>

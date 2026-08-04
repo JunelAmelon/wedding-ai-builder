@@ -91,7 +91,7 @@ export default function VendorPreviewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] flex items-center justify-center bg-[#f3f2ee]">
+      <div className="min-h-[80dvh] flex items-center justify-center bg-gradient-to-b from-[#fff0f3] to-white">
         <Loader2 size={32} className="animate-spin text-[#1c1c1c]" />
       </div>
     );
@@ -133,7 +133,7 @@ export default function VendorPreviewPage() {
   const styles = vendor.styles || [];
 
   return (
-    <div className="min-h-screen bg-[#f3f2ee]">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
         <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full bg-[#dff05a] text-[#1c1c1c] text-xs font-semibold">
           Aperçu prestataire
@@ -143,7 +143,7 @@ export default function VendorPreviewPage() {
           {/* Portfolio - gauche */}
           <div className="min-w-0">
             <div className="mb-4">
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#f3f2ee] border border-black/[0.06]">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-b from-[#fff0f3] to-white border border-black/[0.06]">
                 {selectedImage ? (
                   <Image
                     src={selectedImage}
@@ -369,7 +369,7 @@ export default function VendorPreviewPage() {
                     <button
                       key={img.publicId || i}
                       onClick={() => setSelectedImage(img.url)}
-                      className="relative aspect-square rounded-xl overflow-hidden bg-[#f3f2ee] border border-black/[0.06]"
+                      className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-[#fff0f3] to-white border border-black/[0.06]"
                     >
                       <Image src={img.url} alt={`Portfolio ${i + 1}`} fill className="object-cover hover:scale-105 transition-transform" sizes="(max-width: 768px) 50vw, 33vw" unoptimized />
                     </button>

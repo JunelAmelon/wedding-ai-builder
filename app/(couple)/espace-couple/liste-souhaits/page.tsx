@@ -147,14 +147,14 @@ export default function WishlistManagementPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] bg-[#ffbfca1a] flex items-center justify-center">
+      <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center">
         <div className="text-[#8b8b86]">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[80dvh] bg-[#ffbfca1a]">
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -183,7 +183,7 @@ export default function WishlistManagementPage() {
                 className="rounded-2xl bg-white border border-[#e4e2db] shadow-sm p-6 cursor-pointer hover:shadow-md transition"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="h-12 w-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-full bg-[#88b7b5] flex items-center justify-center">
                     <Gift size={24} className="text-[#1c1c1c]" />
                   </div>
                   <div>
@@ -314,7 +314,7 @@ export default function WishlistManagementPage() {
         {/* Create Wishlist Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
@@ -324,7 +324,7 @@ export default function WishlistManagementPage() {
               </button>
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-[#88b7b5] flex items-center justify-center">
                   <Gift size={20} className="text-[#1c1c1c]" />
                 </div>
                 <div>
@@ -345,7 +345,7 @@ export default function WishlistManagementPage() {
                     value={newWishlistTitle}
                     onChange={(e) => setNewWishlistTitle(e.target.value)}
                     placeholder="Ex: Liste de mariage de Sarah & Marc"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -356,7 +356,7 @@ export default function WishlistManagementPage() {
                     value={newWishlistDescription}
                     onChange={(e) => setNewWishlistDescription(e.target.value)}
                     placeholder="Décrivez votre liste..."
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
                   />
                 </div>
               </div>
@@ -382,7 +382,7 @@ export default function WishlistManagementPage() {
         {/* Add Item Modal */}
         {showAddItemModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full max-w-lg bg-gradient-to-b from-[#fff0f3] to-white rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
               <button
                 onClick={() => setShowAddItemModal(false)}
                 className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
@@ -392,7 +392,7 @@ export default function WishlistManagementPage() {
               </button>
 
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-[#dff05a] flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-[#88b7b5] flex items-center justify-center">
                   <Gift size={20} className="text-[#1c1c1c]" />
                 </div>
                 <div>
@@ -413,7 +413,7 @@ export default function WishlistManagementPage() {
                     value={newItem.name}
                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                     placeholder="Ex: Service photo"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -424,7 +424,7 @@ export default function WishlistManagementPage() {
                     value={newItem.description}
                     onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                     placeholder="Description du cadeau..."
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
                   />
                 </div>
                 <div>
@@ -436,7 +436,7 @@ export default function WishlistManagementPage() {
                     value={newItem.price}
                     onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                     placeholder="Ex: 890"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -448,7 +448,7 @@ export default function WishlistManagementPage() {
                     value={newItem.imageUrl}
                     onChange={(e) => setNewItem({ ...newItem, imageUrl: e.target.value })}
                     placeholder="https://..."
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -460,7 +460,7 @@ export default function WishlistManagementPage() {
                     value={newItem.vendorName}
                     onChange={(e) => setNewItem({ ...newItem, vendorName: e.target.value })}
                     placeholder="Nom du prestataire"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
                 <div>
@@ -472,7 +472,7 @@ export default function WishlistManagementPage() {
                     value={newItem.quantity}
                     onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
                     placeholder="1"
-                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                    className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                   />
                 </div>
               </div>
@@ -498,3 +498,7 @@ export default function WishlistManagementPage() {
     </div>
   );
 }
+
+
+
+

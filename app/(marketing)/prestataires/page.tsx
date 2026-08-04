@@ -187,13 +187,9 @@ export default function ProfessionalMarketingPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* DASHBOARD */}
-        <section id="dashboard" style={{ background: "var(--surface)" }}>
-          <div className="wrap">
-            <div className="live-promo reveal">
+            {/* DASHBOARD - Collé directement après */}
+            <div className="live-promo reveal" style={{ marginTop: 32 }}>
               <div className="lp-col">
                 <div className="lp-visual-duo">
                   <div className="lp-phone">

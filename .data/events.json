@@ -1000,5 +1000,12 @@
       "riskScore": 35
     },
     "timestamp": "2026-06-29T13:04:07.757Z"
+  },
+  "sbH8E7hjdUm6": {
+    "id": "sbH8E7hjdUm6",
+    "sessionId": "AFBZUYI5tO__",
+    "name": "quiz_started",
+    "properties": {},
+    "timestamp": "2026-08-04T11:21:26.368Z"
   }
 }

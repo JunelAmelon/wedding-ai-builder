@@ -38,7 +38,7 @@ export default function CoupleDocumentsPage() {
             className="group flex items-center justify-between rounded-2xl border border-black/10 bg-white p-5 shadow-[0_12px_40px_rgba(11,15,26,0.06)] hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl bg-surface border border-black/10 flex items-center justify-center text-primary">
+              <div className="h-12 w-12 rounded-xl bg-white border border-black/10 flex items-center justify-center text-primary">
                 <doc.icon size={22} />
               </div>
               <div>
@@ -62,3 +62,7 @@ export default function CoupleDocumentsPage() {
     </div>
   );
 }
+
+
+
+

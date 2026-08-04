@@ -5,41 +5,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { ArrowRight, Check, Star } from "lucide-react";
+import type { BlogPost } from "@/types/admin";
 
 const CATEGORIES = ["Tous", "Budget", "Planning", "Prestataires", "Style"];
-
-const ARTICLES = [
-  {
-    img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&h=380&q=85",
-    cat: "Budget",
-    title: "Comment répartir son budget mariage sans mauvaise surprise",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=500&h=380&q=85",
-    cat: "Planning",
-    title: "Le rétroplanning idéal, 12 mois avant le jour J",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&h=380&q=85",
-    cat: "Prestataires",
-    title: "5 questions à poser avant de matcher avec votre traiteur",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=500&h=380&q=85",
-    cat: "Style",
-    title: "Boho, classique, minimaliste : trouver son style en 10 minutes",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&h=380&q=85",
-    cat: "Prestataires",
-    title: "Comment lire un devis de photographe : c'est un match ou non ?",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&h=380&q=85",
-    cat: "Budget",
-    title: "Les 6 postes de dépense les plus souvent sous-estimés",
-  },
-];
 
 const TAGS = [
   { label: "Budget", icon: BudgetIcon },
@@ -68,6 +36,18 @@ function HeartIcon({ size = 15 }: { size?: number }) {
 export default function BlogPage() {
   const [filter, setFilter] = useState("Tous");
   const [email, setEmail] = useState("");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/blog")
+      .then((r) => r.json())
+      .then((d) => {
+        setPosts(d.posts || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -83,9 +63,9 @@ export default function BlogPage() {
     );
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [posts]);
 
-  const filtered = filter === "Tous" ? ARTICLES : ARTICLES.filter((a) => a.cat === filter);
+  const filtered = filter === "Tous" ? posts : posts.filter((a) => a.category === filter);
 
   return (
     <>
@@ -189,7 +169,7 @@ export default function BlogPage() {
               <h2 style={{ marginTop: 18 }}>Nos derniers guides</h2>
             </div>
 
-            <div className="filter-row">
+            <div className="filter-row" style={{ marginBottom: 40 }}>
               {CATEGORIES.map((c) => (
                 <button
                   key={c}
@@ -202,20 +182,26 @@ export default function BlogPage() {
             </div>
 
             <div className="blog-grid-big">
-              {filtered.map((a, i) => (
-                <article key={i} className="blog-card reveal">
-                  <Image src={a.img} alt={a.title} width={400} height={300} className="w-full h-full object-cover" unoptimized />
-                  <div className="cat">{a.cat}</div>
-                  <h4>{a.title}</h4>
-                  <div className="read">Lire l&apos;article <span>→</span></div>
-                </article>
-              ))}
+              {loading ? (
+                <p className="col-span-3 text-center text-[#8b8b86]">Chargement des articles...</p>
+              ) : filtered.length === 0 ? (
+                <p className="col-span-3 text-center text-[#8b8b86]">Aucun article disponible.</p>
+              ) : (
+                filtered.map((a, i) => (
+                  <article key={i} className="blog-card reveal">
+                    <Image src={a.coverImage || "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&h=380&q=85"} alt={a.title} width={400} height={300} className="w-full object-cover" unoptimized />
+                    <div className="cat">{a.category}</div>
+                    <h4>{a.title}</h4>
+                    <Link href={`/blog/${a.slug}`} className="read">Lire l&apos;article <span>→</span></Link>
+                  </article>
+                ))
+              )}
             </div>
           </div>
         </section>
 
         {/* CATEGORIES */}
-        <section style={{ background: "var(--surface)" }}>
+        <section className="explore-section" style={{ background: "var(--surface)" }}>
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">Explorer</span>

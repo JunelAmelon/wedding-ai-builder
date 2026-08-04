@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   LogOut,
+  Calendar,
 } from "lucide-react";
 
 const VENDOR_NAV = [
@@ -27,6 +28,7 @@ const VENDOR_NAV = [
 ];
 
 const VENDOR_NAV_SECONDARY = [
+  { href: "/espace-prestataire/calendrier", label: "Calendrier", icon: Calendar },
   { href: "/espace-prestataire/profil", label: "Profil", icon: UserCircle },
   { href: "/espace-prestataire/credits", label: "Crédits", icon: LayoutGrid },
   { href: "/espace-prestataire/notifications", label: "Notifications", icon: Bell },
@@ -90,7 +92,7 @@ export default function VendorLayoutClient({
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#ffbfca1a] text-[#1c1c1c]">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white text-[#1c1c1c]">
       <div
         className={`hidden lg:block fixed inset-x-0 z-40 px-6 transition-all duration-300 ${
           scrolled ? "top-0 py-3 bg-white/75 backdrop-blur-xl border-b border-[#e6e4dd] shadow-[0_8px_30px_rgba(14,14,16,0.06)]" : "top-5"
@@ -169,7 +171,7 @@ export default function VendorLayoutClient({
         </div>
       </div>
 
-      <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-[#ffbfca1a]/90 backdrop-blur-xl">
+      <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-white/90 backdrop-blur-xl">
         <Link href="/espace-prestataire" className="font-display text-xl font-semibold text-[#1c1c1c]">
           Mariage Facile
         </Link>
@@ -251,7 +253,7 @@ export default function VendorLayoutClient({
                   active ? "text-[#1c1c1c]" : "text-[#8b8b86]"
                 }`}
               >
-                <div className={`relative ${item.primary ? "bg-[#dff05a] text-[#1c1c1c]" : ""} rounded-full p-1.5`}>
+                <div className={`relative ${item.primary ? "bg-[#88b7b5] text-[#1c1c1c]" : ""} rounded-full p-1.5`}>
                   <item.icon size={18} strokeWidth={1.8} />
                 </div>
                 <span className="text-[10px] font-medium">{item.label}</span>
@@ -267,3 +269,4 @@ export default function VendorLayoutClient({
     </div>
   );
 }
+

@@ -76,9 +76,9 @@ export default function LandingPage() {
         {/* HERO */}
         <section className="hero">
           <div className="wrap">
-            <h1>Votre mariage prêt en 5 minutes.</h1>
+            <h1>Votre mariage prêt <span style={{ background: "linear-gradient(to right, #D77779, #FFBFCA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>en 5 minutes avec les bons pros.</span></h1>
             <p className="lead">
-              Avec les bons pros. Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère un plan complet et trouve votre âme sœur professionnelle.
+              Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère un plan complet et trouve votre âme sœur professionnelle.
             </p>
             <div className="btn-row">
               <Link href="/quiz" className="btn btn-solid">Trouver mes matches — Gratuit ! <ArrowRight size={16} /></Link>
@@ -350,7 +350,7 @@ export default function LandingPage() {
         <section>
           <div className="wrap">
             <div className="final-cta reveal">
-              <h2>Votre plan de mariage est prêt à être créé</h2>
+              <h2 style={{ background: "linear-gradient(to right, #D77779, #FFBFCA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 700 }}>Votre plan de mariage est prêt à être créé</h2>
               <p>Rejoignez les couples qui organisent leur mariage sans stress, en commençant par un plan clair et gratuit.</p>
               <div className="btn-row" style={{ justifyContent: "center" }}>
                 <Link href="/quiz" className="btn btn-solid">Créer mon plan — Gratuit ! <ArrowRight size={16} /></Link>

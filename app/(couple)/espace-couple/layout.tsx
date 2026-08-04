@@ -24,3 +24,6 @@ export default async function CoupleLayout({ children }: { children: ReactNode }
     </CoupleLayoutClient>
   );
 }
+
+
+

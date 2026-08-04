@@ -77,7 +77,7 @@ export default function CoupleLayoutClient({
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#ffbfca1a] text-text-primary">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white text-text-primary">
       <div
         className={`hidden lg:block fixed inset-x-0 z-40 px-6 transition-all duration-300 ${
           scrolled ? "top-0 py-3 bg-white/75 backdrop-blur-xl border-b border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.06)]" : "top-5"
@@ -164,7 +164,7 @@ export default function CoupleLayoutClient({
         </div>
       </div>
 
-      <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-surface/90 backdrop-blur-xl">
+      <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-white/90 backdrop-blur-xl">
         <Link href="/espace-couple/result" className="font-display text-xl font-semibold text-[#1c1c1c]">
           Mariage Facile
         </Link>
@@ -285,3 +285,8 @@ export default function CoupleLayoutClient({
     </div>
   );
 }
+
+
+
+
+

@@ -140,7 +140,7 @@ export default function NewTenderPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-surface" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
   return (
     <div className="max-w-4xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
@@ -305,3 +305,7 @@ export default function NewTenderPage() {
     </div>
   );
 }
+
+
+
+

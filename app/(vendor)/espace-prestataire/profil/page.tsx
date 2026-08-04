@@ -74,7 +74,7 @@ export default function VendorProfilePage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
   if (!profile) return <div className="p-6 text-[#8b8b86]">Profil introuvable.</div>;
 
   const updateField = (field: string, value: unknown) => {
@@ -119,9 +119,9 @@ export default function VendorProfilePage() {
       </div>
 
       {saved && (
-        <div className="mb-6 p-4 rounded-xl bg-[#dcfce7] border border-[#dcfce7]/20 flex items-center gap-3">
-          <Check size={20} className="text-[#14532d]" />
-          <span className="text-sm text-[#14532d]">Profil enregistré avec succès !</span>
+        <div className="mb-6 p-4 rounded-xl bg-[#88b7b5] border border-[#88b7b5]/20 flex items-center gap-3">
+          <Check size={20} className="text-[#1c1c1c]" />
+          <span className="text-sm text-[#1c1c1c]">Profil enregistré avec succès !</span>
         </div>
       )}
 
@@ -189,7 +189,7 @@ export default function VendorProfilePage() {
                 type="text"
                 value={profile.companyName}
                 onChange={(e) => updateField("companyName", e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -198,7 +198,7 @@ export default function VendorProfilePage() {
                 type="text"
                 value={profile.brandName || ""}
                 onChange={(e) => updateField("brandName", e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -207,7 +207,7 @@ export default function VendorProfilePage() {
                 type="text"
                 value={profile.siret}
                 onChange={(e) => updateField("siret", e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -215,7 +215,7 @@ export default function VendorProfilePage() {
               <select
                 value={profile.serviceCategory}
                 onChange={(e) => updateField("serviceCategory", e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               >
                 <option value="">Sélectionner...</option>
                 <option value="lieu">Lieu de réception</option>
@@ -241,7 +241,7 @@ export default function VendorProfilePage() {
                 type="text"
                 value={profile.contactName}
                 onChange={(e) => updateField("contactName", e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -250,7 +250,7 @@ export default function VendorProfilePage() {
                 type="text"
                 value={profile.contactRole}
                 onChange={(e) => updateField("contactRole", e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -259,7 +259,7 @@ export default function VendorProfilePage() {
                 type="tel"
                 value={profile.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -287,7 +287,7 @@ export default function VendorProfilePage() {
                   value={profile.website || ""}
                   onChange={(e) => updateField("website", e.target.value)}
                   placeholder="https://votre-site.com"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                 />
               </div>
             </div>
@@ -300,7 +300,7 @@ export default function VendorProfilePage() {
                   value={profile.portfolio?.instagram || ""}
                   onChange={(e) => updateNested("portfolio.instagram", e.target.value)}
                   placeholder="@votre_compte"
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                  className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
                 />
               </div>
             </div>
@@ -314,7 +314,7 @@ export default function VendorProfilePage() {
             value={profile.description}
             onChange={(e) => updateField("description", e.target.value)}
             placeholder="Décrivez votre entreprise et vos services..."
-            className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[120px] resize-none"
+            className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[120px] resize-none"
           />
         </div>
 
@@ -334,7 +334,7 @@ export default function VendorProfilePage() {
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                   profile.styles?.includes(style)
-                    ? "bg-[#dff05a] text-[#1c1c1c]"
+                    ? "bg-[#88b7b5] text-[#1c1c1c]"
                     : "bg-white border border-[#e6e4dd] text-[#8b8b86] hover:bg-[#f1f0eb]"
                 }`}
               >
@@ -354,7 +354,7 @@ export default function VendorProfilePage() {
                 type="number"
                 value={profile.yearsOfExperience}
                 onChange={(e) => updateField("yearsOfExperience", parseInt(e.target.value) || 0)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -363,7 +363,7 @@ export default function VendorProfilePage() {
                 value={profile.trainingDescription || ""}
                 onChange={(e) => updateField("trainingDescription", e.target.value)}
                 placeholder="Vos formations et certifications..."
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
               />
             </div>
           </div>
@@ -379,7 +379,7 @@ export default function VendorProfilePage() {
                 type="number"
                 value={profile.priceRange?.min || 0}
                 onChange={(e) => updateNested("priceRange.min", parseInt(e.target.value) || 0)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
             <div>
@@ -388,7 +388,7 @@ export default function VendorProfilePage() {
                 type="number"
                 value={profile.priceRange?.max || 0}
                 onChange={(e) => updateNested("priceRange.max", parseInt(e.target.value) || 0)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
               />
             </div>
           </div>
@@ -398,7 +398,7 @@ export default function VendorProfilePage() {
               value={profile.pricingDetails || ""}
               onChange={(e) => updateField("pricingDetails", e.target.value)}
               placeholder="Expliquez votre structure de prix..."
-              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a] min-h-[80px] resize-none"
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5] min-h-[80px] resize-none"
             />
           </div>
         </div>
@@ -413,7 +413,7 @@ export default function VendorProfilePage() {
               value={profile.serviceArea?.regions?.join(", ") || ""}
               onChange={(e) => updateNested("serviceArea.regions", e.target.value.split(", "))}
               placeholder="Île-de-France, PACA, Auvergne..."
-              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
             />
           </div>
           <div className="mb-4">
@@ -423,7 +423,7 @@ export default function VendorProfilePage() {
               value={profile.serviceArea?.cities?.join(", ") || ""}
               onChange={(e) => updateNested("serviceArea.cities", e.target.value.split(", "))}
               placeholder="Paris, Lyon, Marseille..."
-              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
             />
           </div>
           <div>
@@ -433,7 +433,7 @@ export default function VendorProfilePage() {
               value={profile.serviceArea?.radius || 0}
               onChange={(e) => updateNested("serviceArea.radius", parseInt(e.target.value) || 0)}
               placeholder="50"
-              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#dff05a]"
+              className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#88b7b5]"
             />
           </div>
         </div>
@@ -441,3 +441,4 @@ export default function VendorProfilePage() {
     </div>
   );
 }
+

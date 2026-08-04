@@ -232,7 +232,7 @@ function GatePageInner() {
       </div>
 
       {/* ===== PANNEAU DROIT ===== */}
-      <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-white">
+      <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-gradient-to-b from-[#fff0f3] to-white">
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <LogoShape />
