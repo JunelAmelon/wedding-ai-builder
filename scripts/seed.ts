@@ -75,6 +75,8 @@ function baseUser(seed: {
     stripeCustomerId: null,
     stripeSubscriptionId: null,
     emailVerified: true,
+    resetToken: null,
+    resetTokenExpiry: null,
   };
 }
 

@@ -106,6 +106,8 @@ export async function POST(req: Request) {
       stripeCustomerId: null,
       stripeSubscriptionId: null,
       emailVerified: false,
+      resetToken: null,
+      resetTokenExpiry: null,
     });
 
     const profile = await vendorProfileRepo.create({

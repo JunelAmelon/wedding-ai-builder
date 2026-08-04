@@ -46,6 +46,8 @@ export async function POST(req: Request) {
       stripeCustomerId: null,
       stripeSubscriptionId: null,
       emailVerified: false,
+      resetToken: null,
+      resetTokenExpiry: null,
     });
 
     if (role === "vendor") {

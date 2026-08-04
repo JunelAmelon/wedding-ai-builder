@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 
 export async function POST(req: Request) {
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Aucun client Stripe trouvé" }, { status: 400 });
     }
     const origin = req.headers.get("origin") || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const portal = await stripe.billingPortal.sessions.create({
+    const portal = await getStripe().billingPortal.sessions.create({
       customer: user.stripeCustomerId,
       return_url: `${origin}/espace-prestataire`,
     });

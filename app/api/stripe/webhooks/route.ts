@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
 import { recordWishlistPayment } from "@/lib/wishlistPayment";
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
+    event = getStripe().webhooks.constructEvent(payload, sig, endpointSecret);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error: `Webhook Error: ${msg}` }, { status: 400 });
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
         const userId = session.metadata?.userId;
         const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
         if (userId && subscriptionId) {
-          const sub = await stripe.subscriptions.retrieve(subscriptionId);
+          const sub = await getStripe().subscriptions.retrieve(subscriptionId);
           const item = sub.items.data[0];
           const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id || null;
           await userRepo.update(userId, {
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
         const subscription = subDetails?.subscription;
         const subscriptionId = typeof subscription === "string" ? subscription : subscription?.id;
         if (subscriptionId) {
-          const sub = await stripe.subscriptions.retrieve(subscriptionId);
+          const sub = await getStripe().subscriptions.retrieve(subscriptionId);
           const item = sub.items.data[0];
           await adminRepo.updateUserSubscription(subscriptionId, {
             status: mapStatus(sub.status),

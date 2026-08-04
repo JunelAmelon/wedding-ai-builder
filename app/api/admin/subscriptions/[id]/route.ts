@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
@@ -17,10 +17,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     if (action === "cancel") {
-      await stripe.subscriptions.update(subscription.stripeSubscriptionId, { cancel_at_period_end: true });
+      await getStripe().subscriptions.update(subscription.stripeSubscriptionId, { cancel_at_period_end: true });
       await adminRepo.updateUserSubscription(params.id, { status: "canceled" });
     } else {
-      await stripe.subscriptions.update(subscription.stripeSubscriptionId, { cancel_at_period_end: false });
+      await getStripe().subscriptions.update(subscription.stripeSubscriptionId, { cancel_at_period_end: false });
       await adminRepo.updateUserSubscription(params.id, { status: "active" });
     }
 
