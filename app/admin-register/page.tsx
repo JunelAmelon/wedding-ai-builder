@@ -1,9 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Shield, Loader2 } from "lucide-react";
 
-export default function AdminRegisterPage() {
+function AdminRegisterForm() {
   const search = useSearchParams();
   const router = useRouter();
   const token = search.get("token");
@@ -11,7 +11,7 @@ export default function AdminRegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => { if (!token) setError("Lien d&apos;invitation invalide"); }, [token]);
+  useEffect(() => { if (!token) setError("Lien d'invitation invalide"); }, [token]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault(); setLoading(true); setError("");
@@ -26,7 +26,7 @@ export default function AdminRegisterPage() {
       <div className="w-full max-w-sm bg-white rounded-3xl border border-black/[0.06] shadow-[0_20px_60px_rgba(11,15,26,0.08)] p-8">
         <div className="flex justify-center mb-6"><span className="h-14 w-14 rounded-2xl bg-ink text-white flex items-center justify-center"><Shield size={28}/></span></div>
         <h1 className="text-center text-xl font-semibold font-display mb-1">Créer mon compte admin</h1>
-        <p className="text-center text-sm text-text-secondary mb-6">Vous avez été invité en tant qu&apos;administrateur</p>
+        <p className="text-center text-sm text-text-secondary mb-6">Vous avez été invité en tant qu'administrateur</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input required placeholder="Prénom" value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} className="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink/20" />
           <input required placeholder="Nom" value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} className="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ink/20" />
@@ -36,5 +36,13 @@ export default function AdminRegisterPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AdminRegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[100dvh] flex items-center justify-center bg-surface"><Loader2 size={32} className="animate-spin text-ink"/></div>}>
+      <AdminRegisterForm />
+    </Suspense>
   );
 }
