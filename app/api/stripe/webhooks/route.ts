@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
+import { recordWishlistPayment } from "@/lib/wishlistPayment";
 import type { UserSubscription } from "@/types/admin";
 import type Stripe from "stripe";
 
@@ -39,6 +40,14 @@ export async function POST(req: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
+
+        // Paiement d'une contribution / cadeau wishlist
+        if (session.metadata?.wishlistId) {
+          await recordWishlistPayment(session);
+          break;
+        }
+
+        // Paiement d'un abonnement prestataire
         const userId = session.metadata?.userId;
         const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
         if (userId && subscriptionId) {

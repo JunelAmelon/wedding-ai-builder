@@ -338,6 +338,18 @@ export interface WishlistPurchase {
   guestEmail: string;
   amount: number;
   message?: string;
+  stripeSessionId?: string;
   stripePaymentIntentId?: string;
+  createdAt: string;
+}
+
+export interface WishlistPayout {
+  id: string;
+  wishlistId: string;
+  amount: number;
+  method: string;
+  note?: string;
+  paidAt: string;
+  status: "pending" | "completed";
   createdAt: string;
 }

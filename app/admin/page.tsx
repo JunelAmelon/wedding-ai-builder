@@ -147,7 +147,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link
           href="/admin/candidatures"
           className="flex items-center justify-between p-5 rounded-2xl text-white hover:opacity-90 transition-colors"
@@ -170,6 +170,14 @@ export default function AdminDashboardPage() {
           style={{ backgroundColor: LIME, color: INK }}
         >
           <span className="font-medium">Gérer les pros</span>
+          <ArrowUpRight size={18} />
+        </Link>
+        <Link
+          href="/admin/cagnottes"
+          className="flex items-center justify-between p-5 rounded-2xl border border-[#1c1c1c]/10 hover:border-[#1c1c1c]/30 transition-colors"
+          style={{ backgroundColor: "#E4DBFB", color: INK }}
+        >
+          <span className="font-medium">Cagnottes à reverser</span>
           <ArrowUpRight size={18} />
         </Link>
       </div>

@@ -78,13 +78,13 @@ function LoginPageInner() {
   return (
     <div className="min-h-[100dvh] grid lg:grid-cols-2">
       {/* ===== PANNEAU GAUCHE ===== */}
-      <div className="hidden lg:block relative overflow-hidden" style={{ backgroundColor: SAGE_CHIP }}>
+      <div className="hidden lg:block relative overflow-hidden" style={{ backgroundColor: "white" }}>
         {/* lignes décoratives blanches courbes */}
         <svg className="absolute inset-0 w-full h-full opacity-90" viewBox="0 0 600 900" fill="none" preserveAspectRatio="xMidYMid slice">
-          <path d="M -40 0 C 120 180, -20 420, 180 900" stroke="white" strokeWidth="2.5" fill="none" />
-          <path d="M 80 0 C 240 200, 60 460, 280 900" stroke="white" strokeWidth="2.5" fill="none" />
-          <path d="M 200 0 C 360 220, 180 480, 380 900" stroke="white" strokeWidth="2.5" fill="none" />
-          <path d="M 320 0 C 480 240, 300 520, 480 900" stroke="white" strokeWidth="2.5" fill="none" />
+          <path d="M -40 0 C 120 180, -20 420, 180 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
+          <path d="M 80 0 C 240 200, 60 460, 280 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
+          <path d="M 200 0 C 360 220, 180 480, 380 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
+          <path d="M 320 0 C 480 240, 300 520, 480 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
         </svg>
 
         {/* avatars circulaires flottants (gauche) */}
