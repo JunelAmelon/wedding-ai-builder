@@ -30,8 +30,8 @@ export const messageRepo = {
       return all.filter((m) => m.proposalId === proposalId).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     }
     const col = await getFirestoreCol();
-    const snap = await col.where("proposalId", "==", proposalId).orderBy("createdAt", "asc").get();
-    return snap.docs.map((d) => d.data() as Message);
+    const snap = await col.where("proposalId", "==", proposalId).get();
+    return snap.docs.map((d) => d.data() as Message).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   },
 
   async listByUser(userId: string): Promise<Message[]> {
@@ -53,9 +53,14 @@ export const messageRepo = {
       return;
     }
     const col = await getFirestoreCol();
-    const snap = await col.where("proposalId", "==", proposalId).where("senderId", "!=", userId).get();
+    const snap = await col.where("proposalId", "==", proposalId).get();
     const batch = col.firestore.batch();
-    snap.docs.forEach((doc) => batch.update(doc.ref, { readAt: now }));
+    snap.docs.forEach((doc) => {
+      const m = doc.data() as Message;
+      if (m.senderId !== userId && !m.readAt) {
+        batch.update(doc.ref, { readAt: now });
+      }
+    });
     await batch.commit();
   },
 };

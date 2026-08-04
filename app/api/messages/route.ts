@@ -40,6 +40,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ messages });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
+    console.error("[GET /api/messages]", err);
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     return NextResponse.json({ error: message }, { status: 500 });
   }
