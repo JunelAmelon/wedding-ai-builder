@@ -32,7 +32,7 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled ? "bg-white/95 backdrop-blur-sm shadow-[0_2px_20px_rgba(14,14,16,0.06)]" : "bg-transparent"
         }`}
       >
