@@ -26,7 +26,7 @@ import type { AdminRole } from "@/types/admin";
 const SAGE = "#D8ECD9";
 const LIME = "#dff05a";
 const INK = "#1c1c1c";
-const SURFACE = "#f3f2ee";
+const SURFACE = "#ffbfca1a";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, minRole: "commercial" },

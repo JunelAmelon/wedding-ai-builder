@@ -239,10 +239,10 @@ export default function CoupleVendorsPage() {
   // Vérifier si une catégorie a déjà un appel d'offres
   const hasTenderForCategory = (cat: string) => tenders.some((t) => t.category === cat);
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#f3f2ee]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
 
   return (
-    <div className="min-h-screen bg-[#f3f2ee]">
+    <div className="min-h-screen bg-[#ffbfca1a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Appels d'offres"
@@ -457,7 +457,7 @@ export default function CoupleVendorsPage() {
       {/* ===== MODALE — formulaire de nouvelle demande ===== */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-xl bg-[#f3f2ee] rounded-3xl p-7 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-xl bg-[#ffbfca1a] rounded-3xl p-7 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => {
                 setShowForm(false);

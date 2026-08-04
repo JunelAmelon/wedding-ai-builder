@@ -120,7 +120,7 @@ export default function VendorOpportunitiesPage() {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
 
   return (
     <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">

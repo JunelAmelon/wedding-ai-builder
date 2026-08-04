@@ -74,7 +74,7 @@ export default function VendorProfilePage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
   if (!profile) return <div className="p-6 text-[#8b8b86]">Profil introuvable.</div>;
 
   const updateField = (field: string, value: unknown) => {

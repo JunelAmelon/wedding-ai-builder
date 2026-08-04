@@ -177,7 +177,7 @@ function LoginPageInner() {
       </div>
 
       {/* ===== PANNEAU DROIT ===== */}
-      <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-[#fbfafa]">
+      <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-[#ffbfca1a]">
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <LogoShape />
@@ -304,7 +304,7 @@ function LoginPageInner() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-[100dvh] bg-[#fbfafa]" />}>
+    <Suspense fallback={<div className="min-h-[100dvh] bg-[#ffbfca1a]" />}>
       <LoginPageInner />
     </Suspense>
   );

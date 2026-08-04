@@ -91,7 +91,7 @@ export default function AdminProsPage() {
                   <td className="px-5 py-3.5" style={{ color: `${INK}99` }}>{item.profile?.serviceCategory || "-"}</td>
                   <td className="px-5 py-3.5">
                     {item.applicationStatus ? (
-                      <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[item.applicationStatus] || "bg-[#f3f2ee]"}`} style={!STATUS_STYLES[item.applicationStatus] ? { color: `${INK}99` } : undefined}>
+                      <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[item.applicationStatus] || "bg-[#ffbfca1a]"}`} style={!STATUS_STYLES[item.applicationStatus] ? { color: `${INK}99` } : undefined}>
                         {item.applicationStatus === "approved" && <CheckCircle2 size={12} />}
                         {item.applicationStatus === "pending" && <Clock size={12} />}
                         {item.applicationStatus === "rejected" && <XCircle size={12} />}

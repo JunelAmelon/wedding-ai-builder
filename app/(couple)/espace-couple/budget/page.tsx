@@ -539,7 +539,7 @@ export default function CoupleBudgetPage() {
       {/* Modal Add/Edit Expense - Style témoin */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#f3f2ee] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"

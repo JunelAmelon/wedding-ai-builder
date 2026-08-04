@@ -147,14 +147,14 @@ export default function WishlistManagementPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] bg-[#fbfafa] flex items-center justify-center">
+      <div className="min-h-[80dvh] bg-[#ffbfca1a] flex items-center justify-center">
         <div className="text-[#8b8b86]">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[80dvh] bg-[#f3f2ee]">
+    <div className="min-h-[80dvh] bg-[#ffbfca1a]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -314,7 +314,7 @@ export default function WishlistManagementPage() {
         {/* Create Wishlist Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="relative w-full max-w-lg bg-[#f3f2ee] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
@@ -382,7 +382,7 @@ export default function WishlistManagementPage() {
         {/* Add Item Modal */}
         {showAddItemModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-            <div className="relative w-full max-w-lg bg-[#f3f2ee] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
               <button
                 onClick={() => setShowAddItemModal(false)}
                 className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"

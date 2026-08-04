@@ -67,7 +67,7 @@ export default function VendorDashboardPage() {
     load();
   }, [router]);
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#fbfafa]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
   if (!data) return <div className="p-8 text-[#8b8b86]">Impossible de charger le tableau de bord. Vérifiez votre connexion ou réessayez.</div>;
 
   const s = data.stats;

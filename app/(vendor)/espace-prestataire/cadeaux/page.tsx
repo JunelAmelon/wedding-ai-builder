@@ -87,14 +87,14 @@ export default function VendorGiftsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] bg-[#fbfafa] flex items-center justify-center">
+      <div className="min-h-[80dvh] bg-[#ffbfca1a] flex items-center justify-center">
         <div className="text-[#8b8b86]">Chargement...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[80dvh] bg-[#fbfafa]">
+    <div className="min-h-[80dvh] bg-[#ffbfca1a]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

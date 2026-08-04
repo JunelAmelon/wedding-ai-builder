@@ -150,7 +150,7 @@ export default function WishlistPublicPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[100dvh] bg-[#fbfafa] flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-[#ffbfca1a] flex items-center justify-center">
         <div className="text-[#8b8b86]">Chargement...</div>
       </div>
     );
@@ -158,14 +158,14 @@ export default function WishlistPublicPage() {
 
   if (!wishlist) {
     return (
-      <div className="min-h-[100dvh] bg-[#fbfafa] flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-[#ffbfca1a] flex items-center justify-center">
         <div className="text-[#8b8b86]">Liste de souhaits introuvable</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[100dvh] bg-[#fbfafa] p-6">
+    <div className="min-h-[100dvh] bg-[#ffbfca1a] p-6">
       <div className="max-w-[1220px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start">
 
         {/* LEFT COLUMN */}
@@ -337,7 +337,7 @@ export default function WishlistPublicPage() {
       {/* Contribution Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#f3f2ee] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"

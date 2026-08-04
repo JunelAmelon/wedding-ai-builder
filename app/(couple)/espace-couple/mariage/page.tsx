@@ -289,7 +289,7 @@ export default function CoupleWeddingPage() {
   }, [project]);
   const doneCount = chapters.filter((c) => c.done).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#f3f2ee]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#ffbfca1a]" />;
 
   // Initiales pour l'avatar
   const initials = (project?.name || "Mon mariage")
@@ -319,7 +319,7 @@ export default function CoupleWeddingPage() {
   const priorityLabel = PRIORITY_OPTIONS.find((p) => p.value === project?.mainPriority)?.label || "À définir";
 
   return (
-    <div className="min-h-screen bg-[#f3f2ee]">
+    <div className="min-h-screen bg-[#ffbfca1a]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Mon espace"
@@ -753,7 +753,7 @@ export default function CoupleWeddingPage() {
       {/* ===== MODAL AJOUT/ÉDITION TÉMOIN ===== */}
       {showWitnessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#f3f2ee] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffbfca1a] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowWitnessModal(false)}
               className="absolute top-5 right-5 h-8 w-8 rounded-full bg-white flex items-center justify-center text-[#8b8b86] hover:text-[#1c1c1c] transition"
