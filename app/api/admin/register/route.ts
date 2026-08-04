@@ -50,6 +50,8 @@ export async function POST(req: Request) {
       stripeCustomerId: null,
       stripeSubscriptionId: null,
       emailVerified: false,
+      resetToken: null,
+      resetTokenExpiry: null,
     });
 
     await adminRepo.markInvitationAccepted(invite.id, user.id);
