@@ -180,21 +180,22 @@ export default function TenderDetailPage() {
 
         {error && <p className="text-sm text-red-600 mb-6">{error}</p>}
 
-        {/* ================= HERO GRADIENT BANNER ================= */}
+        {/* ================= HERO IMAGE BANNER ================= */}
         <div
-          className="relative h-[140px] sm:h-[190px] rounded-[22px] overflow-hidden mx-0 lg:mx-0"
+          className="relative h-[160px] sm:h-[220px] rounded-[22px] overflow-hidden mx-0 lg:mx-0 bg-cover bg-center"
           style={{
-            background: "repeating-linear-gradient(100deg, #f4f1f7 0px, #f4f1f7 42px, #f4f1f7 42px, #f4f1f7 84px)",
+            backgroundImage: "url(https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=300&fit=crop)",
           }}
-        />
+        >
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
 
         {/* ================= PROFILE SECTION ================= */}
-        <div className="px-0 sm:px-2 -mt-12 sm:-mt-[70px] relative z-10 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-8 flex-wrap">
+        <div className="px-0 sm:px-2 mt-6 sm:mt-8 relative z-10 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-end gap-5 lg:gap-8 flex-wrap">
             {/* Avatar */}
             <div
-              className="w-[140px] h-[140px] sm:w-[190px] sm:h-[190px] rounded-[28px] border-[5px] border-white shrink-0 flex items-center justify-center text-[40px] sm:text-[56px] font-bold text-[#1c1c1c] shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
-              style={{ background: "linear-gradient(160deg, #e7d9c9, #c9ab8c)" }}
+              className="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] rounded-[24px] border-[4px] border-white shrink-0 flex items-center justify-center text-[28px] sm:text-[40px] font-bold text-[#1c1c1c] shadow-[0_10px_30px_rgba(0,0,0,0.12)] bg-[#f4f1f7]"
             >
               {initials(tender.category).slice(0, 2)}
             </div>
