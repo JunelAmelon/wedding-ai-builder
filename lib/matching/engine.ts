@@ -74,7 +74,21 @@ function isDateAvailable(tender: Partial<Tender>, project: WeddingProject, vendo
   return !unavailable.includes(ctx.weddingDate);
 }
 
+function isProfileComplete(vendor: VendorProfile): boolean {
+  return !!(
+    vendor.companyName?.trim() &&
+    vendor.serviceCategory?.trim() &&
+    vendor.contactName?.trim() &&
+    vendor.phone?.trim() &&
+    vendor.description?.trim() &&
+    vendor.priceRange &&
+    vendor.serviceArea &&
+    vendor.availability
+  );
+}
+
 export function isHardMatch(tender: Partial<Tender>, project: WeddingProject, vendor: VendorProfile, category: string): boolean {
+  if (!isProfileComplete(vendor)) return false;
   if (!vendor.priceRange || !vendor.serviceArea || !vendor.availability) return false;
   if (normalizeCategory(vendor.serviceCategory) !== normalizeCategory(category)) return false;
   if (!hasBudgetOverlap(tender, project, vendor)) return false;

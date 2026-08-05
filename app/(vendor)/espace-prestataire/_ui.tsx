@@ -5,30 +5,6 @@ import { ArrowUpRight } from "lucide-react";
 
 export const GOLD = "#B08A4A";
 
-export function RoseGlyph({ size = 46 }: { size?: number }) {
-  const petal = "M20 20 C10 15,10 5,20 0 C30 5,30 15,20 20 Z";
-  return (
-    <svg width={size} height={size * 1.52} viewBox="0 0 40 60" fill="none">
-      <g stroke={GOLD} strokeWidth="0.6">
-        {[0, 60, 120, 180, 240, 300].map((deg, i) => (
-          <path
-            key={deg}
-            d={petal}
-            className="text-primary"
-            fill="currentColor"
-            fillOpacity={0.88 - i * 0.035}
-            transform={`rotate(${deg} 20 20)`}
-          />
-        ))}
-      </g>
-      <circle cx="20" cy="20" r="3" fill={GOLD} />
-      <path d="M20 24 C19 34, 22 40, 20 54" className="text-success" stroke="currentColor" strokeWidth="1.4" fill="none" />
-      <path d="M20 36 C24 34,27 36,28 40 C24 40,21 39,20 36 Z" className="text-success" fill="currentColor" fillOpacity={0.75} />
-      <path d="M20 44 C16 42,13 44,12 48 C16 48,19 47,20 44 Z" className="text-success" fill="currentColor" fillOpacity={0.75} />
-    </svg>
-  );
-}
-
 export function SealTag({ ok }: { ok: boolean }) {
   return (
     <div
@@ -114,5 +90,3 @@ export function Card({
     </div>
   );
 }
-
-

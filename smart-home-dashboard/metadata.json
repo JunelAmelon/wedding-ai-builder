@@ -1,0 +1,6 @@
+{
+  "name": "Smart Home Dashboard",
+  "description": "Pixel-perfect smart home dashboard UI with status cards, security camera live feed, climate controls, energy graph, and room management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

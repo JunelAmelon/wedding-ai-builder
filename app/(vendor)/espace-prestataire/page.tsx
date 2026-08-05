@@ -3,21 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  Send,
-  CheckCircle2,
-  TrendingUp,
-  Target,
-  Wallet,
-  Megaphone,
-  Images,
-  UserCircle,
-  CreditCard,
-} from "lucide-react";
+import { ChevronRight, MapPin, ArrowUpRight, Wallet, Inbox, Send, Trophy, UserCircle, Target } from "lucide-react";
 import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
 
 export default function VendorDashboardPage() {
   const router = useRouter();
+
   interface DashboardStats {
     credits: number;
     newOpportunities: number;
@@ -40,6 +31,13 @@ export default function VendorDashboardPage() {
   const [data, setData] = useState<{ stats: DashboardStats; matches: EnrichedMatch[] } | null>(null);
   const [me, setMe] = useState<{ stripeSubscriptionId: string | null; stripeCustomerId: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setNow(new Date());
+    const tick = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(tick);
+  }, []);
 
   useEffect(() => {
     async function load() {
@@ -67,160 +65,288 @@ export default function VendorDashboardPage() {
     load();
   }, [router]);
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
-  if (!data) return <div className="p-8 text-[#8b8b86]">Impossible de charger le tableau de bord. Vérifiez votre connexion ou réessayez.</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff0f3] text-[#6b7076] font-sans">
+        Chargement du tableau de bord…
+      </div>
+    );
+
+  if (!data)
+    return (
+      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff0f3] text-[#6b7076] font-sans">
+        Impossible de charger le tableau de bord. Vérifiez votre connexion ou réessayez.
+      </div>
+    );
 
   const s = data.stats;
   const matches = data.matches || [];
 
-  const statCards = [
-    { label: "Opportunités", value: s?.newOpportunities ?? 0, icon: Target, color: "bg-[#f4f1f7] text-[#1c1c1c]" },
-    { label: "Propositions", value: s?.sentProposals ?? 0, icon: Send, color: "bg-[#dbeafe] text-[#1e3a8a]" },
-    { label: "Contrats gagnés", value: s?.wonContracts ?? 0, icon: CheckCircle2, color: "bg-[#f4f1f7] text-[#1c1c1c]" },
-    { label: "Taux de réponse", value: `${s?.responseRate ?? 0}%`, icon: TrendingUp, color: s?.responseRate > 50 ? "bg-[#f4f1f7] text-[#1c1c1c]" : "bg-[#ffedd5] text-[#7c2d12]" },
+  const weddingImage =
+    "https://images.unsplash.com/photo-1723203812312-0b0ad8c142b6?q=80&w=1502&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
+  const quickActions = [
+    {
+      title: "Appels d'offres",
+      description: "Trouver de nouveaux couples",
+      href: "/espace-prestataire/appels-offres",
+      color: "bg-[#f4f1f7]",
+      icon: Inbox,
+      image: "https://images.unsplash.com/photo-1741893043659-ca8b82a8b637?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGludml0YXRpb24lMjBtYXJpYWdlfGVufDB8fDB8fHww",
+    },
+    {
+      title: "Mon profil",
+      description: "Rester visible & complet",
+      href: "/espace-prestataire/profil",
+      color: "bg-[#cbd5e1]",
+      icon: UserCircle,
+      image: "https://images.unsplash.com/photo-1522202801620-eb6f71f5bf05?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    },
+    {
+      title: "Mes offres",
+      description: "Gérer mon abonnement",
+      href: "/espace-prestataire/offres",
+      color: "bg-[#fde68a]",
+      icon: Wallet,
+      image: "https://images.unsplash.com/photo-1651173889287-58ec0df699c2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    },
   ];
 
+  const formatTime = (d: Date) =>
+    d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  const formatDate = (d: Date) =>
+    d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+
   return (
-    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-8">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Tableau de bord</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
-            Vos matches
-          </h1>
-          <p className="text-[#8b8b86] mt-2 max-w-md">
-            Suivez vos matches, vos opportunités et vos performances en un coup d&apos;œil.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.08em] ${
-              s?.verified ? "bg-[#f4f1f7] text-[#1c1c1c]" : "bg-[#ffedd5] text-[#7c2d12]"
-            }`}
-          >
-            <span className={`h-2 w-2 rounded-full ${s?.verified ? "bg-[#3C8552]" : "bg-[#F2704A]"}`} />
-            {s?.verified ? "Profil vérifié" : "Profil en attente"}
-          </span>
-          <Link href="/espace-prestataire/credits">
-            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition">
-              <Wallet size={15} strokeWidth={1.75} /> {s?.credits ?? 0} crédits
-            </button>
-          </Link>
-          {me?.stripeSubscriptionId ? (
-            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition" onClick={async () => {
-              const res = await fetch("/api/stripe/portal", { method: "POST" });
-              const data = await res.json();
-              if (data.url) window.location.href = data.url;
-            }}>
-              <CreditCard size={15} strokeWidth={1.75} /> Abonnement
-            </button>
-          ) : (
-            <button className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition" onClick={async () => {
-              const res = await fetch("/api/stripe/checkout", { method: "POST" });
-              const data = await res.json();
-              if (data.url) window.location.href = data.url;
-            }}>
-              <CreditCard size={15} strokeWidth={1.75} /> S'abonner 39€/mois
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {statCards.map((stat, i) => (
-          <div
-            key={i}
-            className="rounded-[20px] bg-white border border-[#e6e4dd] p-5 shadow-[0_8px_24px_rgba(14,14,16,0.04)]"
-          >
-            <div className={`h-10 w-10 rounded-xl ${stat.color} flex items-center justify-center mb-4`}>
-              <stat.icon size={20} strokeWidth={1.8} />
-            </div>
-            <p className="font-display text-3xl font-bold text-[#1c1c1c]">{stat.value}</p>
-            <p className="text-[11px] uppercase tracking-[0.12em] text-[#8b8b86] mt-1">{stat.label}</p>
+    <div className="min-h-screen bg-[#fff0f3] font-sans">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-4 sm:py-10">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-5 mb-4 sm:mb-10">
+          <div>
+            <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#15181c]">
+              Tableau de bord
+            </h1>
+            <p className="text-sm sm:text-base text-[#6b7076] mt-2">
+              Retrouvez vos opportunités, matches et abonnement au même endroit.
+            </p>
           </div>
-        ))}
-      </div>
 
-      {/* Main grid */}
-      <div className="grid lg:grid-cols-[1.5fr_1fr] gap-6 items-start">
-        {/* Opportunities */}
-        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="font-display text-xl font-bold text-[#1c1c1c]">Nouveaux matches</h2>
-            <Link href="/espace-prestataire/appels-offres" className="text-sm text-[#1c1c1c] hover:text-[#8b8b86] transition">
-              Voir tout
+          <div className="flex flex-col sm:items-end gap-3">
+            <div className="h-9 p-1 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center w-fit">
+              <div
+                className={`h-7 px-3.5 rounded-full flex items-center text-xs font-semibold transition ${
+                  me?.stripeSubscriptionId ? "bg-[#15181c] text-white" : "text-[#6b7076]"
+                }`}
+              >
+                Abonné
+              </div>
+              <div
+                className={`h-7 px-3.5 rounded-full flex items-center text-xs font-semibold transition ${
+                  !me?.stripeSubscriptionId ? "bg-[#15181c] text-white" : "text-[#6b7076]"
+                }`}
+              >
+                Gratuit
+              </div>
+            </div>
+            {now && (
+              <div className="text-left sm:text-right">
+                <p className="text-xl font-semibold text-[#15181c] font-sans">{formatTime(now)}</p>
+                <p className="text-xs text-[#6b7076] capitalize">{formatDate(now)}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <div className="rounded-3xl border border-[#ececec] bg-[#f4f1f7] p-5 flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+              <Wallet size={18} />
+              Plan actif
+            </div>
+            <p className="font-display text-3xl font-bold text-[#15181c]">
+              {me?.stripeSubscriptionId ? "Essentiel" : "Gratuit"}
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-[#ececec] bg-[#cbd5e1] p-5 flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+              <Inbox size={18} />
+              Opportunités
+            </div>
+            <p className="font-display text-3xl font-bold text-[#15181c]">{s?.newOpportunities ?? 0}</p>
+          </div>
+
+          <div className="rounded-3xl border border-[#ececec] bg-[#fde68a] p-5 flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+              <Send size={18} />
+              Propositions
+            </div>
+            <p className="font-display text-3xl font-bold text-[#15181c]">{s?.activeProposals ?? 0}</p>
+          </div>
+
+          <div className="rounded-3xl border border-[#ececec] bg-[#ffffff] p-5 flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+              <Trophy size={18} />
+              Contrats gagnés
+            </div>
+            <p className="font-display text-3xl font-bold text-[#15181c]">{s?.wonContracts ?? 0}</p>
+          </div>
+        </div>
+
+        {/* Opportunité en vedette */}
+        <section className="mb-10">
+          <div className="relative overflow-hidden rounded-3xl min-h-[420px] p-6 sm:p-8 flex flex-col justify-end group">
+            <img
+              src={weddingImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="relative z-10">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="px-3 py-1.5 rounded-full bg-white text-[10px] font-bold text-[#15181c]">
+                  {matches[0]?.category || "Mariage"}
+                </span>
+                {s?.verified && (
+                  <span className="px-3 py-1.5 rounded-full bg-[#fde68a] text-[10px] font-bold text-[#15181c]">
+                    Vérifié
+                  </span>
+                )}
+                <span className="px-3 py-1.5 rounded-full bg-[#15181c]/50 backdrop-blur-sm text-white text-[10px] font-bold">
+                  {matches[0]?.score || s?.averageCompatibility || 0}% compatibilité
+                </span>
+              </div>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+                {matches[0]?.project?.location?.city
+                  ? `Projet à ${matches[0].project.location.city}`
+                  : "Votre prochaine opportunité"}
+              </h2>
+              <p className="text-sm text-white/90 flex items-center gap-1.5 mb-6">
+                <MapPin size={15} />
+                {matches[0]?.project?.location?.city || "France"} •{" "}
+                {matches[0]?.project?.location?.country || "—"}
+              </p>
+              <Link
+                href="/espace-prestataire/appels-offres"
+                className="inline-flex items-center gap-2 bg-white text-[#15181c] text-sm font-bold px-5 py-2.5 rounded-full hover:bg-[#fde68a] transition"
+              >
+                Voir les appels d&apos;offres <ChevronRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Derniers matches */}
+        <section className="mb-10">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h3 className="font-display text-2xl font-bold text-[#15181c]">Derniers matches</h3>
+              <p className="text-sm text-[#6b7076]">{matches.length} correspondances</p>
+            </div>
+            <Link
+              href="/espace-prestataire/appels-offres"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[#15181c] hover:text-[#6b7076] transition"
+            >
+              Tout voir <ArrowUpRight size={14} />
             </Link>
           </div>
-          {matches.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-[#f4f1f7] mb-4">
-                <Target size={24} className="text-[#1c1c1c]" />
-              </div>
-              <p className="text-[#8b8b86] font-medium mb-1">Aucun match pour le moment</p>
-              <p className="text-sm text-[#8b8b86]/70 max-w-xs mx-auto">
-                Les nouveaux couples correspondant à votre profil apparaîtront ici.
-              </p>
+
+          <div className="rounded-3xl bg-white border border-[#ececec] overflow-hidden">
+            <div className="hidden sm:grid grid-cols-5 gap-4 p-4 bg-[#f4f1f7] text-xs font-bold text-[#15181c] uppercase tracking-wide">
+              <span>Projet</span>
+              <span>Catégorie</span>
+              <span>Lieu</span>
+              <span>Score</span>
+              <span className="text-right">Action</span>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {matches.slice(0, 5).map((match) => (
+
+            {matches.length === 0 ? (
+              <div className="p-8 sm:p-10 text-center">
+                <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-[#f4f1f7] mb-4">
+                  <Target size={28} className="text-[#15181c]" />
+                </div>
+                <p className="font-display text-lg font-bold text-[#15181c] mb-1">Aucune correspondance</p>
+                <p className="text-sm text-[#6b7076] max-w-sm mx-auto mb-5">
+                  Les prochains couples correspondant à votre profil apparaîtront ici.
+                </p>
                 <Link
-                  key={match.id}
-                  href={`/espace-prestataire/appels-offres/${match.tenderId || ""}`}
-                  className="flex items-center justify-between gap-4 p-4 rounded-xl bg-[#f7f7f9] hover:bg-white hover:shadow-[0_4px_16px_rgba(14,14,16,0.06)] border border-[#e6e4dd] transition-all group"
+                  href="/espace-prestataire/appels-offres"
+                  className="inline-flex items-center gap-2 bg-[#fde68a] text-[#15181c] text-sm font-bold px-5 py-2.5 rounded-full hover:bg-[#fcd34d] transition"
                 >
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
-                        {match.category}
+                  Explorer les opportunités <ArrowUpRight size={16} />
+                </Link>
+              </div>
+            ) : (
+              <div className="divide-y divide-[#ececec]">
+                {matches.slice(0, 6).map((match) => {
+                  const initials = match.category?.slice(0, 2).toUpperCase() || "PR";
+                  return (
+                    <Link
+                      key={match.id}
+                      href="/espace-prestataire/appels-offres"
+                      className="grid sm:grid-cols-5 gap-2 sm:gap-4 p-4 items-center hover:bg-[#fff0f3]/50 transition group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-2xl bg-[#f4f1f7] flex items-center justify-center text-xs font-bold text-[#15181c]">
+                          {initials}
+                        </div>
+                        <span className="font-display text-sm font-bold text-[#15181c] truncate">
+                          {`Projet ${match.category || "mariage"}`}
+                        </span>
+                      </div>
+                      <span className="text-sm text-[#6b7076] hidden sm:block">{match.category || "—"}</span>
+                      <p className="text-xs sm:text-sm text-[#6b7076] flex items-center gap-1">
+                        <MapPin size={12} />
+                        {match.project?.location?.city || "Ville non précisée"}
+                      </p>
+                      <span className="text-sm font-bold text-[#15181c]">
+                        {match.score ?? s?.averageCompatibility ?? 0}%
                       </span>
-                      <span className="text-[11px] text-[#8b8b86]">
-                        {match.project?.location?.city || "Lieu non précisé"}
-                      </span>
+                      <div className="flex items-center justify-end">
+                        <span className="text-sm font-semibold text-[#15181c] flex items-center gap-1">
+                          Voir <ChevronRight size={16} className="text-[#94a3b8] group-hover:text-[#15181c] transition" />
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Actions rapides */}
+        <section className="mb-4">
+          <h3 className="font-display text-2xl font-bold text-[#15181c] mb-5">Actions rapides</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <Link
+                  key={action.title}
+                  href={action.href}
+                  className="relative overflow-hidden rounded-3xl p-5 min-h-[220px] flex flex-col justify-end group"
+                >
+                  <img
+                    src={action.image}
+                    alt={action.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+                  <div className="relative z-10">
+                    <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mb-3">
+                      <Icon size={24} strokeWidth={1.75} className="text-[#15181c]" />
                     </div>
-                    <div className="text-sm text-[#8b8b86]">
-                      Budget {match.project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {match.project?.budget?.currency || "EUR"}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center justify-center shrink-0">
-                    <div className="text-lg font-bold text-[#1c1c1c]">{match.score}</div>
-                    <div className="text-[10px] text-[#8b8b86]">Score</div>
+                    <h4 className="font-display text-lg font-bold text-white mb-1">{action.title}</h4>
+                    <p className="text-sm text-white/85">{action.description}</p>
                   </div>
                 </Link>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Profile completion */}
-        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
-          <h2 className="font-display text-xl font-bold text-[#1c1c1c] mb-6">Complétion du profil pour optimiser vos matches</h2>
-          <div className="flex items-center gap-4 mb-6">
-            <div className="relative h-16 w-16 rounded-full bg-[#f4f1f7] flex items-center justify-center">
-              <UserCircle size={32} className="text-[#1c1c1c]" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-[#1c1c1c]">{s?.profileCompletion ?? 0}%</div>
-              <div className="text-sm text-[#8b8b86]">Profil complet</div>
-            </div>
+              );
+            })}
           </div>
-          <div className="w-full h-2 bg-[#f7f7f9] rounded-full overflow-hidden mb-6">
-            <div
-              className="h-full bg-[#f4f1f7] transition-all duration-500"
-              style={{ width: `${s?.profileCompletion ?? 0}%` }}
-            />
-          </div>
-          <Link
-            href="/espace-prestataire/profil"
-            className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition"
-          >
-            <UserCircle size={15} strokeWidth={1.75} /> Compléter mon profil
-          </Link>
-        </div>
+        </section>
       </div>
     </div>
   );
 }
-

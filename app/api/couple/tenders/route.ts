@@ -191,6 +191,17 @@ export async function PUT(req: Request) {
         content: `Félicitations ! Votre proposition pour ${project.name || "un mariage"} a été retenue.`,
         link: "/espace-prestataire/propositions",
       });
+
+      if (project.weddingDate) {
+        const unavailable = new Set(acceptedVendor.availability?.unavailableDates ?? []);
+        unavailable.add(project.weddingDate);
+        await vendorProfileRepo.update(acceptedVendor.id, {
+          availability: {
+            ...acceptedVendor.availability,
+            unavailableDates: Array.from(unavailable),
+          },
+        });
+      }
     }
 
     const updatedTender = await tenderRepo.update(tenderId, { status: "closed", selectedProposalId: proposalId });

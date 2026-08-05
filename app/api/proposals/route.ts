@@ -141,6 +141,17 @@ export async function PUT(req: Request) {
     const updated = await proposalRepo.update(proposalId, { status });
     const vendor = await vendorProfileRepo.get(proposal.vendorId);
 
+    if (vendor && status === "accepted" && project.weddingDate) {
+      const unavailable = new Set(vendor.availability?.unavailableDates ?? []);
+      unavailable.add(project.weddingDate);
+      await vendorProfileRepo.update(vendor.id, {
+        availability: {
+          ...vendor.availability,
+          unavailableDates: Array.from(unavailable),
+        },
+      });
+    }
+
     if (vendor) {
       await notificationRepo.create({
         userId: vendor.userId,

@@ -13,7 +13,6 @@ import {
   Loader2,
   ArrowLeft,
   Check,
-  Flower2,
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -46,25 +45,15 @@ export default function VendorProjectDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [roses, setRoses] = useState(0);
-  const [needsRoses, setNeedsRoses] = useState(false);
 
   useEffect(() => {
     async function load() {
       try {
-        const [oppRes, creditsRes] = await Promise.all([
-          fetch(`/api/vendor/opportunities/${matchId}`),
-          fetch("/api/vendor/credits"),
-        ]);
+        const oppRes = await fetch(`/api/vendor/opportunities/${matchId}`);
 
         if (!oppRes.ok) throw new Error("Impossible de charger le projet");
         const opp = await oppRes.json();
         setData(opp);
-
-        if (creditsRes.ok) {
-          const credits = await creditsRes.json();
-          setRoses(credits.balance || 0);
-        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur");
       } finally {
@@ -88,15 +77,10 @@ export default function VendorProjectDetailPage() {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        if (res.status === 402 || body.error?.includes("rose")) {
-          setNeedsRoses(true);
-          return;
-        }
         throw new Error(body.error || "Échec de l'envoi");
       }
       setShowDialog(false);
       setMessage("");
-      setRoses(body.remainingCredits ?? roses - 2);
       setSuccess(true);
       router.refresh();
     } catch (err) {
@@ -246,7 +230,7 @@ export default function VendorProjectDetailPage() {
                 onClick={() => setShowDialog(true)}
                 disabled={isContacted}
               >
-                {isContacted ? "Déjà répondu" : "Répondre · 2 roses"}
+                {isContacted ? "Déjà répondu" : "Répondre"}
               </Button>
 
               {isContacted && (
@@ -265,7 +249,7 @@ export default function VendorProjectDetailPage() {
           <DialogHeader>
             <DialogTitle className="font-serif">Répondre à l&apos;appel d&apos;offres</DialogTitle>
             <DialogDescription className="text-text-secondary">
-              Cette réponse consomme 2 roses. Rédigez un message personnalisé.
+              Rédigez un message personnalisé pour ce couple.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-2">
@@ -278,15 +262,6 @@ export default function VendorProjectDetailPage() {
                 placeholder="Bonjour, je suis intéressé par votre projet..."
                 className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
               />
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-text-secondary">
-                <Flower2 size={16} className="text-rose-500" />
-                Coût : 2 roses
-              </span>
-              <span className="text-text-secondary">
-                Roses restantes après envoi : <strong className="text-text-primary">{roses > 0 ? roses - 2 : "—"}</strong>
-              </span>
             </div>
             <Button
               variant="primary"
@@ -310,11 +285,6 @@ export default function VendorProjectDetailPage() {
             <DialogTitle className="font-serif">Proposition envoyée</DialogTitle>
             <DialogDescription className="text-text-secondary">
               Votre message a bien été transmis au couple. Vous serez notifié dès qu&apos;il le consultera.
-              <br />
-              <span className="inline-flex items-center gap-1.5 mt-3 text-primary font-medium">
-                <Flower2 size={14} className="text-rose-500" />
-                Roses restantes : {roses}
-              </span>
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 mt-4">
@@ -328,24 +298,7 @@ export default function VendorProjectDetailPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={needsRoses} onOpenChange={() => setNeedsRoses(false)}>
-        <DialogContent className="sm:max-w-md text-center">
-          <DialogHeader>
-            <DialogTitle className="font-serif">Roses insuffisantes</DialogTitle>
-            <DialogDescription className="text-text-secondary">
-              Vous avez besoin de roses pour répondre à cette opportunité.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 mt-4">
-            <Button variant="primary" onClick={() => router.push("/espace-prestataire/credits")}>
-              Créditer mon solde
-            </Button>
-            <Button variant="secondary" onClick={() => setNeedsRoses(false)}>
-              Revenir au projet
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 }

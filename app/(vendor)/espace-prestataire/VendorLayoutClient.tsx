@@ -13,6 +13,7 @@ import {
   Bell,
   MessageCircle,
   SlidersHorizontal,
+  Star,
   Menu,
   X,
   LogOut,
@@ -30,7 +31,7 @@ const VENDOR_NAV = [
 const VENDOR_NAV_SECONDARY = [
   { href: "/espace-prestataire/calendrier", label: "Calendrier", icon: Calendar },
   { href: "/espace-prestataire/profil", label: "Profil", icon: UserCircle },
-  { href: "/espace-prestataire/credits", label: "Crédits", icon: LayoutGrid },
+  { href: "/espace-prestataire/offres", label: "Offres", icon: Star },
   { href: "/espace-prestataire/notifications", label: "Notifications", icon: Bell },
   { href: "/espace-prestataire/parametres", label: "Paramètres", icon: SlidersHorizontal },
 ];
@@ -60,15 +61,7 @@ export default function VendorLayoutClient({
   const pathname = usePathname();
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const safeUser = user ?? {};
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
   const displayName = safeUser.companyName || `${safeUser.firstName || ""} ${safeUser.lastName || ""}`.trim() || "Prestataire";
   const initials = (safeUser.companyName?.[0] ?? safeUser.brandName?.[0] ?? safeUser.firstName?.[0] ?? "").toUpperCase();
   const logoUrl = safeUser.logo?.url;
@@ -94,11 +87,9 @@ export default function VendorLayoutClient({
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white text-[#1c1c1c]">
       <div
-        className={`hidden lg:block fixed inset-x-0 z-40 px-6 transition-all duration-300 ${
-          scrolled ? "top-0 py-3 bg-white/75 backdrop-blur-xl border-b border-[#e6e4dd] shadow-[0_8px_30px_rgba(14,14,16,0.06)]" : "top-5"
-        }`}
+        className="hidden lg:block fixed inset-x-0 top-0 z-40 px-6 py-3 bg-white/90 backdrop-blur-xl border-b border-[#e6e4dd] shadow-[0_8px_30px_rgba(14,14,16,0.06)]"
       >
-        <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-2xl bg-white/40 border border-[#e6e4dd]" : ""}`}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-6 px-5 py-2">
           <Link href="/espace-prestataire" className="font-display text-xl font-semibold text-[#1c1c1c]">
             Mariage Facile
           </Link>

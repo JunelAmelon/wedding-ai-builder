@@ -1,62 +1,58 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   MapPin,
   Calendar,
   Users,
   Banknote,
-  Check,
   X,
   Send,
   Loader2,
-  Megaphone,
-  LayoutGrid,
-  Rows3,
   ChevronLeft,
   ChevronRight,
-  CheckCircle2,
   Sparkles,
-} from "lucide-react";
-import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
+  Star,
+  Heart,
+  ArrowLeft,
+  Bell,
+  TrendingUp,
+  FileText,
+} from 'lucide-react';
+import type { ProjectVendorMatch, WeddingProject } from '@/types/marketplace';
 
-type ViewMode = "dossier" | "liste";
+type Opportunity = {
+  match: ProjectVendorMatch;
+  project: WeddingProject | null;
+};
 
 export default function VendorOpportunitiesPage() {
   const router = useRouter();
-  interface Opportunity {
-    match: ProjectVendorMatch;
-    project: WeddingProject | null;
-  }
 
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Opportunity | null>(null);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [roses, setRoses] = useState(0);
-  const [needsRoses, setNeedsRoses] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [view, setView] = useState<ViewMode>("dossier");
   const [page, setPage] = useState(1);
-  const pageSize = 3;
+  const pageSize = 5;
+
+  const liveImage =
+    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200&auto=format&fit=crop&q=80';
 
   useEffect(() => {
     async function load() {
       try {
-        const [oppRes, creditsRes] = await Promise.all([
-          fetch("/api/vendor/opportunities"),
-          fetch("/api/vendor/credits"),
-        ]);
+        const oppRes = await fetch('/api/vendor/opportunities');
         if (oppRes.status === 401) {
-          router.push("/login?role=vendor");
+          router.push('/login?role=vendor');
           return;
         }
         const oppJson = await oppRes.json();
         setOpportunities(oppJson.opportunities || []);
-        const creditsJson = await creditsRes.json().catch(() => ({}));
-        setRoses(creditsJson.credits ?? 0);
       } catch {
         // ignore
       } finally {
@@ -70,39 +66,36 @@ export default function VendorOpportunitiesPage() {
     if (!selected || !message.trim()) return;
     setSubmitting(true);
     try {
-      const res = await fetch("/api/vendor/proposals", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/vendor/proposals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           matchId: selected.match.id,
           message,
         }),
       });
       const json = await res.json();
-      if (res.status === 402) {
-        setNeedsRoses(true);
-        setSubmitting(false);
-        return;
-      }
-      if (!res.ok) throw new Error(json.error || "Échec de l'envoi");
-      setRoses(json.remainingCredits ?? roses - 2);
+      if (!res.ok) throw new Error(json.error || `Échec de l'envoi`);
       setSelected(null);
-      setMessage("");
+      setMessage('');
       setSuccess(true);
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Erreur");
+      alert(err instanceof Error ? err.message : 'Erreur');
     } finally {
       setSubmitting(false);
     }
   }
 
   async function ignore(matchId: string) {
-    await fetch("/api/matching", { method: "POST", body: JSON.stringify({}) });
+    await fetch('/api/matching', { method: 'POST', body: JSON.stringify({}) });
     setOpportunities((prev) => prev.filter((o) => o.match.id !== matchId));
   }
 
   const sorted = useMemo(
-    () => [...opportunities].sort((a, b) => (b.match.score || 0) - (a.match.score || 0)),
+    () =>
+      [...opportunities].sort(
+        (a, b) => (b.match.score || 0) - (a.match.score || 0)
+      ),
     [opportunities]
   );
 
@@ -112,206 +105,437 @@ export default function VendorOpportunitiesPage() {
     return sorted.slice(start, start + pageSize);
   }, [sorted, page]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [view]);
+  const featured = sorted[0] ?? null;
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className='min-h-screen bg-[#fff0f3]' />;
 
   return (
-    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Opportunités</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
-            Vos matches
-          </h1>
-          <p className="text-[#8b8b86] mt-2">
-            Uniquement les couples avec qui vous allez matcher.
-          </p>
-        </div>
-
-        <div className="inline-flex items-center gap-1 rounded-full bg-white p-1 border border-[#e6e4dd] self-start sm:self-auto shrink-0">
-          <button
-            type="button"
-            onClick={() => setView("dossier")}
-            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              view === "dossier"
-                ? "bg-[#f4f1f7] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
-                : "text-[#8b8b86] hover:text-[#1c1c1c]"
-            }`}
-          >
-            <LayoutGrid size={15} />
-            Dossiers
-          </button>
-          <button
-            type="button"
-            onClick={() => setView("liste")}
-            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              view === "liste"
-                ? "bg-[#f4f1f7] text-[#1c1c1c] shadow-[0_1px_2px_rgba(14,14,16,0.08)]"
-                : "text-[#8b8b86] hover:text-[#1c1c1c]"
-            }`}
-          >
-            <Rows3 size={15} />
-            Liste
-          </button>
-        </div>
-      </div>
-
-      {sorted.length === 0 ? (
-        <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-12 text-center mt-8">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full mb-3 bg-[#f4f1f7]">
-            <Megaphone size={22} className="text-[#1c1c1c]" />
+    <div className='min-h-screen bg-[#fff0f3] text-[#15181c] font-sans'>
+      <div className='max-w-[1400px] mx-auto px-10 sm:px-20 py-12'>
+        {/* Header */}
+        <header className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-10'>
+          <div className='text-center lg:text-left'>
+            <h1 className='font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#15181c]'>
+              Appels d&apos;offres
+            </h1>
+            <p className='text-sm sm:text-base text-[#6b7076] font-medium mt-1'>
+              Découvrez les couples qui correspondent à votre univers
+            </p>
           </div>
-          <h2 className="font-display text-xl font-bold mb-2 text-[#1c1c1c]">Aucun match pour le moment</h2>
-          <p className="text-[#8b8b86]">Nous vous notifierons dès qu&apos;un couple compatible publiera un projet.</p>
-        </div>
-      ) : view === "dossier" ? (
-        <div className="grid gap-6 mt-8 lg:grid-cols-2">
-          {paginated.map(({ match, project }) => (
-            <DossierCard
-              key={match.id}
-              match={match}
-              project={project}
-              onView={() => router.push(`/espace-prestataire/appels-offres/${match.tenderId}`)}
-              onRespond={() => setSelected({ match, project })}
-              onIgnore={() => ignore(match.id)}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="mt-8 rounded-[32px] border border-[#e6e4dd] bg-white overflow-hidden shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
-          {paginated.map(({ match, project }, i) => (
-            <OpportunityRow
-              key={match.id}
-              match={match}
-              project={project}
-              isFirst={i === 0}
-              onView={() => router.push(`/espace-prestataire/appels-offres/${match.tenderId}`)}
-              onRespond={() => setSelected({ match, project })}
-              onIgnore={() => ignore(match.id)}
-            />
-          ))}
-        </div>
-      )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <button
-              key={p}
-              onClick={() => setPage(p)}
-              className={`w-8 h-8 rounded-lg border border-[#e6e4dd] flex items-center justify-center text-sm font-medium transition ${
-                page === p
-                  ? "bg-[#f4f1f7] text-[#1c1c1c] border-[#f4f1f7]"
-                  : "bg-white text-[#8b8b86] hover:bg-[#f4f1f7]"
-              }`}
+          <div className='flex items-center justify-center lg:justify-end gap-3'>
+            <Link
+              href='/espace-prestataire'
+              className='w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] transition active:scale-95'
+              title='Retour'
             >
-              {p}
-            </button>
-          ))}
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      )}
+              <ArrowLeft className='w-5 h-5 stroke-[1.8]' />
+            </Link>
 
-      {/* Response Modal */}
-      {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="absolute inset-0" onClick={() => setSelected(null)} />
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <button onClick={() => setSelected(null)} className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition" aria-label="Fermer">
-              <X size={18} />
-            </button>
+            <Link
+              href='/espace-prestataire/offres'
+              className='w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] transition active:scale-95'
+              title='Offres'
+            >
+              <Star className='w-5 h-5 stroke-[1.8]' />
+            </Link>
+          </div>
+        </header>
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center">
-                <Send size={26} className="text-[#15181c]" />
+        {/* Dashboard 2 colonnes */}
+        <main className='flex flex-col lg:flex-row gap-6'>
+          {/* Colonne gauche — grande image */}
+          <div className='flex-1'>
+            <div className='relative w-full h-[500px] lg:h-[540px] rounded-[20px] overflow-hidden shadow-lg'>
+              <img
+                src={liveImage}
+                alt='Mariage'
+                className='absolute inset-0 w-full h-full object-cover'
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-[#15181c]/90 via-[#15181c]/40 to-[#15181c]/20' />
+              <div className='absolute top-5 left-5 right-5 z-10'>
+                <h3 className='font-display text-3xl sm:text-4xl font-bold text-white leading-tight'>
+                  Votre prochaine opportunité
+                </h3>
+                <p className='text-white/80 text-sm mt-2'>
+                  {featured?.match.category || 'Trouvez le mariage parfait'}
+                </p>
               </div>
-              <div>
-                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Réponse</p>
-                <h3 className="font-display text-2xl font-bold text-[#15181c]">Répondre à l'appel d'offres</h3>
-              </div>
-            </div>
-
-            <div className="mb-6 p-4 rounded-xl bg-[#f7f7f9] border border-[#e6e4dd]">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
-                  {selected.match.category}
+              <div className='absolute bottom-5 left-5 right-5'>
+                <span className='inline-flex items-center gap-1.5 rounded-full bg-[#fde68a] text-[#15181c] px-3 py-1.5 text-xs font-bold shadow-sm'>
+                  <Sparkles className='w-3.5 h-3.5' />
+                  {featured
+                    ? `Match du jour · ${featured.match.category}`
+                    : 'Votre prochain mariage'}
                 </span>
-                <span className="text-sm text-[#8b8b86]">
-                  Score : {selected.match.score}
-                </span>
               </div>
-              <div className="text-sm text-[#8b8b86]">
-                Budget : {selected.project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {selected.project?.budget?.currency || "EUR"}
+            </div>
+          </div>
+
+          {/* Colonne droite — tableau moderne */}
+          <div className='flex-[2] flex flex-col gap-5'>
+            <div className='h-[500px] lg:h-[540px] bg-white border border-[#ececec] shadow-md overflow-hidden flex flex-col'>
+              <div className='flex items-center justify-between p-5 border-b border-[#ececec]'>
+                <div>
+                  <h2 className='font-display text-xl font-bold text-[#15181c]'>
+                    Vos appels d&apos;offres
+                  </h2>
+                  <p className='text-sm text-[#6b7076] mt-0.5'>
+                    {sorted.length} opportunité{sorted.length > 1 ? 's' : ''} reçue
+                    {sorted.length > 1 ? 's' : ''}
+                  </p>
+                </div>
+                <div className='w-10 h-10 rounded-full bg-[#fff0f3] flex items-center justify-center text-[#15181c]'>
+                  <TrendingUp className='w-5 h-5 stroke-[2]' />
+                </div>
+              </div>
+
+              {/* Tableau desktop */}
+              <div className='overflow-x-auto hidden lg:block'>
+                <table className='w-full text-left border-collapse'>
+                  <thead className='bg-[#fff0f3]'>
+                    <tr>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                        Projet
+                      </th>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                        Catégorie
+                      </th>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                        Lieu
+                      </th>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                        Score
+                      </th>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076] text-right'>
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sorted.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className='py-16 px-5 text-center'>
+                          <div className='flex flex-col items-center gap-3 text-[#6b7076]'>
+                            <div className='w-14 h-14 rounded-full bg-[#fff0f3] flex items-center justify-center text-[#15181c]'>
+                              <FileText className='w-6 h-6' />
+                            </div>
+                            <p className='text-base font-semibold text-[#15181c]'>
+                              Aucun appel d&apos;offre reçu
+                            </p>
+                            <p className='text-sm'>
+                              Revenez plus tard pour découvrir de nouvelles
+                              opportunités.
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      paginated.map(({ match, project }) => (
+                        <tr
+                          key={match.id}
+                          onClick={() =>
+                            router.push(
+                              `/espace-prestataire/appels-offres/${match.tenderId}`
+                            )
+                          }
+                          className='border-t border-[#ececec] hover:bg-[#f4f1f7] cursor-pointer transition group'
+                        >
+                          <td className='py-4 px-5'>
+                            <div className='font-semibold text-[#15181c]'>
+                              {project?.name || 'Projet sans nom'}
+                            </div>
+                            {project?.weddingDate && (
+                              <div className='text-xs text-[#6b7076] mt-0.5'>
+                                {new Date(
+                                  project.weddingDate
+                                ).toLocaleDateString('fr-FR')}
+                              </div>
+                            )}
+                          </td>
+                          <td className='py-4 px-5'>
+                            <span className='inline-flex items-center rounded-full bg-[#fff0f3] text-[#15181c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] border border-[#ececec]'>
+                              {match.category}
+                            </span>
+                          </td>
+                          <td className='py-4 px-5 text-sm text-[#6b7076]'>
+                            {project?.location?.city || 'Lieu non précisé'}
+                          </td>
+                          <td className='py-4 px-5'>
+                            <div className='inline-flex items-center gap-1 bg-[#fff0f3] px-2.5 py-1 rounded-full text-xs font-bold text-[#15181c]'>
+                              <Sparkles className='w-3.5 h-3.5' />
+                              {match.score}
+                            </div>
+                          </td>
+                          <td className='py-4 px-5 text-right'>
+                            <div className='flex items-center justify-end gap-2'>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelected({ match, project });
+                                }}
+                                className='h-9 px-4 rounded-full bg-[#15181c] text-white text-xs font-bold hover:bg-[#2c3036] transition flex items-center gap-1.5'
+                              >
+                                <Send className='w-3.5 h-3.5' />
+                                Répondre
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  ignore(match.id);
+                                }}
+                                className='h-9 w-9 rounded-full border border-[#ececec] bg-white text-[#6b7076] hover:bg-[#f4f1f7] hover:text-[#15181c] transition flex items-center justify-center'
+                                aria-label='Ignorer'
+                              >
+                                <X className='w-4 h-4' />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Cartes mobile */}
+              <div className='lg:hidden p-5'>
+                {sorted.length === 0 ? (
+                  <div className='py-12 text-center'>
+                    <div className='flex flex-col items-center gap-3 text-[#6b7076]'>
+                      <div className='w-14 h-14 rounded-full bg-[#fff0f3] flex items-center justify-center text-[#15181c]'>
+                        <FileText className='w-6 h-6' />
+                      </div>
+                      <p className='text-base font-semibold text-[#15181c]'>
+                        Aucun appel d&apos;offre reçu
+                      </p>
+                      <p className='text-sm'>
+                        Revenez plus tard pour découvrir de nouvelles
+                        opportunités.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                    {paginated.map(({ match, project }) => (
+                      <DossierCard
+                        key={match.id}
+                        match={match}
+                        project={project}
+                        onView={() =>
+                          router.push(
+                            `/espace-prestataire/appels-offres/${match.tenderId}`
+                          )
+                        }
+                        onRespond={() => setSelected({ match, project })}
+                        onIgnore={() => ignore(match.id)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
-              Votre message
-            </label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Votre message de réponse..."
-              className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition min-h-[80px] resize-none"
-            />
-
-            <div className="flex items-center justify-between mt-6">
-              <div className="text-sm text-[#6b7076]">
-                Coût : 2 crédits (Solde : {roses})
-              </div>
-              <div className="flex gap-3">
+            {totalPages > 1 && (
+              <div className='flex items-center justify-center gap-2'>
                 <button
-                  onClick={() => setSelected(null)}
-                  className="py-3.5 px-4 rounded-full border-2 border-[#ececec] bg-[#ffffff] text-sm font-bold font-sans text-[#15181c] hover:bg-[#ececec] transition"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className='w-10 h-10 rounded-2xl border border-[#ececec] bg-white flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition'
                 >
-                  Annuler
+                  <ChevronLeft size={18} />
                 </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (p) => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`w-10 h-10 rounded-2xl border flex items-center justify-center text-sm font-semibold transition ${
+                        page === p
+                          ? 'bg-[#15181c] text-white border-[#15181c]'
+                          : 'bg-white text-[#6b7076] border-[#ececec] hover:bg-[#f4f1f7]'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
                 <button
-                  onClick={respond}
-                  disabled={submitting || !message.trim()}
-                  className="py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className='w-10 h-10 rounded-2xl border border-[#ececec] bg-white flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition'
                 >
-                  {submitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-                  Envoyer
+                  <ChevronRight size={18} />
                 </button>
-              </div>
-            </div>
-
-            {needsRoses && (
-              <div className="mt-4 p-4 rounded-xl bg-[#F2704A]/10 border border-[#F2704A]/20">
-                <p className="text-sm text-[#F2704A]">Crédits insuffisants. Veuillez acheter des crédits pour continuer.</p>
-              </div>
-            )}
-
-            {success && (
-              <div className="mt-4 p-4 rounded-xl bg-[#f4f1f7] border border-[#f4f1f7]/20">
-                <p className="text-sm text-[#1c1c1c]">Proposition envoyée avec succès !</p>
               </div>
             )}
           </div>
-        </div>
-      )}
+        </main>
+
+        {/* 3 cartes smart home en bas */}
+        <section className='mt-6 grid grid-cols-2 sm:grid-cols-3 gap-5'>
+          <div
+            onClick={() => router.push('/espace-prestataire/offres')}
+            className='rounded-[20px] bg-[#f4f1f7] p-6 shadow-md flex flex-col justify-end h-[140px] cursor-pointer active:scale-[0.99] transition group'
+          >
+            <p className='text-xs text-[#6b7076] font-semibold uppercase tracking-wider'>
+              Plan actif
+            </p>
+            <svg viewBox='0 0 160 36' className='w-full h-9 overflow-visible my-3'>
+              <defs>
+                <linearGradient id='propGrad' x1='0' y1='0' x2='0' y2='1'>
+                  <stop offset='0%' stopColor='#15181c' stopOpacity='0.2' />
+                  <stop offset='100%' stopColor='#15181c' stopOpacity='0' />
+                </linearGradient>
+              </defs>
+              <path
+                d='M 0 28 L 25 24 L 55 26 L 85 29 L 115 17 L 135 23 L 160 21'
+                fill='url(#propGrad)'
+                stroke='#15181c'
+                strokeWidth='2.2'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>
+            <div className='flex items-baseline gap-1.5'>
+              <span className='text-lg font-bold text-[#15181c]'>Gratuit</span>
+            </div>
+          </div>
+
+          <div
+            onClick={() => featured && setSelected({ match: featured.match, project: featured.project })}
+            className='rounded-[20px] bg-[#cbd5e1] p-6 shadow-md flex flex-col items-center justify-end h-[140px] cursor-pointer active:scale-[0.99] transition group text-center'
+          >
+            <div className='w-11 h-11 rounded-full bg-white/60 flex items-center justify-center text-[#15181c] mb-2'>
+              <Send className='w-5 h-5 stroke-[2]' />
+            </div>
+            <p className='text-xs text-[#15181c] font-semibold uppercase tracking-wider'>
+              Réponse
+            </p>
+            <p className='text-base font-bold text-[#15181c]'>Répondre maintenant</p>
+          </div>
+
+          <div
+            onClick={() => setPage(1)}
+            className='col-span-2 sm:col-span-1 rounded-[20px] bg-[#fde68a] p-6 shadow-md flex flex-col justify-between h-[140px] cursor-pointer active:scale-[0.99] transition'
+          >
+            <p className='text-xs text-[#15181c] font-semibold uppercase tracking-wider'>
+              Catégories
+            </p>
+            <div className='flex items-center justify-center gap-2 flex-wrap'>
+              {sorted.length === 0 ? (
+                <span className='text-xs font-semibold px-3 py-1.5 rounded-full bg-white/60 text-[#15181c]'>
+                  Mariage
+                </span>
+              ) : (
+                Array.from(new Set(sorted.map((o) => o.match.category))).slice(0, 3).map((cat) => (
+                  <span
+                    key={cat}
+                    className='text-xs font-semibold px-3 py-1.5 rounded-full bg-white/60 text-[#15181c]'
+                  >
+                    {cat}
+                  </span>
+                ))
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Response Modal */}
+        {selected && (
+          <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm'>
+            <div
+              className='absolute inset-0'
+              onClick={() => setSelected(null)}
+            />
+            <div className='relative w-full max-w-lg bg-white border border-[#ececec] rounded-[20px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto'>
+              <button
+                onClick={() => setSelected(null)}
+                className='absolute top-5 right-5 h-10 w-10 rounded-full bg-white border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#f4f1f7] transition'
+                aria-label='Fermer'
+              >
+                <X size={18} />
+              </button>
+
+              <div className='flex items-center gap-3 mb-6'>
+                <div className='w-14 h-14 rounded-2xl bg-[#fff0f3] flex items-center justify-center'>
+                  <Send size={26} className='text-[#15181c]' />
+                </div>
+                <div>
+                  <p className='text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider'>
+                    Réponse
+                  </p>
+                  <h3 className='font-display text-2xl font-bold text-[#15181c]'>
+                    Répondre à l&apos;appel d&apos;offres
+                  </h3>
+                </div>
+              </div>
+
+              <div className='mb-6 p-4 rounded-2xl bg-[#fff0f3] border border-[#ececec]'>
+                <div className='flex items-center gap-2 mb-2'>
+                  <span className='inline-flex items-center rounded-full bg-white text-[#15181c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em]'>
+                    {selected.match.category}
+                  </span>
+                  <span className='text-sm text-[#6b7076]'>
+                    Score : {selected.match.score}
+                  </span>
+                </div>
+                <div className='text-sm text-[#6b7076]'>
+                  Budget :{' '}
+                  {selected.project?.budget?.amount?.toLocaleString('fr-FR') ||
+                    '—'}{' '}
+                  {selected.project?.budget?.currency || 'EUR'}
+                </div>
+              </div>
+
+              <label className='block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2'>
+                Votre message
+              </label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder='Votre message de réponse...'
+                className='w-full bg-white border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#cbd5e1] transition min-h-[120px] resize-none'
+              />
+
+              <div className='flex items-center justify-end mt-6'>
+                <div className='flex gap-3'>
+                  <button
+                    onClick={() => setSelected(null)}
+                    className='py-3.5 px-5 rounded-full border-2 border-[#ececec] bg-white text-sm font-bold font-sans text-[#15181c] hover:bg-[#f4f1f7] transition'
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    onClick={respond}
+                    disabled={submitting || !message.trim()}
+                    className='py-3.5 px-5 rounded-full bg-[#15181c] text-white font-bold font-sans hover:bg-[#2c3036] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+                  >
+                    {submitting ? (
+                      <Loader2 size={16} className='animate-spin' />
+                    ) : (
+                      <Send size={16} />
+                    )}
+                    Envoyer
+                  </button>
+                </div>
+              </div>
+
+              {success && (
+                <div className='mt-4 p-4 rounded-xl bg-[#fff0f3] border border-[#fff0f3]/20'>
+                  <p className='text-sm text-[#15181c]'>
+                    Proposition envoyée avec succès !
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -330,51 +554,59 @@ function DossierCard({
   onIgnore: () => void;
 }) {
   return (
-    <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] p-6 sm:p-8">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.06em]">
+    <div className='rounded-[20px] bg-white border border-[#ececec] p-6 shadow-md hover:shadow-lg transition group'>
+      <div className='flex items-start justify-between mb-5'>
+        <div className='flex items-center gap-2 flex-wrap'>
+          <span className='inline-flex items-center rounded-full bg-[#fff0f3] text-[#15181c] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em]'>
             {match.category}
           </span>
-          <div className="flex items-center gap-1 bg-[#f7f7f9] px-3 py-1 rounded-full">
-            <Sparkles size={14} className="text-[#1c1c1c]" />
-            <span className="text-sm font-semibold text-[#1c1c1c]">{match.score}</span>
+          <div className='flex items-center gap-1 bg-[#fff0f3] px-2.5 py-1 rounded-full'>
+            <Sparkles size={13} className='text-[#15181c]' />
+            <span className='text-xs font-bold text-[#15181c]'>
+              {match.score}
+            </span>
           </div>
         </div>
-        <button onClick={onIgnore} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f4f1f7] text-[#8b8b86]">
+        <button
+          onClick={onIgnore}
+          className='h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f4f1f7] text-[#6b7076] transition'
+        >
           <X size={16} />
         </button>
       </div>
 
-      <div className="space-y-3 mb-6">
-        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-          <MapPin size={16} />
-          {project?.location?.city || "Lieu non précisé"}
+      <div className='space-y-2.5 mb-6 text-sm text-[#6b7076]'>
+        <div className='flex items-center gap-2.5'>
+          <MapPin size={16} className='text-[#cbd5e1]' />
+          {project?.location?.city || 'Lieu non précisé'}
         </div>
-        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-          <Calendar size={16} />
-          {project?.weddingDate ? new Date(project.weddingDate).toLocaleDateString("fr-FR") : "Date non précisée"}
+        <div className='flex items-center gap-2.5'>
+          <Calendar size={16} className='text-[#cbd5e1]' />
+          {project?.weddingDate
+            ? new Date(project.weddingDate).toLocaleDateString('fr-FR')
+            : 'Date non précisée'}
         </div>
-        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-          <Users size={16} />
-          {project?.guestCount || "—"} invités
+        <div className='flex items-center gap-2.5'>
+          <Users size={16} className='text-[#cbd5e1]' />
+          {project?.guestCount || '—'} invités
         </div>
-        <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-          <Banknote size={16} />
-          Budget {project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {project?.budget?.currency || "EUR"}
+        <div className='flex items-center gap-2.5'>
+          <Banknote size={16} className='text-[#cbd5e1]' />
+          Budget {project?.budget?.amount?.toLocaleString('fr-FR') || '—'}{' '}
+          {project?.budget?.currency || 'EUR'}
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className='flex gap-3'>
         <button
           onClick={onView}
-          className="flex-1 py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
+          className='flex-1 py-3 px-4 rounded-full border border-[#ececec] bg-white text-sm font-bold text-[#15181c] hover:bg-[#f4f1f7] transition'
         >
-          Voir détails
+          Voir
         </button>
         <button
           onClick={onRespond}
-          className="flex-1 py-3 px-4 rounded-full bg-[#1c1c1c] text-sm font-semibold text-white hover:bg-[#333] transition flex items-center justify-center gap-2"
+          className='flex-1 py-3 px-4 rounded-full bg-[#15181c] text-sm font-bold text-white hover:bg-[#2c3036] transition flex items-center justify-center gap-2'
         >
           <Send size={16} /> Répondre
         </button>
@@ -382,55 +614,3 @@ function DossierCard({
     </div>
   );
 }
-
-function OpportunityRow({
-  match,
-  project,
-  isFirst,
-  onView,
-  onRespond,
-  onIgnore,
-}: {
-  match: ProjectVendorMatch;
-  project: WeddingProject | null;
-  isFirst: boolean;
-  onView: () => void;
-  onRespond: () => void;
-  onIgnore: () => void;
-}) {
-  return (
-    <div className={`flex items-center justify-between gap-4 p-4 sm:p-6 border-b border-[#e6e4dd] last:border-b-0 ${!isFirst ? "bg-[#f7f7f9]" : "bg-white"}`}>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="inline-flex items-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em]">
-            {match.category}
-          </span>
-          <span className="text-[11px] text-[#8b8b86]">
-            {project?.location?.city || "Lieu non précisé"}
-          </span>
-        </div>
-        <div className="text-sm text-[#8b8b86]">
-          Budget {project?.budget?.amount?.toLocaleString("fr-FR") || "—"} {project?.budget?.currency || "EUR"}
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1 bg-[#f7f7f9] px-3 py-1 rounded-full">
-          <Sparkles size={14} className="text-[#1c1c1c]" />
-          <span className="text-sm font-semibold text-[#1c1c1c]">{match.score}</span>
-        </div>
-      </div>
-      <div className="flex items-center gap-2 shrink-0">
-        <button onClick={onView} className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]">
-          <CheckCircle2 size={18} />
-        </button>
-        <button onClick={onRespond} className="p-2 rounded-full bg-[#f4f1f7] hover:bg-[#c9d94a] text-[#1c1c1c]">
-          <Send size={18} />
-        </button>
-        <button onClick={onIgnore} className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]">
-          <X size={18} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
