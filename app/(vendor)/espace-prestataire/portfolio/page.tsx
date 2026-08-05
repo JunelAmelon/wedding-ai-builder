@@ -27,6 +27,12 @@ interface CloudinaryAsset {
   filename: string;
 }
 
+const colorSchemes = [
+  { bg: "bg-[#f4f1f7]", border: "border-[#f4f1f7]", text: "text-[#15181c]", input: "bg-white/70" },
+  { bg: "bg-[#fde68a]", border: "border-[#fde68a]", text: "text-[#15181c]", input: "bg-white/60" },
+  { bg: "bg-[#cbd5e1]", border: "border-[#cbd5e1]", text: "text-[#15181c]", input: "bg-white/70" },
+];
+
 function StarRating({
   value,
   onChange,
@@ -44,11 +50,11 @@ function StarRating({
           type="button"
           disabled={readOnly}
           onClick={() => onChange?.(n)}
-          className={readOnly ? "" : "hover:scale-110 transition"}
+          className={`${readOnly ? "" : "hover:scale-110 transition"} focus:outline-none`}
         >
           <Star
             size={18}
-            className={n <= value ? "fill-[#fde68a] text-[#fde68a]" : "text-[#cbd5e1]"}
+            className={n <= value ? "fill-[#fde68a] text-[#fbbf24]" : "text-[#cbd5e1]"}
           />
         </button>
       ))}
@@ -213,59 +219,109 @@ export default function VendorPortfolioPage() {
   if (loading) return <div className="min-h-[80dvh] bg-[#fff0f3]" />;
 
   const inputClass =
-    "w-full px-4 py-3 bg-white border border-[#cbd5e1] rounded-xl text-[14px] text-[#15181c] placeholder:text-[#6b7076] focus:outline-none focus:ring-2 focus:ring-[#fde68a] transition";
+    "w-full px-4 py-3 bg-white border border-[#e8e8e8] rounded-2xl text-[14px] text-[#15181c] placeholder:text-[#6b7076] focus:outline-none focus:ring-2 focus:ring-[#fde68a]/60 focus:border-[#fde68a] transition";
   const labelClass = "block text-sm font-semibold text-[#15181c] mb-2";
   const cardClass =
-    "rounded-[32px] bg-white border border-[#f4f1f7] shadow-[0_20px_60px_rgba(21,24,28,0.08)] p-6 sm:p-8";
+    "rounded-[26px] bg-white shadow-[0_14px_50px_rgba(21,24,28,0.05)] p-6 sm:p-7 border border-white";
+  const sectionTitle =
+    "font-display text-lg sm:text-xl font-bold text-[#15181c] flex items-center gap-2";
+  const sectionIcon =
+    "w-9 h-9 rounded-full flex items-center justify-center shrink-0";
 
   return (
-    <div className="min-h-screen bg-[#fff0f3] pb-12">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
+    <div className="min-h-screen bg-[#fff0f3]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 mb-8">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#6b7076] mb-2">Portfolio</p>
-            <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#15181c]">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#6b7076] mb-1">
+              Espace prestataire
+            </p>
+            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#15181c]">
               Mon portfolio
             </h1>
-            <p className="text-[#6b7076] mt-2">Mettez en avant vos plus belles réalisations.</p>
+            <p className="text-[#6b7076] mt-1 text-sm">
+              Mettez en avant vos plus belles réalisations.
+            </p>
           </div>
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-3 flex-wrap">
             {profile?.id && (
-              <a
-                href={`/prestataires/preview/${profile.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#15181c] text-sm font-semibold text-[#15181c] hover:bg-[#15181c] hover:text-white transition"
-              >
-                <Eye size={18} /> Prévisualiser
-              </a>
+              <div className="flex items-center gap-2">
+                <a
+                  href={`/prestataires/preview/${profile.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-11 h-11 rounded-full bg-white border border-[#f4f1f7] flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] transition shadow-sm"
+                  title="Prévisualiser"
+                >
+                  <Eye size={18} />
+                </a>
+              </div>
             )}
+
+            <a
+              href={website || "#"}
+              target={website ? "_blank" : undefined}
+              rel={website ? "noreferrer" : undefined}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition shadow-sm ${
+                website ? "bg-[#cbd5e1] text-[#15181c] hover:bg-[#b6c2d0]" : "bg-[#cbd5e1]/40 text-[#6b7076] pointer-events-none"
+              }`}
+              title="Site web"
+            >
+              <Globe size={18} />
+            </a>
+
+            <a
+              href={instagram ? `https://instagram.com/${instagram.replace(/^@/, "")}` : "#"}
+              target={instagram ? "_blank" : undefined}
+              rel={instagram ? "noreferrer" : undefined}
+              className={`w-11 h-11 rounded-full flex items-center justify-center transition shadow-sm ${
+                instagram ? "bg-[#fde68a] text-[#15181c] hover:bg-[#fbd04a]" : "bg-[#fde68a]/40 text-[#6b7076] pointer-events-none"
+              }`}
+              title="Instagram"
+            >
+              <Instagram size={18} />
+            </a>
+
             <button
               onClick={save}
               disabled={saving}
-              className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#15181c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
+              className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[#fde68a] text-sm font-bold text-[#15181c] hover:bg-[#fbd04a] transition disabled:opacity-50 shadow-sm ml-1"
             >
-              {saving ? <Loader2 size={16} className="animate-spin" /> : saved ? <Check size={16} /> : <Plus size={16} />}
-              {saving ? "Enregistrement..." : "Enregistrer le portfolio"}
+              {saving ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : saved ? (
+                <Check size={16} />
+              ) : (
+                <Plus size={16} />
+              )}
+              {saving ? "Enregistrement..." : saved ? "Enregistré" : "Enregistrer"}
             </button>
           </div>
         </div>
 
         {saved && (
           <div className="mb-6 p-4 rounded-2xl bg-[#f4f1f7] border border-[#f4f1f7] flex items-center gap-3">
-            <Check size={20} className="text-[#15181c]" />
+            <div className="w-8 h-8 rounded-full bg-[#fde68a] flex items-center justify-center">
+              <Check size={18} className="text-[#15181c]" />
+            </div>
             <span className="text-sm text-[#15181c]">Portfolio enregistré avec succès !</span>
           </div>
         )}
 
-        <div className="space-y-8">
-          {/* Galerie photos */}
-          <section className={cardClass}>
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#15181c] mb-2 flex items-center gap-2">
-              <Upload size={22} className="text-[#6b7076]" />
-              Galerie photos
-            </h2>
-            <p className="text-[#6b7076] text-sm mb-6">Téléversez vos plus belles photos de mariage.</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* Galerie photos - pleine largeur */}
+          <section className={`${cardClass} lg:col-span-2`}>
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`${sectionIcon} bg-[#fde68a]/40`}>
+                <Upload size={18} className="text-[#15181c]" />
+              </div>
+              <h2 className={sectionTitle}>Galerie photos</h2>
+            </div>
+            <p className="text-[#6b7076] text-sm mb-6">
+              Téléversez vos plus belles photos de mariage.
+            </p>
 
             <input
               ref={fileInputRef}
@@ -298,7 +354,7 @@ export default function VendorPortfolioPage() {
                   </div>
                   <button
                     onClick={() => removeImage(img.publicId)}
-                    className="absolute top-3 right-3 p-2 rounded-xl bg-white/90 text-[#F2704A] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-sm"
+                    className="absolute top-3 right-3 p-2 rounded-full bg-white/90 text-[#F2704A] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-sm hover:bg-[#fff0f3]"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -325,13 +381,17 @@ export default function VendorPortfolioPage() {
 
           {/* Vidéos */}
           <section className={cardClass}>
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#15181c] mb-2 flex items-center gap-2">
-              <Video size={22} className="text-[#6b7076]" />
-              Vidéos
-            </h2>
-            <p className="text-[#6b7076] text-sm mb-6">Ajoutez des liens vers vos vidéos ou teasers.</p>
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`${sectionIcon} bg-[#cbd5e1]/60`}>
+                <Video size={18} className="text-[#15181c]" />
+              </div>
+              <h2 className={sectionTitle}>Vidéos</h2>
+            </div>
+            <p className="text-[#6b7076] text-sm mb-5">
+              Ajoutez des liens vers vos vidéos ou teasers.
+            </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-5">
+            <div className="flex flex-col gap-3 mb-5">
               <input
                 type="url"
                 value={newVideoUrl}
@@ -343,26 +403,33 @@ export default function VendorPortfolioPage() {
                 type="button"
                 onClick={addVideo}
                 disabled={!newVideoUrl.trim()}
-                className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#15181c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 h-11 px-5 w-full rounded-full bg-[#fde68a] text-sm font-bold text-[#15181c] hover:bg-[#fbd04a] transition disabled:opacity-50"
               >
-                <Plus size={16} /> Ajouter
+                <Plus size={16} /> Ajouter la vidéo
               </button>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              {videos.length === 0 && <p className="text-sm text-[#6b7076]">Aucune vidéo ajoutée.</p>}
+            <div className="flex flex-wrap gap-2">
+              {videos.length === 0 && (
+                <p className="text-sm text-[#6b7076]">Aucune vidéo ajoutée.</p>
+              )}
               {videos.map((url, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#fff0f3] text-sm text-[#15181c] border border-[#fde68a]/30"
+                  className="inline-flex items-center gap-2 pl-4 pr-2 py-2 rounded-full bg-[#cbd5e1]/50 text-sm text-[#15181c] border border-[#cbd5e1]"
                 >
-                  <a href={url} target="_blank" rel="noreferrer" className="hover:underline max-w-[220px] truncate">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:underline max-w-[180px] truncate"
+                  >
                     {url}
                   </a>
                   <button
                     type="button"
                     onClick={() => removeVideo(idx)}
-                    className="p-1 rounded-full hover:bg-[#fde68a]/50 text-[#6b7076]"
+                    className="p-1 rounded-full hover:bg-[#fff0f3] text-[#6b7076]"
                   >
                     <X size={14} />
                   </button>
@@ -373,13 +440,17 @@ export default function VendorPortfolioPage() {
 
           {/* Liens réseaux */}
           <section className={cardClass}>
-            <h2 className="font-display text-xl sm:text-2xl font-bold text-[#15181c] mb-2 flex items-center gap-2">
-              <Globe size={22} className="text-[#6b7076]" />
-              Liens réseaux
-            </h2>
-            <p className="text-[#6b7076] text-sm mb-6">Rendez votre site et votre Instagram accessibles.</p>
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`${sectionIcon} bg-[#f4f1f7]`}>
+                <Globe size={18} className="text-[#15181c]" />
+              </div>
+              <h2 className={sectionTitle}>Liens réseaux</h2>
+            </div>
+            <p className="text-[#6b7076] text-sm mb-5">
+              Rendez votre site et votre Instagram accessibles.
+            </p>
 
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
               <div>
                 <label className={labelClass}>Site web</label>
                 <div className="relative">
@@ -412,23 +483,27 @@ export default function VendorPortfolioPage() {
           {/* FAQ */}
           <section className={cardClass}>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-display text-xl sm:text-2xl font-bold text-[#15181c] flex items-center gap-2">
-                <MessageCircleQuestion size={22} className="text-[#6b7076]" />
-                FAQ
-              </h2>
+              <div className="flex items-center gap-3">
+                <div className={`${sectionIcon} bg-[#f4f1f7]`}>
+                  <MessageCircleQuestion size={18} className="text-[#15181c]" />
+                </div>
+                <h2 className={sectionTitle}>FAQ</h2>
+              </div>
               <button
                 type="button"
                 onClick={addFaqItem}
-                className="inline-flex items-center gap-2 h-9 px-4 rounded-full bg-[#15181c] text-sm font-semibold text-white hover:bg-[#333] transition"
+                className="inline-flex items-center gap-1 w-9 h-9 rounded-full bg-[#fde68a] text-[#15181c] justify-center hover:bg-[#fbd04a] transition shrink-0"
               >
-                <Plus size={16} /> Ajouter
+                <Plus size={18} />
               </button>
             </div>
-            <p className="text-[#6b7076] text-sm mb-6">Anticipez les questions des futurs mariés.</p>
+            <p className="text-[#6b7076] text-sm mb-5">
+              Anticipez les questions des futurs mariés.
+            </p>
 
             <div className="space-y-3">
               {faq.length === 0 && (
-                <p className="text-sm text-[#6b7076] bg-[#f4f1f7]/40 rounded-xl p-4">
+                <p className="text-sm text-[#6b7076] bg-[#f4f1f7]/40 rounded-2xl p-4">
                   Aucune question pour le moment.
                 </p>
               )}
@@ -440,20 +515,30 @@ export default function VendorPortfolioPage() {
                   <button
                     type="button"
                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                    className="w-full flex items-center justify-between p-4 text-left hover:bg-[#f4f1f7]/30 transition"
+                    className="w-full flex items-center justify-between p-4 text-left hover:bg-[#f4f1f7]/20 transition"
                   >
                     <span className="font-semibold text-[#15181c] text-sm sm:text-base pr-4">
                       {item.question || `Question ${index + 1}`}
                     </span>
-                    {openFaq === index ? (
-                      <ChevronUp size={18} className="text-[#6b7076] shrink-0" />
-                    ) : (
-                      <ChevronDown size={18} className="text-[#6b7076] shrink-0" />
-                    )}
+                    <div
+                      className={`w-7 h-7 rounded-full flex items-center justify-center transition ${
+                        openFaq === index ? "bg-[#fde68a] rotate-180" : "bg-[#f4f1f7]"
+                      }`}
+                    >
+                      {openFaq === index ? (
+                        <ChevronUp size={14} className="text-[#15181c]" />
+                      ) : (
+                        <ChevronDown size={14} className="text-[#15181c]" />
+                      )}
+                    </div>
                   </button>
-                  {openFaq === index && (
-                    <div className="p-4 pt-0 space-y-4 border-t border-[#f4f1f7]">
-                      <div>
+                  <div
+                    className={`grid transition-[grid-template-rows,opacity,padding] duration-300 ease-out ${
+                      openFaq === index ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden px-4 space-y-4">
+                      <div className="pt-4 border-t border-[#f4f1f7]">
                         <label className={labelClass}>Question</label>
                         <input
                           type="text"
@@ -473,17 +558,17 @@ export default function VendorPortfolioPage() {
                           placeholder="Votre réponse"
                         />
                       </div>
-                      <div className="flex justify-end">
+                      <div className="flex justify-end pb-4">
                         <button
                           type="button"
                           onClick={() => removeFaqItem(index)}
-                          className="inline-flex items-center gap-2 text-sm text-[#F2704A] hover:text-[#d14e2c] font-medium"
+                          className="inline-flex items-center gap-2 h-9 px-4 rounded-full text-sm font-semibold text-[#F2704A] hover:bg-[#fff0f3] transition"
                         >
                           <Trash2 size={16} /> Supprimer
                         </button>
                       </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -492,82 +577,94 @@ export default function VendorPortfolioPage() {
           {/* Avis clients */}
           <section className={cardClass}>
             <div className="flex items-center justify-between mb-2">
-              <h2 className="font-display text-xl sm:text-2xl font-bold text-[#15181c] flex items-center gap-2">
-                <Star size={22} className="text-[#6b7076]" />
-                Avis clients
-              </h2>
+              <div className="flex items-center gap-3">
+                <div className={`${sectionIcon} bg-[#fde68a]/40`}>
+                  <Star size={18} className="text-[#15181c]" />
+                </div>
+                <h2 className={sectionTitle}>Avis clients</h2>
+              </div>
               <button
                 type="button"
                 onClick={addReviewItem}
-                className="inline-flex items-center gap-2 h-9 px-4 rounded-full bg-[#15181c] text-sm font-semibold text-white hover:bg-[#333] transition"
+                className="inline-flex items-center gap-1 w-9 h-9 rounded-full bg-[#fde68a] text-[#15181c] justify-center hover:bg-[#fbd04a] transition shrink-0"
               >
-                <Plus size={16} /> Ajouter
+                <Plus size={18} />
               </button>
             </div>
-            <p className="text-[#6b7076] text-sm mb-6">Valorisez l'expérience des couples que vous avez accompagnés.</p>
+            <p className="text-[#6b7076] text-sm mb-5">
+              Valorisez l'expérience des couples que vous avez accompagnés.
+            </p>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-4 max-h-[640px] overflow-y-auto pr-1">
               {reviews.length === 0 && (
-                <p className="text-sm text-[#6b7076] bg-[#f4f1f7]/40 rounded-xl p-4 sm:col-span-2 lg:col-span-3">
+                <p className="text-sm text-[#6b7076] bg-[#f4f1f7]/40 rounded-2xl p-4">
                   Aucun avis pour le moment.
                 </p>
               )}
-              {reviews.map((review, index) => (
-                <div
-                  key={index}
-                  className="rounded-2xl bg-white border border-[#f4f1f7] p-5 shadow-sm flex flex-col gap-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <StarRating
-                      value={review.rating}
-                      onChange={(r) => {
-                        const updated = [...reviews];
-                        updated[index] = { ...updated[index], rating: r };
-                        setReviews(updated);
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeReviewItem(index)}
-                      className="p-2 rounded-xl hover:bg-[#fff0f3] text-[#6b7076]"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+              {reviews.map((review, index) => {
+                const scheme = colorSchemes[index % colorSchemes.length];
+                return (
+                  <div
+                    key={index}
+                    className={`rounded-2xl ${scheme.bg} border ${scheme.border} p-5 flex flex-col gap-4`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <StarRating
+                        value={review.rating}
+                        onChange={(r) => {
+                          const updated = [...reviews];
+                          updated[index] = { ...updated[index], rating: r };
+                          setReviews(updated);
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeReviewItem(index)}
+                        className="p-2 rounded-full hover:bg-white/50 text-[#6b7076]"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        value={review.author}
+                        onChange={(e) => updateReviewItem(index, "author", e.target.value)}
+                        className={`${inputClass} ${scheme.input}`}
+                        placeholder="Prénom du couple"
+                      />
+                      <textarea
+                        value={review.text}
+                        onChange={(e) => updateReviewItem(index, "text", e.target.value)}
+                        rows={3}
+                        className={`${inputClass} resize-none ${scheme.input}`}
+                        placeholder="L'avis du client"
+                      />
+                      <input
+                        type="date"
+                        value={review.date ? review.date.slice(0, 10) : ""}
+                        onChange={(e) => updateReviewItem(index, "date", e.target.value)}
+                        className={`${inputClass} ${scheme.input}`}
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      value={review.author}
-                      onChange={(e) => updateReviewItem(index, "author", e.target.value)}
-                      className={inputClass}
-                      placeholder="Prénom du couple"
-                    />
-                    <textarea
-                      value={review.text}
-                      onChange={(e) => updateReviewItem(index, "text", e.target.value)}
-                      rows={3}
-                      className={`${inputClass} resize-none`}
-                      placeholder="L'avis du client"
-                    />
-                    <input
-                      type="date"
-                      value={review.date ? review.date.slice(0, 10) : ""}
-                      onChange={(e) => updateReviewItem(index, "date", e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
-          <div className="flex justify-end pt-4">
+          {/* Save */}
+          <div className="lg:col-span-2 flex justify-end pt-2 pb-8">
             <button
               onClick={save}
               disabled={saving}
-              className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-[#15181c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
+              className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-[#fde68a] text-sm font-bold text-[#15181c] hover:bg-[#fbd04a] transition disabled:opacity-50 shadow-sm"
             >
-              {saving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+              {saving ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Check size={16} />
+              )}
               {saving ? "Enregistrement..." : "Enregistrer le portfolio"}
             </button>
           </div>
