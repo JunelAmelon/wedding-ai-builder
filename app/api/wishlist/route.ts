@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifySession } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { wishlistRepo, wishlistItemRepo, wishlistPurchaseRepo } from "@/lib/db/repositories/wishlistRepo";
 import type { Wishlist, WishlistItem } from "@/types/marketplace";
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieStore = await import("next/headers").then((m) => m.cookies());
-    const token = cookieStore.get("wab_session")?.value;
-    const user = token ? verifySession(token) : null;
-
-    if (!user || user.role !== "couple") {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    const user = await requireAuth();
+    if (user.role !== "couple") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -35,14 +32,11 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const cookieStore = await import("next/headers").then((m) => m.cookies());
-    const token = cookieStore.get("wab_session")?.value;
-    const user = token ? verifySession(token) : null;
-
-    if (!user || user.role !== "couple") {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    const user = await requireAuth();
+    if (user.role !== "couple") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 
     const wishlists = await wishlistRepo.getByCouple(user.id);

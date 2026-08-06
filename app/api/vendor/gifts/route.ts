@@ -1,25 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
-import { verifySession } from "@/lib/auth";
+import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/auth";
+import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { wishlistItemRepo } from "@/lib/db/repositories/wishlistRepo";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const cookieStore = await import("next/headers").then((m) => m.cookies());
-    const token = cookieStore.get("wab_session")?.value;
-    const user = token ? verifySession(token) : null;
-
-    if (!user || user.role !== "vendor") {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    const user = await requireAuth();
+    if (user.role !== "vendor") {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
     }
 
-    // Pour l'instant, retourner tous les items (à filtrer par vendorId plus tard)
+    const profile = await vendorProfileRepo.getByUserId(user.id);
+    if (!profile) {
+      return NextResponse.json({ items: [] });
+    }
+
     const allItems = await wishlistItemRepo.getByWishlist("all");
-    // Filtrer par vendorId du prestataire connecté
-    const vendorItems = allItems.filter((item) => item.vendorId === user.id);
-    
+    const vendorItems = allItems.filter((item) => item.vendorId === profile.id);
+
     return NextResponse.json({ items: vendorItems });
-  } catch (error) {
-    console.error("Error fetching vendor gifts:", error);
-    return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur";
+    if (message === "Unauthorized") {
+      return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+    }
+    console.error("Error fetching vendor gifts:", err);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

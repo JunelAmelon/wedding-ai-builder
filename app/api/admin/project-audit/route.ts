@@ -1,21 +1,12 @@
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 
-function checkPassword(req: Request): boolean {
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) return false;
-  const authHeader = req.headers.get("authorization");
-  return authHeader === `Bearer ${password}`;
-}
-
-export async function GET(req: Request) {
-  if (!checkPassword(req)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  }
-
+export async function GET() {
   try {
+    await requireAdmin();
     const [projects, users] = await Promise.all([projectRepo.list(), userRepo.list()]);
     const userById = new Map(users.map((u) => [u.id, u]));
 

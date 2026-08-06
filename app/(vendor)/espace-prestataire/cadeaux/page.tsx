@@ -8,6 +8,7 @@ export default function VendorGiftsPage() {
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [vendor, setVendor] = useState<{ id: string; companyName: string } | null>(null);
   const [newItem, setNewItem] = useState({
     name: "",
     description: "",
@@ -19,9 +20,13 @@ export default function VendorGiftsPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/vendor/gifts");
-        const data = await res.json();
-        setItems(data.items || []);
+        const [giftsRes, profileRes] = await Promise.all([fetch("/api/vendor/gifts"), fetch("/api/vendor/profile")]);
+        const giftsData = await giftsRes.json();
+        const profileData = await profileRes.json();
+        setItems(giftsData.items || []);
+        if (profileData.profile) {
+          setVendor({ id: profileData.profile.id, companyName: profileData.profile.companyName });
+        }
       } catch (error) {
         console.error("Error loading gifts:", error);
       } finally {
@@ -32,19 +37,19 @@ export default function VendorGiftsPage() {
   }, []);
 
   async function addGift() {
-    if (!newItem.name || !newItem.price) return;
+    if (!newItem.name || !newItem.price || !vendor) return;
     try {
       const res = await fetch("/api/wishlist/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          wishlistId: "vendor-default", // À adapter
+          wishlistId: "vendor-default",
           name: newItem.name,
           description: newItem.description,
           price: parseFloat(newItem.price),
           imageUrl: newItem.imageUrl || undefined,
-          vendorId: "current-vendor-id", // À adapter avec l'ID du prestataire connecté
-          vendorName: "Nom du prestataire", // À adapter
+          vendorId: vendor.id,
+          vendorName: vendor.companyName,
           quantity: parseInt(newItem.quantity) || 1,
         }),
       });

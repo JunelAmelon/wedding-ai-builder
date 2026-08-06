@@ -18,7 +18,7 @@ const BROWSER_ROWS = [
   { k: "Style", v: "Champêtre" },
   { k: "Lieu", v: "Bordeaux" },
   { k: "Date", v: "18 juillet 2027" },
-  { k: "Concurrence", v: "3 invités" },
+  { k: "Concurrence", v: "3 pros" },
   { k: "Probabilité", v: "81 % signature" },
 ];
 
@@ -138,7 +138,7 @@ export default function ProfessionalMarketingPage() {
                 <p>
                   Chaque échange avec un couple affine le score de match en temps réel : budget, style, disponibilité, localisation. Vous ne recevez que les couples avec qui vous allez vraiment matcher.
                 </p>
-                <Link href="#dashboard" className="wf-link">
+                <Link href="#workflow" className="wf-link">
                   En savoir plus <ArrowRight size={14} />
                 </Link>
               </div>
@@ -158,7 +158,7 @@ export default function ProfessionalMarketingPage() {
                   </div>
 
                   <div className="badge-pill bp-top-right">
-                    <Check size={12} /> Increase Engagement
+                    <Check size={12} /> Plus d'échanges
                   </div>
                   <div className="badge-pill bp-mid-right">
                     <Check size={12} /> 97% match
@@ -172,9 +172,9 @@ export default function ProfessionalMarketingPage() {
                   <div className="floating-card fc-bottom-right">
                     <Image src="https://images.unsplash.com/photo-1556228720-19870e0b591a?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
                     <div className="fc-info">
-                      <div className="fc-title">Need a fashion fix</div>
+                      <div className="fc-title">Conseil personnalisé</div>
                       <div className="fc-meta">Recommandation IA</div>
-                      <button className="fc-btn">Shop now</button>
+                      <button className="fc-btn">Découvrir</button>
                     </div>
                   </div>
 

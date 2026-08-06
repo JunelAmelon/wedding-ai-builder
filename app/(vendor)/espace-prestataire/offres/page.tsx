@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Star, Zap, Check, Shield, Sparkles, TrendingUp } from "lucide-react";
 
 const PLANS = [
@@ -67,6 +68,25 @@ const COMPARISON = [
 ];
 
 export default function VendorOffresPage() {
+  const [loading, setLoading] = useState<string | null>(null);
+
+  async function choosePlan(planName: string) {
+    setLoading(planName);
+    try {
+      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || "Erreur lors de l'ouverture du paiement");
+      }
+    } catch {
+      alert("Erreur réseau");
+    } finally {
+      setLoading(null);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#fff0f3] text-[#15181c] font-sans">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
@@ -132,13 +152,15 @@ export default function VendorOffresPage() {
               </ul>
 
               <button
+                onClick={() => choosePlan(plan.name)}
+                disabled={!!loading}
                 className={`w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 ${
                   plan.name === "Elite Performance"
                     ? "bg-[#fde68a] text-[#15181c] hover:bg-[#fcd34d]"
                     : "bg-[#15181c] text-white hover:bg-[#2c3036]"
                 }`}
               >
-                <Zap size={16} /> Choisir
+                <Zap size={16} /> {loading === plan.name ? "Chargement..." : "Choisir"}
               </button>
             </div>
           ))}

@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { generateWeddingPlan } from "@/lib/ai/orchestrator";
 import type { QuizAnswers } from "@/types/domain";
 
-function checkPassword(req: Request): boolean {
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) return false;
-  const authHeader = req.headers.get("authorization");
-  return authHeader === `Bearer ${password}`;
-}
-
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> } | { params: { id: string } }) {
-  if (!checkPassword(req)) {
+  try {
+    await requireAdmin();
+  } catch {
     return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
   }
 

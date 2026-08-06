@@ -33,15 +33,10 @@ export async function POST(req: Request) {
       resetTokenExpiry: resetTokenExpiry.toISOString(),
     } as any);
 
-    // En production, envoyer un email avec le lien
-    // Pour le développement, on retourne le token directement
+    // En production, envoyer un email avec le lien (implémenter ici)
+    // En développement, logguer le token côté serveur si nécessaire
     if (process.env.NODE_ENV === "development") {
-      return NextResponse.json({
-        success: true,
-        message: "Token de réinitialisation généré (mode développement)",
-        resetToken,
-        resetLink: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/reset-password?token=${resetToken}`,
-      });
+      console.log(`[dev] reset token for ${email}: ${resetToken}`);
     }
 
     return NextResponse.json({ success: true, message: "Si cet email existe, un lien de réinitialisation sera envoyé." });

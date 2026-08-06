@@ -9,7 +9,7 @@ import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight } from
 const FAQS = [
   { q: "Le matching est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et notre IA trouve vos âmes sœurs professionnelles instantanément." },
   { q: "Comment fonctionne le score de match ?", a: "Notre algorithme analyse votre budget, votre style, votre date et votre zone géographique pour calculer votre compatibilité avec chaque pro." },
-  { q: "Puis-je refuser un match ?", a: "Bien sûr. Vous pouvez swipez à gauche sur les pros qui ne vous conviennent pas. Notre IA apprend de vos préférences." },
+  { q: "Puis-je refuser un match ?", a: "Bien sûr. Vous pouvez swiper à gauche sur les pros qui ne vous conviennent pas. Notre IA apprend de vos préférences." },
   { q: "Les pros sont-ils vérifiés ?", a: "Oui. Tous les prestataires sont vérifiés par notre équipe avant d'être disponibles sur la plateforme." },
 ];
 

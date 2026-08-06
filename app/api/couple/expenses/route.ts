@@ -13,6 +13,14 @@ const ExpenseSchema = z.object({
   currency: z.string().min(1),
 });
 
+const UpdateSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  category: z.string().min(1),
+  plannedAmount: z.number().nonnegative(),
+  actualAmount: z.number().nonnegative().nullable().optional(),
+});
+
 const DeleteSchema = z.object({
   id: z.string().min(1),
 });
@@ -59,6 +67,36 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ expense }, { status: 201 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur";
+    if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const user = await requireAuth();
+    if (user.role !== "couple") return NextResponse.json({ error: "Accès réservé" }, { status: 403 });
+
+    const body = await req.json();
+    const parsed = UpdateSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: "Données invalides" }, { status: 400 });
+
+    const expense = await expenseRepo.get(parsed.data.id);
+    if (!expense) return NextResponse.json({ error: "Dépense introuvable" }, { status: 404 });
+
+    const project = await projectRepo.get(expense.projectId);
+    if (!project || project.userId !== user.id) return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+
+    const updated = await expenseRepo.update(parsed.data.id, {
+      label: parsed.data.label,
+      category: parsed.data.category,
+      plannedAmount: parsed.data.plannedAmount,
+      actualAmount: parsed.data.actualAmount ?? null,
+    });
+
+    return NextResponse.json({ expense: updated });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

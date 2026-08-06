@@ -5,8 +5,12 @@ import type { UserAccount } from "@/types/marketplace";
 import type { AdminRole } from "@/types/admin";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 
-const JWT_SECRET = process.env.JWT_SECRET || "wedding-ai-builder-secret";
+const JWT_SECRET = process.env.JWT_SECRET;
 const COOKIE_NAME = "wab_session";
+
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET must be defined in environment variables");
+}
 
 export interface SessionUser {
   id: string;

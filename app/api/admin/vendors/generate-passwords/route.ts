@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "crypto";
+import { requireAdmin } from "@/lib/auth";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { hashPassword } from "@/lib/auth";
 
@@ -13,19 +14,9 @@ function generatePassword(length = 12): string {
   return result;
 }
 
-function checkPassword(req: Request): boolean {
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) return false;
-  const authHeader = req.headers.get("authorization");
-  return authHeader === `Bearer ${password}`;
-}
-
-export async function POST(req: Request) {
-  if (!checkPassword(req)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  }
-
+export async function POST() {
   try {
+    await requireAdmin();
     const allUsers = await userRepo.list();
     const vendorUsers = allUsers.filter((u) => u.role === "vendor");
     const vendorsWithoutPassword = vendorUsers.filter((u) => !u.passwordHash && !u.googleId);

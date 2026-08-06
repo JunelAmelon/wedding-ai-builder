@@ -32,9 +32,12 @@ export async function GET(req: NextRequest) {
     }
 
     const profile = await vendorProfileRepo.getByUserId(user.id);
-    const unavailableDates = profile?.availability?.unavailableDates || [];
+    if (!profile) {
+      return NextResponse.json({ error: "Profil prestataire introuvable" }, { status: 404 });
+    }
+    const unavailableDates = profile.availability?.unavailableDates || [];
 
-    const matches = await matchRepo.listByVendor(user.id);
+    const matches = await matchRepo.listByVendor(profile.id);
     const acceptedMatches = matches.filter((m: any) => m.status === "accepted");
     const platformEvents: WeddingEvent[] = [];
 

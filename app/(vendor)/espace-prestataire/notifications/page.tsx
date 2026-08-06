@@ -29,7 +29,7 @@ export default function VendorNotificationsPage() {
     const res = await fetch("/api/notifications", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ notificationId: id }),
     });
     if (res.ok) {
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
