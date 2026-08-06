@@ -128,6 +128,8 @@ export default function CoupleMessagingPage() {
       setMessages(json.messages || []);
     }
     loadMessages();
+    const interval = setInterval(loadMessages, 5000);
+    return () => clearInterval(interval);
   }, [selected]);
 
   useEffect(() => {

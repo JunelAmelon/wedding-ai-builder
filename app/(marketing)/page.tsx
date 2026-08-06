@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { MARKETING_STATS } from "@/lib/marketing/stats";
 
 const FAQS = [
   { q: "Le matching est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et notre IA trouve vos âmes sœurs professionnelles instantanément." },
@@ -118,7 +119,7 @@ export default function LandingPage() {
 
                 <div className="stat-card stat-coral reveal">
                   <Users className="ic" size={24} color="#fff" />
-                  <div className="num">2 400+</div>
+                  <div className="num">{MARKETING_STATS.couplesHelped.toLocaleString("fr-FR")}+</div>
                   <div className="lbl">Couples accompagnés en France</div>
                 </div>
               </div>
@@ -146,7 +147,7 @@ export default function LandingPage() {
               <div className="promo-card yellow reveal">
                 <div className="promo-visual">
                   <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&h=400&q=85" alt="" width={300} height={400} className="w-full h-full object-cover" unoptimized />
-                  <span className="promo-badge">92%</span>
+                  <span className="promo-badge">{MARKETING_STATS.matchScore}%</span>
                 </div>
                 <div className="promo-text">
                   <span className="eyebrow-pill">Étape 1</span>
@@ -267,9 +268,9 @@ export default function LandingPage() {
 
             <div className="chip-grid" style={{ marginTop: 36 }}>
               <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--rose-chip)" }}>⏱</span><div><div className="num">15h</div><div className="lbl">économisées en recherches</div></div></div>
-              <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--sage-chip)" }}>✓</span><div><div className="num">92%</div><div className="lbl">de couples satisfaits du matching</div></div></div>
-              <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--lavender)" }}>€</span><div><div className="num">1 250€</div><div className="lbl">économisés en moyenne</div></div></div>
-              <div className="chip reveal"><span className="dot-ic" style={{ background: "#FDEBD3" }}>★</span><div><div className="num">4.8/5</div><div className="lbl">note moyenne des prestataires</div></div></div>
+              <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--sage-chip)" }}>✓</span><div><div className="num">{MARKETING_STATS.matchScore}%</div><div className="lbl">de couples satisfaits du matching</div></div></div>
+              <div className="chip reveal"><span className="dot-ic" style={{ background: "var(--lavender)" }}>€</span><div><div className="num">{MARKETING_STATS.avgSavings.toLocaleString("fr-FR")}€</div><div className="lbl">économisés en moyenne</div></div></div>
+              <div className="chip reveal"><span className="dot-ic" style={{ background: "#FDEBD3" }}>★</span><div><div className="num">{MARKETING_STATS.avgRating}/5</div><div className="lbl">note moyenne des prestataires</div></div></div>
             </div>
           </div>
         </section>
@@ -313,8 +314,8 @@ export default function LandingPage() {
 
               <div className="stat-stack reveal">
                 <div className="box"><div className="num">3x</div><div className="lbl">Plus rapide qu&apos;une organisation classique</div></div>
-                <div className="box"><div className="num">92%</div><div className="lbl">De couples satisfaits du matching</div></div>
-                <div className="box"><div className="num">24h</div><div className="lbl">Pour obtenir un plan complet</div></div>
+                <div className="box"><div className="num">{MARKETING_STATS.matchScore}%</div><div className="lbl">De couples satisfaits du matching</div></div>
+                <div className="box"><div className="num">{MARKETING_STATS.planGenerationTime}</div><div className="lbl">Pour obtenir un plan complet</div></div>
               </div>
             </div>
           </div>

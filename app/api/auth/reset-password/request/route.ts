@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { randomBytes } from "crypto";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const RequestResetSchema = z.object({
   email: z.string().email(),
@@ -9,6 +10,12 @@ const RequestResetSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    const limit = await checkRateLimit(`reset-request:${ip}`, 3, 3600);
+    if (!limit.allowed) {
+      return NextResponse.json({ error: "Trop de demandes. Réessayez plus tard." }, { status: 429 });
+    }
+
     const body = await req.json();
     const parsed = RequestResetSchema.safeParse(body);
     if (!parsed.success) {

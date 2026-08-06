@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Star,
 } from "lucide-react";
+import { MARKETING_STATS } from "@/lib/marketing/stats";
 
 const SERVICE_CATEGORIES = [
   "Photographe / Vidéaste",
@@ -407,7 +408,7 @@ export default function ProfessionalRegistrationPage() {
               <div className="hero-text">
                 <div className="trust-badge">
                   <Star size={14} className="stars" style={{ color: "#B8960C", fill: "#B8960C" }} />
-                  <b>4.9</b> · avis des professionnels inscrits
+                  <b>{MARKETING_STATS.avgRating}</b> · avis des professionnels inscrits
                 </div>
                 <h1>Recevez des couples avec qui vous allez matcher</h1>
                 <p className="lead">
@@ -420,7 +421,7 @@ export default function ProfessionalRegistrationPage() {
                   <Image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=420&h=800&q=85" alt="Professionnel" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                 </div>
 
-                <div className="rating-badge"><span>★★★★★</span> 4.9</div>
+                <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
 
                 <div className="floating-card fc-left">
                   <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
@@ -430,7 +431,7 @@ export default function ProfessionalRegistrationPage() {
                 </div>
 
                 <div className="badge-pill bp-top-right">
-                  <Check size={12} /> 97% compatibilité
+                  <Check size={12} /> {MARKETING_STATS.matchScore}% compatibilité
                 </div>
                 <div className="badge-pill bp-mid-right">
                   <Star size={12} /> 2 roses
@@ -445,7 +446,7 @@ export default function ProfessionalRegistrationPage() {
                   <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
                   <div className="fc-info">
                     <div className="fc-title">Photographe pro</div>
-                    <div className="fc-meta">Bordeaux · 4.9/5</div>
+                    <div className="fc-meta">Bordeaux · {MARKETING_STATS.avgRating}/5</div>
                     <button className="fc-btn">Voir le profil</button>
                   </div>
                 </div>
@@ -490,7 +491,7 @@ export default function ProfessionalRegistrationPage() {
             <div className="dark-stats-grid">
               <div>
                 <div className="cap">Professionnels inscrits</div>
-                <div className="dark-big-num">2 847</div>
+                <div className="dark-big-num">{MARKETING_STATS.activeProfessionals.toLocaleString("fr-FR")}</div>
               </div>
               <div className="dark-testi">
                 <p>« En deux semaines, j&apos;ai reçu plus de demandes qualifiées qu&apos;en trois mois sur les autres plateformes. »</p>

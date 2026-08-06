@@ -6,6 +6,7 @@ import { coupleProfileRepo } from "@/lib/db/repositories/coupleProfileRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const RegisterSchema = z.object({
   firstName: z.string().min(1),
@@ -21,6 +22,12 @@ const RegisterSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    const limit = await checkRateLimit(`register:${ip}`, 5, 3600);
+    if (!limit.allowed) {
+      return NextResponse.json({ error: "Trop de créations de compte. Réessayez plus tard." }, { status: 429 });
+    }
+
     const body = await req.json();
     const parsed = RegisterSchema.safeParse(body);
     if (!parsed.success) {

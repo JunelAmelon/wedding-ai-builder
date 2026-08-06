@@ -3,6 +3,7 @@ import { z } from "zod";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { verifyPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const LoginSchema = z.object({
   email: z.string().email(),
@@ -11,6 +12,12 @@ const LoginSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    const limit = await checkRateLimit(`login:${ip}`, 10, 60);
+    if (!limit.allowed) {
+      return NextResponse.json({ error: "Trop de tentatives. Réessayez dans une minute." }, { status: 429 });
+    }
+
     const body = await req.json();
     const parsed = LoginSchema.safeParse(body);
     if (!parsed.success) {

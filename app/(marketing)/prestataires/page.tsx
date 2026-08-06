@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
 import { ArrowRight, Check, MessageCircle, BarChart3 } from "lucide-react";
+import { MARKETING_STATS } from "@/lib/marketing/stats";
 
 const FAQS = [
   { q: "Combien coûte l'inscription ?", a: "L'inscription est gratuite. Vous ne payez aucun abonnement pour recevoir des matches qualifiés." },
@@ -55,7 +56,7 @@ export default function ProfessionalMarketingPage() {
               <div className="hero-text">
                 <div className="trust-badge">
                   <span className="stars">★★★★★</span>
-                  <b>4.9</b> · avis des professionnels inscrits
+                  <b>{MARKETING_STATS.avgRating}</b> · avis des professionnels inscrits
                 </div>
                 <h1>Des couples avec qui vous allez matcher</h1>
                 <p className="lead">
@@ -68,7 +69,7 @@ export default function ProfessionalMarketingPage() {
                   <Image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=420&h=800&q=85" alt="Professionnel mariage" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                 </div>
 
-                <div className="rating-badge"><span>★★★★★</span> 4.9</div>
+                <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
 
                 <div className="floating-card fc-left">
                   <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
@@ -78,7 +79,7 @@ export default function ProfessionalMarketingPage() {
                 </div>
 
                 <div className="badge-pill bp-top-right">
-                  <Check size={12} /> 97% match
+                  <Check size={12} /> {MARKETING_STATS.matchScore}% match
                 </div>
                 <div className="badge-pill bp-mid-right">
                   <MessageCircle size={12} /> 2 roses
@@ -148,7 +149,7 @@ export default function ProfessionalMarketingPage() {
                     <Image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=420&h=800&q=85" alt="Matching IA" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                   </div>
 
-                  <div className="rating-badge"><span>★★★★★</span> 4.9</div>
+                  <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
 
                   <div className="floating-card fc-left">
                     <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
@@ -161,11 +162,11 @@ export default function ProfessionalMarketingPage() {
                     <Check size={12} /> Plus d'échanges
                   </div>
                   <div className="badge-pill bp-mid-right">
-                    <Check size={12} /> 97% match
+                    <Check size={12} /> {MARKETING_STATS.matchScore}% match
                   </div>
 
                   <div className="stat-card-green" style={{ background: "var(--coral)" }}>
-                    <b>+34%</b>
+                    <b>+{MARKETING_STATS.responseRateIncrease}%</b>
                     <span>taux de réponse</span>
                   </div>
 
@@ -235,10 +236,10 @@ export default function ProfessionalMarketingPage() {
 
             <div className="proof-divider">
               <span className="cap">
-                <b>2 847</b> · PROFESSIONNELS ACTIFS
+                <b>{MARKETING_STATS.activeProfessionals.toLocaleString("fr-FR")}</b> · PROFESSIONNELS ACTIFS
               </span>
             </div>
-            <div className="proof-num reveal">26 900 789 €</div>
+            <div className="proof-num reveal">{MARKETING_STATS.totalBudgetsManaged.toLocaleString("fr-FR")} €</div>
             <p style={{ marginBottom: 32 }}>de budgets confiés à nos prestataires depuis le lancement.</p>
 
             <div className="proof-cards">

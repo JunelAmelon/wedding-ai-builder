@@ -109,7 +109,7 @@ export default function VendorMessagingPage() {
     async function loadMessages() {
       if (!selected) return;
       try {
-        const res = await fetch(`/api/vendor/messages?proposalId=${selected.id}`);
+        const res = await fetch(`/api/messages?proposalId=${selected.id}`);
         const json = await res.json();
         setMessages(json.messages || []);
       } catch {
@@ -117,6 +117,8 @@ export default function VendorMessagingPage() {
       }
     }
     loadMessages();
+    const interval = setInterval(loadMessages, 5000);
+    return () => clearInterval(interval);
   }, [selected]);
 
   useEffect(() => {
