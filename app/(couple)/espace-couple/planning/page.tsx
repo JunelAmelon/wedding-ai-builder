@@ -60,6 +60,7 @@ export default function CouplePlanningPage() {
   const [tasks, setTasks] = useState<PlanningTask[]>([]);
   const [timeline, setTimeline] = useState<Timeline | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Modal states
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -117,7 +118,7 @@ export default function CouplePlanningPage() {
           }
         }
       } catch {
-        // ignore
+        setError("Impossible de charger le planning.");
       } finally {
         setLoading(false);
       }
@@ -295,6 +296,13 @@ export default function CouplePlanningPage() {
   };
 
   if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (error) return (
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
+      <div className="bg-white border border-[#fce7f3] rounded-2xl p-6 text-center max-w-md">
+        <p className="text-[#831843]">{error}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white">

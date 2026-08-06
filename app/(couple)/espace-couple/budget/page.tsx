@@ -59,6 +59,7 @@ export default function CoupleBudgetPage() {
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -73,7 +74,11 @@ export default function CoupleBudgetPage() {
         setExpenses((await eR.json()).expenses || []);
         const rJ = await rR.json().catch(() => ({}));
         setAiBudget(rJ.project?.aiOutput?.budgetBreakdown || rJ.session?.aiOutput?.budgetBreakdown || null);
-      } catch {} finally { setLoading(false); }
+      } catch {
+        setError("Impossible de charger le budget.");
+      } finally {
+        setLoading(false);
+      }
     }
     load();
   }, [router]);
@@ -214,6 +219,13 @@ export default function CoupleBudgetPage() {
   }
 
   if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (error) return (
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
+      <div className="bg-white border border-[#fce7f3] rounded-2xl p-6 text-center max-w-md">
+        <p className="text-[#831843]">{error}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white">

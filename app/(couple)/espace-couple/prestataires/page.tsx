@@ -119,6 +119,7 @@ export default function CoupleVendorsPage() {
   const [tenders, setTenders] = useState<TenderWithProposals[]>([]);
   const [project, setProject] = useState<WeddingProject | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [launching, setLaunching] = useState(false);
   const [tenderError, setTenderError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -152,7 +153,7 @@ export default function CoupleVendorsPage() {
         });
         setConfirmedVendors(confirmed);
       } catch {
-        // ignore
+        setError("Impossible de charger les prestataires.");
       } finally {
         setLoading(false);
       }
@@ -240,6 +241,13 @@ export default function CoupleVendorsPage() {
   const hasTenderForCategory = (cat: string) => tenders.some((t) => t.category === cat);
 
   if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (error) return (
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
+      <div className="bg-white border border-[#fce7f3] rounded-2xl p-6 text-center max-w-md">
+        <p className="text-[#831843]">{error}</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
