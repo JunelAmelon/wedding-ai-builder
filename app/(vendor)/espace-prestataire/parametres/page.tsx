@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Save, Bell, Shield, LogOut, Key } from "lucide-react";
@@ -11,14 +11,62 @@ export default function VendorSettingsPage() {
   const [opportunityAlerts, setOpportunityAlerts] = useState(true);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/vendor/profile")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.profile?.preferences) {
+          setEmailNotifications(json.profile.preferences.emailNotifications ?? true);
+          setOpportunityAlerts(json.profile.preferences.opportunityAlerts ?? true);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleSave() {
     setSaving(true);
-    // Simulate save
-    setTimeout(() => {
+    setSaved(false);
+    try {
+      const res = await fetch("/api/vendor/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          preferences: { emailNotifications, opportunityAlerts },
+        }),
+      });
+      if (res.ok) setSaved(true);
+    } finally {
       setSaving(false);
-    }, 1000);
+    }
+  }
+
+  async function handleChangePassword() {
+    if (!currentPassword || !newPassword) return;
+    setPasswordSaving(true);
+    setPasswordError(null);
+    try {
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setPasswordError(json.error || "Erreur");
+      } else {
+        setCurrentPassword("");
+        setNewPassword("");
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } finally {
+      setPasswordSaving(false);
+    }
   }
 
   async function handleLogout() {
@@ -94,10 +142,13 @@ export default function VendorSettingsPage() {
               placeholder="Nouveau mot de passe"
               className="w-full rounded-xl border border-[#e6e4dd] px-4 py-3 text-sm bg-white text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
             />
+            {passwordError && <p className="text-sm text-[#F2704A]">{passwordError}</p>}
             <button
-              className="w-full py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
+              onClick={handleChangePassword}
+              disabled={passwordSaving || !currentPassword || !newPassword}
+              className="w-full py-3 px-4 rounded-full border border-[#e6e4dd] bg-white text-sm font-semibold text-[#1c1c1c] hover:bg-[#f4f1f7] transition disabled:opacity-50"
             >
-              Changer le mot de passe
+              {passwordSaving ? "Changement..." : "Changer le mot de passe"}
             </button>
           </div>
         </div>
@@ -141,7 +192,8 @@ export default function VendorSettingsPage() {
         </button>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end items-center gap-4">
+        {saved && <span className="text-sm text-green-600">Enregistré avec succès</span>}
         <button
           onClick={handleSave}
           disabled={saving}

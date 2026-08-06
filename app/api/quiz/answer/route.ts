@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { sessionRepo, getStoreBackend } from "@/lib/db/repositories/sessionRepo";
+import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { eventRepo } from "@/lib/db/repositories/eventRepo";
 import { trackServer } from "@/lib/analytics/posthog.server";
 import { QUIZ_STEPS } from "@/types/domain";
@@ -45,12 +45,7 @@ export async function POST(req: Request) {
 
     const session = await sessionRepo.get(sessionId);
     if (!session) {
-      const res = NextResponse.json(
-        { error: "Session introuvable", backend: getStoreBackend(), sessionId },
-        { status: 404 }
-      );
-      res.headers.set("x-store-backend", getStoreBackend());
-      return res;
+      return NextResponse.json({ error: "Session introuvable", sessionId }, { status: 404 });
     }
 
     const updated = await sessionRepo.updateAnswers(sessionId, updatePayload);
@@ -58,9 +53,7 @@ export async function POST(req: Request) {
     await eventRepo.log(sessionId, "quiz_step_completed", { step, stepName: step });
     trackServer(sessionId, "quiz_step_completed", { step });
 
-    const res = NextResponse.json({ session: updated });
-    res.headers.set("x-store-backend", getStoreBackend());
-    return res;
+    return NextResponse.json({ session: updated });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Une erreur est survenue";
     return NextResponse.json({ error: message }, { status: 500 });

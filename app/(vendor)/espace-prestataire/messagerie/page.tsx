@@ -60,7 +60,8 @@ type EnrichedProject = WeddingProject & { email?: string; phone?: string };
 interface ProposalWithDetails extends Proposal {
   project: EnrichedProject | null;
   couple: CoupleInfo | null;
-  lastMessageAt?: string;
+  lastMessage: Message | null;
+  unreadCount: number;
 }
 
 export default function VendorMessagingPage() {
@@ -252,8 +253,8 @@ export default function VendorMessagingPage() {
                           <span className="font-medium text-[#1c1c1c] truncate">
                             {proposal.couple?.firstName} {proposal.couple?.lastName}
                           </span>
-                          {proposal.lastMessageAt && (
-                            <span className="text-[10px] text-[#8b8b86]">{formatDate(proposal.lastMessageAt)}</span>
+                          {proposal.lastMessage && (
+                            <span className="text-[10px] text-[#8b8b86]">{formatDate(proposal.lastMessage.createdAt)}</span>
                           )}
                         </div>
                         <p className="text-sm text-[#8b8b86] truncate">{proposal.project?.name || "Projet sans nom"}</p>

@@ -44,6 +44,8 @@ type EnrichedProject = WeddingProject & { email?: string; phone?: string };
 interface ProposalWithDetails extends Proposal {
   project: EnrichedProject | null;
   vendor: VendorProfile | null;
+  lastMessage: Message | null;
+  unreadCount: number;
 }
 
 function Avatar({ name, src, className, online }: { name: string; src?: string; className?: string; online?: boolean }) {
@@ -187,8 +189,8 @@ export default function CoupleMessagingPage() {
     );
   }, [proposals, search]);
 
-  const lastMessage = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id).pop() || null;
-  const unreadCount = (p: ProposalWithDetails) => messages.filter((m) => m.proposalId === p.id && m.senderRole !== "couple" && !m.readAt).length;
+  const lastMessage = (p: ProposalWithDetails) => p.lastMessage || messages.filter((m) => m.proposalId === p.id).pop() || null;
+  const unreadCount = (p: ProposalWithDetails) => p.unreadCount ?? messages.filter((m) => m.proposalId === p.id && m.senderRole !== "couple" && !m.readAt).length;
 
   if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 

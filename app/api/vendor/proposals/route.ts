@@ -8,6 +8,7 @@ import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
+import { messageRepo } from "@/lib/db/repositories/messageRepo";
 
 const ProposalSchema = z.object({
   matchId: z.string().min(1),
@@ -30,9 +31,14 @@ export async function GET() {
     const proposals = await proposalRepo.listByVendor(profile.id);
     const detailed = await Promise.all(
       proposals.map(async (p) => {
-        const project = await projectRepo.get(p.projectId);
+        const [project, messages] = await Promise.all([
+          projectRepo.get(p.projectId),
+          messageRepo.listByProposal(p.id),
+        ]);
         const couple = project ? await userRepo.get(project.userId) : null;
-        return { ...p, project, couple: couple ? { firstName: couple.firstName, lastName: couple.lastName, avatarUrl: couple.avatarUrl } : null };
+        const lastMessage = messages[messages.length - 1] || null;
+        const unreadCount = messages.filter((m) => m.senderRole !== "vendor" && !m.readAt).length;
+        return { ...p, project, couple: couple ? { firstName: couple.firstName, lastName: couple.lastName, avatarUrl: couple.avatarUrl } : null, lastMessage, unreadCount };
       })
     );
     return NextResponse.json({ proposals: detailed });

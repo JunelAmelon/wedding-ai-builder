@@ -80,6 +80,7 @@ export interface VendorProfile {
   acceptedTerms: boolean;
   credits: number;
   profileCompletion: number; // 0-100
+  preferences?: { emailNotifications: boolean; opportunityAlerts: boolean };
   verified: boolean;
   reviewedAt: string | null;
   reviewedBy: string | null;

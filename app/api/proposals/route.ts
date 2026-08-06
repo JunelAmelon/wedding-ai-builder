@@ -29,8 +29,13 @@ export async function GET() {
     const proposals = await proposalRepo.listByProject(project.id);
     const detailed = await Promise.all(
       proposals.map(async (p) => {
-        const vendor = await vendorProfileRepo.get(p.vendorId);
-        return { ...p, vendor };
+        const [vendor, messages] = await Promise.all([
+          vendorProfileRepo.get(p.vendorId),
+          messageRepo.listByProposal(p.id),
+        ]);
+        const lastMessage = messages[messages.length - 1] || null;
+        const unreadCount = messages.filter((m) => m.senderRole !== "couple" && !m.readAt).length;
+        return { ...p, vendor, lastMessage, unreadCount };
       })
     );
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { leadRepo } from "@/lib/db/repositories/leadRepo";
-import { sessionRepo, getStoreBackend } from "@/lib/db/repositories/sessionRepo";
+import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { eventRepo } from "@/lib/db/repositories/eventRepo";
 import { trackServer } from "@/lib/analytics/posthog.server";
 import { sendResultEmail } from "@/lib/email/resend";
@@ -26,12 +26,7 @@ export async function POST(req: Request) {
 
     const session = await sessionRepo.get(sessionId);
     if (!session) {
-      const res = NextResponse.json(
-        { error: "Session introuvable", backend: getStoreBackend(), sessionId },
-        { status: 404 }
-      );
-      res.headers.set("x-store-backend", getStoreBackend());
-      return res;
+      return NextResponse.json({ error: "Session introuvable", sessionId }, { status: 404 });
     }
 
     const lead = await leadRepo.create({
