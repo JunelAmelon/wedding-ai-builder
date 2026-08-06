@@ -33,8 +33,8 @@ export function Footer() {
           <div>
             <h4>Légal</h4>
             <ul>
-              <li><Link href="#">Confidentialité</Link></li>
-              <li><Link href="#">CGU</Link></li>
+              <li><Link href="/confidentialite">Confidentialité</Link></li>
+              <li><Link href="/cgu">CGU</Link></li>
             </ul>
           </div>
         </div>
