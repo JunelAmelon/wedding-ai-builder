@@ -7,6 +7,64 @@ import { Header, Footer } from "@/components/layout";
 import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
 
+const SHOWCASE_MEDIA: {
+  id: string;
+  src: string;
+  poster: string;
+  alt: string;
+  badge: string;
+  span: string;
+}[] = [
+  {
+    id: "photographe",
+    src: "https://assets.mixkit.co/videos/36171/36171-720.mp4",
+    poster: "https://assets.mixkit.co/videos/36171/36171-thumb-720-0.jpg",
+    alt: "Photographe capturant un mariage",
+    badge: "Photographe",
+    span: "vc1",
+  },
+  {
+    id: "videaste",
+    src: "https://assets.mixkit.co/videos/40599/40599-720.mp4",
+    poster: "https://assets.mixkit.co/videos/40599/40599-thumb-720-0.jpg",
+    alt: "Vidéaste filmant un couple",
+    badge: "Vidéaste",
+    span: "vc2",
+  },
+  {
+    id: "traiteur",
+    src: "https://assets.mixkit.co/videos/5224/5224-720.mp4",
+    poster: "https://assets.mixkit.co/videos/5224/5224-thumb-720-0.jpg",
+    alt: "Dressage de table par un traiteur",
+    badge: "Traiteur",
+    span: "vc3",
+  },
+  {
+    id: "dj-animation",
+    src: "https://assets.mixkit.co/videos/11941/11941-720.mp4",
+    poster: "https://assets.mixkit.co/videos/11941/11941-thumb-720-0.jpg",
+    alt: "DJ animant un mariage",
+    badge: "DJ & Animation",
+    span: "vc4",
+  },
+  {
+    id: "fleuriste",
+    src: "https://assets.mixkit.co/videos/5208/5208-720.mp4",
+    poster: "https://assets.mixkit.co/videos/5208/5208-thumb-720-0.jpg",
+    alt: "Bouquet de fleurs de mariage",
+    badge: "Fleuriste",
+    span: "vc5",
+  },
+  {
+    id: "lieu",
+    src: "https://assets.mixkit.co/videos/5217/5217-720.mp4",
+    poster: "https://assets.mixkit.co/videos/5217/5217-thumb-720-0.jpg",
+    alt: "Lieu de réception",
+    badge: "Lieu",
+    span: "vc6",
+  },
+];
+
 const FAQS = [
   { q: "Le matching est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et notre IA trouve vos âmes sœurs professionnelles instantanément." },
   { q: "Comment fonctionne le score de match ?", a: "Notre algorithme analyse votre budget, votre style, votre date et votre zone géographique pour calculer votre compatibilité avec chaque pro." },
@@ -212,31 +270,21 @@ export default function LandingPage() {
             <span className="eyebrow-pill">Nos prestataires</span>
             <h2 style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des pros avec qui vous allez matcher</h2>
             <div className="video-grid reveal">
-              <div className="vc vc1">
-                <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&h=650&q=85" alt="" width={500} height={650} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-corner-stat">Photographe</span>
-                <span className="badge-play">▶</span>
-              </div>
-              <div className="vc vc2">
-                <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-live">LIVE</span>
-                <span className="badge-play">▶</span>
-              </div>
-              <div className="vc vc3">
-                <Image src="https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-heart">♥</span>
-              </div>
-              <div className="vc vc4">
-                <Image src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=350&h=350&q=85" alt="" width={350} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-play">▶</span>
-              </div>
-              <div className="vc vc5">
-                <Image src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-stat">20+ mariages</span>
-              </div>
-              <div className="vc vc6">
-                <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=350&h=350&q=85" alt="" width={350} height={350} className="w-full h-full object-cover" unoptimized />
-              </div>
+              {SHOWCASE_MEDIA.map((item) => (
+                <div key={item.id} className={`vc ${item.span}`}>
+                  <video
+                    className="w-full h-full object-cover"
+                    src={item.src}
+                    poster={item.poster}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                  />
+                  <span className="badge-corner-stat">{item.badge}</span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
