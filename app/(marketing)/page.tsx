@@ -4,8 +4,59 @@ import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Header, Footer } from "@/components/layout";
-import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
+
+const VALUES = [
+  {
+    q: "Un algorithme de compatibilité précis",
+    a: "Budget, style, date et zone géographique : chaque critère est pondéré pour ne vous proposer que des prestataires réellement disponibles et alignés avec votre projet.",
+  },
+  {
+    q: "Des scores de match transparents",
+    a: "Chaque prestataire affiche son pourcentage de compatibilité et le détail du calcul. Vous savez exactement pourquoi un pro vous est recommandé.",
+  },
+  {
+    q: "Un matching qui apprend de vos goûts",
+    a: "Chaque like et chaque refus affine vos recommandations. Plus vous utilisez Mariage Facile, plus les propositions collent à votre univers.",
+  },
+];
+
+const PRO_VIDEOS = {
+  photographe: "https://assets.mixkit.co/videos/40601/40601-360.mp4",
+  live: "https://assets.mixkit.co/videos/40627/40627-360.mp4",
+  square: "https://assets.mixkit.co/videos/40596/40596-360.mp4",
+};
+
+const WEDDING_GALLERY = [
+  "photo-1519741497674-611481863552",
+  "photo-1591604466107-ec97de577aff",
+  "photo-1606216794074-735e91aa2c92",
+  "photo-1550784718-990c6de52adf",
+  "photo-1520854221256-17451cc331bf",
+  "photo-1532712938310-34cb3982ef74",
+  "photo-1583939003579-730e3918a45a",
+  "photo-1523438885200-e635ba2c371e",
+  "photo-1607190074257-dd4b7af0309f",
+  "photo-1529636798458-92182e662485",
+  "photo-1460978812857-470ed1c77af0",
+  "photo-1606216794079-73f85bbd57d5",
+  "photo-1515934751635-c81c6bc9a2d8",
+  "photo-1511285560929-80b456fea0bc",
+  "photo-1551468307-8c1e3c78013c",
+  "photo-1583939411023-14783179e581",
+  "photo-1529634597503-139d3726fed5",
+  "photo-1607861884586-c7cfaed16290",
+  "photo-1481653125770-b78c206c59d4",
+  "photo-1525772764200-be829a350797",
+  "photo-1509927083803-4bd519298ac4",
+  "photo-1485700281629-290c5a704409",
+  "photo-1511795409834-ef04bbd61622",
+  "photo-1494955870715-979ca4f13bf0",
+];
+
+const galleryUrl = (id: string, w: number, h: number) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
 
 const FAQS = [
   { q: "Le matching est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et notre IA trouve vos âmes sœurs professionnelles instantanément." },
@@ -16,6 +67,8 @@ const FAQS = [
 
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [openValue, setOpenValue] = useState<number | null>(0);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [testiIndex, setTestiIndex] = useState(0);
   const heroStageOuterRef = useRef<HTMLDivElement>(null);
   const heroStageRef = useRef<HTMLDivElement>(null);
@@ -35,6 +88,19 @@ export default function LandingPage() {
     window.addEventListener("resize", scaleHeroStage);
     return () => window.removeEventListener("resize", scaleHeroStage);
   }, [scaleHeroStage]);
+
+  useEffect(() => {
+    if (!galleryOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setGalleryOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [galleryOpen]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -213,32 +279,53 @@ export default function LandingPage() {
             <h2 style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des pros avec qui vous allez matcher</h2>
             <div className="video-grid reveal">
               <div className="vc vc1">
-                <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&h=650&q=85" alt="" width={500} height={650} className="w-full h-full object-cover" unoptimized />
+                <video src={PRO_VIDEOS.photographe} autoPlay loop muted playsInline preload="metadata" poster={galleryUrl("photo-1519741497674-611481863552", 500, 650)} />
                 <span className="badge-corner-stat">Photographe</span>
-                <span className="badge-play">▶</span>
               </div>
               <div className="vc vc2">
-                <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
+                <video src={PRO_VIDEOS.live} autoPlay loop muted playsInline preload="metadata" poster={galleryUrl("photo-1606216794074-735e91aa2c92", 500, 350)} />
                 <span className="badge-live">LIVE</span>
-                <span className="badge-play">▶</span>
               </div>
               <div className="vc vc3">
-                <Image src="https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
+                <Image src={galleryUrl("photo-1583939003579-730e3918a45a", 500, 350)} alt="Couple de mariés" width={500} height={350} className="w-full h-full object-cover" unoptimized />
                 <span className="badge-heart">♥</span>
               </div>
               <div className="vc vc4">
-                <Image src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=350&h=350&q=85" alt="" width={350} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-play">▶</span>
+                <video src={PRO_VIDEOS.square} autoPlay loop muted playsInline preload="metadata" poster={galleryUrl("photo-1550784718-990c6de52adf", 350, 350)} />
               </div>
-              <div className="vc vc5">
-                <Image src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&h=350&q=85" alt="" width={500} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-stat">20+ mariages</span>
-              </div>
+              <button type="button" className="vc vc5 vc-gallery-trigger" onClick={() => setGalleryOpen(true)} aria-label="Voir la galerie de mariages">
+                <Image src={galleryUrl("photo-1520854221256-17451cc331bf", 500, 350)} alt="Galerie de mariages" width={500} height={350} className="w-full h-full object-cover" unoptimized />
+                <span className="badge-stat">{WEDDING_GALLERY.length}+ mariages</span>
+                <span className="vc-gallery-hint">Voir les photos</span>
+              </button>
               <div className="vc vc6">
-                <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=350&h=350&q=85" alt="" width={350} height={350} className="w-full h-full object-cover" unoptimized />
+                <Image src={galleryUrl("photo-1532712938310-34cb3982ef74", 350, 350)} alt="Mariés dans la nature" width={350} height={350} className="w-full h-full object-cover" unoptimized />
               </div>
             </div>
           </div>
+
+          {galleryOpen && (
+            <div className="gallery-overlay" role="dialog" aria-modal="true" aria-label="Galerie de mariages" onClick={() => setGalleryOpen(false)}>
+              <div className="gallery-panel" onClick={(e) => e.stopPropagation()}>
+                <div className="gallery-head">
+                  <div>
+                    <span className="eyebrow-pill">Nos prestataires</span>
+                    <h3>{WEDDING_GALLERY.length} mariages réalisés</h3>
+                  </div>
+                  <button type="button" className="gallery-close" onClick={() => setGalleryOpen(false)} aria-label="Fermer la galerie">
+                    <X size={18} />
+                  </button>
+                </div>
+                <div className="gallery-grid">
+                  {WEDDING_GALLERY.map((id, i) => (
+                    <div key={id} className="gallery-cell">
+                      <Image src={galleryUrl(id, 400, 400)} alt={`Photo de mariage ${i + 1}`} width={400} height={400} className="w-full h-full object-cover" unoptimized />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* VALUES + RESULTS */}
@@ -249,9 +336,20 @@ export default function LandingPage() {
                 <span className="eyebrow-pill">Nos valeurs</span>
                 <h2 style={{ marginTop: 18, marginBottom: 22 }}>Plus de perte de temps avec les mauvais pros</h2>
                 <div className="accordion-mini">
-                  <div className="row">Un algorithme de compatibilité précis <ChevronDown size={16} className="chev" /></div>
-                  <div className="row">Des scores de match transparents <ChevronDown size={16} className="chev" /></div>
-                  <div className="row">Un matching qui apprend de vos goûts <ChevronDown size={16} className="chev" /></div>
+                  {VALUES.map((item, i) => {
+                    const isOpen = openValue === i;
+                    return (
+                      <div key={item.q} className={`am-item ${isOpen ? "open" : ""}`}>
+                        <button type="button" className="row" onClick={() => setOpenValue(isOpen ? null : i)} aria-expanded={isOpen}>
+                          {item.q}
+                          <ChevronDown size={16} className="chev" />
+                        </button>
+                        <div className="am-panel" style={{ maxHeight: isOpen ? 220 : 0 }}>
+                          <p>{item.a}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div className="sh-visual reveal">

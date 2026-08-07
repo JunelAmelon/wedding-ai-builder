@@ -359,7 +359,7 @@ export default function VendorProposalsPage() {
                               disabled={updating === proposal.id}
                               className="p-2 rounded-full bg-[#fff0f3] hover:bg-[#6b7076] hover:text-white text-[#6b7076] disabled:opacity-50 transition"
                             >
-                              <X size={18} />
+                              <X size={18} />la page calendrier du prestaire; on aure exacrement ce style; 
                             </button>
                           </>
                         )}
