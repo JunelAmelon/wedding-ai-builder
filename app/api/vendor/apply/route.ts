@@ -4,7 +4,7 @@ import { vendorRepo } from "@/lib/db/repositories/vendorRepo";
 import { eventRepo } from "@/lib/db/repositories/eventRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
-import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
 
 const AddressSchema = z.object({
   street: z.string().min(1),
@@ -195,16 +195,18 @@ export async function POST(req: Request) {
     });
     await eventRepo.log(application.id, "vendor_application_created", { category: application.serviceCategory });
 
-    const token = createSession(user);
+    // Vendors must be validated by an admin before they can log in.
+    // Do NOT create a session — return a pending message instead.
     const response = NextResponse.json(
       {
         ok: true,
         id: application.id,
+        pending: true,
+        message: "Votre candidature a été soumise. Elle doit être validée par notre équipe avant que vous puissiez vous connecter. Vous recevrez un email dès qu'elle sera approuvée.",
         user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
       },
       { status: 201 }
     );
-    setSessionCookie(response, token);
     return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Une erreur est survenue";

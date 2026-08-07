@@ -17,6 +17,8 @@ import { coupleProfileRepo } from "./coupleProfileRepo";
 import { vendorProfileRepo } from "./vendorProfileRepo";
 import { projectRepo } from "./projectRepo";
 import { vendorRepo } from "./vendorRepo";
+import { localStore } from "@/lib/db/localStore";
+import { isLocalMode } from "./utils";
 
 const INVITES_COL = "adminInvitations";
 const POSTS_COL = "blogPosts";
@@ -224,17 +226,56 @@ export const adminRepo = {
     const id = nanoid(12);
     const t = now();
     const ticket: SupportTicket = { ...data, id, createdAt: t, updatedAt: t };
+    if (isLocalMode()) {
+      await localStore.set(TICKETS_COL, id, ticket);
+      return ticket;
+    }
     await getCol(TICKETS_COL).doc(id).set(ticket);
     return ticket;
   },
 
   async listTickets(limit = 100): Promise<SupportTicket[]> {
-    const snap = await getCol(TICKETS_COL).orderBy("createdAt", "desc").limit(limit).get();
-    return snap.docs.map((d) => d.data() as SupportTicket);
+    if (isLocalMode()) {
+      const all = await localStore.all<SupportTicket>(TICKETS_COL);
+      return all.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, limit);
+    }
+    // Avoid index requirement: fetch all, sort in JS
+    const snap = await getCol(TICKETS_COL).get();
+    const tickets = snap.docs.map((d) => d.data() as SupportTicket);
+    return tickets.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, limit);
+  },
+
+  async getTicket(id: string): Promise<SupportTicket | null> {
+    if (isLocalMode()) return localStore.get<SupportTicket>(TICKETS_COL, id);
+    const snap = await getCol(TICKETS_COL).doc(id).get();
+    return snap.exists ? (snap.data() as SupportTicket) : null;
+  },
+
+  async listTicketsByUser(userId: string): Promise<SupportTicket[]> {
+    if (isLocalMode()) {
+      const all = await localStore.all<SupportTicket>(TICKETS_COL);
+      return all.filter((t) => t.userId === userId).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+    // Avoid composite index requirement: query by userId only, sort in JS
+    const snap = await getCol(TICKETS_COL).where("userId", "==", userId).get();
+    const tickets = snap.docs.map((d) => d.data() as SupportTicket);
+    return tickets.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   },
 
   async updateTicket(id: string, data: Partial<SupportTicket>): Promise<void> {
+    if (isLocalMode()) {
+      await localStore.update<SupportTicket>(TICKETS_COL, id, { ...data, updatedAt: now() });
+      return;
+    }
     await getCol(TICKETS_COL).doc(id).update({ ...data, updatedAt: now() });
+  },
+
+  async deleteTicket(id: string): Promise<void> {
+    if (isLocalMode()) {
+      await localStore.delete(TICKETS_COL, id);
+      return;
+    }
+    await getCol(TICKETS_COL).doc(id).delete();
   },
 
   // Subscriptions / plans

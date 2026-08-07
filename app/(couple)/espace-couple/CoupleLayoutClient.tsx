@@ -17,6 +17,7 @@ import {
   LogOut,
   Gift,
   ShoppingBag,
+  LifeBuoy,
 } from "lucide-react";
 
 const COUPLE_NAV = [
@@ -32,6 +33,7 @@ const COUPLE_NAV_SECONDARY = [
   { href: "/espace-couple/liste-souhaits", label: "Liste de mariage", icon: Gift },
   { href: "/espace-couple/boutique", label: "Boutique", icon: ShoppingBag },
   { href: "/espace-couple/parametres", label: "Paramètres", icon: SlidersHorizontal },
+  { href: "/espace-couple/support", label: "Support", icon: LifeBuoy },
 ];
 
 const MOBILE_TABS = [

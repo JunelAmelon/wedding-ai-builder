@@ -90,8 +90,16 @@ export async function POST(req: Request) {
         reviewedBy: null,
         notes: null,
       });
-    } else {
-      const coupleProfile = await coupleProfileRepo.create({
+      // Vendors must be validated by an admin before they can log in.
+      // Do NOT create a session — return a pending message instead.
+      return NextResponse.json({
+        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
+        pending: true,
+        message: "Votre compte professionnel a été créé. Il doit être validé par notre équipe avant que vous puissiez vous connecter. Vous recevrez un email dès qu'il sera approuvé.",
+      }, { status: 201 });
+    }
+
+    const coupleProfile = await coupleProfileRepo.create({
         userId: user.id,
         weddingDate: null,
         location: null,
@@ -129,7 +137,6 @@ export async function POST(req: Request) {
           });
         }
       }
-    }
 
     const token = createSession(user);
     const response = NextResponse.json({ user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role } }, { status: 201 });

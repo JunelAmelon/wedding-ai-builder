@@ -18,6 +18,7 @@ import {
   X,
   LogOut,
   Calendar,
+  LifeBuoy,
 } from "lucide-react";
 
 const VENDOR_NAV = [
@@ -34,6 +35,7 @@ const VENDOR_NAV_SECONDARY = [
   { href: "/espace-prestataire/offres", label: "Offres", icon: Star },
   { href: "/espace-prestataire/notifications", label: "Notifications", icon: Bell },
   { href: "/espace-prestataire/parametres", label: "Paramètres", icon: SlidersHorizontal },
+  { href: "/espace-prestataire/support", label: "Support", icon: LifeBuoy },
 ];
 
 const MOBILE_TABS = [

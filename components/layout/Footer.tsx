@@ -35,6 +35,7 @@ export function Footer() {
             <ul>
               <li><Link href="/confidentialite">Confidentialité</Link></li>
               <li><Link href="/cgu">CGU</Link></li>
+              <li><Link href="/support">Support</Link></li>
             </ul>
           </div>
         </div>

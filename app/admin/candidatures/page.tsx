@@ -4,11 +4,8 @@ import { Search, Loader2, CheckCircle2, XCircle, Eye, Clock } from "lucide-react
 import Link from "next/link";
 import type { VendorApplication } from "@/types/domain";
 
-const SAGE = "#D8ECD9";
-const INK = "#1c1c1c";
-
-const STATUS_STYLES = { pending: "bg-amber-100 text-amber-700", approved: "bg-emerald-100 text-emerald-700", rejected: "bg-rose-100 text-rose-700" };
-const STATUS_LABELS = { pending: "En attente", approved: "Approuvé", rejected: "Refusé" };
+const STATUS_STYLES = { pending: "bg-[#fef3c7] text-[#b45309]", approved: "bg-[#e6f4ea] text-[#137333]", rejected: "bg-[#fee2e2] text-[#b91c1c]" };
+const STATUS_LABELS = { pending: "En attente", approved: "Approuve", rejected: "Refuse" };
 
 export default function AdminCandidaturesPage() {
   const [items, setItems] = useState<VendorApplication[]>([]);
@@ -30,62 +27,62 @@ export default function AdminCandidaturesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold font-display" style={{ color: INK }}>Candidatures</h1>
-          <p className="text-sm mt-1" style={{ color: `${INK}99` }}>{filtered.length} candidature(s)</p>
+          <h1 className="text-2xl font-semibold font-display text-[#0f172a]">Candidatures</h1>
+          <p className="text-sm mt-1 text-[#64748b]">{filtered.length} candidature(s)</p>
         </div>
-        <div className="flex items-center gap-3">
-          <select value={filter} onChange={e => setFilter(e.target.value as VendorApplication["status"] | "all")} className="rounded-xl border border-[#1c1c1c]/10 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <select value={filter} onChange={e => setFilter(e.target.value as VendorApplication["status"] | "all")} className="rounded-lg border border-[#f1f5f9] px-4 py-2.5 text-sm bg-white text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#db2777]/20">
             <option value="all">Tous</option>
             <option value="pending">En attente</option>
-            <option value="approved">Approuvés</option>
-            <option value="rejected">Refusés</option>
+            <option value="approved">Approuves</option>
+            <option value="rejected">Refuses</option>
           </select>
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: `${INK}99` }} />
-            <input type="text" placeholder="Rechercher..." value={query} onChange={e => setQuery(e.target.value)} className="pl-9 pr-4 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60 w-full sm:w-64" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94a3b8]" />
+            <input type="text" placeholder="Rechercher..." value={query} onChange={e => setQuery(e.target.value)} className="pl-9 pr-4 py-2.5 rounded-lg border border-[#f1f5f9] bg-white text-sm text-[#1e293b] placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#db2777]/20 w-full sm:w-64" />
           </div>
         </div>
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 size={24} className="animate-spin" style={{ color: INK }} /></div>
+        <div className="flex justify-center py-20"><Loader2 size={24} className="animate-spin text-[#db2777]" /></div>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#1c1c1c]/10 shadow-[0_8px_30px_rgba(11,15,26,0.04)] overflow-hidden">
+        <div className="bg-white rounded-[20px] border border-[#f1f5f9] overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="border-b border-[#1c1c1c]/10" style={{ backgroundColor: SAGE }}>
+            <thead className="border-b border-[#f1f5f9] bg-[#f8fafc]">
               <tr>
-                <th className="text-left px-5 py-3 font-medium" style={{ color: `${INK}99` }}>Société</th>
-                <th className="text-left px-5 py-3 font-medium" style={{ color: `${INK}99` }}>Contact</th>
-                <th className="text-left px-5 py-3 font-medium" style={{ color: `${INK}99` }}>Catégorie</th>
-                <th className="text-left px-5 py-3 font-medium" style={{ color: `${INK}99` }}>Statut</th>
-                <th className="text-left px-5 py-3 font-medium" style={{ color: `${INK}99` }}>Date</th>
-                <th className="px-5 py-3"></th>
+                <th className="text-left px-5 py-3.5 font-medium text-[#64748b]">Societe</th>
+                <th className="text-left px-5 py-3.5 font-medium text-[#64748b]">Contact</th>
+                <th className="text-left px-5 py-3.5 font-medium text-[#64748b]">Categorie</th>
+                <th className="text-left px-5 py-3.5 font-medium text-[#64748b]">Statut</th>
+                <th className="text-left px-5 py-3.5 font-medium text-[#64748b]">Date</th>
+                <th className="px-5 py-3.5" />
               </tr>
             </thead>
             <tbody>
               {filtered.map(item => (
-                <tr key={item.id} className="border-b border-[#1c1c1c]/5 hover:bg-[#1c1c1c]/[0.02]">
-                  <td className="px-5 py-3.5"><div className="font-medium" style={{ color: INK }}>{item.companyName}</div><div className="text-xs" style={{ color: `${INK}99` }}>{item.brandName || "-"}</div></td>
-                  <td className="px-5 py-3.5" style={{ color: `${INK}99` }}>{item.contactName}</td>
-                  <td className="px-5 py-3.5" style={{ color: `${INK}99` }}>{item.serviceCategory}</td>
+                <tr key={item.id} className="border-b border-[#f1f5f9] last:border-0 hover:bg-[#f8fafc]/50">
+                  <td className="px-5 py-3.5"><div className="font-medium text-[#0f172a]">{item.companyName}</div><div className="text-xs text-[#94a3b8]">{item.brandName || "-"}</div></td>
+                  <td className="px-5 py-3.5 text-[#1e293b]">{item.contactName}</td>
+                  <td className="px-5 py-3.5 text-[#1e293b]">{item.serviceCategory}</td>
                   <td className="px-5 py-3.5"><span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[item.status]}`}>{item.status === "pending" ? <Clock size={12}/> : item.status === "approved" ? <CheckCircle2 size={12}/> : <XCircle size={12}/>}{STATUS_LABELS[item.status]}</span></td>
-                  <td className="px-5 py-3.5" style={{ color: `${INK}99` }}>{new Date(item.createdAt).toLocaleDateString("fr-FR")}</td>
+                  <td className="px-5 py-3.5 text-[#1e293b]">{new Date(item.createdAt).toLocaleDateString("fr-FR")}</td>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center justify-end gap-2">
                       {item.status === "pending" && (
                         <>
-                          <button onClick={() => updateStatus(item.id, "approved")} className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 hover:bg-emerald-200" title="Approuver"><CheckCircle2 size={16} /></button>
-                          <button onClick={() => updateStatus(item.id, "rejected")} className="p-1.5 rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200" title="Refuser"><XCircle size={16} /></button>
+                          <button onClick={() => updateStatus(item.id, "approved")} className="p-1.5 rounded-lg bg-[#e6f4ea] text-[#137333] hover:bg-[#d1fae5]" title="Approuver"><CheckCircle2 size={16} /></button>
+                          <button onClick={() => updateStatus(item.id, "rejected")} className="p-1.5 rounded-lg bg-[#fee2e2] text-[#b91c1c] hover:bg-[#fecaca]" title="Refuser"><XCircle size={16} /></button>
                         </>
                       )}
-                      <Link href={`/admin/candidatures/${item.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors hover:opacity-90" style={{ backgroundColor: SAGE, color: INK }}><Eye size={14}/> Voir</Link>
+                      <Link href={`/admin/candidatures/${item.id}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[10px] text-sm font-medium text-white bg-[#db2777] hover:bg-[#be185d] transition-colors"><Eye size={14}/> Voir</Link>
                     </div>
                   </td>
                 </tr>
               ))}
-              {filtered.length === 0 && <tr><td colSpan={6} className="px-5 py-10 text-center" style={{ color: `${INK}99` }}>Aucune candidature</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={6} className="px-5 py-10 text-center text-[#64748b]">Aucune candidature</td></tr>}
             </tbody>
           </table>
         </div>
