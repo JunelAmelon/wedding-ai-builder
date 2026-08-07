@@ -5,12 +5,12 @@ import type { UserAccount } from "@/types/marketplace";
 import type { AdminRole } from "@/types/admin";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const COOKIE_NAME = "wab_session";
-
-if (!JWT_SECRET) {
+const rawSecret = process.env.JWT_SECRET;
+if (!rawSecret) {
   throw new Error("JWT_SECRET must be defined in environment variables");
 }
+const JWT_SECRET: string = rawSecret;
+const COOKIE_NAME = "wab_session";
 
 export interface SessionUser {
   id: string;
