@@ -22,11 +22,63 @@ const VALUES = [
   },
 ];
 
-const PRO_VIDEOS = {
-  photographe: "https://assets.mixkit.co/videos/40601/40601-360.mp4",
-  live: "https://assets.mixkit.co/videos/40627/40627-360.mp4",
-  square: "https://assets.mixkit.co/videos/40596/40596-360.mp4",
-};
+const SHOWCASE_MEDIA: {
+  id: string;
+  src: string;
+  poster: string;
+  alt: string;
+  badge: string;
+  span: string;
+}[] = [
+  {
+    id: "photographe",
+    src: "https://assets.mixkit.co/videos/36171/36171-720.mp4",
+    poster: "https://assets.mixkit.co/videos/36171/36171-thumb-720-0.jpg",
+    alt: "Photographe capturant un mariage",
+    badge: "Photographe",
+    span: "vc1",
+  },
+  {
+    id: "videaste",
+    src: "https://assets.mixkit.co/videos/40599/40599-720.mp4",
+    poster: "https://assets.mixkit.co/videos/40599/40599-thumb-720-0.jpg",
+    alt: "Vidéaste filmant un couple",
+    badge: "Vidéaste",
+    span: "vc2",
+  },
+  {
+    id: "traiteur",
+    src: "https://assets.mixkit.co/videos/5224/5224-720.mp4",
+    poster: "https://assets.mixkit.co/videos/5224/5224-thumb-720-0.jpg",
+    alt: "Dressage de table par un traiteur",
+    badge: "Traiteur",
+    span: "vc3",
+  },
+  {
+    id: "dj-animation",
+    src: "https://assets.mixkit.co/videos/11941/11941-720.mp4",
+    poster: "https://assets.mixkit.co/videos/11941/11941-thumb-720-0.jpg",
+    alt: "DJ animant un mariage",
+    badge: "DJ & Animation",
+    span: "vc4",
+  },
+  {
+    id: "fleuriste",
+    src: "https://assets.mixkit.co/videos/5208/5208-720.mp4",
+    poster: "https://assets.mixkit.co/videos/5208/5208-thumb-720-0.jpg",
+    alt: "Bouquet de fleurs de mariage",
+    badge: "Fleuriste",
+    span: "vc5",
+  },
+  {
+    id: "lieu",
+    src: "https://assets.mixkit.co/videos/5217/5217-720.mp4",
+    poster: "https://assets.mixkit.co/videos/5217/5217-thumb-720-0.jpg",
+    alt: "Lieu de réception",
+    badge: "Lieu",
+    span: "vc6",
+  },
+];
 
 const WEDDING_GALLERY = [
   "photo-1519741497674-611481863552",
@@ -57,7 +109,6 @@ const WEDDING_GALLERY = [
 
 const galleryUrl = (id: string, w: number, h: number) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
-
 const FAQS = [
   { q: "Le matching est-il vraiment gratuit ?", a: "Oui. Vous répondez au quiz et notre IA trouve vos âmes sœurs professionnelles instantanément." },
   { q: "Comment fonctionne le score de match ?", a: "Notre algorithme analyse votre budget, votre style, votre date et votre zone géographique pour calculer votre compatibilité avec chaque pro." },
@@ -278,29 +329,21 @@ export default function LandingPage() {
             <span className="eyebrow-pill">Nos prestataires</span>
             <h2 style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des pros avec qui vous allez matcher</h2>
             <div className="video-grid reveal">
-              <div className="vc vc1">
-                <video src={PRO_VIDEOS.photographe} autoPlay loop muted playsInline preload="metadata" poster={galleryUrl("photo-1519741497674-611481863552", 500, 650)} />
-                <span className="badge-corner-stat">Photographe</span>
-              </div>
-              <div className="vc vc2">
-                <video src={PRO_VIDEOS.live} autoPlay loop muted playsInline preload="metadata" poster={galleryUrl("photo-1606216794074-735e91aa2c92", 500, 350)} />
-                <span className="badge-live">LIVE</span>
-              </div>
-              <div className="vc vc3">
-                <Image src={galleryUrl("photo-1583939003579-730e3918a45a", 500, 350)} alt="Couple de mariés" width={500} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-heart">♥</span>
-              </div>
-              <div className="vc vc4">
-                <video src={PRO_VIDEOS.square} autoPlay loop muted playsInline preload="metadata" poster={galleryUrl("photo-1550784718-990c6de52adf", 350, 350)} />
-              </div>
-              <button type="button" className="vc vc5 vc-gallery-trigger" onClick={() => setGalleryOpen(true)} aria-label="Voir la galerie de mariages">
-                <Image src={galleryUrl("photo-1520854221256-17451cc331bf", 500, 350)} alt="Galerie de mariages" width={500} height={350} className="w-full h-full object-cover" unoptimized />
-                <span className="badge-stat">{WEDDING_GALLERY.length}+ mariages</span>
-                <span className="vc-gallery-hint">Voir les photos</span>
-              </button>
-              <div className="vc vc6">
-                <Image src={galleryUrl("photo-1532712938310-34cb3982ef74", 350, 350)} alt="Mariés dans la nature" width={350} height={350} className="w-full h-full object-cover" unoptimized />
-              </div>
+              {SHOWCASE_MEDIA.map((item) => (
+                <div key={item.id} className={`vc ${item.span}`}>
+                  <video
+                    className="w-full h-full object-cover"
+                    src={item.src}
+                    poster={item.poster}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                  />
+                  <span className="badge-corner-stat">{item.badge}</span>
+                </div>
+              ))}
             </div>
           </div>
 
