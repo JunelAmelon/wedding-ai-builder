@@ -266,13 +266,7 @@ function LoginPageInner() {
             )}
           </button>
 
-          <div className="text-center mt-4 mb-6">
-            <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-gray-800 underline underline-offset-4 transition">
-              Mot de passe oublié ?
-            </Link>
-          </div>
-
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mt-4 mb-6">
             <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer select-none">
               <span className="w-4 h-4 rounded border border-gray-300 flex items-center justify-center" style={{ backgroundColor: rememberMe ? NAVY : "transparent" }}>
                 {rememberMe && <Check size={10} className="text-white" />}
@@ -285,7 +279,7 @@ function LoginPageInner() {
               />
               Se souvenir de moi
             </label>
-            <Link href="/mot-de-passe-oublie" className="text-xs text-gray-500 underline underline-offset-2 hover:text-gray-800 transition">
+            <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-gray-800 underline underline-offset-4 transition">
               Mot de passe oublié ?
             </Link>
           </div>

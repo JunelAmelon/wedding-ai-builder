@@ -207,13 +207,18 @@ export default function BlogPage() {
               <span className="eyebrow-pill">Explorer</span>
               <h2 style={{ marginTop: 18 }}>Parcourir par thème</h2>
             </div>
-            <div className="cat-tags">
-              {TAGS.map((t, i) => {
+            <div className="cat-tags reveal">
+              {TAGS.map((t) => {
                 const Icon = t.icon;
                 return (
-                  <button key={i} className="cat-tag-item reveal" onClick={() => setFilter(t.label)}>
-                    <Icon />
-                    {t.label}
+                  <button
+                    key={t.label}
+                    type="button"
+                    className={`cat-tag-item ${filter === t.label ? "on" : ""}`}
+                    onClick={() => setFilter(t.label)}
+                  >
+                    <Icon size={22} />
+                    <span>{t.label}</span>
                   </button>
                 );
               })}
