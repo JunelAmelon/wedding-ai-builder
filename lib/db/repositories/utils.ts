@@ -1,8 +1,4 @@
-function normalizeEnvBool(value: string | undefined): boolean {
-  if (!value) return true;
-  const cleaned = value.trim().replace(/^["']|["']$/g, "");
-  return cleaned.toLowerCase() !== "false";
-}
+import { env } from "@/lib/env";
 
 function isValidCredential(value: string | undefined): boolean {
   if (!value) return false;
@@ -15,15 +11,14 @@ function isValidCredential(value: string | undefined): boolean {
 }
 
 function isFirebaseConfigured(): boolean {
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+  const projectId = env.FIREBASE_PROJECT_ID;
+  const clientEmail = env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = env.FIREBASE_PRIVATE_KEY;
   return isValidCredential(projectId) && isValidCredential(clientEmail) && isValidCredential(privateKey);
 }
 
 export function isLocalMode(): boolean {
-  const envLocal = normalizeEnvBool(process.env.USE_LOCAL_DB);
-  if (envLocal) return true;
+  if (env.USE_LOCAL_DB === "true") return true;
   // Si Firebase est demandé mais non configuré, on bascule sur local avec un avertissement
   if (!isFirebaseConfigured()) {
     console.warn(

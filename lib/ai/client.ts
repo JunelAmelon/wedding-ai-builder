@@ -1,11 +1,12 @@
 import OpenAI from "openai";
+import { env } from "@/lib/env";
 
 let client: OpenAI | null = null;
 
 function getClient(): OpenAI {
   if (!client) {
-    const apiKey = process.env.OPENAI_API_KEY;
-    const model = process.env.OPENAI_MODEL;
+    const apiKey = env.OPENAI_API_KEY;
+    const model = env.OPENAI_MODEL;
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY manquante dans l'environnement");
     }
@@ -31,7 +32,7 @@ export async function callAI({
   maxTokens = 2500,
 }: CallAIOptions): Promise<string> {
   const openai = getClient();
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+  const model = env.OPENAI_MODEL;
 
   try {
     const response = await openai.chat.completions.create({

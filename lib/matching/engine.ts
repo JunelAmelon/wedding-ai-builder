@@ -1,5 +1,6 @@
 import type { WeddingProject, VendorProfile, ProjectVendorMatch, Tender } from "@/types/marketplace";
 import { callAI, parseAIJson } from "@/lib/ai/client";
+import { env } from "@/lib/env";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
@@ -269,7 +270,7 @@ export async function findTopMatches(
 
   let aiScores: { [vendorId: string]: MatchScore } = {};
   try {
-    if (process.env.OPENAI_API_KEY && candidates.length > 0) {
+    if (env.OPENAI_API_KEY && candidates.length > 0) {
       aiScores = await scoreMatchesWithOpenAI(tender, project, candidates, category);
     }
   } catch {
@@ -330,7 +331,7 @@ export async function revalidateVendorMatches(vendor: VendorProfile): Promise<vo
       let summary = ruleBased.summary ?? null;
 
       try {
-        if (process.env.OPENAI_API_KEY) {
+        if (env.OPENAI_API_KEY) {
           const aiScores = await scoreMatchesWithOpenAI(tenderData, project, [vendor], m.category);
           const ai = aiScores[vendor.id];
           if (ai) {

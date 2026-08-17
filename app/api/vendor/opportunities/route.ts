@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
+import { requireActiveVendorSubscription } from "@/lib/subscription-guard";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
@@ -12,6 +13,8 @@ export async function GET() {
     if (user.role !== "vendor") {
       return NextResponse.json({ error: "Accès réservé aux professionnels" }, { status: 403 });
     }
+
+    await requireActiveVendorSubscription(user.id);
 
     const profile = await vendorProfileRepo.getByUserId(user.id);
     if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 404 });

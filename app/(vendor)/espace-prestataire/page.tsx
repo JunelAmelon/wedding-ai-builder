@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, MapPin, ArrowUpRight, Wallet, Inbox, Send, Trophy, UserCircle, Target } from "lucide-react";
+import { ChevronRight, MapPin, ArrowUpRight, Wallet, Inbox, Send, Trophy, UserCircle, Target, Check, X } from "lucide-react";
 import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
 
 export default function VendorDashboardPage() {
@@ -28,10 +28,21 @@ export default function VendorDashboardPage() {
     project: WeddingProject | null;
   }
 
-  const [data, setData] = useState<{ stats: DashboardStats; matches: EnrichedMatch[] } | null>(null);
+  interface SubscriptionSummary {
+    id: string;
+    status: string;
+    planId: string | null;
+    planName: string;
+    features: string[];
+    currentPeriodEnd: string;
+  }
+
+  const [data, setData] = useState<{ stats: DashboardStats; matches: EnrichedMatch[]; subscription: SubscriptionSummary | null } | null>(null);
   const [me, setMe] = useState<{ stripeSubscriptionId: string | null; stripeCustomerId: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState<Date | null>(null);
+  const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     setNow(new Date());
@@ -64,6 +75,19 @@ export default function VendorDashboardPage() {
     }
     load();
   }, [router]);
+
+  useEffect(() => {
+    const sub = searchParams.get("subscription");
+    if (sub === "success") {
+      setToast({ type: "success", message: "Paiement réussi. Votre abonnement est en cours d'activation." });
+    } else if (sub === "cancel") {
+      setToast({ type: "error", message: "Paiement annulé. Vous pouvez réessayer quand vous voulez." });
+    }
+    if (sub) {
+      const timeout = setTimeout(() => setToast(null), 6000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
 
   if (loading)
     return (
@@ -117,8 +141,21 @@ export default function VendorDashboardPage() {
   const formatDate = (d: Date) =>
     d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
 
+  const sub = data?.subscription;
+  const isActive = sub?.status === "active" || sub?.status === "trialing";
+
   return (
     <div className="min-h-screen bg-[#fff0f3] font-sans">
+      {toast && (
+        <div
+          className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full shadow-lg text-sm font-semibold flex items-center gap-2 ${
+            toast.type === "success" ? "bg-[#15181c] text-white" : "bg-rose-600 text-white"
+          }`}
+        >
+          {toast.type === "success" ? <Check size={16} /> : <X size={16} />}
+          {toast.message}
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-4 sm:py-10">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-5 mb-4 sm:mb-10">
@@ -135,18 +172,16 @@ export default function VendorDashboardPage() {
             <div className="h-9 p-1 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center w-fit">
               <div
                 className={`h-7 px-3.5 rounded-full flex items-center text-xs font-semibold transition ${
-                  me?.stripeSubscriptionId ? "bg-[#15181c] text-white" : "text-[#6b7076]"
+                  isActive ? "bg-[#15181c] text-white" : "text-[#6b7076]"
                 }`}
               >
-                Abonné
+                {isActive ? "Abonné" : "Gratuit"}
               </div>
-              <div
-                className={`h-7 px-3.5 rounded-full flex items-center text-xs font-semibold transition ${
-                  !me?.stripeSubscriptionId ? "bg-[#15181c] text-white" : "text-[#6b7076]"
-                }`}
-              >
-                Gratuit
-              </div>
+              {!isActive && (
+                <div className="h-7 px-3.5 rounded-full flex items-center text-xs font-semibold bg-[#15181c] text-white transition">
+                  Gratuit
+                </div>
+              )}
             </div>
             {now && (
               <div className="text-left sm:text-right">
@@ -165,7 +200,10 @@ export default function VendorDashboardPage() {
               Plan actif
             </div>
             <p className="font-display text-3xl font-bold text-[#15181c]">
-              {me?.stripeSubscriptionId ? "Essentiel" : "Gratuit"}
+              {sub?.planName ?? "Gratuit"}
+            </p>
+            <p className="text-xs text-[#6b7076] mt-1">
+              {sub ? `Paiement à jour jusqu'au ${new Date(sub.currentPeriodEnd).toLocaleDateString("fr-FR")}` : "Aucun abonnement en cours"}
             </p>
           </div>
 
@@ -193,6 +231,22 @@ export default function VendorDashboardPage() {
             <p className="font-display text-3xl font-bold text-[#15181c]">{s?.wonContracts ?? 0}</p>
           </div>
         </div>
+
+        {isActive && sub?.features && sub.features.length > 0 && (
+          <section className="mb-10">
+            <h3 className="font-display text-2xl font-bold text-[#15181c] mb-5">Avantages de votre plan {sub.planName}</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {sub.features.map((feature, idx) => (
+                <div key={idx} className="rounded-2xl bg-white border border-[#ececec] p-4 flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-[#fde68a] flex items-center justify-center shrink-0">
+                    <Check size={16} className="text-[#15181c]" />
+                  </div>
+                  <p className="text-sm font-medium text-[#15181c]">{feature}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Opportunité en vedette */}
         <section className="mb-10">

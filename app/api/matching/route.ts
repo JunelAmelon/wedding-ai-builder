@@ -4,11 +4,13 @@ import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { findTopMatches } from "@/lib/matching/engine";
+import { filterActiveVendors } from "@/lib/subscription-guard";
 import { requireAuth } from "@/lib/auth";
 
 const MatchSchema = z.object({
   projectId: z.string().min(1),
   category: z.string().min(1),
+  all: z.boolean().optional().default(false),
 });
 
 export async function POST(req: Request) {
@@ -24,7 +26,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Données invalides" }, { status: 400 });
     }
 
-    const { projectId, category } = parsed.data;
+    const { projectId, category, all } = parsed.data;
     const project = await projectRepo.get(projectId);
     if (!project || project.userId !== user.id) {
       return NextResponse.json({ error: "Projet introuvable" }, { status: 404 });
@@ -42,7 +44,18 @@ export async function POST(req: Request) {
     };
 
     const vendors = await vendorProfileRepo.listApproved();
-    const topMatches = await findTopMatches(tenderData, project, vendors, category, 3);
+    const activeVendors = await filterActiveVendors(vendors);
+
+    let topMatches: Awaited<ReturnType<typeof findTopMatches>> = [];
+    if (all) {
+      const categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+      for (const cat of categories) {
+        const matches = await findTopMatches(tenderData, project, activeVendors, cat, 2);
+        topMatches = topMatches.concat(matches);
+      }
+    } else {
+      topMatches = await findTopMatches(tenderData, project, activeVendors, category, 3);
+    }
 
     await matchRepo.deleteByProject(projectId);
 

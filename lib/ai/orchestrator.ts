@@ -18,6 +18,7 @@ import {
   fallbackRiskEngine,
 } from "./fallback";
 import { getCached, setCached } from "@/lib/cache/redis";
+import { env } from "@/lib/env";
 
 async function generateBlock<T>({
   system,
@@ -30,7 +31,7 @@ async function generateBlock<T>({
   schema: z.ZodSchema<T>;
   fallback: () => T;
 }): Promise<{ data: T; usedFallback: boolean }> {
-  const hasApiKey = !!process.env.OPENAI_API_KEY;
+  const hasApiKey = !!env.OPENAI_API_KEY;
 
   if (!hasApiKey) {
     return { data: fallback(), usedFallback: true };
@@ -93,7 +94,7 @@ export async function generateWeddingPlan(answers: QuizAnswers, sessionId: strin
     riskEngine,
     riskScore: riskEngine.riskScore,
     generatedAt: new Date().toISOString(),
-    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+    model: env.OPENAI_MODEL,
     cacheHit: false,
   };
 

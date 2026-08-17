@@ -1,11 +1,12 @@
 import { nanoid } from "nanoid";
 import type { ShareRecord } from "@/types/domain";
 import { localStore } from "@/lib/db/localStore";
+import { env } from "@/lib/env";
 
 const COLLECTION = "shares";
 
 function isLocalMode(): boolean {
-  return process.env.USE_LOCAL_DB !== "false";
+  return env.USE_LOCAL_DB !== "false";
 }
 
 async function getFirestoreCol() {

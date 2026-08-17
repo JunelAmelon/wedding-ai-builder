@@ -4,16 +4,10 @@ import { createHmac, randomBytes, pbkdf2Sync } from "crypto";
 import type { UserAccount } from "@/types/marketplace";
 import type { AdminRole } from "@/types/admin";
 import { userRepo } from "@/lib/db/repositories/userRepo";
+import { env } from "@/lib/env";
 
 const COOKIE_NAME = "wab_session";
-
-function getJwtSecret(): string {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error("JWT_SECRET must be defined in environment variables");
-  }
-  return secret;
-}
+const JWT_SECRET = env.JWT_SECRET;
 
 export interface SessionUser {
   id: string;
@@ -38,7 +32,7 @@ export function verifyPassword(password: string, hashed: string): boolean {
 
 function signSession(payload: SessionUser): string {
   const payloadStr = Buffer.from(JSON.stringify(payload)).toString("base64");
-  const signature = createHmac("sha256", getJwtSecret()).update(payloadStr).digest("hex");
+  const signature = createHmac("sha256", JWT_SECRET).update(payloadStr).digest("hex");
   return `${payloadStr}.${signature}`;
 }
 
@@ -46,7 +40,7 @@ export function verifySession(token: string): SessionUser | null {
   try {
     const [payloadStr, signature] = token.split(".");
     if (!payloadStr || !signature) return null;
-    const expected = createHmac("sha256", getJwtSecret()).update(payloadStr).digest("hex");
+    const expected = createHmac("sha256", JWT_SECRET).update(payloadStr).digest("hex");
     if (signature !== expected) return null;
     const payload = JSON.parse(Buffer.from(payloadStr, "base64").toString("utf-8"));
     return payload as SessionUser;

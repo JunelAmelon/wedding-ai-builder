@@ -52,6 +52,12 @@ const PLANS = [
   },
 ];
 
+const PLAN_IDS: Record<string, string> = {
+  Essentiel: "essential",
+  "Premium Business": "premium",
+  "Elite Performance": "elite",
+};
+
 const COMPARISON = [
   { feature: "Matching intelligent", essentiel: true, premium: true, elite: true },
   { feature: "Visibilité de base", essentiel: true, premium: true, elite: true },
@@ -73,7 +79,12 @@ export default function VendorOffresPage() {
   async function choosePlan(planName: string) {
     setLoading(planName);
     try {
-      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      const planId = PLAN_IDS[planName];
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId }),
+      });
       const data = await res.json();
       if (res.ok && data.url) {
         window.location.href = data.url;

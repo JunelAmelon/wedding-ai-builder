@@ -1,6 +1,7 @@
 import Stripe from "stripe";
+import { env } from "@/lib/env";
 
-const secretKey = process.env.STRIPE_SECRET_KEY;
+const secretKey = env.STRIPE_SECRET_KEY;
 
 export const stripe = secretKey
   ? new Stripe(secretKey, {
@@ -13,8 +14,21 @@ export function getStripe(): Stripe {
   return stripe;
 }
 
-export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID || "";
+export const STRIPE_PRICE_ID = env.STRIPE_PRICE_ID || "";
+export const STRIPE_PRICE_ESSENTIAL_ID = env.STRIPE_PRICE_ESSENTIAL_ID || env.STRIPE_PRICE_ID || "";
+export const STRIPE_PRICE_PREMIUM_ID = env.STRIPE_PRICE_PREMIUM_ID || "";
+export const STRIPE_PRICE_ELITE_ID = env.STRIPE_PRICE_ELITE_ID || "";
+
+export const PLAN_PRICE_IDS: Record<string, string | undefined> = {
+  essential: STRIPE_PRICE_ESSENTIAL_ID || undefined,
+  premium: STRIPE_PRICE_PREMIUM_ID || undefined,
+  elite: STRIPE_PRICE_ELITE_ID || undefined,
+};
+
+export function getPlanPriceId(planId: string): string | undefined {
+  return PLAN_PRICE_IDS[planId.toLowerCase()];
+}
 
 export function getStripePublishableKey() {
-  return process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+  return env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 }

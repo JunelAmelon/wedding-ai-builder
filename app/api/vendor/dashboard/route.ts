@@ -1,11 +1,31 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
+import { getStripe } from "@/lib/stripe";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { creditRepo } from "@/lib/db/repositories/creditRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
+import { userRepo } from "@/lib/db/repositories/userRepo";
+import { adminRepo } from "@/lib/db/repositories/adminRepo";
+import { getVendorPlanById, getVendorPlanByStripePriceId } from "@/lib/subscriptions";
+
+function mapStatus(status: string) {
+  switch (status) {
+    case "active":
+    case "trialing":
+      return "active";
+    case "canceled":
+      return "canceled";
+    case "past_due":
+      return "past_due";
+    case "unpaid":
+      return "unpaid";
+    default:
+      return "unpaid";
+  }
+}
 
 export async function GET() {
   try {
@@ -60,6 +80,45 @@ export async function GET() {
       })
     );
 
+    const dbUser = await userRepo.get(user.id);
+    if (dbUser?.stripeCustomerId) {
+      try {
+        const stripeSubs = await getStripe().subscriptions.list({
+          customer: dbUser.stripeCustomerId,
+          status: "all",
+          limit: 1,
+        });
+        const stripeSub = stripeSubs.data[0];
+        if (stripeSub) {
+          const item = stripeSub.items.data[0];
+          const price = item?.price;
+          const plan = price?.id ? getVendorPlanByStripePriceId(price.id) : undefined;
+          await userRepo.update(user.id, {
+            stripeCustomerId: dbUser.stripeCustomerId,
+            stripeSubscriptionId: stripeSub.id,
+          });
+          await adminRepo.updateUserSubscription(stripeSub.id, {
+            userId: user.id,
+            planId: plan?.id || null,
+            status: mapStatus(stripeSub.status),
+            stripeCustomerId: dbUser.stripeCustomerId,
+            stripeSubscriptionId: stripeSub.id,
+            currentPeriodStart: new Date((item.current_period_start ?? stripeSub.billing_cycle_anchor ?? 0) * 1000).toISOString(),
+            currentPeriodEnd: new Date((item.current_period_end ?? stripeSub.billing_cycle_anchor ?? 0) * 1000).toISOString(),
+            canceledAt: stripeSub.cancel_at ? new Date(stripeSub.cancel_at * 1000).toISOString() : null,
+            planInterval: price?.recurring?.interval || "month",
+            amount: price?.unit_amount || plan?.price || 0,
+            currency: stripeSub.currency || "eur",
+          });
+        }
+      } catch (err) {
+        console.error("[dashboard] sync stripe error", err);
+      }
+    }
+
+    const subscription = await adminRepo.getUserSubscriptionByUserId(user.id).catch(() => null);
+    const plan = subscription?.planId ? getVendorPlanById(subscription.planId) : undefined;
+
     return NextResponse.json({
       stats: {
         credits: profile.credits ?? 0,
@@ -79,6 +138,13 @@ export async function GET() {
       proposals: enrichedProposals.slice(0, 10),
       notifications: unreadNotifications,
       creditTransactions: creditTransactions.slice(0, 10),
+      subscription: subscription
+        ? {
+            ...subscription,
+            planName: plan?.name || subscription.planId || "Abonnement",
+            features: plan?.features || [],
+          }
+        : null,
     });
   } catch (err) {
     console.error("[dashboard] error", err);

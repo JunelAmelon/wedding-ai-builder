@@ -301,6 +301,12 @@ export const adminRepo = {
     return snap.exists ? (snap.data() as UserSubscription) : null;
   },
 
+  async getUserSubscriptionByUserId(userId: string): Promise<UserSubscription | null> {
+    const snap = await getCol(SUBS_COL).where("userId", "==", userId).limit(1).get();
+    if (snap.empty) return null;
+    return snap.docs[0].data() as UserSubscription;
+  },
+
   async updateUserSubscription(id: string, data: Partial<Omit<UserSubscription, "id" | "createdAt">>): Promise<UserSubscription> {
     const ref = getCol(SUBS_COL).doc(id);
     const snap = await ref.get();

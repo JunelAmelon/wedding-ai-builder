@@ -125,13 +125,15 @@ export default function CoupleVendorsPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [confirmedVendors, setConfirmedVendors] = useState<ConfirmedVendor[]>([]);
+  const [recommendations, setRecommendations] = useState<Array<{ match: { id: string; category: string; score: number; summary: string | null }; vendor: VendorPreview | null }>>([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const [tendersRes, projectRes] = await Promise.all([
+        const [tendersRes, projectRes, recommendationsRes] = await Promise.all([
           fetch("/api/couple/tenders"),
           fetch("/api/couple/project"),
+          fetch("/api/couple/recommendations"),
         ]);
         if (tendersRes.status === 401) {
           router.push("/login?role=couple");
@@ -139,8 +141,10 @@ export default function CoupleVendorsPage() {
         }
         const tendersJson = await tendersRes.json();
         const projectJson = await projectRes.json();
+        const recommendationsJson = await recommendationsRes.json();
         setTenders((tendersJson.tenders || []) as TenderWithProposals[]);
         setProject(projectJson.project as WeddingProject | null);
+        setRecommendations((recommendationsJson.recommendations || []) as typeof recommendations);
 
         // Récupérer les prestataires confirmés (proposals acceptées)
         const confirmed: ConfirmedVendor[] = [];
@@ -311,6 +315,48 @@ export default function CoupleVendorsPage() {
                 })}
               </div>
             </div>
+
+            {/* ---- SECTION 1.5 : Ils vous correspondent ---- */}
+            {recommendations.length > 0 && (
+              <div className="mb-8">
+                <h2 className="font-display text-2xl font-bold text-[#1c1c1c] tracking-tight mb-5">
+                  Ils vous correspondent
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {recommendations.slice(0, 6).map((rec) => {
+                    const vendor = rec.vendor;
+                    const logoUrl = typeof vendor?.logo === "string" ? vendor.logo : (vendor?.logo as { url?: string } | undefined)?.url;
+                    const category = rec.match.category;
+                    const Icon = CATEGORY_ICON[category] || Sparkle;
+                    return (
+                      <div key={rec.match.id} className="rounded-2xl bg-white border border-[#e4e2db] p-4 flex flex-col gap-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="h-10 w-10 rounded-full bg-cover bg-center shrink-0"
+                            style={{ backgroundImage: logoUrl ? `url(${logoUrl})` : `url(${CATEGORY_IMAGES[category] || CATEGORY_IMAGES["Autre"]})` }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-display text-sm font-bold text-[#1c1c1c] truncate">
+                              {(vendor as { companyName?: string; businessName?: string; name?: string })?.companyName || (vendor as { businessName?: string; name?: string })?.businessName || (vendor as { name?: string })?.name || "Prestataire"}
+                            </h3>
+                            <p className="text-[11px] text-[#8b8b86] flex items-center gap-1">
+                              <Icon size={11} /> {category}
+                            </p>
+                          </div>
+                        </div>
+                        {rec.match.summary && <p className="text-[12px] text-[#4a4a4a] line-clamp-3">{rec.match.summary}</p>}
+                        <div className="flex items-center justify-between gap-2 mt-auto">
+                          <span className="text-[11px] text-[#8b8b86]">Score {rec.match.score}%</span>
+                          <Button variant="primary" className="text-xs px-3 py-1.5" onClick={() => launchTenderForCategory(category)}>
+                            Lancer un appel
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* ---- SECTION 2 : Cartes des appels d'offres (style events) ---- */}
             {tenders.length > 0 && (

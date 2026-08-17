@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
+import { getVendorPlanById, getVendorPlanByStripePriceId } from "@/lib/subscriptions";
 import { recordWishlistPayment } from "@/lib/wishlistPayment";
 import type { UserSubscription } from "@/types/admin";
 import type Stripe from "stripe";
@@ -53,20 +54,29 @@ export async function POST(req: Request) {
         if (userId && subscriptionId) {
           const sub = await getStripe().subscriptions.retrieve(subscriptionId);
           const item = sub.items.data[0];
+          const price = item?.price;
           const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id || null;
+          const checkoutPlanId = session.metadata?.planId;
+          const plan = checkoutPlanId
+            ? getVendorPlanById(checkoutPlanId)
+            : price?.id
+            ? getVendorPlanByStripePriceId(price.id)
+            : undefined;
           await userRepo.update(userId, {
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscriptionId,
           });
           await adminRepo.updateUserSubscription(subscriptionId, {
             userId,
+            planId: plan?.id || checkoutPlanId || null,
             status: mapStatus(sub.status),
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscriptionId,
             currentPeriodStart: new Date((item.current_period_start ?? sub.billing_cycle_anchor) * 1000).toISOString(),
             currentPeriodEnd: new Date((item.current_period_end ?? sub.billing_cycle_anchor) * 1000).toISOString(),
+            canceledAt: sub.cancel_at ? new Date(sub.cancel_at * 1000).toISOString() : null,
             planInterval: item?.price?.recurring?.interval || "month",
-            amount: item?.price?.unit_amount || 3900,
+            amount: item?.price?.unit_amount || plan?.price || 3900,
             currency: sub.currency || "eur",
           });
         }
@@ -84,6 +94,22 @@ export async function POST(req: Request) {
             status: mapStatus(sub.status),
             currentPeriodStart: new Date((item.current_period_start ?? sub.billing_cycle_anchor) * 1000).toISOString(),
             currentPeriodEnd: new Date((item.current_period_end ?? sub.billing_cycle_anchor) * 1000).toISOString(),
+          });
+        }
+        break;
+      }
+      case "invoice.payment_failed": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const subDetails = invoice.parent?.subscription_details;
+        const subscription = subDetails?.subscription;
+        const subscriptionId = typeof subscription === "string" ? subscription : subscription?.id;
+        if (subscriptionId) {
+          const sub = await getStripe().subscriptions.retrieve(subscriptionId);
+          const item = sub.items.data[0];
+          await adminRepo.updateUserSubscription(subscriptionId, {
+            status: mapStatus(sub.status),
+            currentPeriodStart: new Date((item.current_period_start ?? sub.billing_cycle_anchor ?? 0) * 1000).toISOString(),
+            currentPeriodEnd: new Date((item.current_period_end ?? sub.billing_cycle_anchor ?? 0) * 1000).toISOString(),
           });
         }
         break;
