@@ -8,6 +8,7 @@ import { taskRepo } from "@/lib/db/repositories/taskRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { generateWeddingPlan } from "@/lib/ai/orchestrator";
 import { delCached } from "@/lib/cache/redis";
+import { runAutoMatching } from "@/lib/matching/auto-match";
 
 function cleanNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === "") return null;
@@ -122,8 +123,6 @@ export async function PUT(req: Request) {
       ...parsed.data,
       style: parsed.data.style as never,
     });
-    await matchRepo.deleteByProject(project.id);
-    await taskRepo.deleteByProject(project.id);
 
     let regenerated = false;
     if (updated.sessionId) {
@@ -149,11 +148,22 @@ export async function PUT(req: Request) {
           await delCached(`ai-output:${updated.sessionId}`);
           const output = await generateWeddingPlan(refreshedQuiz, updated.sessionId);
           await sessionRepo.setAIOutput(updated.sessionId, output);
+          await taskRepo.deleteByProject(project.id);
           await taskRepo.createFromTimeline(project.id, output.timeline);
           regenerated = true;
         }
       } catch (regenErr) {
         console.error("[couple/project] AI regeneration failed", regenErr);
+      }
+    }
+
+    const shouldRematch = body.rematch === true;
+    if (shouldRematch) {
+      await matchRepo.deleteSuggestedByProject(project.id);
+      try {
+        await runAutoMatching(updated, { perCategory: 3, notifyVendors: false });
+      } catch (matchErr) {
+        console.error("[couple/project] Auto-matching failed:", matchErr);
       }
     }
 

@@ -2790,6 +2790,28 @@ main > section { padding: 40px 0; background: linear-gradient(to bottom, #fff0f3
 .tier-mini b { display: block; font-size: 12.5px; }
 .tier-mini span { font-size: 10.5px; color: var(--grey-light); }
 
+.styles-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.style-chip {
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: .15s;
+  background: #fff;
+  color: var(--grey);
+}
+.style-chip.on {
+  border-color: var(--bordeaux);
+  background: var(--rose-chip);
+  color: var(--bordeaux);
+  font-weight: 600;
+}
+
 .upload-zone {
   border: 1.5px dashed var(--line);
   border-radius: var(--r-md);

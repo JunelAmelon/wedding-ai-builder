@@ -148,12 +148,12 @@ export default function NewTenderPage() {
         href="/espace-couple/prestataires"
         className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-text-secondary hover:text-text-primary mb-10"
       >
-        <ArrowLeft size={14} /> Retour aux appels d&apos;offres
+        <ArrowLeft size={14} /> Retour aux appels d'offres
       </Link>
 
       <PageHeader
         eyebrow="Nouveau faire-part"
-        title="Nouvel appel d&apos;offres"
+        title="Nouvel appel d'offres"
         description="Scellez une nouvelle demande et confiez-la aux artisans les plus proches de votre univers."
       />
 
@@ -172,7 +172,7 @@ export default function NewTenderPage() {
               Nouveau faire-part
             </p>
             <h2 className="font-display text-2xl font-semibold text-text-primary mt-3 mb-4">
-              Lancer un appel d&apos;offres
+              Lancer un appel d'offres
             </h2>
             <p className="text-text-secondary text-sm mb-10 max-w-sm mx-auto leading-relaxed">
               Choisissez le prestataire recherché. Nous scellons votre demande et la transmettons aux trois
@@ -293,7 +293,7 @@ export default function NewTenderPage() {
               <div className="w-14 h-14 rounded-2xl bg-[#cbd5e1] flex items-center justify-center mx-auto mb-5">
                 <CheckCircle2 size={26} className="text-[#15181c]" />
               </div>
-              <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C&apos;est scellé.</h3>
+              <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C'est scellé.</h3>
               <p className="text-[#6b7076] text-sm mb-8 leading-relaxed">
                 Votre faire-part est en route. Dans quelques instants, les trois prestataires les plus proches de
                 votre univers vous contacteront pour que vous puissiez choisir en toute sérénité.

@@ -18,6 +18,8 @@ import {
   Loader2,
   Check,
   X,
+  GripVertical,
+  ImageDown,
 } from "lucide-react";
 import type { VendorProfile } from "@/types/marketplace";
 
@@ -79,6 +81,8 @@ export default function VendorPortfolioPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [reviews, setReviews] = useState<{ author: string; rating: number; text: string; date: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -174,6 +178,49 @@ export default function VendorPortfolioPage() {
 
   function removeImage(publicId: string) {
     setImages((prev) => prev.filter((img) => img.publicId !== publicId));
+  }
+
+  function setAsCover(publicId: string) {
+    setImages((prev) => {
+      const idx = prev.findIndex((img) => img.publicId === publicId);
+      if (idx <= 0) return prev;
+      const updated = [...prev];
+      const [item] = updated.splice(idx, 1);
+      updated.unshift(item);
+      return updated;
+    });
+  }
+
+  function handleDragStart(index: number) {
+    setDraggedIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDragOverIndex(index);
+    }
+  }
+
+  function handleDrop(index: number) {
+    if (draggedIndex === null || draggedIndex === index) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+    setImages((prev) => {
+      const updated = [...prev];
+      const [item] = updated.splice(draggedIndex, 1);
+      updated.splice(index, 0, item);
+      return updated;
+    });
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  }
+
+  function handleDragEnd() {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   }
 
   function addVideo() {
@@ -336,28 +383,71 @@ export default function VendorPortfolioPage() {
               <p className="text-sm text-[#F2704A] mb-4 bg-[#fff0f3] p-3 rounded-xl">{uploadError}</p>
             )}
 
-            <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4 mb-6">
-              {images.map((img) => (
+            <p className="text-[#6b7076] text-xs mb-4 flex items-center gap-2">
+              <GripVertical size={14} className="text-[#cbd5e1]" />
+              Glissez-déposez pour réordonner. La première photo est votre photo de couverture.
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+              {images.map((img, index) => (
                 <div
                   key={img.publicId}
-                  className="relative break-inside-avoid rounded-[20px] overflow-hidden bg-white border border-[#f4f1f7] shadow-sm group"
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDrop={() => handleDrop(index)}
+                  onDragEnd={handleDragEnd}
+                  className={`relative rounded-[20px] overflow-hidden bg-white border shadow-sm group cursor-grab active:cursor-grabbing transition-all ${
+                    index === 0
+                      ? "border-[#fde68a] border-[3px] ring-2 ring-[#fde68a]/30"
+                      : "border-[#f4f1f7]"
+                  } ${draggedIndex === index ? "opacity-40 scale-95" : ""} ${
+                    dragOverIndex === index && draggedIndex !== index ? "ring-2 ring-[#8a7bff] scale-105" : ""
+                  }`}
                 >
                   <div className="relative aspect-[4/3]">
                     <Image
                       src={img.url}
                       alt={img.filename}
                       fill
-                      sizes="(max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                      className="object-cover pointer-events-none"
                       unoptimized
                     />
                   </div>
-                  <button
-                    onClick={() => removeImage(img.publicId)}
-                    className="absolute top-3 right-3 p-2 rounded-full bg-white/90 text-[#F2704A] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-sm hover:bg-[#fff0f3]"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+
+                  {/* Cover badge */}
+                  {index === 0 && (
+                    <div className="absolute top-2 left-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#fde68a] text-[#15181c] text-[10px] font-bold shadow-sm z-10">
+                      <ImageDown size={12} />
+                      Couverture
+                    </div>
+                  )}
+
+                  {/* Drag handle */}
+                  <div className="absolute top-2 right-2 flex gap-1.5 z-10">
+                    {index !== 0 && (
+                      <button
+                        onClick={() => setAsCover(img.publicId)}
+                        className="p-2 rounded-full bg-white/90 text-[#15181c] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-sm hover:bg-[#fde68a]"
+                        title="Définir comme couverture"
+                      >
+                        <ImageDown size={14} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => removeImage(img.publicId)}
+                      className="p-2 rounded-full bg-white/90 text-[#F2704A] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-sm hover:bg-[#fff0f3]"
+                      title="Supprimer"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+
+                  {/* Order number */}
+                  <div className="absolute bottom-2 left-2 w-6 h-6 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white text-[10px] font-bold z-10">
+                    {index + 1}
+                  </div>
                 </div>
               ))}
 
@@ -365,7 +455,7 @@ export default function VendorPortfolioPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={imagesUploading}
-                className="w-full break-inside-avoid min-h-[160px] rounded-[20px] border-2 border-dashed border-[#cbd5e1] flex flex-col items-center justify-center bg-white/60 hover:bg-white hover:border-[#fde68a] transition cursor-pointer disabled:opacity-50"
+                className="min-h-[160px] rounded-[20px] border-2 border-dashed border-[#cbd5e1] flex flex-col items-center justify-center bg-white/60 hover:bg-white hover:border-[#fde68a] transition cursor-pointer disabled:opacity-50"
               >
                 {imagesUploading ? (
                   <Loader2 size={24} className="text-[#6b7076] mb-2 animate-spin" />

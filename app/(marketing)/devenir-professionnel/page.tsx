@@ -72,7 +72,9 @@ const DEFAULT_FORM = {
   password: "",
   phone: "",
   website: "",
+  address: "",
   city: "",
+  zipCode: "",
   serviceCategory: "",
   otherCategory: "",
   yearsOfExperience: "",
@@ -91,6 +93,16 @@ const DEFAULT_FORM = {
   tier: "standard" as "economique" | "standard" | "premium" | "luxe",
   acceptedTerms: false,
 };
+
+const NOTICE_PERIOD_OPTIONS = [
+  "24h",
+  "48h",
+  "1 semaine",
+  "2 semaines",
+  "1 mois",
+  "2 mois",
+  "3 mois ou plus",
+];
 
 export default function ProfessionalRegistrationPage() {
   const [openIndex, setOpenIndex] = useState<number>(0);
@@ -120,7 +132,7 @@ export default function ProfessionalRegistrationPage() {
   function validateStep(index: number): boolean {
     switch (index) {
       case 0:
-        return !!(form.companyName && form.siret && form.contactName && form.email && form.password.length >= 8 && form.phone && form.city);
+        return !!(form.companyName && form.siret && form.contactName && form.email && form.password.length >= 8 && form.phone && form.address && form.city && form.zipCode);
       case 1:
         return !!(form.serviceCategory && form.yearsOfExperience && form.description);
       case 2:
@@ -146,7 +158,7 @@ export default function ProfessionalRegistrationPage() {
     let filled = Object.values(done).filter(Boolean).length;
     if (form.companyName) filled += 0.4;
     if (form.serviceCategory) filled += 0.3;
-    if (form.city) filled += 0.3;
+    if (form.address) filled += 0.3;
     return Math.min(100, Math.round((filled / 6) * 100));
   }, [done, form]);
 
@@ -170,9 +182,9 @@ export default function ProfessionalRegistrationPage() {
         phone: form.phone,
         website: form.website || null,
         address: {
-          street: "",
+          street: form.address,
           city: form.city,
-          zipCode: "",
+          zipCode: form.zipCode,
           country: "France",
         },
         serviceCategory: form.serviceCategory,
@@ -181,10 +193,10 @@ export default function ProfessionalRegistrationPage() {
         trainingDate: form.trainingDate || null,
         trainingDescription: form.trainingDescription || null,
         description: form.description,
-        styles: [],
+        styles: form.styles,
         priceRange: {
-          min: 0,
-          max: 0,
+          min: Number(form.priceMin) || 0,
+          max: Number(form.priceMax) || 0,
           currency: "EUR",
         },
         pricingDetails: "",
@@ -201,9 +213,9 @@ export default function ProfessionalRegistrationPage() {
         },
         portfolio: {
           images: [],
-          website: null,
-          instagram: null,
-          videos: [],
+          website: form.portfolioWebsite || null,
+          instagram: form.instagram || null,
+          videos: form.videoUrls ? form.videoUrls.split(",").map((s) => s.trim()).filter(Boolean) : [],
           faq: [],
           reviews: [],
         },
@@ -256,7 +268,7 @@ export default function ProfessionalRegistrationPage() {
       body: (
         <div className="grid2">
           <div className="field span2">
-            <label>Nom de l&apos;entreprise *</label>
+            <label>Nom de l'entreprise *</label>
             <input value={form.companyName} onChange={(e) => update("companyName", e.target.value)} placeholder="Ex. Studio Lumière" />
           </div>
           <div className="field">
@@ -284,8 +296,16 @@ export default function ProfessionalRegistrationPage() {
             <input type="url" value={form.website} onChange={(e) => update("website", e.target.value)} placeholder="https://..." />
           </div>
           <div className="field span2">
+            <label>Adresse complète *</label>
+            <input value={form.address} onChange={(e) => update("address", e.target.value)} placeholder="Ex. 23 rue du Béarn, Ris-Orangis" />
+          </div>
+          <div className="field">
             <label>Ville *</label>
-            <input value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Bordeaux" />
+            <input value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Ris-Orangis" />
+          </div>
+          <div className="field">
+            <label>Code postal *</label>
+            <input value={form.zipCode} onChange={(e) => update("zipCode", e.target.value)} placeholder="91130" />
           </div>
         </div>
       ),
@@ -310,7 +330,7 @@ export default function ProfessionalRegistrationPage() {
             </div>
           )}
           <div className="field">
-            <label>Années d&apos;expérience *</label>
+            <label>Années d'expérience *</label>
             <input type="number" min={0} value={form.yearsOfExperience} onChange={(e) => update("yearsOfExperience", e.target.value)} />
           </div>
           <div className="field">
@@ -325,6 +345,29 @@ export default function ProfessionalRegistrationPage() {
             <label>Description de votre activité *</label>
             <textarea value={form.description} onChange={(e) => update("description", e.target.value)} rows={4} placeholder="Ce qui fait votre différence, votre approche..." />
           </div>
+          <div className="field span2">
+            <label>Styles de mariage</label>
+            <div className="styles-chips">
+              {WEDDING_STYLES.map((style) => (
+                <button
+                  key={style}
+                  type="button"
+                  className={`style-chip ${form.styles.includes(style) ? "on" : ""}`}
+                  onClick={() => toggleStyle(style)}
+                >
+                  {style}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="field">
+            <label>Budget minimum (€)</label>
+            <input type="number" min={0} value={form.priceMin} onChange={(e) => update("priceMin", e.target.value)} placeholder="500" />
+          </div>
+          <div className="field">
+            <label>Budget maximum (€)</label>
+            <input type="number" min={0} value={form.priceMax} onChange={(e) => update("priceMax", e.target.value)} placeholder="5000" />
+          </div>
         </div>
       ),
     },
@@ -335,16 +378,21 @@ export default function ProfessionalRegistrationPage() {
       body: (
         <div className="grid2">
           <div className="field span2">
-            <label>Régions d&apos;intervention</label>
+            <label>Régions d'intervention</label>
             <input value={form.regions} onChange={(e) => update("regions", e.target.value)} placeholder="Ex. Nouvelle-Aquitaine, Île-de-France" />
           </div>
           <div className="field">
-            <label>Rayon d&apos;intervention (km)</label>
+            <label>Rayon d'intervention (km)</label>
             <input type="number" min={0} value={form.radius} onChange={(e) => update("radius", e.target.value)} placeholder="80" />
           </div>
           <div className="field">
             <label>Délai de réponse / préavis</label>
-            <input value={form.noticePeriod} onChange={(e) => update("noticePeriod", e.target.value)} placeholder="Ex. 2 semaines" />
+            <select value={form.noticePeriod} onChange={(e) => update("noticePeriod", e.target.value)}>
+              <option value="">Sélectionner</option>
+              {NOTICE_PERIOD_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
           </div>
         </div>
       ),
@@ -372,7 +420,7 @@ export default function ProfessionalRegistrationPage() {
 
           <div className="field span2" style={{ marginTop: 16 }}>
             <label>Documents justificatifs</label>
-            <p className="hint" style={{ marginBottom: 10 }}>Kbis, attestation d&apos;assurance ou diplôme. Non visibles par les couples.</p>
+            <p className="hint" style={{ marginBottom: 10 }}>Kbis, attestation d'assurance ou diplôme. Non visibles par les couples.</p>
             <CloudinaryUpload onUpload={setDocuments} uploaded={documents} accept="*/*" maxFiles={5} />
           </div>
 
@@ -383,7 +431,7 @@ export default function ProfessionalRegistrationPage() {
               checked={form.acceptedTerms}
               onChange={(e) => update("acceptedTerms", e.target.checked)}
             />
-            <span>J&apos;accepte que mes données soient traitées dans le cadre de mon inscription et je certifie l&apos;exactitude des informations fournies. *</span>
+            <span>J'accepte que mes données soient traitées dans le cadre de mon inscription et je certifie l'exactitude des informations fournies. *</span>
           </div>
         </>
       ),
@@ -439,7 +487,7 @@ export default function ProfessionalRegistrationPage() {
 
                 <div className="stat-card-green">
                   <b>0€</b>
-                  <span>coût d&apos;inscription</span>
+                  <span>coût d'inscription</span>
                 </div>
 
                 <div className="floating-card fc-bottom-right">
@@ -466,7 +514,7 @@ export default function ProfessionalRegistrationPage() {
                 </div>
 
                 <div className="stat-row">
-                  <div className="box"><b>0€</b><span>Coût d&apos;inscription</span></div>
+                  <div className="box"><b>0€</b><span>Coût d'inscription</span></div>
                   <div className="box"><b>2-4x</b><span>Demandes plus qualifiées</span></div>
                   <div className="box"><b>48h</b><span>Délai de validation</span></div>
                 </div>
@@ -474,7 +522,7 @@ export default function ProfessionalRegistrationPage() {
             </div>
 
             <div className="join-logos">
-              <span>Château d&apos;Or</span>
+              <span>Château d'Or</span>
               <span>Belle Fleur</span>
               <span>Lumière Studio</span>
               <span>Maison Rosé</span>
@@ -494,7 +542,7 @@ export default function ProfessionalRegistrationPage() {
                 <div className="dark-big-num">{MARKETING_STATS.activeProfessionals.toLocaleString("fr-FR")}</div>
               </div>
               <div className="dark-testi">
-                <p>« En deux semaines, j&apos;ai reçu plus de demandes qualifiées qu&apos;en trois mois sur les autres plateformes. »</p>
+                <p>« En deux semaines, j'ai reçu plus de demandes qualifiées qu'en trois mois sur les autres plateformes. »</p>
                 <div className="who">
                   <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&w=96&h=96&q=80" alt="" width={96} height={96} className="w-full h-full object-cover" unoptimized />
                   <div>
@@ -574,8 +622,8 @@ export default function ProfessionalRegistrationPage() {
 
                   <div className="lf-rows">
                     <div className="lf-row">
-                      <span className="k">Ville</span>
-                      <span className={`v ${form.city ? "" : "empty"}`}>{form.city || "à renseigner"}</span>
+                      <span className="k">Adresse</span>
+                      <span className={`v ${form.address ? "" : "empty"}`}>{form.address ? `${form.address}, ${form.zipCode} ${form.city}` : "à renseigner"}</span>
                     </div>
                     <div className="lf-row">
                       <span className="k">Budget cible</span>

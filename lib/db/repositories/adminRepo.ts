@@ -292,16 +292,22 @@ export const adminRepo = {
   },
 
   async listUserSubscriptions(): Promise<UserSubscription[]> {
+    if (isLocalMode()) return localStore.all<UserSubscription>(SUBS_COL);
     const snap = await getCol(SUBS_COL).orderBy("createdAt", "desc").get();
     return snap.docs.map((d) => d.data() as UserSubscription);
   },
 
   async getUserSubscriptionById(id: string): Promise<UserSubscription | null> {
+    if (isLocalMode()) return localStore.get<UserSubscription>(SUBS_COL, id);
     const snap = await getCol(SUBS_COL).doc(id).get();
     return snap.exists ? (snap.data() as UserSubscription) : null;
   },
 
   async getUserSubscriptionByUserId(userId: string): Promise<UserSubscription | null> {
+    if (isLocalMode()) {
+      const all = await localStore.all<UserSubscription>(SUBS_COL);
+      return all.find((s) => s.userId === userId) ?? null;
+    }
     const snap = await getCol(SUBS_COL).where("userId", "==", userId).limit(1).get();
     if (snap.empty) return null;
     return snap.docs[0].data() as UserSubscription;

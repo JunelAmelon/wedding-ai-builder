@@ -145,7 +145,7 @@ export default function ResultPage() {
                 Votre plan de préparation
               </h1>
               <p className="text-text-secondary mt-4 max-w-2xl text-lg leading-relaxed">
-                Un assistant intelligent pour décider, prioriser et avancer sereinement jusqu&apos;au Jour J.
+                Un assistant intelligent pour décider, prioriser et avancer sereinement jusqu'au Jour J.
               </p>
 
               {weddingDate && !Number.isNaN(weddingDate.getTime()) && (
@@ -274,7 +274,7 @@ export default function ResultPage() {
               Imprimer
             </Button>
             <Link href="/" className="text-primary hover:underline">
-              Retour à l&apos;accueil
+              Retour à l'accueil
             </Link>
           </div>
         </div>

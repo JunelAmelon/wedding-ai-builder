@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
-import { requireActiveVendorSubscription } from "@/lib/subscription-guard";
+import { isVendorSubscriptionActive } from "@/lib/subscription-guard";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
@@ -14,7 +14,7 @@ export async function GET() {
       return NextResponse.json({ error: "Accès réservé aux professionnels" }, { status: 403 });
     }
 
-    await requireActiveVendorSubscription(user.id);
+    const subscriptionActive = await isVendorSubscriptionActive(user.id).catch(() => false);
 
     const profile = await vendorProfileRepo.getByUserId(user.id);
     if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 404 });
@@ -33,7 +33,7 @@ export async function GET() {
       })
     );
 
-    return NextResponse.json({ opportunities: opportunities.filter((o) => o.project) });
+    return NextResponse.json({ opportunities: opportunities.filter((o) => o.project), subscriptionActive });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

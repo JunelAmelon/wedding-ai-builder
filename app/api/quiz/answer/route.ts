@@ -5,6 +5,8 @@ import { eventRepo } from "@/lib/db/repositories/eventRepo";
 import { trackServer } from "@/lib/analytics/posthog.server";
 import { QUIZ_STEPS } from "@/types/domain";
 import type { QuizAnswers } from "@/types/domain";
+import { localStore } from "@/lib/db/localStore";
+import { isLocalMode } from "@/lib/db/repositories/utils";
 
 const AnswerSchema = z.object({
   sessionId: z.string().min(1),
@@ -45,7 +47,27 @@ export async function POST(req: Request) {
 
     const session = await sessionRepo.get(sessionId);
     if (!session) {
-      return NextResponse.json({ error: "Session introuvable", sessionId }, { status: 404 });
+      const now = new Date().toISOString();
+      const newSession = {
+        id: sessionId,
+        createdAt: now,
+        updatedAt: now,
+        status: "in_progress" as const,
+        quizAnswers: {},
+        aiOutput: null,
+        leadId: null,
+        userId: null,
+      };
+      if (isLocalMode()) {
+        await localStore.set("sessions", sessionId, newSession);
+      } else {
+        const { getDb } = await import("@/lib/db/firebase");
+        await getDb().collection("sessions").doc(sessionId).set(newSession);
+      }
+      const updated = await sessionRepo.updateAnswers(sessionId, updatePayload);
+      await eventRepo.log(sessionId, "quiz_step_completed", { step, stepName: step });
+      trackServer(sessionId, "quiz_step_completed", { step });
+      return NextResponse.json({ session: updated });
     }
 
     const updated = await sessionRepo.updateAnswers(sessionId, updatePayload);

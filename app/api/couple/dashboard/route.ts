@@ -8,6 +8,8 @@ import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { messageRepo } from "@/lib/db/repositories/messageRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
+import { isVendorSubscriptionActive } from "@/lib/subscription-guard";
+import { runAutoMatching } from "@/lib/matching/auto-match";
 
 export async function GET() {
   try {
@@ -39,10 +41,27 @@ export async function GET() {
     const tasks = await taskRepo.listByProject(project.id);
     const nextTasks = tasks.filter((t) => !t.completed).slice(0, 5);
 
-    const matches = await matchRepo.listByProject(project.id);
+    // Always refresh suggested matches so the dashboard stays up-to-date
+    let matches: Awaited<ReturnType<typeof matchRepo.listByProject>>;
+    try {
+      await matchRepo.deleteSuggestedByProject(project.id);
+      const result = await runAutoMatching(project, { perCategory: 2, notifyVendors: false });
+      const freshMatches = result.matches;
+      const existing = await matchRepo.listByProject(project.id);
+      const nonSuggested = existing.filter((m) => m.status !== "suggested");
+      matches = [...freshMatches, ...nonSuggested];
+    } catch {
+      matches = await matchRepo.listByProject(project.id);
+    }
+
     const recommendations = await Promise.all(
       matches.slice(0, 6).map(async (m) => {
         const vendor = await vendorProfileRepo.get(m.vendorId);
+        if (!vendor) return null;
+        const isActive = await isVendorSubscriptionActive(vendor.userId);
+        if (!isActive) return null;
+        const weddingDate = project.weddingDate;
+        if (weddingDate && vendor.availability?.unavailableDates?.includes(weddingDate)) return null;
         return { match: m, vendor };
       })
     );
@@ -63,7 +82,7 @@ export async function GET() {
       riskScore: null,
       nextTasks,
       unreadMessages: unreadMessages.reduce((a, b) => a + b, 0),
-      recommendations: recommendations.filter((r) => r.vendor),
+      recommendations: recommendations.filter(Boolean),
       unreadNotifications: unreadNotifications.length,
     });
   } catch (err) {

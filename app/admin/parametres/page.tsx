@@ -46,7 +46,7 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold font-display text-[#0f172a]">Parametres</h1>
-        <p className="text-sm mt-1 text-[#64748b]">Plans d&apos;abonnement et configuration</p>
+        <p className="text-sm mt-1 text-[#64748b]">Plans d'abonnement et configuration</p>
       </div>
       {message && <p className="text-sm px-4 py-2 rounded-lg bg-[#e6f4ea] text-[#137333] inline-block">{message}</p>}
       <div className="bg-white rounded-[20px] border border-[#f1f5f9] p-6 space-y-4">
@@ -57,7 +57,7 @@ export default function AdminSettingsPage() {
             <div key={p.id} className="flex items-center justify-between rounded-[16px] border border-[#f1f5f9] px-4 py-3 bg-[#f8fafc]">
               <div>
                 <p className="font-medium text-[#0f172a]">{p.name}</p>
-                <p className="text-xs text-[#64748b]">{p.price}€ / {p.interval} • {p.commitmentMonths} mois d&apos;engagement</p>
+                <p className="text-xs text-[#64748b]">{p.price}€ / {p.interval} • {p.commitmentMonths} mois d'engagement</p>
               </div>
               <span className={`text-xs px-2 py-1 rounded-full font-medium ${p.isActive ? "bg-[#e6f4ea] text-[#137333]" : "bg-[#f1f5f9] text-[#64748b]"}`}>{p.isActive ? "Actif" : "Inactif"}</span>
             </div>

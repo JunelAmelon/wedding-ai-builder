@@ -3,6 +3,7 @@ import { vendorRepo } from "@/lib/db/repositories/vendorRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { hashPassword, requireAdmin } from "@/lib/auth";
+import { revalidateVendorMatches } from "@/lib/matching/engine";
 import type { VendorApplication } from "@/types/domain";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
@@ -30,7 +31,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     if (updated.profileId && ["approved", "rejected"].includes(status)) {
       try {
-        await vendorProfileRepo.update(updated.profileId, { status });
+        const profile = await vendorProfileRepo.update(updated.profileId, { status });
+        if (status === "approved" && profile) {
+          revalidateVendorMatches(profile).catch(() => {});
+        }
       } catch (profileErr) {
         console.error("[admin/vendor] failed to update profile status", profileErr);
       }

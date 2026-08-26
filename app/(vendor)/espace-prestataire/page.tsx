@@ -232,22 +232,6 @@ export default function VendorDashboardPage() {
           </div>
         </div>
 
-        {isActive && sub?.features && sub.features.length > 0 && (
-          <section className="mb-10">
-            <h3 className="font-display text-2xl font-bold text-[#15181c] mb-5">Avantages de votre plan {sub.planName}</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {sub.features.map((feature, idx) => (
-                <div key={idx} className="rounded-2xl bg-white border border-[#ececec] p-4 flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-full bg-[#fde68a] flex items-center justify-center shrink-0">
-                    <Check size={16} className="text-[#15181c]" />
-                  </div>
-                  <p className="text-sm font-medium text-[#15181c]">{feature}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* Opportunité en vedette */}
         <section className="mb-10">
           <div className="relative overflow-hidden rounded-3xl min-h-[420px] p-6 sm:p-8 flex flex-col justify-end group">
@@ -285,7 +269,7 @@ export default function VendorDashboardPage() {
                 href="/espace-prestataire/appels-offres"
                 className="inline-flex items-center gap-2 bg-white text-[#15181c] text-sm font-bold px-5 py-2.5 rounded-full hover:bg-[#fde68a] transition"
               >
-                Voir les appels d&apos;offres <ChevronRight size={16} />
+                Voir les appels d'offres <ChevronRight size={16} />
               </Link>
             </div>
           </div>
@@ -338,7 +322,7 @@ export default function VendorDashboardPage() {
                   return (
                     <Link
                       key={match.id}
-                      href="/espace-prestataire/appels-offres"
+                      href={`/espace-prestataire/appels-offres/${match.id}`}
                       className="grid sm:grid-cols-5 gap-2 sm:gap-4 p-4 items-center hover:bg-[#fff0f3]/50 transition group"
                     >
                       <div className="flex items-center gap-3">

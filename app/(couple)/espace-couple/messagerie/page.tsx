@@ -305,7 +305,7 @@ export default function CoupleMessagingPage() {
 
                 {phoneUnavailable && (
                   <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center justify-between">
-                    <span>L&apos;appel téléphonique n&apos;est pas encore disponible. Utilisez la messagerie.</span>
+                    <span>L'appel téléphonique n'est pas encore disponible. Utilisez la messagerie.</span>
                     <button onClick={() => setPhoneUnavailable(false)} className="p-1 hover:bg-amber-100 rounded"><X size={14} /></button>
                   </div>
                 )}

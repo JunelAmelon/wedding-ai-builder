@@ -101,7 +101,7 @@ export default function VendorPreviewPage() {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
         <h1 className="font-display text-2xl font-semibold text-[#1c1c1c] mb-3">Profil introuvable</h1>
-        <p className="text-[#8b8b86]">{error || "Ce professionnel n&apos;existe pas."}</p>
+        <p className="text-[#8b8b86]">{error || "Ce professionnel n'existe pas."}</p>
       </div>
     );
   }
@@ -246,7 +246,7 @@ export default function VendorPreviewPage() {
                     emphasis
                   />
                   {price?.max && price.max > price.min && (
-                    <LedgerRow label="Jusqu&apos;à" value={`${price.max.toLocaleString("fr-FR")} ${price.currency || "EUR"}`} />
+                    <LedgerRow label="Jusqu'à" value={`${price.max.toLocaleString("fr-FR")} ${price.currency || "EUR"}`} />
                   )}
                   <LedgerRow label="Expérience" value={experience > 0 ? `${experience} ans` : "Non précisée"} />
                   <LedgerRow label="Délai de réponse" value="24h" />
@@ -325,7 +325,7 @@ export default function VendorPreviewPage() {
                   <div>
                     <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] mb-1">Expérience</div>
                     <p className="text-[#8b8b86] text-sm">
-                      {experience > 0 ? `${experience} ans d&apos;expérience dans le domaine.` : "Expérience non précisée."}
+                      {experience > 0 ? `${experience} ans d'expérience dans le domaine.` : "Expérience non précisée."}
                     </p>
                   </div>
                 </div>
@@ -334,7 +334,7 @@ export default function VendorPreviewPage() {
                     <ZoneIcon className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] mb-1">Zone d&apos;intervention</div>
+                    <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] mb-1">Zone d'intervention</div>
                     <p className="text-[#8b8b86] text-sm">
                       {serviceArea?.regions?.join(", ") || serviceArea?.cities?.slice(0, 3).join(", ") || location}
                     </p>

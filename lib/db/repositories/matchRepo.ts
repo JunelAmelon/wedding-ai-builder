@@ -82,4 +82,32 @@ export const matchRepo = {
     snap.docs.forEach((doc) => batch.delete(doc.ref));
     await batch.commit();
   },
+
+  async deleteByProjectAndCategory(projectId: string, category: string): Promise<void> {
+    if (isLocalMode()) {
+      const all = await localStore.all<ProjectVendorMatch>(COLLECTION);
+      const toDelete = all.filter((m) => m.projectId === projectId && m.category === category);
+      await Promise.all(toDelete.map((m) => localStore.delete(COLLECTION, m.id)));
+      return;
+    }
+    const col = await getFirestoreCol();
+    const snap = await col.where("projectId", "==", projectId).where("category", "==", category).get();
+    const batch = col.firestore.batch();
+    snap.docs.forEach((doc) => batch.delete(doc.ref));
+    await batch.commit();
+  },
+
+  async deleteSuggestedByProject(projectId: string): Promise<void> {
+    if (isLocalMode()) {
+      const all = await localStore.all<ProjectVendorMatch>(COLLECTION);
+      const toDelete = all.filter((m) => m.projectId === projectId && m.status === "suggested");
+      await Promise.all(toDelete.map((m) => localStore.delete(COLLECTION, m.id)));
+      return;
+    }
+    const col = await getFirestoreCol();
+    const snap = await col.where("projectId", "==", projectId).where("status", "==", "suggested").get();
+    const batch = col.firestore.batch();
+    snap.docs.forEach((doc) => batch.delete(doc.ref));
+    await batch.commit();
+  },
 };

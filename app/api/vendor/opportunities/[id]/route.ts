@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
-import { requireActiveVendorSubscription } from "@/lib/subscription-guard";
+import { isVendorSubscriptionActive } from "@/lib/subscription-guard";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
@@ -14,7 +14,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Accès réservé aux professionnels" }, { status: 403 });
     }
 
-    await requireActiveVendorSubscription(user.id);
+    const subscriptionActive = await isVendorSubscriptionActive(user.id).catch(() => false);
 
     const { id } = await params;
     const profile = await vendorProfileRepo.getByUserId(user.id);
@@ -25,13 +25,25 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: "Opportunité introuvable" }, { status: 404 });
     }
 
+    // Free vendors: return limited project info (name only), no sensitive details
+    if (!subscriptionActive) {
+      const limitedProject = await projectRepo.get(match.projectId);
+      return NextResponse.json({
+        match,
+        project: limitedProject ? { id: limitedProject.id, name: limitedProject.name } : null,
+        summary: null,
+        profile,
+        subscriptionActive: false,
+      });
+    }
+
     const project = await projectRepo.get(match.projectId);
     if (!project) return NextResponse.json({ error: "Projet introuvable" }, { status: 404 });
 
     const session = project.sessionId ? await sessionRepo.get(project.sessionId) : null;
     const summary = await buildVendorProjectSummary(project, session?.aiOutput ?? null, match.category, true);
 
-    return NextResponse.json({ match, project, summary, profile });
+    return NextResponse.json({ match, project, summary, profile, subscriptionActive: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

@@ -7,9 +7,9 @@ import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { hashPassword } from "@/lib/auth";
 
 const AddressSchema = z.object({
-  street: z.string().min(1),
+  street: z.string().optional().default(""),
   city: z.string().min(1),
-  zipCode: z.string().min(1),
+  zipCode: z.string().optional().default(""),
   country: z.string().min(1),
 });
 
@@ -40,9 +40,9 @@ const AvailabilitySchema = z.object({
 
 const PortfolioSchema = z.object({
   images: z.array(DocumentSchema).default([]),
-  website: z.string().url().nullable().optional(),
+  website: z.string().nullable().optional(),
   instagram: z.string().nullable().optional(),
-  videos: z.array(z.string().url()).default([]),
+  videos: z.array(z.string()).default([]),
   faq: z.array(z.object({ question: z.string().min(1), answer: z.string().min(1) })).default([]),
   reviews: z.array(z.object({ author: z.string().min(1), rating: z.number().min(0).max(5), text: z.string().min(1), date: z.string() })).default([]),
 });
@@ -54,7 +54,7 @@ const VendorApplicationSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   phone: z.string().min(1),
-  website: z.string().url().nullable().optional(),
+  website: z.string().nullable().optional(),
   address: AddressSchema,
   serviceCategory: z.string().min(1),
   otherCategory: z.string().nullable().optional(),
@@ -64,7 +64,7 @@ const VendorApplicationSchema = z.object({
   description: z.string().min(1),
   styles: z.array(z.string().min(1)).default([]),
   contactName: z.string().min(1),
-  contactRole: z.string().min(1),
+  contactRole: z.string().optional().default("Professionnel"),
   priceRange: PriceRangeSchema,
   pricingDetails: z.string().nullable().optional(),
   serviceArea: ServiceAreaSchema,
@@ -80,6 +80,8 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = VendorApplicationSchema.safeParse(body);
     if (!parsed.success) {
+      console.error("[vendor/apply] Validation error:", JSON.stringify(parsed.error.flatten(), null, 2));
+      console.error("[vendor/apply] Received body:", JSON.stringify(body, null, 2));
       return NextResponse.json({ error: "Données invalides", details: parsed.error.flatten() }, { status: 400 });
     }
 

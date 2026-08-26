@@ -593,7 +593,7 @@ export default function CouplePlanningPage() {
               <div>
                 <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Planning</p>
                 <h2 className="font-display text-2xl font-bold text-[#15181c]">
-                  {selectedTask ? "Modifier l&apos;étape" : "Nouvelle étape"}
+                  {selectedTask ? "Modifier l'étape" : "Nouvelle étape"}
                 </h2>
               </div>
             </div>
@@ -601,7 +601,7 @@ export default function CouplePlanningPage() {
             <div className="space-y-5">
               <div>
                 <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
-                  Titre de l&apos;étape *
+                  Titre de l'étape *
                 </label>
                 <input
                   type="text"
@@ -668,7 +668,7 @@ export default function CouplePlanningPage() {
                 ) : (
                   <>
                     <Check size={16} />
-                    {selectedTask ? "Mettre à jour" : "Créer l&apos;étape"}
+                    {selectedTask ? "Mettre à jour" : "Créer l'étape"}
                   </>
                 )}
               </button>

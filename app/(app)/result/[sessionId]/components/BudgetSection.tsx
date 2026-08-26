@@ -173,7 +173,7 @@ export default function BudgetSection({ budget }: BudgetSectionProps) {
             </div>
             <div className="px-7 pb-7">
               <div className="rounded-3xl border border-black/10 bg-surface p-5">
-                <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-2">Vue d&apos;ensemble</div>
+                <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-2">Vue d'ensemble</div>
                 <p className="text-sm text-text-secondary leading-relaxed">
                   Le budget est segmenté selon les postes essentiels. Le lieu et la restauration absorbent généralement
                   la plus grande part. La provision imprévus (8-12%) est incluse pour absorber les dépassements classiques.

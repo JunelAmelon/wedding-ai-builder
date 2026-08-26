@@ -34,6 +34,14 @@ export async function isVendorSubscriptionActive(userId: string): Promise<boolea
 }
 
 export async function filterActiveVendors(vendors: VendorProfile[]): Promise<VendorProfile[]> {
+  const { isLocalMode } = await import("@/lib/db/repositories/utils");
+  if (isLocalMode()) {
+    // In local/dev mode with zero subscriptions, allow all vendors through (dev-friendly).
+    const { adminRepo } = await import("@/lib/db/repositories/adminRepo");
+    const allSubs = await adminRepo.listUserSubscriptions();
+    if (allSubs.length === 0) return vendors;
+  }
+  // Always filter: only vendors with an active subscription are recommended to couples.
   const results = await Promise.all(
     vendors.map(async (vendor) => ({
       vendor,

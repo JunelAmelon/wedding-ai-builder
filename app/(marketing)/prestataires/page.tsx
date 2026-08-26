@@ -293,7 +293,7 @@ export default function ProfessionalMarketingPage() {
             <span className="eyebrow-pill">Découvrez pourquoi</span>
             <h2>Une expérience plus intelligente, plus rapide, plus engageante</h2>
             <p>
-              Votre espace professionnel se construit à la frontière du bon design et de l&apos;IA — pensé pour combler l&apos;écart entre une demande et une signature.
+              Votre espace professionnel se construit à la frontière du bon design et de l'IA — pensé pour combler l'écart entre une demande et une signature.
             </p>
             <Link
               href="/devenir-professionnel"

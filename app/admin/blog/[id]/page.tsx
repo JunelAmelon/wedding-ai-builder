@@ -35,7 +35,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold font-display">Modifier l&apos;article</h1>
+        <h1 className="text-2xl font-semibold font-display">Modifier l'article</h1>
         <p className="text-text-secondary text-sm mt-1">{post.title}</p>
       </div>
       <BlogEditor initialPost={post} authorId={post.authorId} authorName={post.authorName} onSave={handleSave} onDelete={handleDelete} saving={saving} deleting={deleting} />

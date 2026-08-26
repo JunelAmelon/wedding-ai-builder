@@ -7,6 +7,8 @@ import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { runAutoMatching } from "@/lib/matching/auto-match";
+import { isLocalMode } from "@/lib/db/repositories/utils";
 
 const RegisterSchema = z.object({
   firstName: z.string().min(1),
@@ -18,6 +20,7 @@ const RegisterSchema = z.object({
   role: z.enum(["couple", "vendor"]),
   source: z.enum(["quiz", "vendor_landing", "direct"]).default("direct"),
   sessionId: z.string().optional(),
+  quizAnswers: z.record(z.unknown()).optional(),
 });
 
 export async function POST(req: Request) {
@@ -34,7 +37,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Données invalides", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { firstName, lastName, email, password, phone, address, role, sessionId } = parsed.data;
+    const { firstName, lastName, email, password, phone, address, role, sessionId, quizAnswers: clientQuizAnswers } = parsed.data;
     const existing = await userRepo.getByEmail(email);
     if (existing) {
       return NextResponse.json({ error: "Un compte existe déjà avec cet email" }, { status: 409 });
@@ -112,30 +115,55 @@ export async function POST(req: Request) {
         stressLevel: null,
         favoriteVendorIds: [],
       });
+      console.log("[register] Couple profile created:", coupleProfile.id, "for user:", user.id);
+
+      let sessionIdToUse: string | null = null;
+      let quizAnswers: any = clientQuizAnswers || {};
 
       if (sessionId) {
-        const session = await sessionRepo.get(sessionId);
-        if (session) {
-          if (session.userId && session.userId !== user.id) {
-            return NextResponse.json({ error: "Cette session est déjà associée à un autre compte" }, { status: 409 });
+        console.log("[register] Looking for session:", sessionId, "isLocalMode:", isLocalMode());
+        try {
+          const session = await sessionRepo.get(sessionId);
+          if (session) {
+            console.log("[register] Session found, quizAnswers keys:", Object.keys(session.quizAnswers || {}));
+            if (session.userId && session.userId !== user.id) {
+              return NextResponse.json({ error: "Cette session est déjà associée à un autre compte" }, { status: 409 });
+            }
+            await sessionRepo.setUserId(sessionId, user.id);
+            sessionIdToUse = sessionId;
+            quizAnswers = { ...(session.quizAnswers || {}), ...quizAnswers };
+          } else {
+            console.warn("[register] Session not found:", sessionId, "- using client quizAnswers fallback");
           }
-          await sessionRepo.setUserId(sessionId, user.id);
-          await projectRepo.create({
-            userId: user.id,
-            coupleProfileId: coupleProfile.id,
-            sessionId,
-            name: "Mon mariage",
-            weddingDate: session.quizAnswers.weddingDate || null,
-            location: session.quizAnswers.location || null,
-            guestCount: session.quizAnswers.guestCount || null,
-            budget: session.quizAnswers.budget || null,
-            style: session.quizAnswers.style || null,
-            customStyle: session.quizAnswers.customStyle || null,
-            customStyleDescription: session.quizAnswers.customStyleDescription || null,
-            mainPriority: session.quizAnswers.mainPriority || null,
-            stressLevel: session.quizAnswers.stressLevel || null,
-          });
+        } catch (sessionErr) {
+          console.error("[register] Error fetching session:", sessionErr);
         }
+      } else {
+        console.log("[register] No sessionId provided, using client quizAnswers");
+      }
+
+      const project = await projectRepo.create({
+        userId: user.id,
+        coupleProfileId: coupleProfile.id,
+        sessionId: sessionIdToUse,
+        name: "Mon mariage",
+        weddingDate: quizAnswers.weddingDate || null,
+        location: quizAnswers.location || null,
+        guestCount: quizAnswers.guestCount || null,
+        budget: quizAnswers.budget || null,
+        style: quizAnswers.style || null,
+        customStyle: quizAnswers.customStyle || null,
+        customStyleDescription: quizAnswers.customStyleDescription || null,
+        mainPriority: quizAnswers.mainPriority || null,
+        stressLevel: quizAnswers.stressLevel || null,
+      });
+      console.log("[register] Wedding project created:", project.id, "for user:", user.id);
+
+      try {
+        await runAutoMatching(project, { perCategory: 3, notifyVendors: true });
+        console.log("[register] Auto-matching completed for project:", project.id);
+      } catch (matchErr) {
+        console.error("[register] Auto-matching failed:", matchErr);
       }
 
     const token = createSession(user);

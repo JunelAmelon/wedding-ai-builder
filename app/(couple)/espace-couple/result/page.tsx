@@ -246,7 +246,7 @@ export default function CoupleResultPage() {
     const rPct = Math.min(100, Math.max(0, computed.riskScore));
     const rLabel =
       computed.riskScore >= 80
-        ? "Plusieurs points méritent d&apos;être sécurisés"
+        ? "Plusieurs points méritent d'être sécurisés"
         : computed.riskScore >= 60
           ? "Bon niveau, quelques points à surveiller"
           : "Très bon niveau de maîtrise";
@@ -498,9 +498,9 @@ export default function CoupleResultPage() {
             <span className="inline-flex items-center h-[26px] px-3.5 rounded-full border border-line text-[11px] font-semibold uppercase tracking-[0.04em] text-grey bg-white mb-5">
               Votre parcours
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink">Le chemin jusqu&apos;au Jour J</h2>
+            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink">Le chemin jusqu'au Jour J</h2>
             <p className="text-text-secondary mt-4 leading-relaxed max-w-2xl text-justify">
-              Chaque étape est calibrée selon votre date. Concentrez-vous sur l&apos;échéance suivante pour avancer sereinement.
+              Chaque étape est calibrée selon votre date. Concentrez-vous sur l'échéance suivante pour avancer sereinement.
             </p>
           </div>
 

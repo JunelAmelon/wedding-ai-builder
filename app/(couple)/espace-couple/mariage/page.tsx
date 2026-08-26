@@ -24,6 +24,7 @@ import {
   Users,
   Camera,
   ImageIcon,
+  RefreshCw,
 } from "lucide-react";
 import type { Witness, UserAccount, WeddingProject } from "@/types/marketplace";
 
@@ -69,6 +70,8 @@ export default function CoupleWeddingPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [showRematchPrompt, setShowRematchPrompt] = useState(false);
+  const [rematching, setRematching] = useState(false);
 
   // Témoins
   const [witnesses, setWitnesses] = useState<Witness[]>([]);
@@ -135,8 +138,9 @@ export default function CoupleWeddingPage() {
               country: project.location.country || "",
             }
           : null;
+      const isNew = !project.id;
       const res = await fetch("/api/couple/project", {
-        method: project.id ? "PUT" : "POST",
+        method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: project.name || "Mon mariage",
@@ -152,15 +156,56 @@ export default function CoupleWeddingPage() {
         }),
       });
       if (res.ok) {
-        setProject((await res.json()).project);
+        const data = await res.json();
+        setProject(data.project);
         setSaved(true);
         setTimeout(() => setSaved(false), 2400);
+        if (!isNew) {
+          setShowRematchPrompt(true);
+        }
       } else {
         const json = await res.json().catch(() => ({}));
         console.error("[Mon mariage] save failed", json.error || res.statusText, JSON.stringify(json.details, null, 2));
       }
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function confirmRematch() {
+    if (!project) return;
+    setRematching(true);
+    try {
+      const guestCount = project.guestCount ? Number(project.guestCount) : null;
+      const stressLevel = project.stressLevel ? Number(project.stressLevel) : null;
+      const budget =
+        project.budget?.amount || project.budget?.currency
+          ? { amount: Number(project.budget.amount) || 0, currency: project.budget.currency || "EUR" }
+          : null;
+      const location =
+        project.location?.city || project.location?.country
+          ? { city: project.location.city || "", country: project.location.country || "" }
+          : null;
+      await fetch("/api/couple/project", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: project.name || "Mon mariage",
+          weddingDate: project.weddingDate || null,
+          location,
+          guestCount: Number.isFinite(guestCount) ? guestCount : null,
+          budget,
+          style: project.style || null,
+          customStyle: project.customStyle || null,
+          customStyleDescription: project.customStyleDescription || null,
+          mainPriority: project.mainPriority || null,
+          stressLevel: Number.isFinite(stressLevel) ? stressLevel : null,
+          rematch: true,
+        }),
+      });
+    } finally {
+      setRematching(false);
+      setShowRematchPrompt(false);
     }
   }
 
@@ -437,7 +482,7 @@ export default function CoupleWeddingPage() {
                       />
                     </div>
                     <div>
-                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Nombre d&apos;invités</div>
+                      <div className="text-[11px] uppercase tracking-[0.14em] text-[#8b8b86] mb-0.5">Nombre d'invités</div>
                       <input
                         type="number"
                         value={project?.guestCount || ""}
@@ -932,6 +977,47 @@ export default function CoupleWeddingPage() {
                     <Check size={16} />
                     {editingWitness ? "Mettre à jour" : "Ajouter le témoin"}
                   </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showRematchPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-5">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-full bg-[#f4f1f7] flex items-center justify-center">
+                <RefreshCw size={20} className="text-[#15181c]" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-[#15181c]">
+                Nouveau matching prestataires ?
+              </h3>
+            </div>
+            <p className="text-sm text-[#6b7076] mb-6">
+              Vos informations de mariage ont été mises à jour. Souhaitez-vous recevoir de nouvelles recommandations de prestataires basées sur vos réponses ? Vos prestataires déjà confirmés ne seront pas affectés.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowRematchPrompt(false)}
+                disabled={rematching}
+                className="flex-1 px-4 py-3 rounded-2xl border-2 border-[#ececec] text-sm font-semibold text-[#6b7076] hover:bg-[#f4f1f7] transition disabled:opacity-50"
+              >
+                Plus tard
+              </button>
+              <button
+                onClick={confirmRematch}
+                disabled={rematching}
+                className="flex-1 px-4 py-3 rounded-2xl bg-[#15181c] text-white text-sm font-semibold hover:bg-[#2a2d33] transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {rematching ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Matching...
+                  </>
+                ) : (
+                  "Oui, matcher"
                 )}
               </button>
             </div>

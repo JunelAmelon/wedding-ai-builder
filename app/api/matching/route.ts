@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
-import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
-import { findTopMatches } from "@/lib/matching/engine";
-import { filterActiveVendors } from "@/lib/subscription-guard";
+import { runAutoMatching } from "@/lib/matching/auto-match";
 import { requireAuth } from "@/lib/auth";
 
 const MatchSchema = z.object({
@@ -26,55 +24,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Données invalides" }, { status: 400 });
     }
 
-    const { projectId, category, all } = parsed.data;
+    const { projectId, all } = parsed.data;
     const project = await projectRepo.get(projectId);
     if (!project || project.userId !== user.id) {
       return NextResponse.json({ error: "Projet introuvable" }, { status: 404 });
     }
 
-    const tenderData = {
-      budgetRange: project.budget ? { min: project.budget.amount * 0.8, max: project.budget.amount * 1.2, currency: project.budget.currency } : null,
-      guestCount: project.guestCount,
-      location: project.location,
-      weddingDate: project.weddingDate,
-      style: project.style,
-      customStyle: project.customStyle,
-      requirements: [],
-      priority: null,
-    };
-
-    const vendors = await vendorProfileRepo.listApproved();
-    const activeVendors = await filterActiveVendors(vendors);
-
-    let topMatches: Awaited<ReturnType<typeof findTopMatches>> = [];
     if (all) {
-      const categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
-      for (const cat of categories) {
-        const matches = await findTopMatches(tenderData, project, activeVendors, cat, 2);
-        topMatches = topMatches.concat(matches);
-      }
+      await matchRepo.deleteByProject(projectId);
     } else {
-      topMatches = await findTopMatches(tenderData, project, activeVendors, category, 3);
+      await matchRepo.deleteByProjectAndCategory(projectId, parsed.data.category);
     }
 
-    await matchRepo.deleteByProject(projectId);
+    const result = await runAutoMatching(project, { perCategory: all ? 2 : 3, notifyVendors: true });
 
-    const saved = await Promise.all(
-      topMatches.map((m) =>
-        matchRepo.create({
-          projectId: m.projectId,
-          tenderId: m.tenderId,
-          vendorId: m.vendorId,
-          category: m.category,
-          score: m.score,
-          reasons: m.reasons,
-          summary: m.summary,
-          status: "suggested",
-        })
-      )
-    );
-
-    return NextResponse.json({ matches: saved });
+    return NextResponse.json({ matches: result.matches });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur lors du matching";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

@@ -110,18 +110,13 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "Impossible de supprimer un compte administrateur" }, { status: 400 });
     }
 
-    const collectionsToCleanByUserId = [
-      "messages",
+    // Collections where data is linked by userId directly
+    const collectionsByUserId = [
       "notifications",
       "sessions",
       "leads",
       "shares",
       "events",
-      "credit_transactions",
-      "timeline_tasks",
-      "witnesses",
-      "wedding_expenses",
-      "proposals",
     ];
 
     // Delete vendor-specific data
@@ -142,6 +137,14 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
       } catch {}
       // Delete matches by vendor
       try { await deleteByField("project_vendor_matches", "vendorId", userId); } catch {}
+      // Delete proposals by vendorId (not userId)
+      try { await deleteByField("proposals", "vendorId", userId); } catch {}
+      // Delete credit transactions by vendorId (not userId)
+      try { await deleteByField("credit_transactions", "vendorId", userId); } catch {}
+      // Delete user subscription
+      try { await deleteByField("user_subscriptions", "userId", userId); } catch {}
+      // Delete messages sent by this vendor
+      try { await deleteByField("messages", "senderId", userId); } catch {}
     }
 
     // Delete couple-specific data
@@ -159,14 +162,28 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
           try { await matchRepo.deleteByProject(proj.id).catch(() => {}); } catch {}
           // Delete tenders for this project
           try { await deleteByField("tenders", "projectId", proj.id); } catch {}
+          // Delete timeline tasks for this project
+          try { await deleteByField("timeline_tasks", "projectId", proj.id); } catch {}
+          // Delete wedding expenses for this project
+          try { await deleteByField("wedding_expenses", "projectId", proj.id); } catch {}
+          // Delete witnesses for this project
+          try { await deleteByField("witnesses", "projectId", proj.id); } catch {}
           // Delete the project
           await projectRepo.delete(proj.id).catch(() => {});
         }
       } catch {}
+      // Delete messages sent by this couple
+      try { await deleteByField("messages", "senderId", userId); } catch {}
+      // Delete wishlists by coupleId
+      try {
+        await deleteByField("wishlists", "coupleId", userId);
+        // Also clean wishlist items, purchases, payouts via wishlists that were linked
+        // (these are sub-collections linked by wishlistId, but wishlists are already gone)
+      } catch {}
     }
 
     // Delete common data by userId
-    for (const col of collectionsToCleanByUserId) {
+    for (const col of collectionsByUserId) {
       try { await deleteByField(col, "userId", userId); } catch {}
     }
 

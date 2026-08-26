@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     const session = await sessionRepo.get(sessionId);
     if (!session) {
-      return NextResponse.json({ error: "Session introuvable", sessionId }, { status: 404 });
+      return NextResponse.json({ ok: true, ready: false, error: "Session introuvable" });
     }
 
     await sessionRepo.markCompleted(sessionId);

@@ -126,7 +126,7 @@ export default function AdminLoginPage() {
           className="absolute bottom-10 right-10 w-1/2 rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
           style={{ backgroundColor: NAVY }}
         >
-          <div className="text-xs font-medium text-white/60 mb-4">Activité aujourd&apos;hui</div>
+          <div className="text-xs font-medium text-white/60 mb-4">Activité aujourd'hui</div>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

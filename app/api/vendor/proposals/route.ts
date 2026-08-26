@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
-import { requireActiveVendorSubscription } from "@/lib/subscription-guard";
+import { isVendorSubscriptionActive } from "@/lib/subscription-guard";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
@@ -82,7 +82,10 @@ export async function POST(req: Request) {
     const user = await requireAuth();
     if (user.role !== "vendor") return NextResponse.json({ error: "Accès réservé" }, { status: 403 });
 
-    await requireActiveVendorSubscription(user.id);
+    const subscriptionActive = await isVendorSubscriptionActive(user.id).catch(() => false);
+    if (!subscriptionActive) {
+      return NextResponse.json({ error: "Abonnement requis pour répondre aux appels d'offres", needsSubscription: true }, { status: 402 });
+    }
 
     const profile = await vendorProfileRepo.getByUserId(user.id);
     if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 404 });

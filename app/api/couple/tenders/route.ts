@@ -21,6 +21,7 @@ const CreateSchema = z.object({
   customStyle: z.string().optional().nullable(),
   requirements: z.array(z.string()).optional(),
   priority: z.string().optional().nullable(),
+  replaceMode: z.enum(["replace", "keep"]).optional(),
 });
 
 const AcceptSchema = z.object({
@@ -81,14 +82,27 @@ export async function POST(req: Request) {
       customStyle,
       requirements,
       priority,
+      replaceMode,
     } = parsed.data;
     const project = await projectRepo.get(projectId);
     if (!project || project.userId !== user.id) return NextResponse.json({ error: "Projet introuvable" }, { status: 404 });
 
     const existing = await tenderRepo.listByProject(projectId);
-    const alreadyActive = existing.find((t) => t.category === category && t.status !== "closed");
-    if (alreadyActive) {
-      return NextResponse.json({ error: "Un appel d'offres est déjà en cours pour cette catégorie." }, { status: 409 });
+    const activeTenders = existing.filter((t) => t.category === category && t.status !== "closed");
+    // Close any existing active tender for this category so the new one can be created
+    if (activeTenders.length > 0) {
+      await Promise.all(
+        activeTenders.map((t) => tenderRepo.update(t.id, { status: "closed" }))
+      );
+    }
+
+    // Handle replace mode: if "replace", delete only suggested matches for this category
+    if (replaceMode === "replace") {
+      const allMatches = await matchRepo.listByProject(projectId);
+      const suggestedForCategory = allMatches.filter(
+        (m) => m.category === category && m.status === "suggested"
+      );
+      await Promise.all(suggestedForCategory.map((m) => matchRepo.update(m.id, { status: "rejected" })));
     }
 
     const tenderData = {
@@ -107,10 +121,18 @@ export async function POST(req: Request) {
       priority: priority ?? null,
     };
 
-    const vendors = await vendorProfileRepo.listApproved();
-    const topMatches = await findTopMatches(tenderData, project, vendors, category, 3);
+    // Get existing matches for this project+category to avoid duplicating vendors
+    const existingMatches = await matchRepo.listByProject(projectId);
+    const existingVendorIds = new Set(
+      existingMatches
+        .filter((m) => m.category === category && m.status !== "rejected")
+        .map((m) => m.vendorId)
+    );
 
-    await matchRepo.deleteByProject(projectId);
+    const vendors = await vendorProfileRepo.listApproved();
+    // Exclude vendors that already have a non-rejected match for this category
+    const newVendors = vendors.filter((v) => !existingVendorIds.has(v.id));
+    const topMatches = await findTopMatches(tenderData, project, newVendors.length > 0 ? newVendors : vendors, category, 3);
 
     const tender = await tenderRepo.create(tenderData);
 
@@ -129,7 +151,29 @@ export async function POST(req: Request) {
       )
     );
 
-    const updatedTender = await tenderRepo.update(tender.id, { matchIds: savedMatches.map((m) => m.id) });
+    // Link existing non-rejected matches for this category to the new tender as well
+    const existingForCategory = existingMatches.filter(
+      (m) => m.category === category && m.status !== "rejected" && !m.tenderId
+    );
+    await Promise.all(
+      existingForCategory.map((m) => matchRepo.update(m.id, { tenderId: tender.id }))
+    );
+
+    const allMatchIds = [...savedMatches.map((m) => m.id), ...existingForCategory.map((m) => m.id)];
+    const updatedTender = await tenderRepo.update(tender.id, { matchIds: allMatchIds });
+
+    await Promise.all(
+      savedMatches.map((m) =>
+        notificationRepo.create({
+          userId: m.vendorId,
+          type: "new_opportunity",
+          title: "Nouvel appel d'offres",
+          content: `Un couple recherche un prestataire ${category}. Score de compatibilité : ${m.score}%.`,
+          link: "/espace-prestataire/appels-offres",
+        })
+      )
+    );
+
     const enriched = await enrichTender(updatedTender);
 
     return NextResponse.json({ tender: enriched, matches: savedMatches }, { status: 201 });

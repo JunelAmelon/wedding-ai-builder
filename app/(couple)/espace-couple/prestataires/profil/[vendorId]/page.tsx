@@ -26,8 +26,10 @@ import {
   Instagram,
   CheckCircle2,
   X,
+  Plus,
 } from "lucide-react";
-import type { VendorProfile } from "@/types/marketplace";
+import type { VendorProfile, WeddingProject } from "@/types/marketplace";
+import TenderFormModal from "@/components/couple/TenderFormModal";
 
 function ExperienceIcon({ className = "" }: { className?: string }) {
   return (
@@ -100,13 +102,16 @@ export default function VendorProfileForCouplePage() {
   const [contactProposalId, setContactProposalId] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [togglingFavorite, setTogglingFavorite] = useState(false);
+  const [showTenderForm, setShowTenderForm] = useState(false);
+  const [coupleProject, setCoupleProject] = useState<WeddingProject | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const [vendorRes, favoritesRes] = await Promise.all([
+        const [vendorRes, favoritesRes, projectRes] = await Promise.all([
           fetch(`/api/couple/vendors/${vendorId}`),
           fetch("/api/couple/favorites"),
+          fetch("/api/couple/project"),
         ]);
         if (vendorRes.status === 401) {
           router.push("/login?role=couple");
@@ -121,6 +126,10 @@ export default function VendorProfileForCouplePage() {
         if (favoritesRes.ok) {
           const favoritesJson = await favoritesRes.json();
           setIsFavorite((favoritesJson.ids || []).includes(vendorId));
+        }
+        if (projectRes.ok) {
+          const projectJson = await projectRes.json();
+          setCoupleProject(projectJson.project);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur");
@@ -162,9 +171,9 @@ export default function VendorProfileForCouplePage() {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
         <h1 className="font-display text-2xl font-semibold text-[#1c1c1c] mb-3">Profil introuvable</h1>
-        <p className="text-[#8b8b86] mb-6">{error || "Ce professionnel n&apos;existe pas ou n&apos;est plus disponible."}</p>
+        <p className="text-[#8b8b86] mb-6">{error || "Ce professionnel n'existe pas ou n'est plus disponible."}</p>
         <Button variant="primary" onClick={() => router.push("/espace-couple/prestataires")}>
-          Retour à mes appels d&apos;offres
+          Retour à mes appels d'offres
         </Button>
       </div>
     );
@@ -223,7 +232,7 @@ export default function VendorProfileForCouplePage() {
         href="/espace-couple/prestataires"
         className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-[#8b8b86] hover:text-[#1c1c1c] mb-10"
       >
-        <ArrowLeft size={14} /> Retour à mes appels d&apos;offres
+        <ArrowLeft size={14} /> Retour à mes appels d'offres
       </Link>
 
       <div className="grid lg:grid-cols-[1fr_420px] gap-10 lg:gap-14 items-start">
@@ -377,7 +386,7 @@ export default function VendorProfileForCouplePage() {
                 />
                 {price?.max && price.max > price.min && (
                   <LedgerRow
-                    label="Jusqu&apos;à"
+                    label="Jusqu'à"
                     value={`${price.max.toLocaleString("fr-FR")} ${price.currency || "EUR"}`}
                   />
                 )}
@@ -411,6 +420,15 @@ export default function VendorProfileForCouplePage() {
                   Détacher pour contacter
                 </span>
               </div>
+
+              <Button
+                variant="primary"
+                className="w-full mb-3"
+                iconLeft={<Plus size={18} />}
+                onClick={() => setShowTenderForm(true)}
+              >
+                Créer un appel d'offres
+              </Button>
 
               <Button
                 variant="primary"
@@ -516,7 +534,7 @@ export default function VendorProfileForCouplePage() {
                     Expérience
                   </div>
                   <p className="text-[#8b8b86] text-sm">
-                    {experience > 0 ? `${experience} ans d&apos;expérience dans le domaine.` : "Expérience non précisée."}
+                    {experience > 0 ? `${experience} ans d'expérience dans le domaine.` : "Expérience non précisée."}
                   </p>
                 </div>
               </div>
@@ -526,7 +544,7 @@ export default function VendorProfileForCouplePage() {
                 </div>
                 <div>
                   <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] mb-1">
-                    Zone d&apos;intervention
+                    Zone d'intervention
                   </div>
                   <p className="text-[#8b8b86] text-sm">
                     {serviceArea?.regions?.join(", ") || serviceArea?.cities?.slice(0, 3).join(", ") || location}
@@ -746,6 +764,16 @@ export default function VendorProfileForCouplePage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <TenderFormModal
+        open={showTenderForm}
+        onClose={() => setShowTenderForm(false)}
+        project={coupleProject}
+        preselectedCategory={category || undefined}
+        onLaunched={() => {
+          router.push("/espace-couple/prestataires");
+        }}
+      />
     </div>
   </div>
   );

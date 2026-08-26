@@ -4,6 +4,7 @@ import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
+import { revalidateVendorMatches } from "@/lib/matching/engine";
 
 interface WeddingEvent {
   id: string;
@@ -102,6 +103,12 @@ export async function POST(req: NextRequest) {
 
     await vendorProfileRepo.update(profile.id, { availability });
 
+    // Re-evaluate existing matches: reject those that no longer fit the vendor's availability
+    const updatedProfile = await vendorProfileRepo.get(profile.id);
+    if (updatedProfile) {
+      revalidateVendorMatches(updatedProfile).catch(() => {});
+    }
+
     return NextResponse.json({
       id: normalizedDate,
       date: normalizedDate,
@@ -146,6 +153,12 @@ export async function DELETE(req: NextRequest) {
     };
 
     await vendorProfileRepo.update(profile.id, { availability });
+
+    // Re-evaluate existing matches: a vendor becoming available again may requalify for matches
+    const updatedProfile = await vendorProfileRepo.get(profile.id);
+    if (updatedProfile) {
+      revalidateVendorMatches(updatedProfile).catch(() => {});
+    }
 
     return NextResponse.json({
       removed: date,

@@ -6,9 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import PageHeader from "@/components/couple/PageHeader";
 import {
-  Loader2,
   CheckCircle2,
-  Wallet,
   Sparkles,
   Plus,
   X,
@@ -25,9 +23,14 @@ import {
   Crown,
   Gem,
   Sparkle,
+  RefreshCw,
+  MapPin,
+  ArrowRight,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Tender, Proposal, WeddingProject } from "@/types/marketplace";
+import TenderFormModal from "@/components/couple/TenderFormModal";
+import { ExpandableText } from "@/components/couple/ExpandableText";
 
 const CATEGORIES = [
   "Photographe / Vidéaste",
@@ -61,13 +64,22 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
   "Bijoutier": Gem,
 };
 
-// Chips colorés pour les 5 catégories principales (style Connectify)
+// Chips colorés pour toutes les catégories (style Connectify)
 const CHIP_CATEGORIES = [
   { category: "Photographe / Vidéaste", emoji: "📸", bg: "#f4f1f7", color: "#1c1c1c" },
+  { category: "Musique / DJ / Orchestre", emoji: "🎵", bg: "#c9b6ee", color: "#1c1c1c" },
   { category: "Traiteur", emoji: "🥐", bg: "#f7e2b8", color: "#1c1c1c" },
+  { category: "Lieu de réception", emoji: "🏰", bg: "#b9b3ba", color: "#1c1c1c" },
   { category: "Décoration / Fleuriste", emoji: "💐", bg: "#a9c9f5", color: "#1c1c1c" },
-  { category: "Musique / DJ / Orchestre", emoji: "🎵", bg: "#c9b6ee", color: "#fff" },
-  { category: "Lieu de réception", emoji: "🏰", bg: "#b9b3ba", color: "#fff" },
+  { category: "Wedding planner", emoji: "📋", bg: "#fbcfe8", color: "#1c1c1c" },
+  { category: "Maquilleur / Coiffeur", emoji: "💄", bg: "#fde68a", color: "#1c1c1c" },
+  { category: "Animation", emoji: "🎉", bg: "#fed7aa", color: "#1c1c1c" },
+  { category: "Transport", emoji: "🚗", bg: "#d1fae5", color: "#1c1c1c" },
+  { category: "Hébergement", emoji: "🏠", bg: "#e0e7ff", color: "#1c1c1c" },
+  { category: "Conception de robe de mariée", emoji: "👗", bg: "#f5d0fe", color: "#1c1c1c" },
+  { category: "Bijoutier", emoji: "💍", bg: "#fef3c7", color: "#1c1c1c" },
+  { category: "Officiant", emoji: "⛪", bg: "#dbeafe", color: "#1c1c1c" },
+  { category: "Autre", emoji: "✨", bg: "#f3f4f6", color: "#1c1c1c" },
 ];
 
 // Images par défaut pour chaque catégorie de prestataire
@@ -103,61 +115,79 @@ interface VendorPreview {
   companyName?: string;
   logo?: string | { url?: string } | null;
   serviceCategory?: string;
+  yearsOfExperience?: number;
+  serviceArea?: { cities?: string[]; regions?: string[]; radius?: number | null };
+  priceRange?: { min?: number; max?: number; currency?: string };
 }
 interface TenderWithProposals extends Tender {
   proposals?: Array<Proposal & { vendor?: VendorPreview }>;
 }
 type ConfirmedVendor = VendorPreview & { category: string };
+interface Recommendation {
+  match: { id: string; category: string; score: number; summary: string | null; vendorId: string };
+  vendor: VendorPreview | null;
+}
 
 export default function CoupleVendorsPage() {
   const router = useRouter();
   const [category, setCategory] = useState<string>("");
-  const [budgetMin, setBudgetMin] = useState<string>("");
-  const [budgetMax, setBudgetMax] = useState<string>("");
-  const [requirements, setRequirements] = useState<string>("");
-  const [priority, setPriority] = useState<string>("");
   const [tenders, setTenders] = useState<TenderWithProposals[]>([]);
   const [project, setProject] = useState<WeddingProject | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [launching, setLaunching] = useState(false);
-  const [tenderError, setTenderError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [confirmedVendors, setConfirmedVendors] = useState<ConfirmedVendor[]>([]);
-  const [recommendations, setRecommendations] = useState<Array<{ match: { id: string; category: string; score: number; summary: string | null }; vendor: VendorPreview | null }>>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showReplaceDialog, setShowReplaceDialog] = useState(false);
+  const [pendingCategory, setPendingCategory] = useState<string | null>(null);
+  const [replaceAction, setReplaceAction] = useState<"replace" | "keep">("keep");
 
   useEffect(() => {
     async function load() {
       try {
-        const [tendersRes, projectRes, recommendationsRes] = await Promise.all([
+        const [tendersRes, projectRes, recommendationsRes] = await Promise.allSettled([
           fetch("/api/couple/tenders"),
           fetch("/api/couple/project"),
           fetch("/api/couple/recommendations"),
         ]);
-        if (tendersRes.status === 401) {
+
+        // Check auth via tenders response
+        if (tendersRes.status === "fulfilled" && tendersRes.value.status === 401) {
           router.push("/login?role=couple");
           return;
         }
-        const tendersJson = await tendersRes.json();
-        const projectJson = await projectRes.json();
-        const recommendationsJson = await recommendationsRes.json();
-        setTenders((tendersJson.tenders || []) as TenderWithProposals[]);
-        setProject(projectJson.project as WeddingProject | null);
-        setRecommendations((recommendationsJson.recommendations || []) as typeof recommendations);
 
-        // Récupérer les prestataires confirmés (proposals acceptées)
-        const confirmed: ConfirmedVendor[] = [];
-        ((tendersJson.tenders || []) as TenderWithProposals[]).forEach((t) => {
-          (t.proposals || []).forEach((p) => {
-            if (p.status === "accepted" && p.vendor) {
-              confirmed.push({ ...p.vendor, category: t.category });
-            }
+        // Parse tenders
+        if (tendersRes.status === "fulfilled" && tendersRes.value.ok) {
+          const tendersJson = await tendersRes.value.json();
+          setTenders((tendersJson.tenders || []) as TenderWithProposals[]);
+          const confirmed: ConfirmedVendor[] = [];
+          ((tendersJson.tenders || []) as TenderWithProposals[]).forEach((t) => {
+            (t.proposals || []).forEach((p) => {
+              if (p.status === "accepted" && p.vendor) {
+                confirmed.push({ ...p.vendor, category: t.category });
+              }
+            });
           });
-        });
-        setConfirmedVendors(confirmed);
+          setConfirmedVendors(confirmed);
+        }
+
+        // Parse project
+        if (projectRes.status === "fulfilled" && projectRes.value.ok) {
+          const projectJson = await projectRes.value.json();
+          setProject(projectJson.project as WeddingProject | null);
+        }
+
+        // Parse recommendations
+        if (recommendationsRes.status === "fulfilled" && recommendationsRes.value.ok) {
+          const recommendationsJson = await recommendationsRes.value.json();
+          setRecommendations((recommendationsJson.recommendations || []) as Recommendation[]);
+        }
       } catch {
-        setError("Impossible de charger les prestataires.");
+        // Don't set error — let the page render with empty state
       } finally {
         setLoading(false);
       }
@@ -165,80 +195,30 @@ export default function CoupleVendorsPage() {
     load();
   }, [router]);
 
-  async function ensureProject() {
-    if (project) return project;
-    const res = await fetch("/api/couple/project", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "Mon mariage" }),
-    });
-    if (!res.ok) {
-      const json = await res.json().catch(() => ({}));
-      throw new Error(json.error || "Impossible de créer le projet");
-    }
-    const json = await res.json();
-    setProject(json.project);
-    return json.project;
+  function openCategory(cat: string) {
+    setSelectedCategory(cat);
   }
 
-  async function launchTenderForCategory(cat: string) {
-    setCategory(cat);
+  function closeCategory() {
+    setSelectedCategory(null);
+  }
+
+  function tryLaunchTender(cat: string) {
+    const hasExisting = recommendations.some((r) => r.match.category === cat);
+    if (hasExisting) {
+      setPendingCategory(cat);
+      setShowReplaceDialog(true);
+    } else {
+      setCategory(cat);
+      setShowForm(true);
+    }
+  }
+
+  function confirmReplace(action: "replace" | "keep") {
+    setShowReplaceDialog(false);
+    if (pendingCategory) setCategory(pendingCategory);
     setShowForm(true);
-  }
-
-  async function launchTender() {
-    setTenderError(null);
-    if (!category) {
-      setTenderError("Veuillez sélectionner un type de prestataire.");
-      return;
-    }
-    let currentProject = project;
-    try {
-      currentProject = await ensureProject();
-    } catch (err) {
-      setTenderError(err instanceof Error ? err.message : "Une erreur est survenue");
-      return;
-    }
-    if (!currentProject) {
-      setTenderError("Impossible de récupérer le projet.");
-      return;
-    }
-    const min = Number(budgetMin);
-    const max = Number(budgetMax);
-    const hasBudget = !isNaN(min) && !isNaN(max) && min > 0 && max > 0;
-    const payload: {
-      projectId: string;
-      category: string;
-      budgetRange?: { min: number; max: number; currency: string };
-      requirements?: string[];
-      priority?: string;
-    } = { projectId: currentProject.id, category };
-    if (hasBudget) payload.budgetRange = { min, max, currency: currentProject.budget?.currency || "EUR" };
-    if (requirements.trim()) payload.requirements = requirements.split(",").map((s) => s.trim()).filter(Boolean);
-    if (priority.trim()) payload.priority = priority.trim();
-
-    setLaunching(true);
-    try {
-      const res = await fetch("/api/couple/tenders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Erreur lors du lancement");
-      setTenders((prev) => [json.tender, ...prev]);
-      setShowForm(false);
-      setShowSuccess(true);
-      setCategory("");
-      setBudgetMin("");
-      setBudgetMax("");
-      setRequirements("");
-      setPriority("");
-    } catch (err) {
-      setTenderError(err instanceof Error ? err.message : "Une erreur est survenue");
-    } finally {
-      setLaunching(false);
-    }
+    setReplaceAction(action);
   }
 
   // Vérifier si une catégorie a déjà un appel d'offres
@@ -279,26 +259,30 @@ export default function CoupleVendorsPage() {
                   className="text-[12.5px] text-[#8b8b86] hover:text-[#1c1c1c] transition-colors flex items-center gap-1"
                 >
                   <Plus size={14} />
-                  Ajouter d&apos;autres
+                  Ajouter d'autres
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {/* Grille des catégories — scrollable sur mobile avec indicateur de défilement */}
+              <div className="relative">
+                <div
+                  className="flex sm:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory sm:snap-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
                 {CHIP_CATEGORIES.map((chip) => {
                   const hasTender = hasTenderForCategory(chip.category);
+                  const matchCount = recommendations.filter((r) => r.match.category === chip.category).length;
                   return (
                     <button
                       key={chip.category}
-                      onClick={() => !hasTender && launchTenderForCategory(chip.category)}
-                      disabled={hasTender}
-                      className="rounded-[18px] p-4 flex flex-col justify-between min-h-[90px] text-left transition-transform hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                      onClick={() => openCategory(chip.category)}
+                      className="rounded-[18px] p-4 flex flex-col justify-between min-h-[90px] text-left transition-transform hover:-translate-y-0.5 snap-start shrink-0 w-[140px] sm:w-auto"
                       style={{ background: chip.bg, color: chip.color }}
                     >
                       <div className="flex items-start justify-between">
                         <span className="text-[22px]">{chip.emoji}</span>
-                        {!hasTender && (
-                          <span className="h-6 w-6 rounded-full bg-white/40 flex items-center justify-center">
-                            <Plus size={12} className="text-[#1c1c1c]" />
+                        {matchCount > 0 && (
+                          <span className="h-6 min-w-6 px-1.5 rounded-full bg-white/60 flex items-center justify-center text-[11px] font-bold text-[#1c1c1c]">
+                            {matchCount}
                           </span>
                         )}
                         {hasTender && (
@@ -313,50 +297,16 @@ export default function CoupleVendorsPage() {
                     </button>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* ---- SECTION 1.5 : Ils vous correspondent ---- */}
-            {recommendations.length > 0 && (
-              <div className="mb-8">
-                <h2 className="font-display text-2xl font-bold text-[#1c1c1c] tracking-tight mb-5">
-                  Ils vous correspondent
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {recommendations.slice(0, 6).map((rec) => {
-                    const vendor = rec.vendor;
-                    const logoUrl = typeof vendor?.logo === "string" ? vendor.logo : (vendor?.logo as { url?: string } | undefined)?.url;
-                    const category = rec.match.category;
-                    const Icon = CATEGORY_ICON[category] || Sparkle;
-                    return (
-                      <div key={rec.match.id} className="rounded-2xl bg-white border border-[#e4e2db] p-4 flex flex-col gap-3">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="h-10 w-10 rounded-full bg-cover bg-center shrink-0"
-                            style={{ backgroundImage: logoUrl ? `url(${logoUrl})` : `url(${CATEGORY_IMAGES[category] || CATEGORY_IMAGES["Autre"]})` }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-display text-sm font-bold text-[#1c1c1c] truncate">
-                              {(vendor as { companyName?: string; businessName?: string; name?: string })?.companyName || (vendor as { businessName?: string; name?: string })?.businessName || (vendor as { name?: string })?.name || "Prestataire"}
-                            </h3>
-                            <p className="text-[11px] text-[#8b8b86] flex items-center gap-1">
-                              <Icon size={11} /> {category}
-                            </p>
-                          </div>
-                        </div>
-                        {rec.match.summary && <p className="text-[12px] text-[#4a4a4a] line-clamp-3">{rec.match.summary}</p>}
-                        <div className="flex items-center justify-between gap-2 mt-auto">
-                          <span className="text-[11px] text-[#8b8b86]">Score {rec.match.score}%</span>
-                          <Button variant="primary" className="text-xs px-3 py-1.5" onClick={() => launchTenderForCategory(category)}>
-                            Lancer un appel
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })}
+                </div>
+                {/* Indicateur de défilement subtil — visible uniquement sur mobile */}
+                <div className="flex sm:hidden items-center justify-center gap-1.5 mt-3 text-[#8b8b86]">
+                  <span className="text-[11px] font-medium">Glissez pour voir plus</span>
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="none" className="animate-pulse">
+                    <path d="M1 5h13M9 1l5 4-5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </div>
               </div>
-            )}
+            </div>
 
             {/* ---- SECTION 2 : Cartes des appels d'offres (style events) ---- */}
             {tenders.length > 0 && (
@@ -431,16 +381,111 @@ export default function CoupleVendorsPage() {
             )}
 
             {tenders.length === 0 && (
-              <div className="rounded-2xl bg-white border border-[#e4e2db] p-8 text-center">
-                <div className="h-14 w-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
-                  <Sparkles size={22} className="text-[#1c1c1c]" />
-                </div>
-                <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-2">
-                  Aucun appel d&apos;offres pour l&apos;instant
-                </h3>
-                <p className="text-[#8b8b86] text-sm mb-6 max-w-sm mx-auto">
-                  Cliquez sur un type de prestataire ci-dessus pour lancer votre premier appel d&apos;offres.
-                </p>
+              <div>
+                {/* Auto-match suggestions as event-style cards */}
+                {recommendations.length > 0 ? (
+                  <>
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="font-display text-2xl font-bold text-[#1c1c1c] tracking-tight">
+                        Suggestions automatiques
+                      </h2>
+                      <button
+                        onClick={async () => {
+                          setRefreshing(true);
+                          try {
+                            const res = await fetch("/api/couple/recommendations", { method: "POST" });
+                            const json = await res.json();
+                            if (res.ok) setRecommendations(json.recommendations || []);
+                          } catch { /* ignore */ } finally {
+                            setRefreshing(false);
+                          }
+                        }}
+                        disabled={refreshing}
+                        className="text-[12.5px] text-[#8b8b86] hover:text-[#1c1c1c] transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                      >
+                        <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+                        Rafraîchir
+                      </button>
+                    </div>
+
+                    {(() => {
+                      const grouped: Record<string, Recommendation[]> = {};
+                      recommendations.forEach((r) => {
+                        if (!grouped[r.match.category]) grouped[r.match.category] = [];
+                        grouped[r.match.category].push(r);
+                      });
+                      const categories = Object.keys(grouped).sort((a, b) => grouped[b][0].match.score - grouped[a][0].match.score);
+
+                      return (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {categories.map((cat) => {
+                            const Icon = CATEGORY_ICON[cat] || Sparkle;
+                            const catRecs = grouped[cat];
+                            const bestScore = Math.max(...catRecs.map((r) => r.match.score));
+                            return (
+                              <Link
+                                key={cat}
+                                href={`/espace-couple/prestataires/suggestions/${encodeURIComponent(cat)}`}
+                                className="relative rounded-2xl overflow-hidden aspect-square flex flex-col justify-end p-4 text-white group text-left transition-transform hover:-translate-y-0.5"
+                              >
+                                <div
+                                  className="absolute inset-0 bg-cover bg-center"
+                                  style={{ backgroundImage: `url(${CATEGORY_IMAGES[cat] || CATEGORY_IMAGES["Autre"]})` }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 z-0" />
+
+                                <div className="relative z-10">
+                                  <div className="text-[10px] opacity-90 mb-1">
+                                    {catRecs.length} suggestion{catRecs.length > 1 ? "s" : ""} • {bestScore}% match
+                                  </div>
+                                  <div className="font-bold text-[13px] mb-1 flex items-center gap-2">
+                                    <Icon size={14} />
+                                    {cat}
+                                  </div>
+
+                                  <div className="flex mt-2 -space-x-1.5">
+                                    {catRecs.slice(0, 4).map((rec, idx) => {
+                                      const logoUrl = typeof rec.vendor?.logo === "string"
+                                        ? rec.vendor.logo
+                                        : (rec.vendor?.logo as { url?: string } | undefined)?.url;
+                                      return (
+                                        <span
+                                          key={idx}
+                                          className="h-[17px] w-[17px] rounded-full border-[1.5px] border-white bg-gray-300 bg-cover bg-center"
+                                          style={{
+                                            backgroundImage: logoUrl ? `url(${logoUrl})` : undefined,
+                                            background: !logoUrl ? CONTACT_COLORS[idx % CONTACT_COLORS.length] : undefined,
+                                          }}
+                                        />
+                                      );
+                                    })}
+                                    {catRecs.length > 4 && (
+                                      <span className="h-[17px] w-[17px] rounded-full border-[1.5px] border-white bg-black/40 flex items-center justify-center text-[8px] font-bold">
+                                        +{catRecs.length - 4}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+                  </>
+                ) : (
+                  <div className="rounded-2xl bg-white border border-[#e4e2db] p-8 text-center">
+                    <div className="h-14 w-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
+                      <Sparkles size={22} className="text-[#1c1c1c]" />
+                    </div>
+                    <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-2">
+                      Aucun appel d'offres pour l'instant
+                    </h3>
+                    <p className="text-[#8b8b86] text-sm mb-6 max-w-sm mx-auto">
+                      Cliquez sur un type de prestataire ci-dessus pour lancer votre premier appel d'offres.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -452,7 +497,7 @@ export default function CoupleVendorsPage() {
               <h3 className="font-bold text-[16px] text-[#1c1c1c] mb-4">Contact</h3>
               {confirmedVendors.length === 0 ? (
                 <p className="text-[13px] text-[#8b8b86] leading-relaxed">
-                  Aucun prestataire confirmé pour l&apos;instant. Validez une proposition pour voir vos contacts ici.
+                  Aucun prestataire confirmé pour l'instant. Validez une proposition pour voir vos contacts ici.
                 </p>
               ) : (
                 <ul className="space-y-3.5">
@@ -518,116 +563,33 @@ export default function CoupleVendorsPage() {
       </div>
 
       {/* ===== MODALE — formulaire de nouvelle demande ===== */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => {
-                setShowForm(false);
-                setCategory("");
-                setTenderError(null);
-              }}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
-              aria-label="Fermer"
-            >
-              <X size={15} />
-            </button>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center">
-                <Sparkles size={26} className="text-[#15181c]" />
-              </div>
-              <div>
-                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Appel d&apos;offres</p>
-                <h2 className="font-display text-2xl font-bold text-[#15181c]">Nouvel appel d&apos;offres</h2>
-              </div>
-            </div>
-
-            <div className="space-y-5">
-              <div>
-                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
-                  Type de prestataire
-                </label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition cursor-pointer"
-                >
-                  <option value="">Choisir une catégorie</option>
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
-                  Tranche de budget
-                </label>
-                <div className="flex items-center gap-3">
-                  <div className="relative flex-1">
-                    <Wallet size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
-                    <input
-                      type="number"
-                      value={budgetMin}
-                      onChange={(e) => setBudgetMin(e.target.value)}
-                      placeholder="Min"
-                      className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
-                    />
-                  </div>
-                  <span className="text-[#8b8b86]">—</span>
-                  <input
-                    type="number"
-                    value={budgetMax}
-                    onChange={(e) => setBudgetMax(e.target.value)}
-                    placeholder="Max"
-                    className="flex-1 bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
-                  />
-                  <span className="text-xs text-[#8b8b86]">EUR</span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
-                  Exigences spécifiques
-                </label>
-                <input
-                  type="text"
-                  value={requirements}
-                  onChange={(e) => setRequirements(e.target.value)}
-                  placeholder="Ex. : vegan, photographe discret, anglais courant..."
-                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
-                />
-              </div>
-
-              <div>
-                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
-                  Priorité principale
-                </label>
-                <input
-                  type="text"
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
-                  placeholder="Ex. : rapport qualité/prix, créativité, disponibilité..."
-                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
-                />
-              </div>
-
-              {tenderError && <p className="text-sm text-red-600">{tenderError}</p>}
-
-              <Button
-                onClick={launchTender}
-                disabled={launching}
-                loading={launching}
-                variant="primary"
-                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50"
-                iconLeft={launching ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-              >
-                {launching ? "Lancement en cours..." : "Lancer la demande"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <TenderFormModal
+        open={showForm}
+        onClose={() => {
+          setShowForm(false);
+          setCategory("");
+        }}
+        project={project}
+        preselectedCategory={category || undefined}
+        replaceMode={replaceAction}
+        onLaunched={async () => {
+          setTenders((prev) => [{} as TenderWithProposals, ...prev].slice(0, 1));
+          setShowForm(false);
+          setShowSuccess(true);
+          setCategory("");
+          setReplaceAction("keep");
+          try {
+            const recRes = await fetch("/api/couple/recommendations");
+            const recJson = await recRes.json();
+            if (recRes.ok) setRecommendations(recJson.recommendations || []);
+            const tendersRes = await fetch("/api/couple/tenders");
+            if (tendersRes.ok) {
+              const tendersJson = await tendersRes.json();
+              setTenders((tendersJson.tenders || []) as TenderWithProposals[]);
+            }
+          } catch { /* ignore */ }
+        }}
+      />
 
       {/* ===== MODALE — confirmation ===== */}
       {showSuccess && (
@@ -643,13 +605,212 @@ export default function CoupleVendorsPage() {
             <div className="w-14 h-14 rounded-2xl bg-[#fde68a] flex items-center justify-center mx-auto mb-5">
               <CheckCircle2 size={26} className="text-[#15181c]" />
             </div>
-            <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C&apos;est envoyé !</h3>
+            <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C'est envoyé !</h3>
             <p className="text-[#6b7076] text-sm mb-7 leading-relaxed">
               Votre demande est en route. Les prestataires les plus adaptés à votre budget et votre style vous répondront sous peu.
             </p>
             <Button onClick={() => setShowSuccess(false)} variant="primary" className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition">
               Parfait
             </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ===== MODALE — détail catégorie (suggestions auto) ===== */}
+      {selectedCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={closeCategory}
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              aria-label="Fermer"
+            >
+              <X size={15} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-[#cbd5e1] flex items-center justify-center">
+                {React.createElement(CATEGORY_ICON[selectedCategory] || Sparkle, { size: 26, className: "text-[#15181c]" })}
+              </div>
+              <div>
+                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Suggestions auto</p>
+                <h2 className="font-display text-2xl font-bold text-[#15181c]">{selectedCategory}</h2>
+              </div>
+            </div>
+
+            {(() => {
+              const catRecs = recommendations.filter((r) => r.match.category === selectedCategory);
+              const catTender = tenders.find((t) => t.category === selectedCategory);
+
+              if (catRecs.length === 0) {
+                return (
+                  <div className="text-center py-10">
+                    <div className="h-12 w-12 rounded-full bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
+                      <Sparkles size={22} className="text-[#1c1c1c]" />
+                    </div>
+                    <p className="text-[#8b8b86] text-sm mb-6 max-w-sm mx-auto">
+                      Aucune suggestion automatique pour cette catégorie pour le moment. Lancez votre propre appel d'offres pour recevoir des propositions.
+                    </p>
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        closeCategory();
+                        setCategory(selectedCategory);
+                        setShowForm(true);
+                      }}
+                      className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition flex items-center justify-center gap-2"
+                      iconLeft={<Plus size={16} />}
+                    >
+                      Lancer mon appel d'offres
+                    </Button>
+                  </div>
+                );
+              }
+
+              return (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm text-[#6b7076]">
+                      {catRecs.length} prestataire{catRecs.length > 1 ? "s" : ""} correspondent à votre projet
+                    </p>
+                    <button
+                      onClick={async () => {
+                        setRefreshing(true);
+                        try {
+                          const res = await fetch("/api/couple/recommendations", { method: "POST" });
+                          const json = await res.json();
+                          if (res.ok) setRecommendations(json.recommendations || []);
+                        } catch { /* ignore */ } finally {
+                          setRefreshing(false);
+                        }
+                      }}
+                      disabled={refreshing}
+                      className="text-[12.5px] text-[#8b8b86] hover:text-[#1c1c1c] transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                      <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+                      Rafraîchir
+                    </button>
+                  </div>
+
+                  <div className="space-y-3 mb-6">
+                    {catRecs.map((rec) => {
+                      const vendor = rec.vendor;
+                      const logoUrl = typeof vendor?.logo === "string" ? vendor.logo : (vendor?.logo as { url?: string } | undefined)?.url;
+                      return (
+                        <div key={rec.match.id} className="rounded-2xl bg-white border border-[#e4e2db] p-4 flex items-start gap-4">
+                          <div
+                            className="h-14 w-14 rounded-2xl bg-cover bg-center shrink-0"
+                            style={{ backgroundImage: logoUrl ? `url(${logoUrl})` : `url(${CATEGORY_IMAGES[selectedCategory] || CATEGORY_IMAGES["Autre"]})` }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-display text-sm font-bold text-[#1c1c1c] truncate">
+                                {vendor?.companyName || vendor?.businessName || vendor?.name || "Prestataire"}
+                              </h3>
+                              <span className="text-[10px] font-bold bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 rounded-full">
+                                {rec.match.score}%
+                              </span>
+                            </div>
+                            {vendor?.serviceArea?.cities?.[0] && (
+                              <p className="text-[11px] text-[#8b8b86] flex items-center gap-1 mb-1">
+                                <MapPin size={10} /> {vendor.serviceArea.cities[0]}
+                              </p>
+                            )}
+                            {rec.match.summary && (
+                              <div className="text-[12px] text-[#4a4a4a] mt-1">
+                                <ExpandableText text={rec.match.summary} lines={2} />
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2 mt-3">
+                              <Link
+                                href={`/espace-couple/prestataires/profil/${vendor?.id}`}
+                                onClick={closeCategory}
+                                className="text-[12px] font-bold text-[#1c1c1c] hover:underline flex items-center gap-1"
+                              >
+                                Voir le profil <ArrowRight size={12} />
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {catTender && (
+                    <Link
+                      href={`/espace-couple/prestataires/${catTender.id}`}
+                      onClick={closeCategory}
+                      className="block rounded-2xl bg-[#f4f1f7] border border-[#ececec] p-4 mb-4 hover:bg-[#ececef] transition"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6b7076]">Appel d'offres en cours</p>
+                          <p className="text-sm font-bold text-[#1c1c1c] mt-0.5">
+                            {catTender.status === "searching" ? "En recherche" : catTender.status === "responded" ? "Réponses reçues" : "Clôturé"}
+                            {" — "}
+                            {(catTender.proposals || []).length} proposition{(catTender.proposals || []).length > 1 ? "s" : ""}
+                          </p>
+                        </div>
+                        <ArrowRight size={18} className="text-[#1c1c1c]" />
+                      </div>
+                    </Link>
+                  )}
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        closeCategory();
+                        tryLaunchTender(selectedCategory);
+                      }}
+                      className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition flex items-center justify-center gap-2"
+                      iconLeft={<Plus size={16} />}
+                    >
+                      Lancer mon propre appel
+                    </Button>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* ===== DIALOG — remplacer ou conserver les suggestions ===== */}
+      {showReplaceDialog && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-full bg-[#fde68a] flex items-center justify-center">
+                <Sparkles size={20} className="text-[#15181c]" />
+              </div>
+              <h3 className="font-display text-lg font-bold text-[#15181c]">
+                Nouvelles suggestions ou en plus ?
+              </h3>
+            </div>
+            <p className="text-sm text-[#6b7076] mb-6">
+              Vous avez déjà des suggestions pour <strong>{pendingCategory}</strong>. Souhaitez-vous remplacer les suggestions actuelles par de nouvelles, ou les conserver et ajouter de nouveaux prestataires ?
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => confirmReplace("replace")}
+                className="w-full px-4 py-3.5 rounded-2xl bg-[#15181c] text-white text-sm font-bold hover:bg-[#2a2d33] transition flex items-center justify-center gap-2"
+              >
+                Remplacer les suggestions
+              </button>
+              <button
+                onClick={() => confirmReplace("keep")}
+                className="w-full px-4 py-3.5 rounded-2xl border-2 border-[#ececec] text-sm font-bold text-[#6b7076] hover:bg-[#f4f1f7] transition"
+              >
+                Conserver + ajouter de nouvelles
+              </button>
+              <button
+                onClick={() => setShowReplaceDialog(false)}
+                className="w-full px-4 py-2 text-sm text-[#8b8b86] hover:text-[#1c1c1c] transition"
+              >
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}

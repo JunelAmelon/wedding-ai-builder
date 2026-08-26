@@ -139,7 +139,7 @@ export default function AdminDashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-xl font-semibold font-display text-[#0f172a]">Vue d&apos;ensemble</h1>
+              <h1 className="text-xl font-semibold font-display text-[#0f172a]">Vue d'ensemble</h1>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#e6f4ea] text-[#137333]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
                 Actif

@@ -111,7 +111,7 @@ export default function ExtrasSection({ answers, aiOutput }: ExtrasSectionProps)
           <SectionHeader
             label="Simulateur"
             title="Comparez vos scénarios"
-            description="Visualisez l&apos;impact de différents choix budgétaires et ajustez votre plan sans stress."
+            description="Visualisez l'impact de différents choix budgétaires et ajustez votre plan sans stress."
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {scenarios.map((scenario) => (
@@ -125,7 +125,7 @@ export default function ExtrasSection({ answers, aiOutput }: ExtrasSectionProps)
             ))}
           </div>
           <div className="mt-6 rounded-3xl border border-black/10 bg-white p-6">
-            <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Impact sur l&apos;expérience</div>
+            <div className="text-xs uppercase tracking-[0.22em] text-text-secondary mb-3">Impact sur l'expérience</div>
             <p className="text-sm text-text-primary leading-relaxed">{selectedScenario.experienceImpact}</p>
             <div className="mt-4 grid sm:grid-cols-2 gap-4">
               <div>
@@ -336,7 +336,7 @@ export default function ExtrasSection({ answers, aiOutput }: ExtrasSectionProps)
                   <Sparkles size={16} />
                   Coach IA
                 </div>
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mt-3">Votre plan d&apos;action priorisé</h2>
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mt-3">Votre plan d'action priorisé</h2>
                 <p className="text-text-secondary mt-4 leading-relaxed text-lg">{coach.reassurance}</p>
 
                 <div className="mt-8 grid sm:grid-cols-2 gap-4">

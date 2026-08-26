@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
+import { generateWeddingPlan } from "@/lib/ai/orchestrator";
 
 export async function GET() {
   try {
@@ -12,17 +13,53 @@ export async function GET() {
 
     const projects = await projectRepo.listByUser(user.id);
     const project = projects[0];
-    if (!project?.sessionId) {
-      return NextResponse.json({ error: "Aucun résultat IA disponible" }, { status: 404 });
+    if (!project) {
+      return NextResponse.json({ error: "Aucun projet trouvé. Contactez le support." }, { status: 404 });
     }
 
-    const session = await sessionRepo.get(project.sessionId);
+    let session: any = null;
+
+    if (project.sessionId) {
+      session = await sessionRepo.get(project.sessionId);
+      if (session && session.userId && session.userId !== user.id) {
+        return NextResponse.json({ error: "Cette session n'appartient pas à votre compte" }, { status: 403 });
+      }
+    }
+
     if (!session) {
-      return NextResponse.json({ error: "Session introuvable" }, { status: 404 });
+      const fallbackAnswers: any = {};
+      if (project.weddingDate) fallbackAnswers.weddingDate = project.weddingDate;
+      if (project.location) fallbackAnswers.location = project.location;
+      if (project.guestCount) fallbackAnswers.guestCount = project.guestCount;
+      if (project.budget) fallbackAnswers.budget = project.budget;
+      if (project.style) fallbackAnswers.style = project.style;
+      if (project.customStyle) fallbackAnswers.customStyle = project.customStyle;
+      if (project.customStyleDescription) fallbackAnswers.customStyleDescription = project.customStyleDescription;
+      if (project.mainPriority) fallbackAnswers.mainPriority = project.mainPriority;
+      if (project.stressLevel) fallbackAnswers.stressLevel = project.stressLevel;
+
+      session = {
+        id: project.sessionId || project.id,
+        quizAnswers: fallbackAnswers,
+        aiOutput: null,
+        userId: user.id,
+        status: "completed",
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
+        leadId: null,
+      };
     }
 
-    if (session.userId && session.userId !== user.id) {
-      return NextResponse.json({ error: "Cette session n'appartient pas à votre compte" }, { status: 403 });
+    if (!session.aiOutput) {
+      try {
+        const output = await generateWeddingPlan(session.quizAnswers || {}, session.id);
+        if (project.sessionId) {
+          await sessionRepo.setAIOutput(project.sessionId, output);
+        }
+        session.aiOutput = output;
+      } catch (err) {
+        console.error("[couple/result] Failed to generate AI plan:", err);
+      }
     }
 
     return NextResponse.json({ session, project });

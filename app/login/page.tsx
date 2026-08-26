@@ -235,7 +235,7 @@ function LoginPageInner() {
 
           {pendingApproval && (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 mb-4 text-sm text-amber-800 text-center">
-              Votre profil professionnel est en cours de validation. Vous recevrez un email dès qu&apos;il sera approuvé.
+              Votre profil professionnel est en cours de validation. Vous recevrez un email dès qu'il sera approuvé.
             </div>
           )}
 

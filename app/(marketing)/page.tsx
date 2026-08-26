@@ -174,14 +174,14 @@ export default function LandingPage() {
       initials: "LT",
       name: "Léa & Thomas",
       meta: "Mariés à Nantes",
-      quote: "On a eu notre budget réparti en une soirée, alors qu&apos;on tournait en rond depuis un mois.",
+      quote: "On a eu notre budget réparti en une soirée, alors qu'on tournait en rond depuis un mois.",
       img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=120&h=120&q=80",
     },
     {
       initials: "AK",
       name: "Awa & Karim",
       meta: "Mariés à Lyon",
-      quote: "Le matching nous a proposé un traiteur qu&apos;on n&apos;aurait jamais trouvé nous-mêmes, dans notre budget.",
+      quote: "Le matching nous a proposé un traiteur qu'on n'aurait jamais trouvé nous-mêmes, dans notre budget.",
       img: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=120&h=120&q=80",
     },
   ];
@@ -243,7 +243,7 @@ export default function LandingPage() {
             </div>
 
             <div className="logo-strip">
-              <span>Château d&apos;Or</span>
+              <span>Château d'Or</span>
               <span>Belle Fleur</span>
               <span>Lumière Studio</span>
               <span>Maison Rosé</span>
@@ -315,7 +315,7 @@ export default function LandingPage() {
                 <span className="eyebrow-pill">Zéro compromis</span>
                 <h2>Zéro envoi, zéro compte</h2>
                 <p style={{ marginBottom: 20 }}>
-                  Pas de carte bancaire, pas d&apos;e-mail à confirmer, pas d&apos;appel commercial. Un plan complet, immédiatement, sans rien à donner en échange.
+                  Pas de carte bancaire, pas d'e-mail à confirmer, pas d'appel commercial. Un plan complet, immédiatement, sans rien à donner en échange.
                 </p>
                 <Link href="/quiz" className="btn btn-solid">Créer mon plan</Link>
               </div>
@@ -420,8 +420,8 @@ export default function LandingPage() {
         <section id="testi">
           <div className="wrap">
             <div className="section-head-center">
-              <span className="eyebrow-pill">Ils l&apos;ont testé</span>
-              <h2 style={{ marginTop: 18 }}>Les résultats parlent d&apos;eux-mêmes</h2>
+              <span className="eyebrow-pill">Ils l'ont testé</span>
+              <h2 style={{ marginTop: 18 }}>Les résultats parlent d'eux-mêmes</h2>
             </div>
 
             <div className="testi-row">
@@ -454,7 +454,7 @@ export default function LandingPage() {
               </div>
 
               <div className="stat-stack reveal">
-                <div className="box"><div className="num">3x</div><div className="lbl">Plus rapide qu&apos;une organisation classique</div></div>
+                <div className="box"><div className="num">3x</div><div className="lbl">Plus rapide qu'une organisation classique</div></div>
                 <div className="box"><div className="num">{MARKETING_STATS.matchScore}%</div><div className="lbl">De couples satisfaits du matching</div></div>
                 <div className="box"><div className="num">{MARKETING_STATS.planGenerationTime}</div><div className="lbl">Pour obtenir un plan complet</div></div>
               </div>

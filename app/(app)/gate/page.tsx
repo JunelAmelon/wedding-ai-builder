@@ -42,7 +42,7 @@ function LogoShape() {
 function GatePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { sessionId, setSession, reset } = useQuizStore();
+  const { sessionId, setSession, reset, answers } = useQuizStore();
   const registeredRef = useRef(false);
   const [form, setForm] = useState({
     firstName: "",
@@ -118,6 +118,7 @@ function GatePageInner() {
           role: "couple",
           source: "quiz",
           sessionId,
+          quizAnswers: answers,
         }),
       });
       const data = await res.json();

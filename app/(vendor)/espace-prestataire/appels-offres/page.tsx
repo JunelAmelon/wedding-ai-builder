@@ -20,6 +20,8 @@ import {
   Bell,
   TrendingUp,
   FileText,
+  Lock,
+  Crown,
 } from 'lucide-react';
 import type { ProjectVendorMatch, WeddingProject } from '@/types/marketplace';
 
@@ -38,10 +40,8 @@ export default function VendorOpportunitiesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [page, setPage] = useState(1);
+  const [subscriptionActive, setSubscriptionActive] = useState(true);
   const pageSize = 5;
-
-  const liveImage =
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200&auto=format&fit=crop&q=80';
 
   useEffect(() => {
     async function load() {
@@ -53,6 +53,7 @@ export default function VendorOpportunitiesPage() {
         }
         const oppJson = await oppRes.json();
         setOpportunities(oppJson.opportunities || []);
+        setSubscriptionActive(oppJson.subscriptionActive ?? true);
       } catch {
         // ignore
       } finally {
@@ -75,7 +76,13 @@ export default function VendorOpportunitiesPage() {
         }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || `Échec de l'envoi`);
+      if (!res.ok) {
+        if (res.status === 402 && json.needsSubscription) {
+          router.push('/espace-prestataire/offres');
+          return;
+        }
+        throw new Error(json.error || `Échec de l'envoi`);
+      }
       setSelected(null);
       setMessage('');
       setSuccess(true);
@@ -120,7 +127,7 @@ export default function VendorOpportunitiesPage() {
         <header className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-10'>
           <div className='text-center lg:text-left'>
             <h1 className='font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#15181c]'>
-              Appels d&apos;offres
+              Appels d'offres
             </h1>
             <p className='text-sm sm:text-base text-[#6b7076] font-medium mt-1'>
               Découvrez les couples qui correspondent à votre univers
@@ -146,43 +153,35 @@ export default function VendorOpportunitiesPage() {
           </div>
         </header>
 
-        {/* Dashboard 2 colonnes */}
-        <main className='flex flex-col lg:flex-row gap-6'>
-          {/* Colonne gauche — grande image */}
-          <div className='flex-1'>
-            <div className='relative w-full h-[500px] lg:h-[540px] rounded-[20px] overflow-hidden shadow-lg'>
-              <img
-                src={liveImage}
-                alt='Mariage'
-                className='absolute inset-0 w-full h-full object-cover'
-              />
-              <div className='absolute inset-0 bg-gradient-to-t from-[#15181c]/90 via-[#15181c]/40 to-[#15181c]/20' />
-              <div className='absolute top-5 left-5 right-5 z-10'>
-                <h3 className='font-display text-3xl sm:text-4xl font-bold text-white leading-tight'>
-                  Votre prochaine opportunité
-                </h3>
-                <p className='text-white/80 text-sm mt-2'>
-                  {featured?.match.category || 'Trouvez le mariage parfait'}
-                </p>
+        {/* Dashboard */}
+        <main className='flex flex-col gap-6'>
+          {!subscriptionActive && (
+            <div className='rounded-3xl bg-gradient-to-r from-[#15181c] to-[#2c3036] p-6 sm:p-8 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg'>
+              <div className='flex items-center gap-4'>
+                <div className='w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center shrink-0'>
+                  <Crown className='w-7 h-7 text-[#fde68a]' />
+                </div>
+                <div>
+                  <h3 className='font-display text-lg font-bold mb-0.5'>Activez votre abonnement</h3>
+                  <p className='text-sm text-white/70'>
+                    Vous avez {sorted.length} opportunité{sorted.length > 1 ? 's' : ''} qui vous attend{sorted.length > 1 ? 'ent' : ''}. Activez un plan pour voir les détails et répondre aux couples.
+                  </p>
+                </div>
               </div>
-              <div className='absolute bottom-5 left-5 right-5'>
-                <span className='inline-flex items-center gap-1.5 rounded-full bg-[#fde68a] text-[#15181c] px-3 py-1.5 text-xs font-bold shadow-sm'>
-                  <Sparkles className='w-3.5 h-3.5' />
-                  {featured
-                    ? `Match du jour · ${featured.match.category}`
-                    : 'Votre prochain mariage'}
-                </span>
-              </div>
+              <Link
+                href='/espace-prestataire/offres'
+                className='shrink-0 inline-flex items-center gap-2 h-12 px-6 rounded-full bg-[#fde68a] text-[#15181c] font-bold text-sm hover:bg-[#fcd34d] transition'
+              >
+                <Crown size={18} /> Voir les offres
+              </Link>
             </div>
-          </div>
-
-          {/* Colonne droite — tableau moderne */}
-          <div className='flex-[2] flex flex-col gap-5'>
+          )}
+          <div className='flex flex-col gap-5'>
             <div className='h-[500px] lg:h-[540px] bg-white border border-[#ececec] shadow-md overflow-hidden flex flex-col'>
               <div className='flex items-center justify-between p-5 border-b border-[#ececec]'>
                 <div>
                   <h2 className='font-display text-xl font-bold text-[#15181c]'>
-                    Vos appels d&apos;offres
+                    Vos appels d'offres
                   </h2>
                   <p className='text-sm text-[#6b7076] mt-0.5'>
                     {sorted.length} opportunité{sorted.length > 1 ? 's' : ''} reçue
@@ -225,7 +224,7 @@ export default function VendorOpportunitiesPage() {
                               <FileText className='w-6 h-6' />
                             </div>
                             <p className='text-base font-semibold text-[#15181c]'>
-                              Aucun appel d&apos;offre reçu
+                              Aucun appel d'offre reçu
                             </p>
                             <p className='text-sm'>
                               Revenez plus tard pour découvrir de nouvelles
@@ -240,13 +239,14 @@ export default function VendorOpportunitiesPage() {
                           key={match.id}
                           onClick={() =>
                             router.push(
-                              `/espace-prestataire/appels-offres/${match.tenderId}`
+                              `/espace-prestataire/appels-offres/${match.id}`
                             )
                           }
                           className='border-t border-[#ececec] hover:bg-[#f4f1f7] cursor-pointer transition group'
                         >
                           <td className='py-4 px-5'>
-                            <div className='font-semibold text-[#15181c]'>
+                            <div className='font-semibold text-[#15181c] flex items-center gap-2'>
+                              {!subscriptionActive && <Lock size={12} className='text-[#6b7076]' />}
                               {project?.name || 'Projet sans nom'}
                             </div>
                             {project?.weddingDate && (
@@ -273,16 +273,26 @@ export default function VendorOpportunitiesPage() {
                           </td>
                           <td className='py-4 px-5 text-right'>
                             <div className='flex items-center justify-end gap-2'>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelected({ match, project });
-                                }}
-                                className='h-9 px-4 rounded-full bg-[#15181c] text-white text-xs font-bold hover:bg-[#2c3036] transition flex items-center gap-1.5'
-                              >
-                                <Send className='w-3.5 h-3.5' />
-                                Répondre
-                              </button>
+                              {!subscriptionActive ? (
+                                <Link
+                                  href='/espace-prestataire/offres'
+                                  className='h-9 px-4 rounded-full bg-[#fde68a] text-[#15181c] text-xs font-bold hover:bg-[#fcd34d] transition flex items-center gap-1.5'
+                                >
+                                  <Crown className='w-3.5 h-3.5' />
+                                  Activer
+                                </Link>
+                              ) : (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelected({ match, project });
+                                  }}
+                                  className='h-9 px-4 rounded-full bg-[#15181c] text-white text-xs font-bold hover:bg-[#2c3036] transition flex items-center gap-1.5'
+                                >
+                                  <Send className='w-3.5 h-3.5' />
+                                  Répondre
+                                </button>
+                              )}
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -311,7 +321,7 @@ export default function VendorOpportunitiesPage() {
                         <FileText className='w-6 h-6' />
                       </div>
                       <p className='text-base font-semibold text-[#15181c]'>
-                        Aucun appel d&apos;offre reçu
+                        Aucun appel d'offre reçu
                       </p>
                       <p className='text-sm'>
                         Revenez plus tard pour découvrir de nouvelles
@@ -326,9 +336,10 @@ export default function VendorOpportunitiesPage() {
                         key={match.id}
                         match={match}
                         project={project}
+                        subscriptionActive={subscriptionActive}
                         onView={() =>
                           router.push(
-                            `/espace-prestataire/appels-offres/${match.tenderId}`
+                            `/espace-prestataire/appels-offres/${match.id}`
                           )
                         }
                         onRespond={() => setSelected({ match, project })}
@@ -470,7 +481,7 @@ export default function VendorOpportunitiesPage() {
                     Réponse
                   </p>
                   <h3 className='font-display text-2xl font-bold text-[#15181c]'>
-                    Répondre à l&apos;appel d&apos;offres
+                    Répondre à l'appel d'offres
                   </h3>
                 </div>
               </div>
@@ -543,12 +554,14 @@ export default function VendorOpportunitiesPage() {
 function DossierCard({
   match,
   project,
+  subscriptionActive,
   onView,
   onRespond,
   onIgnore,
 }: {
   match: ProjectVendorMatch;
   project: WeddingProject | null;
+  subscriptionActive: boolean;
   onView: () => void;
   onRespond: () => void;
   onIgnore: () => void;
@@ -600,16 +613,25 @@ function DossierCard({
       <div className='flex gap-3'>
         <button
           onClick={onView}
-          className='flex-1 py-3 px-4 rounded-full border border-[#ececec] bg-white text-sm font-bold text-[#15181c] hover:bg-[#f4f1f7] transition'
+          className='flex-1 py-3 px-4 rounded-full border border-[#ececec] bg-white text-sm font-bold text-[#15181c] hover:bg-[#f4f1f7] transition flex items-center justify-center gap-2'
         >
-          Voir
+          {!subscriptionActive && <Lock size={14} />} Voir
         </button>
-        <button
-          onClick={onRespond}
-          className='flex-1 py-3 px-4 rounded-full bg-[#15181c] text-sm font-bold text-white hover:bg-[#2c3036] transition flex items-center justify-center gap-2'
-        >
-          <Send size={16} /> Répondre
-        </button>
+        {subscriptionActive ? (
+          <button
+            onClick={onRespond}
+            className='flex-1 py-3 px-4 rounded-full bg-[#15181c] text-sm font-bold text-white hover:bg-[#2c3036] transition flex items-center justify-center gap-2'
+          >
+            <Send size={16} /> Répondre
+          </button>
+        ) : (
+          <Link
+            href='/espace-prestataire/offres'
+            className='flex-1 py-3 px-4 rounded-full bg-[#fde68a] text-[#15181c] text-sm font-bold hover:bg-[#fcd34d] transition flex items-center justify-center gap-2'
+          >
+            <Crown size={16} /> Activer
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ export default function VendorCreditsRedirectPage() {
           Le système de crédits a évolué.
         </h1>
         <p className="text-[#6b7076] mb-8">
-          Découvrez nos offres d&apos;abonnement pensées pour développer votre activité.
+          Découvrez nos offres d'abonnement pensées pour développer votre activité.
         </p>
         <Link
           href="/espace-prestataire/offres"

@@ -151,7 +151,7 @@ export default function BlogPage() {
                 <div className="dark-big-num">184 620</div>
               </div>
               <div className="dark-testi reveal">
-                <p>« L&apos;article sur la répartition du budget m&apos;a évité deux mauvaises surprises. Simple et concret. »</p>
+                <p>« L'article sur la répartition du budget m'a évité deux mauvaises surprises. Simple et concret. »</p>
                 <div className="who">
                   <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&w=96&h=96&q=80" alt="" width={96} height={96} className="w-full h-full object-cover" unoptimized />
                   <div><div className="n">Léa, future mariée</div><div className="r">Nantes</div></div>
@@ -192,7 +192,7 @@ export default function BlogPage() {
                     <Image src={a.coverImage || "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=500&h=380&q=85"} alt={a.title} width={400} height={300} className="w-full object-cover" unoptimized />
                     <div className="cat">{a.category}</div>
                     <h4>{a.title}</h4>
-                    <Link href={`/blog/${a.slug}`} className="read">Lire l&apos;article <span>→</span></Link>
+                    <Link href={`/blog/${a.slug}`} className="read">Lire l'article <span>→</span></Link>
                   </article>
                 ))
               )}
@@ -240,7 +240,7 @@ export default function BlogPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <button className="btn btn-solid" onClick={() => setEmail("")}>S&apos;inscrire</button>
+                <button className="btn btn-solid" onClick={() => setEmail("")}>S'inscrire</button>
               </div>
             </div>
           </div>

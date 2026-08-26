@@ -67,7 +67,7 @@ export default function ArticlePage() {
       <>
         <Header ctaHref="/quiz" ctaLabel="Créer mon plan" />
         <main className="min-h-screen flex items-center justify-center">
-          <p className="text-[#8b8b86]">Chargement de l&apos;article...</p>
+          <p className="text-[#8b8b86]">Chargement de l'article...</p>
         </main>
         <Footer />
       </>

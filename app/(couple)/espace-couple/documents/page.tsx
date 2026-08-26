@@ -56,7 +56,7 @@ export default function CoupleDocumentsPage() {
       <div className="mt-10 rounded-2xl border border-dashed border-black/20 p-8 text-center">
         <FileText size={40} className="text-text-secondary mx-auto mb-3" />
         <p className="text-text-secondary text-sm max-w-md mx-auto">
-          L&apos;ajout de contrats, devis et factures personnels sera disponible prochainement.
+          L'ajout de contrats, devis et factures personnels sera disponible prochainement.
         </p>
       </div>
     </div>
