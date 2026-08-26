@@ -9,6 +9,13 @@ import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { runAutoMatching } from "@/lib/matching/auto-match";
 import { isLocalMode } from "@/lib/db/repositories/utils";
+import { geocodeCity } from "@/lib/geocoding/nominatim";
+
+async function geocodeLocation(location: { city?: string; country?: string } | null | undefined): Promise<{ city: string; country: string; geo?: { lat: number; lng: number } } | null> {
+  if (!location?.city || !location?.country) return null;
+  const geo = await geocodeCity(location.city, location.country);
+  return { city: location.city, country: location.country, ...(geo ? { geo } : {}) };
+}
 
 const RegisterSchema = z.object({
   firstName: z.string().min(1),
@@ -148,7 +155,7 @@ export async function POST(req: Request) {
         sessionId: sessionIdToUse,
         name: "Mon mariage",
         weddingDate: quizAnswers.weddingDate || null,
-        location: quizAnswers.location || null,
+        location: await geocodeLocation(quizAnswers.location),
         guestCount: quizAnswers.guestCount || null,
         budget: quizAnswers.budget || null,
         style: quizAnswers.style || null,

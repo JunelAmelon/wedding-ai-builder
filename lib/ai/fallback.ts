@@ -145,33 +145,80 @@ export function fallbackBlueprint(answers: QuizAnswers): WeddingBlueprint {
   };
 }
 
+const FALLBACK_BUDGET_LABELS: Record<string, string> = {
+  venue: "Lieu de réception",
+  catering: "Traiteur & boissons",
+  photography: "Photographe",
+  videography: "Vidéaste",
+  music: "Musique & DJ",
+  decoration: "Décoration",
+  flowers: "Fleurs",
+  attire: "Tenue des mariés",
+  rings: "Alliances & bijoux",
+  beauty: "Coiffure & maquillage",
+  stationery: "Papeterie & faire-part",
+  transport: "Transport",
+  accommodation: "Hébergement",
+  cake: "Gâteau / pièce montée",
+  weddingPlanner: "Wedding planner",
+  officiant: "Officiant & cérémonie",
+  giftsFavours: "Cadeaux invités",
+  contingency: "Imprévus",
+};
+
+const DEFAULT_BUDGET_RATIOS: Record<string, number> = {
+  venue: 0.25,
+  catering: 0.20,
+  photography: 0.05,
+  videography: 0.03,
+  music: 0.05,
+  decoration: 0.06,
+  flowers: 0.03,
+  attire: 0.05,
+  rings: 0.02,
+  beauty: 0.03,
+  stationery: 0.02,
+  transport: 0.02,
+  accommodation: 0.02,
+  cake: 0.02,
+  weddingPlanner: 0.03,
+  officiant: 0.01,
+  giftsFavours: 0.02,
+  contingency: 0.09,
+};
+
+const DEFAULT_MARKET_RATES: Record<string, { rec: number; min: number; max: number }> = {
+  venue: { rec: 0.30, min: 0.20, max: 0.45 },
+  catering: { rec: 0.25, min: 0.20, max: 0.35 },
+  photography: { rec: 0.06, min: 0.04, max: 0.10 },
+  videography: { rec: 0.03, min: 0.02, max: 0.06 },
+  music: { rec: 0.05, min: 0.03, max: 0.10 },
+  decoration: { rec: 0.05, min: 0.03, max: 0.10 },
+  flowers: { rec: 0.03, min: 0.02, max: 0.06 },
+  attire: { rec: 0.05, min: 0.03, max: 0.10 },
+  rings: { rec: 0.02, min: 0.01, max: 0.05 },
+  beauty: { rec: 0.04, min: 0.02, max: 0.07 },
+  stationery: { rec: 0.02, min: 0.01, max: 0.04 },
+  transport: { rec: 0.02, min: 0.01, max: 0.05 },
+  accommodation: { rec: 0.02, min: 0.01, max: 0.05 },
+  cake: { rec: 0.02, min: 0.01, max: 0.05 },
+  weddingPlanner: { rec: 0.04, min: 0.02, max: 0.08 },
+  officiant: { rec: 0.01, min: 0.005, max: 0.03 },
+  giftsFavours: { rec: 0.02, min: 0.01, max: 0.04 },
+  contingency: { rec: 0.10, min: 0.08, max: 0.12 },
+};
+
 function fallbackCategoryStatuses(
-  breakdown: BudgetBreakdown["breakdown"],
+  breakdown: Record<string, number>,
   total: number
 ): BudgetCategoryStatus[] {
-  const keys = ["venue", "catering", "photography", "music", "decoration", "contingency"] as const;
-  const labels: Record<string, string> = {
-    venue: "Lieu",
-    catering: "Traiteur & boissons",
-    photography: "Photo & vidéo",
-    music: "Musique & DJ",
-    decoration: "Décoration & fleurs",
-    contingency: "Provision imprévus",
-  };
-  const marketRates: Record<string, { rec: number; min: number; max: number }> = {
-    venue: { rec: 0.36, min: 0.28, max: 0.45 },
-    catering: { rec: 0.27, min: 0.22, max: 0.35 },
-    photography: { rec: 0.11, min: 0.08, max: 0.16 },
-    music: { rec: 0.07, min: 0.04, max: 0.12 },
-    decoration: { rec: 0.09, min: 0.06, max: 0.15 },
-    contingency: { rec: 0.1, min: 0.08, max: 0.12 },
-  };
-  return keys.map((key) => {
+  return Object.keys(breakdown).map((key) => {
     const planned = breakdown[key];
     const percentage = total > 0 ? (planned / total) * 100 : 0;
-    const recommended = Math.round(total * marketRates[key].rec);
-    const realisticMin = Math.round(total * marketRates[key].min);
-    const realisticMax = Math.round(total * marketRates[key].max);
+    const rates = DEFAULT_MARKET_RATES[key] ?? { rec: 0.02, min: 0.01, max: 0.05 };
+    const recommended = Math.round(total * rates.rec);
+    const realisticMin = Math.round(total * rates.min);
+    const realisticMax = Math.round(total * rates.max);
     const margin = planned - recommended;
     const riskLevel: "excellent" | "good" | "tight" | "critical" =
       planned >= realisticMin && planned <= realisticMax
@@ -184,7 +231,7 @@ function fallbackCategoryStatuses(
     const overrunEstimate = Math.max(0, realisticMin - planned);
     const savingsPotential = Math.max(0, planned - realisticMax);
     return {
-      key: labels[key],
+      key,
       planned,
       recommended,
       realisticMin,
@@ -201,44 +248,35 @@ function fallbackCategoryStatuses(
 export function fallbackBudgetBreakdown(answers: QuizAnswers): BudgetBreakdown {
   const total = answers.budget?.amount ?? 10000;
   const currency = answers.budget?.currency ?? "EUR";
-  const ratios = {
-    venue: 0.35,
-    catering: 0.25,
-    photography: 0.12,
-    music: 0.08,
-    decoration: 0.1,
-    contingency: 0.1,
-  };
-  const breakdown = {
-    venue: Math.round(total * ratios.venue),
-    catering: Math.round(total * ratios.catering),
-    photography: Math.round(total * ratios.photography),
-    music: Math.round(total * ratios.music),
-    decoration: Math.round(total * ratios.decoration),
-    contingency: Math.round(total * ratios.contingency),
-  };
+
+  const ratios = DEFAULT_BUDGET_RATIOS;
+  const breakdown: Record<string, number> = {};
+  Object.keys(ratios).forEach((key) => {
+    breakdown[key] = Math.round(total * ratios[key]);
+  });
+
   const sum = Object.values(breakdown).reduce((a, b) => a + b, 0);
-  breakdown.contingency += total - sum;
+  // Ajuste le poste imprévu pour compenser les arrondis et atteindre le total
+  const diff = total - sum;
+  breakdown.contingency += diff;
+
+  const percentages: Record<string, number> = {};
+  Object.keys(breakdown).forEach((key) => {
+    percentages[key] = total > 0 ? (breakdown[key] / total) * 100 : 0;
+  });
 
   const categoryStatuses = fallbackCategoryStatuses(breakdown, total);
   const totalOverrunEstimate = categoryStatuses.reduce((acc, c) => acc + c.overrunEstimate, 0);
   const totalSavingsPotential = categoryStatuses.reduce((acc, c) => acc + c.savingsPotential, 0);
   const tightCount = categoryStatuses.filter((c) => c.riskLevel === "tight" || c.riskLevel === "critical").length;
   const globalRiskLevel: "excellent" | "good" | "tight" | "critical" =
-    tightCount === 0 ? "good" : tightCount >= 2 ? "critical" : "tight";
+    tightCount === 0 ? "good" : tightCount >= 3 ? "critical" : "tight";
 
   return {
     totalBudget: total,
     currency,
     breakdown,
-    percentages: {
-      venue: ratios.venue * 100,
-      catering: ratios.catering * 100,
-      photography: ratios.photography * 100,
-      music: ratios.music * 100,
-      decoration: ratios.decoration * 100,
-      contingency: ratios.contingency * 100,
-    },
+    percentages,
     categoryStatuses,
     globalRiskLevel,
     totalOverrunEstimate,

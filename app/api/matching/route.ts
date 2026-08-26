@@ -4,6 +4,7 @@ import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { runAutoMatching } from "@/lib/matching/auto-match";
 import { requireAuth } from "@/lib/auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const MatchSchema = z.object({
   projectId: z.string().min(1),
@@ -16,6 +17,13 @@ export async function POST(req: Request) {
     const user = await requireAuth();
     if (user.role !== "couple") {
       return NextResponse.json({ error: "Accès réservé aux couples" }, { status: 403 });
+    }
+
+    // Rate limit: 3 manual matching runs per hour to prevent AI cost spikes
+    const ip = getClientIp(req);
+    const rate = await checkRateLimit(`matching:${user.id}:${ip}`, 3, 3600);
+    if (!rate.allowed) {
+      return NextResponse.json({ error: "Trop de lancements de matching. Réessayez plus tard." }, { status: 429 });
     }
 
     const body = await req.json();

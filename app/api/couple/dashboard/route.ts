@@ -9,7 +9,6 @@ import { messageRepo } from "@/lib/db/repositories/messageRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { isVendorSubscriptionActive } from "@/lib/subscription-guard";
-import { runAutoMatching } from "@/lib/matching/auto-match";
 
 export async function GET() {
   try {
@@ -41,18 +40,9 @@ export async function GET() {
     const tasks = await taskRepo.listByProject(project.id);
     const nextTasks = tasks.filter((t) => !t.completed).slice(0, 5);
 
-    // Always refresh suggested matches so the dashboard stays up-to-date
-    let matches: Awaited<ReturnType<typeof matchRepo.listByProject>>;
-    try {
-      await matchRepo.deleteSuggestedByProject(project.id);
-      const result = await runAutoMatching(project, { perCategory: 2, notifyVendors: false });
-      const freshMatches = result.matches;
-      const existing = await matchRepo.listByProject(project.id);
-      const nonSuggested = existing.filter((m) => m.status !== "suggested");
-      matches = [...freshMatches, ...nonSuggested];
-    } catch {
-      matches = await matchRepo.listByProject(project.id);
-    }
+    // Dashboard no longer refreshes suggested matches on every load to avoid expensive AI calls.
+    // Matches are refreshed on project update or explicit POST /recommendations.
+    const matches = await matchRepo.listByProject(project.id);
 
     const recommendations = await Promise.all(
       matches.slice(0, 6).map(async (m) => {

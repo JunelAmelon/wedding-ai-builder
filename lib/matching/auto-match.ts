@@ -3,10 +3,20 @@ import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
 import { findTopMatches } from "@/lib/matching/engine";
+import { filterActiveVendors } from "@/lib/subscription-guard";
+import { createMatchAiCache } from "@/lib/matching/ai-cache";
 
 export interface AutoMatchResult {
   matches: ProjectVendorMatch[];
   categoriesMatched: string[];
+}
+
+function buildRequirements(project: WeddingProject): string[] {
+  const requirements: string[] = [];
+  if (project.customStyleDescription?.trim()) {
+    requirements.push(project.customStyleDescription.trim());
+  }
+  return requirements;
 }
 
 export async function runAutoMatching(
@@ -25,23 +35,37 @@ export async function runAutoMatching(
     weddingDate: project.weddingDate,
     style: project.style,
     customStyle: project.customStyle,
-    requirements: [],
-    priority: null,
+    requirements: buildRequirements(project),
+    priority: project.mainPriority,
   };
 
   const allVendors = await vendorProfileRepo.listApproved();
 
-  if (allVendors.length === 0) {
+  // Only match against vendors with an active subscription to avoid noise and wasted AI calls.
+  const activeVendors = await filterActiveVendors(allVendors);
+
+  if (activeVendors.length === 0) {
     return { matches: [], categoriesMatched: [] };
   }
 
-  const categories = [...new Set(allVendors.map((v) => v.serviceCategory))];
+  const categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+
+  // Load existing non-rejected matches to avoid creating duplicates for the same project/vendor/category
+  const existingMatches = await matchRepo.listByProject(project.id);
+  const existingKeys = new Set(
+    existingMatches
+      .filter((m) => m.status !== "rejected")
+      .map((m) => `${m.category}:${m.vendorId}`)
+  );
+
   const allNewMatches: ProjectVendorMatch[] = [];
 
   for (const category of categories) {
-    const topMatches = await findTopMatches(tenderData, project, allVendors, category, perCategory);
+    const aiCache = createMatchAiCache(project.id, category, project.updatedAt);
+    const topMatches = await findTopMatches(tenderData, project, activeVendors, category, perCategory, aiCache);
+    const toCreate = topMatches.filter((m) => !existingKeys.has(`${m.category}:${m.vendorId}`));
     const saved = await Promise.all(
-      topMatches.map((m) =>
+      toCreate.map((m) =>
         matchRepo.create({
           projectId: m.projectId,
           tenderId: m.tenderId,

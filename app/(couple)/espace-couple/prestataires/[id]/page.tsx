@@ -184,7 +184,7 @@ export default function TenderDetailPage() {
         <div
           className="relative h-[160px] sm:h-[220px] rounded-[22px] overflow-hidden mx-0 lg:mx-0 bg-cover bg-center"
           style={{
-            backgroundImage: "url(https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=300&fit=crop)",
+            backgroundImage: "url(https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg)",
           }}
         >
           <div className="absolute inset-0 bg-black/20" />

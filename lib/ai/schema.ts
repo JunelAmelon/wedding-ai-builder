@@ -55,28 +55,22 @@ export const BudgetBreakdownSchema = z
   .object({
     totalBudget: z.number().finite().positive(),
     currency: z.string().min(1),
-    breakdown: z.object({
-      venue: z.number().finite().nonnegative(),
-      catering: z.number().finite().nonnegative(),
-      photography: z.number().finite().nonnegative(),
-      music: z.number().finite().nonnegative(),
-      decoration: z.number().finite().nonnegative(),
-      contingency: z.number().finite().nonnegative(),
-    }),
-    percentages: z.object({
-      venue: z.number().finite(),
-      catering: z.number().finite(),
-      photography: z.number().finite(),
-      music: z.number().finite(),
-      decoration: z.number().finite(),
-      contingency: z.number().finite(),
-    }),
+    breakdown: z.record(z.string(), z.number().finite().nonnegative()),
+    percentages: z.record(z.string(), z.number().finite()),
     categoryStatuses: z.array(BudgetCategoryStatusSchema).optional(),
     globalRiskLevel: RiskLevelSchema.optional(),
     totalOverrunEstimate: z.number().finite().nonnegative().optional(),
     totalSavingsPotential: z.number().finite().nonnegative().optional(),
   })
   .superRefine((val, ctx) => {
+    const breakdownKeys = Object.keys(val.breakdown);
+    if (breakdownKeys.length < 6) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Le breakdown doit contenir au moins 6 postes.",
+        path: ["breakdown"],
+      });
+    }
     const sum = Object.values(val.breakdown).reduce((a, b) => a + b, 0);
     const tol = val.totalBudget * 0.01;
     if (Math.abs(sum - val.totalBudget) > tol) {
@@ -87,12 +81,13 @@ export const BudgetBreakdownSchema = z
       });
     }
 
-    const contingencyPct = val.totalBudget > 0 ? (val.breakdown.contingency / val.totalBudget) * 100 : 0;
+    const contingency = val.breakdown.contingency ?? val.breakdown.imprevus ?? val.breakdown.provision ?? 0;
+    const contingencyPct = val.totalBudget > 0 ? (contingency / val.totalBudget) * 100 : 0;
     if (contingencyPct < 8 || contingencyPct > 12) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Le contingency doit être entre 8% et 12%.",
-        path: ["breakdown", "contingency"],
+        message: "Le poste imprévus doit représenter entre 8% et 12% du total.",
+        path: ["breakdown"],
       });
     }
 
@@ -112,7 +107,7 @@ export const TimelineSchema = z.object({
       z.object({
         monthsBeforeWedding: z.number().finite().nonnegative(),
         title: z.string().min(1),
-        tasks: z.array(z.string().min(1)).min(2).max(4),
+        tasks: z.array(z.string().min(1)).min(2).max(5),
         priority: z.enum(["low", "medium", "high", "critical"]).optional(),
         urgency: z.enum(["early", "soon", "urgent", "late"]).optional(),
         idealDeadline: z.string().min(1).optional(),
@@ -122,7 +117,8 @@ export const TimelineSchema = z.object({
         status: z.enum(["completed", "in_progress", "upcoming", "overdue"]).optional(),
       })
     )
-    .length(8),
+    .min(8)
+    .max(14),
   globalProgress: z.number().finite().min(0).max(100).optional(),
   nextCriticalStep: z
     .object({

@@ -174,22 +174,8 @@ export interface BudgetCategoryStatus {
 export interface BudgetBreakdown {
   totalBudget: number;
   currency: string;
-  breakdown: {
-    venue: number;
-    catering: number;
-    photography: number;
-    music: number;
-    decoration: number;
-    contingency: number;
-  };
-  percentages: {
-    venue: number;
-    catering: number;
-    photography: number;
-    music: number;
-    decoration: number;
-    contingency: number;
-  };
+  breakdown: Record<string, number>;
+  percentages: Record<string, number>;
   categoryStatuses?: BudgetCategoryStatus[];
   globalRiskLevel?: "excellent" | "good" | "tight" | "critical";
   totalOverrunEstimate?: number;

@@ -132,7 +132,7 @@ export async function POST(req: Request) {
     const vendors = await vendorProfileRepo.listApproved();
     // Exclude vendors that already have a non-rejected match for this category
     const newVendors = vendors.filter((v) => !existingVendorIds.has(v.id));
-    const topMatches = await findTopMatches(tenderData, project, newVendors.length > 0 ? newVendors : vendors, category, 3);
+    const topMatches = await findTopMatches(tenderData, project, newVendors, category, 3);
 
     const tender = await tenderRepo.create(tenderData);
 

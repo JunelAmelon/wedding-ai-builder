@@ -39,6 +39,7 @@ export interface VendorProfile {
     city: string;
     zipCode: string;
     country: string;
+    geo?: { lat: number; lng: number };
   };
   serviceCategory: string;
   otherCategory: string | null;
@@ -61,6 +62,7 @@ export interface VendorProfile {
     cities: string[];
     radius: number | null;
     travelPolicy: string | null;
+    geo?: { lat: number; lng: number };
   };
   availability: {
     noticePeriod: string | null;
@@ -93,7 +95,7 @@ export interface CoupleProfile {
   id: string; // same as userId
   userId: string;
   weddingDate: string | null;
-  location: { city: string; country: string } | null;
+  location: { city: string; country: string; geo?: { lat: number; lng: number } } | null;
   guestCount: number | null;
   budget: { amount: number; currency: string } | null;
   style: WeddingStyle | null;
@@ -113,7 +115,7 @@ export interface WeddingProject {
   sessionId: string | null;
   name: string;
   weddingDate: string | null;
-  location: { city: string; country: string } | null;
+  location: { city: string; country: string; geo?: { lat: number; lng: number } } | null;
   guestCount: number | null;
   budget: { amount: number; currency: string } | null;
   style: WeddingStyle | null;
@@ -152,7 +154,7 @@ export interface Tender {
   selectedProposalId: string | null;
   budgetRange: { min: number; max: number; currency: string } | null;
   guestCount: number | null;
-  location: { city: string; country: string } | null;
+  location: { city: string; country: string; geo?: { lat: number; lng: number } } | null;
   weddingDate: string | null;
   style: WeddingStyle | null;
   customStyle: string | null;

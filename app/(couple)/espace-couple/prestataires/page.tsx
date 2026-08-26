@@ -92,7 +92,7 @@ const CATEGORY_IMAGES: Record<string, string> = {
   "Wedding planner": "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop",
   "Maquilleur / Coiffeur": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=400&fit=crop",
   "Animation": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=400&fit=crop",
-  "Transport": "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=400&fit=crop",
+  "Transport": "https://images.pexels.com/photos/29624024/pexels-photo-29624024.jpeg",
   "Hébergement": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=400&fit=crop",
   "Conception de robe de mariée": "https://images.unsplash.com/photo-1594552072238-b8a33785b261?w=400&h=400&fit=crop",
   "Bijoutier": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop",

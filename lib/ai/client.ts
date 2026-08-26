@@ -23,6 +23,7 @@ export interface CallAIOptions {
   user: string;
   temperature?: number;
   maxTokens?: number;
+  seed?: number;
 }
 
 export async function callAI({
@@ -30,6 +31,7 @@ export async function callAI({
   user,
   temperature = 0.4,
   maxTokens = 2500,
+  seed,
 }: CallAIOptions): Promise<string> {
   const openai = getClient();
   const model = env.OPENAI_MODEL;
@@ -39,6 +41,7 @@ export async function callAI({
       model,
       max_tokens: maxTokens,
       temperature,
+      seed,
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },

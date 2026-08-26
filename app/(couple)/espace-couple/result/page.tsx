@@ -1,27 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import PageHeader from "@/components/couple/PageHeader";
 import { track } from "@/lib/analytics/posthog.client";
-import type { WeddingSession } from "@/types/domain";
+import type { WeddingSession, TimelineMilestone } from "@/types/domain";
 import {
   CalendarDays,
   Download,
   Printer,
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
   TriangleAlert,
   CheckCircle2,
   Sparkles,
   Heart,
   Wallet,
   Clock,
-  Flag,
   Lightbulb,
   Users,
   MapPin,
@@ -47,6 +44,15 @@ function normalizeStyleAnswer(quiz: WeddingSession["quizAnswers"]) {
 function monthsBetween(from: Date, to: Date) {
   return (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24 * 30.4375);
 }
+
+const ADMINISTRATIVE_STEPS = [
+  { title: "Publication des bans", when: "M-3 à M-1", note: "Obligatoire à la mairie du lieu de célébration. Vérifier les délais de votre commune." },
+  { title: "Choix du régime matrimonial", when: "Avant le mariage", note: "Rendez-vous chez le notaire si vous optez pour un contrat autre que la communauté réduite aux acquêts." },
+  { title: "Passeports & visas invités", when: "Dès que possible", note: "Prévenez les invités étrangers pour leur laisser le temps d'obtenir les documents." },
+  { title: "Liste des témoins", when: "M-2", note: "Choisir et inscrire les témoins auprès de la mairie." },
+  { title: "Assurance mariage", when: "Dès signature des gros contrats", note: "Couvre annulation, responsabilité civile et dommages selon les contrats." },
+  { title: "Autorisation cérémonie laïque", when: "M-3", note: "Si cérémonie en extérieur ou lieu privé, vérifier les autorisations locales." },
+];
 
 function computeRiskEngine(
   answers: WeddingSession["quizAnswers"],
@@ -146,10 +152,22 @@ export default function CoupleResultPage() {
 
   const BUDGET_LABELS: Record<string, string> = {
     venue: "Lieu de réception",
-    catering: "Traiteur",
-    photography: "Photo & vidéo",
-    music: "Musique",
+    catering: "Traiteur & boissons",
+    photography: "Photographe",
+    videography: "Vidéaste",
+    music: "Musique & DJ",
     decoration: "Décoration",
+    flowers: "Fleurs",
+    attire: "Tenue des mariés",
+    rings: "Alliances & bijoux",
+    beauty: "Coiffure & maquillage",
+    stationery: "Papeterie",
+    transport: "Transport",
+    accommodation: "Hébergement",
+    cake: "Gâteau",
+    weddingPlanner: "Wedding planner",
+    officiant: "Officiant & cérémonie",
+    giftsFavours: "Cadeaux invités",
     contingency: "Imprévus",
   };
 
@@ -157,8 +175,20 @@ export default function CoupleResultPage() {
     venue: "#3C8552",
     catering: "#F2704A",
     photography: "#8B7BD8",
+    videography: "#5B4FC4",
     music: "#F4D93E",
     decoration: "#FBE1E6",
+    flowers: "#FDE68A",
+    attire: "#E4DBFB",
+    rings: "#C9A35C",
+    beauty: "#FBCFE8",
+    stationery: "#F4F1F7",
+    transport: "#A9C9F5",
+    accommodation: "#D8ECD9",
+    cake: "#FADADD",
+    weddingPlanner: "#FED7AA",
+    officiant: "#DBEAFE",
+    giftsFavours: "#F3E8FF",
     contingency: "#6B6B72",
   };
 
@@ -228,18 +258,41 @@ export default function CoupleResultPage() {
 
     const today = new Date();
     const sorted = aiOutput.timeline.milestones.slice().sort((a, b) => b.monthsBeforeWedding - a.monthsBeforeWedding);
-    const maxMonths = Math.max(...sorted.map((m) => m.monthsBeforeWedding), 1);
-    const minMonths = Math.min(...sorted.map((m) => m.monthsBeforeWedding), 0);
     const timeline = sorted.map((m) => {
       if (!wDate || Number.isNaN(wDate.getTime())) {
         return { ...m, displayDate: `${m.monthsBeforeWedding} mois avant` };
       }
-      const span = wDate.getTime() - today.getTime();
-      if (span <= 0) return { ...m, displayDate: formatDateFr(wDate) };
-      const denom = Math.max(1, maxMonths - minMonths);
-      const t = Math.max(0, Math.min(1, (maxMonths - m.monthsBeforeWedding) / denom));
-      const dt = new Date(today.getTime() + span * t);
-      return { ...m, displayDate: formatDateFr(dt) };
+
+      function subtractMonths(date: Date, months: number) {
+        const result = new Date(date);
+        const whole = Math.floor(months);
+        const days = Math.round((months - whole) * 30.44);
+        result.setMonth(result.getMonth() - whole);
+        result.setDate(result.getDate() - days);
+        return result;
+      }
+
+      let targetDate: Date;
+      if (m.idealDeadline) {
+        const parsed = new Date(m.idealDeadline);
+        targetDate = Number.isNaN(parsed.getTime()) ? subtractMonths(wDate, m.monthsBeforeWedding) : parsed;
+      } else {
+        targetDate = subtractMonths(wDate, m.monthsBeforeWedding);
+      }
+
+      const computedStatus: TimelineMilestone["status"] =
+        m.status ??
+        (targetDate < today
+          ? "completed"
+          : targetDate.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000
+            ? "in_progress"
+            : "upcoming");
+
+      return {
+        ...m,
+        displayDate: formatDateFr(targetDate),
+        status: computedStatus,
+      };
     });
 
     const computed = computeRiskEngine(session.quizAnswers, tb, cur);
@@ -266,31 +319,6 @@ export default function CoupleResultPage() {
     };
   }, [session?.aiOutput, session?.quizAnswers]);
 
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const [canScroll, setCanScroll] = useState({ left: false, right: false });
-
-  const scrollTimeline = (direction: number) => {
-    timelineRef.current?.scrollBy({ left: direction * 220, behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    const el = timelineRef.current;
-    const update = () => {
-      if (!el) return;
-      setCanScroll({
-        left: el.scrollLeft > 0,
-        right: el.scrollLeft + el.clientWidth < el.scrollWidth - 1,
-      });
-    };
-    update();
-    el?.addEventListener("scroll", update);
-    window.addEventListener("resize", update);
-    return () => {
-      el?.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, [timelineWithDates.length]);
-
   if (loading) return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
   if (error) return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white p-6">{error}</div>;
   if (!session?.aiOutput) return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white p-6">Résultat indisponible.</div>;
@@ -302,11 +330,11 @@ export default function CoupleResultPage() {
 
   const metricCards = [
     {
-      label: "Score de match",
-      value: riskEngine.riskScore.toString(),
-      hint: riskLabel,
-      chip: "#F4D93E",
-      icon: Sparkles,
+      label: "Style",
+      value: displayStyle,
+      hint: "ambiance",
+      chip: "#FBE1E6",
+      icon: Heart,
     },
     {
       label: "Budget",
@@ -316,89 +344,47 @@ export default function CoupleResultPage() {
       icon: Wallet,
     },
     {
-      label: "Style",
-      value: displayStyle,
-      hint: "ambiance",
-      chip: "#FBE1E6",
-      icon: Heart,
+      label: "Invités",
+      value: session?.quizAnswers?.guestCount?.toString() ?? "—",
+      hint: "personnes",
+      chip: "#D8ECD9",
+      icon: Users,
+    },
+    {
+      label: "Lieu",
+      value: session?.quizAnswers?.location?.city ?? "Non défini",
+      hint: "ville",
+      chip: "#E4DBFB",
+      icon: MapPin,
     },
     {
       label: "Délai",
       value: weddingDate ? `${Math.max(0, Math.round(monthsBetween(new Date(), weddingDate)))} mois` : "—",
       hint: "avant le jour J",
-      chip: "#E4DBFB",
+      chip: "#F4D93E",
       icon: Clock,
+    },
+    {
+      label: "Score",
+      value: riskEngine.riskScore.toString(),
+      hint: riskLabel,
+      chip: riskTone,
+      icon: Sparkles,
     },
   ] as const;
 
   const HeroImage = (
-    <div className="relative w-full max-w-[520px] mx-auto pb-16">
-      <div className="relative rounded-[34px] overflow-visible">
-        <div className="relative w-full aspect-[1/1.15] rounded-[28px] overflow-hidden">
-          <Image
-            src="/hero-result.png"
-            alt=""
-            fill
-            sizes="(max-width: 768px) 100vw, 520px"
-            className="object-cover"
-            unoptimized
-            priority
-          />
-        </div>
-
-        <div className="absolute left-4 right-4 sm:left-6 sm:right-6 -bottom-12 rounded-[24px] bg-white border border-black/10 shadow-[0_18px_40px_rgba(14,14,16,0.14)] p-4 sm:p-5 z-20">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-grey mb-4">Résumé</div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="min-w-0 flex-1">
-                <div className="text-[10px] uppercase tracking-wider text-grey/70">Style</div>
-                <div className="font-display text-sm font-bold text-ink leading-snug break-words">{displayStyle}</div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="h-7 w-7 rounded-full flex items-center justify-center" style={{ backgroundColor: riskTone }}>
-                  <Sparkles size={13} color="#0E0E10" />
-                </span>
-                <div>
-                  <div className="font-display text-base font-bold text-ink leading-none">{riskEngine.riskScore}</div>
-                  <div className="text-[9px] text-text-secondary">score</div>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 pt-3 border-t border-line">
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-grey/70">Budget</div>
-                <div className="font-display text-sm font-bold text-ink">{formatAmount(totalBudget)}</div>
-                <div className="text-[9px] text-text-secondary">enveloppe totale</div>
-              </div>
-              <div className="text-right">
-                <div className="text-[10px] uppercase tracking-wider text-grey/70">Délai</div>
-                <div className="font-display text-sm font-bold text-ink">
-                  {weddingDate ? `${Math.max(0, Math.round(monthsBetween(new Date(), weddingDate)))} mois` : "—"}
-                </div>
-                <div className="text-[9px] text-text-secondary">avant le jour J</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute -top-6 left-4 sm:-top-8 sm:-left-6 bg-white rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-line w-[160px] sm:w-[190px] z-10">
-        <div className="flex items-center gap-2 mb-2">
-          <Users size={14} className="text-ink" />
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Invités</span>
-        </div>
-        <div className="font-display text-xl font-bold text-ink">{session?.quizAnswers?.guestCount ?? "—"}</div>
-        <div className="text-[10px] text-text-secondary mt-1">personnes</div>
-      </div>
-
-      <div className="absolute top-6 right-4 sm:top-10 sm:-right-7 bg-lavender rounded-[22px] p-4 shadow-[0_18px_40px_rgba(14,14,16,0.12)] border border-white/60 w-[160px] sm:w-[190px] z-10">
-        <div className="flex items-center gap-2 mb-2">
-          <MapPin size={14} className="text-ink" />
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-ink/70">Lieu</span>
-        </div>
-        <div className="font-display text-sm font-bold text-ink leading-snug truncate">
-          {session?.quizAnswers?.location?.city ?? "Non défini"}
-        </div>
+    <div className="w-full max-w-[520px] mx-auto">
+      <div className="relative h-[420px] sm:h-[520px] rounded-[32px] overflow-hidden shadow-[0_20px_60px_-15px_rgba(14,14,16,0.16)] border border-line">
+        <Image
+          src="/hero-result.png"
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, 520px"
+          className="object-cover"
+          unoptimized
+          priority
+        />
       </div>
     </div>
   );
@@ -494,91 +480,88 @@ export default function CoupleResultPage() {
       {/* ============================== TIMELINE ============================== */}
       <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <span className="inline-flex items-center h-[26px] px-3.5 rounded-full border border-line text-[11px] font-semibold uppercase tracking-[0.04em] text-grey bg-white mb-5">
-              Votre parcours
-            </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink">Le chemin jusqu'au Jour J</h2>
-            <p className="text-text-secondary mt-4 leading-relaxed max-w-2xl text-justify">
-              Chaque étape est calibrée selon votre date. Concentrez-vous sur l'échéance suivante pour avancer sereinement.
-            </p>
-          </div>
+          <div className="rounded-[32px] bg-white border border-line overflow-hidden shadow-[0_20px_60px_-15px_rgba(219,39,119,0.08)] p-6 lg:p-8">
+            <div className="text-center mb-10">
+              <h3 className="text-xs uppercase tracking-[0.22em] text-grey font-semibold mb-3">Frise chronologique</h3>
+              <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink tracking-tight mb-4">Votre parcours jusqu'au Jour J</h2>
+            </div>
 
-          <div className="rounded-[32px] bg-ink text-white overflow-hidden shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
-            <div className="p-6 lg:p-8">
-              <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <Flag size={14} className="text-sage" />
-                  <div className="text-xs uppercase tracking-[0.22em] text-white/60">Frise chronologique</div>
-                </div>
-              </div>
+            <div className="relative">
+              {/* Ligne horizontale desktop */}
+              <div className="absolute top-[180px] left-0 right-0 h-[2px] bg-ink/10 hidden sm:block" />
 
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => scrollTimeline(-1)}
-                  className={`absolute left-2 top-[24px] z-20 h-5 w-5 rounded-full bg-yellow text-ink flex items-center justify-center shadow-sm transition ${canScroll.left ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-                  aria-label="Défiler vers la gauche"
-                >
-                  <ChevronLeft size={12} strokeWidth={2.5} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollTimeline(1)}
-                  className={`absolute right-2 top-[24px] z-20 h-5 w-5 rounded-full bg-yellow text-ink flex items-center justify-center shadow-sm transition ${canScroll.right ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-                  aria-label="Défiler vers la droite"
-                >
-                  <ChevronRight size={12} strokeWidth={2.5} />
-                </button>
-
-                <div
-                  ref={timelineRef}
-                  className="overflow-x-auto -mx-2 px-2 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-                >
-                  <div className="relative flex gap-4 min-w-max">
-                    <div className="absolute top-[34px] left-0 right-0 h-[2px] bg-yellow" />
-
-                    {timelineWithDates.map((m, idx) => {
-                      const bg = ["#f4f1f7", "#E4DBFB", "#FBE1E6", "#F4D93E", "#F2704A"][idx % 5];
-                      return (
-                        <div
-                          key={`${m.monthsBeforeWedding}-${m.title}`}
-                          className="relative w-[170px] shrink-0 flex flex-col"
-                        >
-                          <div className="h-5 self-center flex items-center justify-center text-[10px] text-white/50 mb-2">
-                            {m.monthsBeforeWedding === 0 ? "Jour J" : `M-${m.monthsBeforeWedding}`}
-                          </div>
-
-                          <div className="relative z-10 self-center mb-5">
-                            <span className="h-3 w-3 rounded-full ring-4 ring-ink block" style={{ backgroundColor: bg }} />
-                          </div>
-
-                          <div className="flex-1 min-h-0 w-full rounded-[22px] bg-white/[0.06] border border-white/[0.10] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] p-4">
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="text-[10px] uppercase tracking-[0.18em] text-white/60 truncate">
-                                Étape {idx + 1}
-                              </div>
-                              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: bg }} />
-                            </div>
-                            <div className="font-display text-base font-bold mt-2 leading-snug">
-                              {m.title}
-                            </div>
-                            <div className="text-xs text-white/60 mt-1">{m.displayDate}</div>
-
-                            <div className="mt-3 space-y-2">
-                              {m.tasks.slice(0, 2).map((task) => (
-                                <div key={task} className="text-xs text-white/70 leading-snug flex items-start gap-2">
-                                  <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: bg }} />
-                                  <span className="line-clamp-2">{task}</span>
+              <div className="flex flex-col sm:flex-row sm:overflow-x-auto sm:gap-0 sm:[&::-webkit-scrollbar]:hidden sm:[scrollbar-width:none] gap-4">
+                {timelineWithDates.map((m, idx) => {
+                  const isTop = idx % 2 === 0;
+                  const accent = ["#db2777", "#8C2F39", "#F2704A", "#8B7BD8", "#3C8552"][idx % 5];
+                  return (
+                    <div
+                      key={`${m.monthsBeforeWedding}-${m.title}`}
+                      className="relative h-auto sm:h-[360px] sm:w-[170px] sm:shrink-0 flex sm:flex-col items-center"
+                    >
+                      {/* Desktop : alternance haut / bas */}
+                      <div className="hidden sm:flex flex-col w-full h-full">
+                        {isTop ? (
+                          <>
+                            <div className="flex-1 flex items-end justify-center pb-5">
+                              <div className="text-center w-[150px]">
+                                <div className="text-4xl font-bold text-ink/10 leading-none">{String(idx + 1).padStart(2, "0")}</div>
+                                <h4 className="font-display font-bold text-sm text-ink mt-2 leading-tight">{m.title}</h4>
+                                <p className="text-[10px] text-grey mt-1.5">{m.displayDate}</p>
+                                <div className="mt-2 space-y-1.5">
+                                  {m.tasks.slice(0, 2).map((task) => (
+                                    <p key={task} className="text-[9px] text-grey/70 leading-snug line-clamp-2">{task}</p>
+                                  ))}
                                 </div>
-                              ))}
+                              </div>
                             </div>
+                            <div className="flex items-center justify-center">
+                              <span className="h-5 w-5 rounded-full ring-4 ring-white z-10" style={{ backgroundColor: accent }} />
+                            </div>
+                            <div className="flex-1" />
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex-1" />
+                            <div className="flex items-center justify-center">
+                              <span className="h-5 w-5 rounded-full ring-4 ring-white z-10" style={{ backgroundColor: accent }} />
+                            </div>
+                            <div className="flex-1 flex items-start justify-center pt-5">
+                              <div className="text-center w-[150px]">
+                                <div className="text-4xl font-bold text-ink/10 leading-none">{String(idx + 1).padStart(2, "0")}</div>
+                                <h4 className="font-display font-bold text-sm text-ink mt-2 leading-tight">{m.title}</h4>
+                                <p className="text-[10px] text-grey mt-1.5">{m.displayDate}</p>
+                                <div className="mt-2 space-y-1.5">
+                                  {m.tasks.slice(0, 2).map((task) => (
+                                    <p key={task} className="text-[9px] text-grey/70 leading-snug line-clamp-2">{task}</p>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Mobile : liste verticale simple */}
+                      <div className="sm:hidden flex items-start gap-4 w-full">
+                        <div className="flex flex-col items-center h-full">
+                          <span className="h-4 w-4 rounded-full z-10" style={{ backgroundColor: accent }} />
+                          {idx !== timelineWithDates.length - 1 && <div className="w-[2px] flex-1 bg-ink/10 my-1" />}
+                        </div>
+                        <div className="flex-1 pb-8">
+                          <div className="text-2xl font-bold text-ink/10 leading-none">{String(idx + 1).padStart(2, "0")}</div>
+                          <h4 className="font-display font-bold text-base text-ink mt-1 leading-tight">{m.title}</h4>
+                          <p className="text-xs text-grey mt-1">{m.displayDate}</p>
+                          <div className="mt-2 space-y-1">
+                            {m.tasks.slice(0, 2).map((task) => (
+                              <p key={task} className="text-xs text-grey/70 leading-snug">{task}</p>
+                            ))}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -589,7 +572,14 @@ export default function CoupleResultPage() {
       <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="bg-white rounded-[28px] p-6 lg:p-12 border border-line">
-            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-14 items-center">
+            <div className="text-center lg:text-left mb-10">
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-ink mb-2">Planification budgétaire</h2>
+              <p className="text-sm text-text-secondary max-w-xl mx-auto lg:mx-0">
+                Répartition complète sur {percentRows.length} postes. Faites défiler la liste si nécessaire.
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-14">
               <div className="flex flex-col items-center">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-grey mb-4">Répartition du budget</span>
                 <svg viewBox="0 0 200 200" className="w-56 h-56 lg:w-64 lg:h-64">
@@ -647,7 +637,10 @@ export default function CoupleResultPage() {
                 <p className="text-sm text-text-secondary mb-8 max-w-md mx-auto lg:mx-0">
                   Le lieu et la restauration absorbent généralement la plus grande part. La provision Imprévus (8-12%) est incluse pour absorber les dépassements classiques.
                 </p>
-                <div className="space-y-3">
+                <div
+                  className="space-y-3 max-h-[360px] overflow-y-auto pr-2 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-[#fff0f3] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#FBE1E6]"
+                  style={{ scrollbarColor: "#FBE1E6 #fff0f3" }}
+                >
                   {percentRows
                     .slice()
                     .sort((a, b) => b[1] - a[1])
@@ -665,6 +658,36 @@ export default function CoupleResultPage() {
                     ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================== ADMINISTRATIF ============================== */}
+      <section className="px-6 py-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-[28px] p-6 lg:p-12 border border-line">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center h-[26px] px-3.5 rounded-full border border-line text-[11px] font-semibold uppercase tracking-[0.04em] text-grey bg-white mb-5">
+                Pense-bête
+              </span>
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-ink mb-2">Démarches administratives à anticiper</h2>
+              <p className="text-sm text-text-secondary mb-8">
+                Chaque commune et chaque situation est différente. Vérifiez ces points en fonction de votre mairie, de la nationalité des invités et du type de cérémonie.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {ADMINISTRATIVE_STEPS.map((step) => (
+                <div key={step.title} className="rounded-[18px] border border-line p-5 bg-surface/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="h-2 w-2 rounded-full bg-lavender-deep" />
+                    <h3 className="font-display font-bold text-sm text-ink">{step.title}</h3>
+                  </div>
+                  <p className="text-[10px] uppercase tracking-wider text-grey mb-1">{step.when}</p>
+                  <p className="text-xs text-text-secondary leading-relaxed">{step.note}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

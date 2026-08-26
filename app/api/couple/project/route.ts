@@ -9,6 +9,13 @@ import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
 import { generateWeddingPlan } from "@/lib/ai/orchestrator";
 import { delCached } from "@/lib/cache/redis";
 import { runAutoMatching } from "@/lib/matching/auto-match";
+import { geocodeCity } from "@/lib/geocoding/nominatim";
+
+async function geocodeLocation(location: { city?: string | null; country?: string | null } | null | undefined): Promise<{ city: string; country: string; geo?: { lat: number; lng: number } } | null> {
+  if (!location || !location.city || !location.country) return null;
+  const geo = await geocodeCity(location.city, location.country);
+  return { city: location.city, country: location.country, ...(geo ? { geo } : {}) };
+}
 
 function cleanNumber(value: unknown): number | null {
   if (value === null || value === undefined || value === "") return null;
@@ -80,13 +87,15 @@ export async function POST(req: Request) {
     const coupleProfile = await coupleProfileRepo.getByUserId(user.id);
     if (!coupleProfile) return NextResponse.json({ error: "Profil introuvable" }, { status: 404 });
 
+    const location = await geocodeLocation(parsed.data.location);
+
     const project = await projectRepo.create({
       userId: user.id,
       coupleProfileId: coupleProfile.id,
       sessionId: null,
       name: parsed.data.name || "Mon mariage",
       weddingDate: parsed.data.weddingDate ?? null,
-      location: parsed.data.location ?? null,
+      location,
       guestCount: parsed.data.guestCount ?? null,
       budget: parsed.data.budget ?? null,
       style: (parsed.data.style as never) ?? null,
@@ -119,10 +128,13 @@ export async function PUT(req: Request) {
     const project = projects[0];
     if (!project) return NextResponse.json({ error: "Projet introuvable" }, { status: 404 });
 
-    const updated = await projectRepo.update(project.id, {
-      ...parsed.data,
-      style: parsed.data.style as never,
-    });
+    const location = parsed.data.location ? await geocodeLocation(parsed.data.location) : null;
+    const updatePayload: Record<string, unknown> = { ...parsed.data, style: parsed.data.style as never };
+    if ("location" in updatePayload) {
+      updatePayload.location = location;
+    }
+
+    const updated = await projectRepo.update(project.id, updatePayload);
 
     let regenerated = false;
     if (updated.sessionId) {

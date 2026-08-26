@@ -57,14 +57,12 @@ function haversineDistanceKm(a: GeoPoint, b: GeoPoint): number {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-function getVendorGeo(vendor: VendorProfile): GeoPoint | null {
-  const area = vendor.serviceArea as unknown as { geo?: GeoPoint };
-  return area?.geo ?? null;
+function getVendorGeo(vendor: VendorProfile): { lat: number; lng: number } | null {
+  return vendor.serviceArea?.geo ?? null;
 }
 
-function getNeedGeo(tender: Partial<Tender>, project: WeddingProject): GeoPoint | null {
-  const loc = (tender.location ?? project.location) as unknown as { geo?: GeoPoint } | null;
-  return loc?.geo ?? null;
+function getNeedGeo(tender: Partial<Tender>, project: WeddingProject): { lat: number; lng: number } | null {
+  return tender.location?.geo ?? project.location?.geo ?? null;
 }
 
 function computeDistanceKm(tender: Partial<Tender>, project: WeddingProject, vendor: VendorProfile): number | null {
@@ -87,15 +85,29 @@ function normalizeStyle(style: unknown): string {
   return "";
 }
 
+function sanitizeString(value: unknown, maxLength = 200): string {
+  if (typeof value !== "string") return "";
+  return value
+    .replace(/[<>\{\}\[\]"'`]/g, "")
+    .replace(/\r?\n/g, " ")
+    .trim()
+    .slice(0, maxLength);
+}
+
+function sanitizeForPrompt(values: string[]): string[] {
+  return values.map((v) => sanitizeString(v, 300)).filter((v) => v.length > 0);
+}
+
 function getNeedContext(tender: Partial<Tender>, project: WeddingProject) {
+  const rawRequirements = Array.isArray(tender.requirements) ? tender.requirements : [];
   return {
     budget: tender.budgetRange ?? project.budget ?? null,
     guestCount: tender.guestCount ?? project.guestCount ?? null,
     location: tender.location ?? project.location ?? null,
     weddingDate: tender.weddingDate ?? project.weddingDate ?? null,
     style: tender.customStyle || normalizeStyle(tender.style) || project.customStyle || normalizeStyle(project.style) || null,
-    requirements: tender.requirements ?? [],
-    priority: tender.priority ?? null,
+    requirements: sanitizeForPrompt(rawRequirements),
+    priority: sanitizeString(tender.priority ?? project.mainPriority, 200),
   };
 }
 
@@ -449,7 +461,7 @@ async function scoreBatchWithAI(
 
   let raw: string;
   try {
-    raw = await callAI({ system, user, temperature: 0.2, maxTokens: 4000 });
+    raw = await callAI({ system, user, temperature: 0, maxTokens: 4000, seed: 123456 });
   } catch {
     return {};
   }
@@ -597,28 +609,11 @@ export async function findTopMatches(
     };
   });
 
-  let finalMatches = scored.filter((m) => m.score >= MIN_MATCH_SCORE);
-
-  if (finalMatches.length === 0 && candidates.length > 0) {
-    finalMatches = candidates.map((vendor) => {
-      const ruleBased = calculateMatchScore(tender, project, vendor, category);
-      return {
-        id: "",
-        projectId: project.id,
-        tenderId: tender.id ?? null,
-        vendorId: vendor.id,
-        category,
-        score: Math.max(ruleBased.score, 55),
-        reasons: ruleBased.reasons.length > 0 ? ruleBased.reasons : ["même catégorie de prestataire"],
-        summary: ruleBased.summary ?? "Prestataire correspondant à votre catégorie de recherche.",
-        status: "suggested" as const,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-    });
-  }
-
-  return finalMatches
+  // Return the top `limit` candidates sorted deterministically by score and tier.
+  // Filtering by MIN_MATCH_SCORE is intentionally skipped here so the couple always
+  // sees the same number of recommendations between reloads. Low-scoring candidates
+  // naturally end up at the bottom.
+  return scored
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       const tierOrder: Record<string, number> = { luxe: 4, premium: 3, standard: 2, economique: 1 };
