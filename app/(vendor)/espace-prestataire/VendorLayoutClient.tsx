@@ -87,7 +87,7 @@ export default function VendorLayoutClient({
   }
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white text-[#1c1c1c]">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff8fa] to-white text-[#1c1c1c]">
       <div
         className="hidden lg:block fixed inset-x-0 top-0 z-40 px-6 py-3 bg-white/90 backdrop-blur-xl border-b border-[#e6e4dd] shadow-[0_8px_30px_rgba(14,14,16,0.06)]"
       >

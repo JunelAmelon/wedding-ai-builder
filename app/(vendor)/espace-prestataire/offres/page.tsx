@@ -7,7 +7,7 @@ const PLANS = [
   {
     name: "Essentiel",
     price: 49,
-    color: "#fff0f3",
+    color: "#fff8fa",
     accent: "#15181c",
     popular: false,
     icon: Shield,
@@ -120,7 +120,7 @@ export default function VendorOffresPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fff0f3] text-[#15181c] font-sans">
+    <div className="min-h-screen bg-[#fff8fa] text-[#15181c] font-sans">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
         <div className="text-center mb-12">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[#6b7076] mb-3">

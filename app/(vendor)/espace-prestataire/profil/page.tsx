@@ -206,14 +206,14 @@ export default function VendorProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] flex items-center justify-center bg-[#fff0f3]">
+      <div className="min-h-[80dvh] flex items-center justify-center bg-[#fff8fa]">
         <Loader2 className="animate-spin text-[#15181c]" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fff0f3] pb-12">
+    <div className="min-h-screen bg-[#fff8fa] pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 lg:py-14">
         <div className="mb-6 sm:mb-8">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[#6b7076] mb-2">Mon compte</p>

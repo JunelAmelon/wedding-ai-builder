@@ -91,14 +91,14 @@ export default function VendorDashboardPage() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff0f3] text-[#6b7076] font-sans">
+      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff8fa] text-[#6b7076] font-sans">
         Chargement du tableau de bord…
       </div>
     );
 
   if (!data)
     return (
-      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff0f3] text-[#6b7076] font-sans">
+      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff8fa] text-[#6b7076] font-sans">
         Impossible de charger le tableau de bord. Vérifiez votre connexion ou réessayez.
       </div>
     );
@@ -145,7 +145,7 @@ export default function VendorDashboardPage() {
   const isActive = sub?.status === "active" || sub?.status === "trialing";
 
   return (
-    <div className="min-h-screen bg-[#fff0f3] font-sans">
+    <div className="min-h-screen bg-[#fff8fa] font-sans">
       {toast && (
         <div
           className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full shadow-lg text-sm font-semibold flex items-center gap-2 ${
@@ -323,7 +323,7 @@ export default function VendorDashboardPage() {
                     <Link
                       key={match.id}
                       href={`/espace-prestataire/appels-offres/${match.id}`}
-                      className="grid sm:grid-cols-5 gap-2 sm:gap-4 p-4 items-center hover:bg-[#fff0f3]/50 transition group"
+                      className="grid sm:grid-cols-5 gap-2 sm:gap-4 p-4 items-center hover:bg-[#fff8fa]/50 transition group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-2xl bg-[#f4f1f7] flex items-center justify-center text-xs font-bold text-[#15181c]">

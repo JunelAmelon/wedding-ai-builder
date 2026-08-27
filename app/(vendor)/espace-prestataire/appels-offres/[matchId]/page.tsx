@@ -143,7 +143,7 @@ export default function VendorProjectDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center">
+      <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white flex items-center justify-center">
         <Loader2 size={32} className="animate-spin text-[#cbd5e1]" />
       </div>
     );
@@ -151,7 +151,7 @@ export default function VendorProjectDetailPage() {
 
   if (error || !data) {
     return (
-      <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
+      <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white flex items-center justify-center px-6">
         <div className="text-center max-w-md">
           <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-[#f4f1f7] mb-6">
             <ArrowLeft size={28} className="text-[#15181c]" />
@@ -176,7 +176,7 @@ export default function VendorProjectDetailPage() {
   // Free vendors: show paywall instead of couple details
   if (isFree || !project) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white font-sans">
+      <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white font-sans">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
           <button
             onClick={() => router.push("/espace-prestataire/appels-offres")}
@@ -233,7 +233,7 @@ export default function VendorProjectDetailPage() {
   const matchReasons = (match.reasons || []).slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white font-sans">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
         {/* Back link */}
         <button

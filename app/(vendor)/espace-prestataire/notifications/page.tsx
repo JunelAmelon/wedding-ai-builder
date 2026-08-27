@@ -66,7 +66,7 @@ export default function VendorNotificationsPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
 
   return (
     <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">

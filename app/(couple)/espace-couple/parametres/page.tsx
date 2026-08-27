@@ -91,7 +91,7 @@ export default function CoupleSettingsPage() {
 
   const initials = `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase();
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">

@@ -70,7 +70,7 @@ export default function CoupleSupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Mon espace"
@@ -94,7 +94,7 @@ export default function CoupleSupportPage() {
               </div>
             ) : tickets.length === 0 ? (
               <div className="rounded-2xl border border-line bg-white p-6 text-center">
-                <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-[#fff0f3] mb-3">
+                <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-[#fff8fa] mb-3">
                   <MessageSquare size={22} className="text-text-secondary" />
                 </div>
                 <p className="text-sm text-text-secondary">Vous n'avez pas encore de ticket.</p>
@@ -188,7 +188,7 @@ export default function CoupleSupportPage() {
           {/* Info cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-2xl border border-line bg-white p-5 flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#fff0f3] flex items-center justify-center shrink-0">
+              <div className="h-10 w-10 rounded-xl bg-[#fff8fa] flex items-center justify-center shrink-0">
                 <Mail size={18} className="text-text-secondary" />
               </div>
               <div>
@@ -197,7 +197,7 @@ export default function CoupleSupportPage() {
               </div>
             </div>
             <div className="rounded-2xl border border-line bg-white p-5 flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#fff0f3] flex items-center justify-center shrink-0">
+              <div className="h-10 w-10 rounded-xl bg-[#fff8fa] flex items-center justify-center shrink-0">
                 <Clock size={18} className="text-text-secondary" />
               </div>
               <div>
@@ -206,7 +206,7 @@ export default function CoupleSupportPage() {
               </div>
             </div>
             <div className="rounded-2xl border border-line bg-white p-5 flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#fff0f3] flex items-center justify-center shrink-0">
+              <div className="h-10 w-10 rounded-xl bg-[#fff8fa] flex items-center justify-center shrink-0">
                 <LifeBuoy size={18} className="text-text-secondary" />
               </div>
               <div>

@@ -174,7 +174,7 @@ export default function CategorySuggestionsPage() {
     setShowTenderForm(true);
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
   if (error && suggestions.length === 0)
     return (
       <div className="max-w-6xl mx-auto px-6 py-14 text-center text-text-secondary">{error}</div>
@@ -189,7 +189,7 @@ export default function CategorySuggestionsPage() {
   const heroImage = CATEGORY_IMAGES[rawCategory] || CATEGORY_IMAGES["Autre"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <Link
           href="/espace-couple/prestataires"

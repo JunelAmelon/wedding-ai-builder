@@ -224,9 +224,9 @@ export default function CoupleVendorsPage() {
   // Vérifier si une catégorie a déjà un appel d'offres
   const hasTenderForCategory = (cat: string) => tenders.some((t) => t.category === cat);
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
   if (error) return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white flex items-center justify-center px-6">
       <div className="bg-white border border-[#fce7f3] rounded-2xl p-6 text-center max-w-md">
         <p className="text-[#831843]">{error}</p>
       </div>
@@ -234,7 +234,7 @@ export default function CoupleVendorsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Appels d'offres"

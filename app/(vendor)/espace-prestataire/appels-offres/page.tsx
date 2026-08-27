@@ -127,10 +127,10 @@ export default function VendorOpportunitiesPage() {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  if (loading) return <div className='min-h-screen bg-[#fff0f3]' />;
+  if (loading) return <div className='min-h-screen bg-[#fff8fa]' />;
 
   return (
-    <div className='min-h-screen bg-[#fff0f3] text-[#15181c] font-sans'>
+    <div className='min-h-screen bg-[#fff8fa] text-[#15181c] font-sans'>
       <div className='max-w-[1400px] mx-auto px-10 sm:px-20 py-12'>
         {/* Header */}
         <header className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-10'>
@@ -197,7 +197,7 @@ export default function VendorOpportunitiesPage() {
                     {sorted.length > 1 ? 's' : ''}
                   </p>
                 </div>
-                <div className='w-10 h-10 rounded-full bg-[#fff0f3] flex items-center justify-center text-[#15181c]'>
+                <div className='w-10 h-10 rounded-full bg-[#fff8fa] flex items-center justify-center text-[#15181c]'>
                   <TrendingUp className='w-5 h-5 stroke-[2]' />
                 </div>
               </div>
@@ -205,7 +205,7 @@ export default function VendorOpportunitiesPage() {
               {/* Tableau desktop */}
               <div className='overflow-x-auto hidden lg:block'>
                 <table className='w-full text-left border-collapse'>
-                  <thead className='bg-[#fff0f3]'>
+                  <thead className='bg-[#fff8fa]'>
                     <tr>
                       <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
                         Projet
@@ -229,7 +229,7 @@ export default function VendorOpportunitiesPage() {
                       <tr>
                         <td colSpan={5} className='py-16 px-5 text-center'>
                           <div className='flex flex-col items-center gap-3 text-[#6b7076]'>
-                            <div className='w-14 h-14 rounded-full bg-[#fff0f3] flex items-center justify-center text-[#15181c]'>
+                            <div className='w-14 h-14 rounded-full bg-[#fff8fa] flex items-center justify-center text-[#15181c]'>
                               <FileText className='w-6 h-6' />
                             </div>
                             <p className='text-base font-semibold text-[#15181c]'>
@@ -267,7 +267,7 @@ export default function VendorOpportunitiesPage() {
                             )}
                           </td>
                           <td className='py-4 px-5'>
-                            <span className='inline-flex items-center rounded-full bg-[#fff0f3] text-[#15181c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] border border-[#ececec]'>
+                            <span className='inline-flex items-center rounded-full bg-[#fff8fa] text-[#15181c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] border border-[#ececec]'>
                               {match.category}
                             </span>
                           </td>
@@ -275,7 +275,7 @@ export default function VendorOpportunitiesPage() {
                             {project?.location?.city || 'Lieu non précisé'}
                           </td>
                           <td className='py-4 px-5'>
-                            <div className='inline-flex items-center gap-1 bg-[#fff0f3] px-2.5 py-1 rounded-full text-xs font-bold text-[#15181c]'>
+                            <div className='inline-flex items-center gap-1 bg-[#fff8fa] px-2.5 py-1 rounded-full text-xs font-bold text-[#15181c]'>
                               <Sparkles className='w-3.5 h-3.5' />
                               {match.score}
                             </div>
@@ -331,7 +331,7 @@ export default function VendorOpportunitiesPage() {
                 {sorted.length === 0 ? (
                   <div className='py-12 text-center'>
                     <div className='flex flex-col items-center gap-3 text-[#6b7076]'>
-                      <div className='w-14 h-14 rounded-full bg-[#fff0f3] flex items-center justify-center text-[#15181c]'>
+                      <div className='w-14 h-14 rounded-full bg-[#fff8fa] flex items-center justify-center text-[#15181c]'>
                         <FileText className='w-6 h-6' />
                       </div>
                       <p className='text-base font-semibold text-[#15181c]'>
@@ -490,7 +490,7 @@ export default function VendorOpportunitiesPage() {
               </button>
 
               <div className='flex items-center gap-3 mb-6'>
-                <div className='w-14 h-14 rounded-2xl bg-[#fff0f3] flex items-center justify-center'>
+                <div className='w-14 h-14 rounded-2xl bg-[#fff8fa] flex items-center justify-center'>
                   <Send size={26} className='text-[#15181c]' />
                 </div>
                 <div>
@@ -503,7 +503,7 @@ export default function VendorOpportunitiesPage() {
                 </div>
               </div>
 
-              <div className='mb-6 p-4 rounded-2xl bg-[#fff0f3] border border-[#ececec]'>
+              <div className='mb-6 p-4 rounded-2xl bg-[#fff8fa] border border-[#ececec]'>
                 <div className='flex items-center gap-2 mb-2'>
                   <span className='inline-flex items-center rounded-full bg-white text-[#15181c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em]'>
                     {selected.match.category}
@@ -554,7 +554,7 @@ export default function VendorOpportunitiesPage() {
               </div>
 
               {success && (
-                <div className='mt-4 p-4 rounded-xl bg-[#fff0f3] border border-[#fff0f3]/20'>
+                <div className='mt-4 p-4 rounded-xl bg-[#fff8fa] border border-[#fff8fa]/20'>
                   <p className='text-sm text-[#15181c]'>
                     Proposition envoyée avec succès !
                   </p>
@@ -587,10 +587,10 @@ function DossierCard({
     <div className='rounded-[20px] bg-white border border-[#ececec] p-6 shadow-md hover:shadow-lg transition group'>
       <div className='flex items-start justify-between mb-5'>
         <div className='flex items-center gap-2 flex-wrap'>
-          <span className='inline-flex items-center rounded-full bg-[#fff0f3] text-[#15181c] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em]'>
+          <span className='inline-flex items-center rounded-full bg-[#fff8fa] text-[#15181c] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em]'>
             {match.category}
           </span>
-          <div className='flex items-center gap-1 bg-[#fff0f3] px-2.5 py-1 rounded-full'>
+          <div className='flex items-center gap-1 bg-[#fff8fa] px-2.5 py-1 rounded-full'>
             <Sparkles size={13} className='text-[#15181c]' />
             <span className='text-xs font-bold text-[#15181c]'>
               {match.score}

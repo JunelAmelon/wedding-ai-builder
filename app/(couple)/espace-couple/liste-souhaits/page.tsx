@@ -160,7 +160,7 @@ export default function WishlistManagementPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] bg-[#fff0f3] flex items-center justify-center font-sans">
+      <div className="min-h-[80dvh] bg-[#fff8fa] flex items-center justify-center font-sans">
         <div className="text-[#cbd5e1] flex items-center gap-2">
           <Sparkles size={20} className="animate-spin" />
           Chargement...
@@ -170,7 +170,7 @@ export default function WishlistManagementPage() {
   }
 
   return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white font-sans">
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {!selectedWishlist ? (
           <>

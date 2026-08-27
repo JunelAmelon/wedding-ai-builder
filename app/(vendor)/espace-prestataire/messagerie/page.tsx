@@ -205,7 +205,7 @@ export default function VendorMessagingPage() {
   const lastMessage = (p: ProposalWithDetails) => p.lastMessage || messages.filter((m) => m.proposalId === p.id).pop() || null;
   const unreadCount = (p: ProposalWithDetails) => p.unreadCount ?? messages.filter((m) => m.proposalId === p.id && m.senderRole !== "vendor" && !m.readAt).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
 
   const vendorDisplayName = vendorInfo.brandName || vendorInfo.companyName || "V";
 

@@ -31,7 +31,7 @@ const FILTERS = [
 const STATUS_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pending: { label: "En attente", color: "bg-[#fde68a] text-[#15181c]", icon: <Clock size={13} /> },
   accepted: { label: "Validée", color: "bg-[#f4f1f7] text-[#15181c]", icon: <BadgeCheck size={13} /> },
-  declined: { label: "Refusée", color: "bg-[#fff0f3] text-[#6b7076]", icon: <X size={13} /> },
+  declined: { label: "Refusée", color: "bg-[#fff8fa] text-[#6b7076]", icon: <X size={13} /> },
   archived: { label: "Archivée", color: "bg-[#f4f1f7] text-[#6b7076]", icon: <Archive size={13} /> },
 };
 
@@ -145,11 +145,11 @@ export default function VendorProposalsPage() {
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-[#fff0f3] flex items-center justify-center">Chargement…</div>;
+    return <div className="min-h-screen bg-[#fff8fa] flex items-center justify-center">Chargement…</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fff0f3] to-white p-3 sm:p-4 lg:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#fff8fa] to-white p-3 sm:p-4 lg:p-6">
       <div className="max-w-[1200px] mx-auto p-3 sm:p-4 lg:p-6 rounded-[28px]">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main */}
@@ -350,7 +350,7 @@ export default function VendorProposalsPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 p-3 rounded-xl bg-[#fff0f3] border border-[#f4f1f7]">
+                      <div className="flex-1 p-3 rounded-xl bg-[#fff8fa] border border-[#f4f1f7]">
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-[10px] uppercase tracking-wider text-grey font-semibold">
                             {proposal.lastMessage?.senderRole === "couple"
@@ -376,7 +376,7 @@ export default function VendorProposalsPage() {
                               onClick={() => updateStatus(proposal.id, "declined")}
                               disabled={updating === proposal.id}
                               title="Refuser"
-                              className="p-2 rounded-full bg-[#fff0f3] hover:bg-[#6b7076] hover:text-white text-[#6b7076] disabled:opacity-50 transition"
+                              className="p-2 rounded-full bg-[#fff8fa] hover:bg-[#6b7076] hover:text-white text-[#6b7076] disabled:opacity-50 transition"
                             >
                               <X size={18} />
                             </button>
@@ -445,9 +445,9 @@ export default function VendorProposalsPage() {
               <p className="text-[11px] uppercase tracking-[0.12em] text-[#6b7076] mb-3">Présets</p>
               <div className="grid grid-cols-4 gap-3">
                 {[
-                  { icon: Send, label: "Envoyées", value: counts.all, color: "text-[#15181c]", bg: "bg-[#fff0f3]" },
+                  { icon: Send, label: "Envoyées", value: counts.all, color: "text-[#15181c]", bg: "bg-[#fff8fa]" },
                   { icon: Clock, label: "Attente", value: counts.pending, color: "text-[#15181c]", bg: "bg-[#fde68a]" },
-                  { icon: BadgeCheck, label: "Validées", value: counts.accepted, color: "text-[#15181c]", bg: "bg-[#fff0f3]" },
+                  { icon: BadgeCheck, label: "Validées", value: counts.accepted, color: "text-[#15181c]", bg: "bg-[#fff8fa]" },
                   { icon: X, label: "Refusées", value: counts.declined, color: "text-[#6b7076]", bg: "bg-[#f4f1f7]" },
                 ].map(({ icon: Icon, label, value, color, bg }) => (
                   <button

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function VendorCreditsRedirectPage() {
   return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center p-5">
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white flex items-center justify-center p-5">
       <div className="max-w-md w-full text-center">
         <div className="h-16 w-16 rounded-2xl bg-[#fde68a] flex items-center justify-center text-[#15181c] mx-auto mb-6">
           <Sparkles size={28} />

@@ -79,7 +79,7 @@ export default function CoupleLayoutClient({
   }
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white text-text-primary">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff8fa] to-white text-text-primary">
       <div
         className={`hidden lg:block fixed inset-x-0 z-40 px-6 transition-all duration-300 ${
           scrolled ? "top-0 py-3 bg-white/75 backdrop-blur-xl border-b border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.06)]" : "top-5"

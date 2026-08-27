@@ -263,7 +263,7 @@ export default function VendorPortfolioPage() {
     setReviews(reviews.filter((_, i) => i !== index));
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-[#fff0f3]" />;
+  if (loading) return <div className="min-h-[80dvh] bg-[#fff8fa]" />;
 
   const inputClass =
     "w-full px-4 py-3 bg-white border border-[#e8e8e8] rounded-2xl text-[14px] text-[#15181c] placeholder:text-[#6b7076] focus:outline-none focus:ring-2 focus:ring-[#fde68a]/60 focus:border-[#fde68a] transition";
@@ -276,7 +276,7 @@ export default function VendorPortfolioPage() {
     "w-9 h-9 rounded-full flex items-center justify-center shrink-0";
 
   return (
-    <div className="min-h-screen bg-[#fff0f3]">
+    <div className="min-h-screen bg-[#fff8fa]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 mb-8">
@@ -380,7 +380,7 @@ export default function VendorPortfolioPage() {
             />
 
             {uploadError && (
-              <p className="text-sm text-[#F2704A] mb-4 bg-[#fff0f3] p-3 rounded-xl">{uploadError}</p>
+              <p className="text-sm text-[#F2704A] mb-4 bg-[#fff8fa] p-3 rounded-xl">{uploadError}</p>
             )}
 
             <p className="text-[#6b7076] text-xs mb-4 flex items-center gap-2">
@@ -437,7 +437,7 @@ export default function VendorPortfolioPage() {
                     )}
                     <button
                       onClick={() => removeImage(img.publicId)}
-                      className="p-2 rounded-full bg-white/90 text-[#F2704A] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-sm hover:bg-[#fff0f3]"
+                      className="p-2 rounded-full bg-white/90 text-[#F2704A] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-sm hover:bg-[#fff8fa]"
                       title="Supprimer"
                     >
                       <Trash2 size={14} />
@@ -519,7 +519,7 @@ export default function VendorPortfolioPage() {
                   <button
                     type="button"
                     onClick={() => removeVideo(idx)}
-                    className="p-1 rounded-full hover:bg-[#fff0f3] text-[#6b7076]"
+                    className="p-1 rounded-full hover:bg-[#fff8fa] text-[#6b7076]"
                   >
                     <X size={14} />
                   </button>
@@ -652,7 +652,7 @@ export default function VendorPortfolioPage() {
                         <button
                           type="button"
                           onClick={() => removeFaqItem(index)}
-                          className="inline-flex items-center gap-2 h-9 px-4 rounded-full text-sm font-semibold text-[#F2704A] hover:bg-[#fff0f3] transition"
+                          className="inline-flex items-center gap-2 h-9 px-4 rounded-full text-sm font-semibold text-[#F2704A] hover:bg-[#fff8fa] transition"
                         >
                           <Trash2 size={16} /> Supprimer
                         </button>

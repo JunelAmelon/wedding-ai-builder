@@ -60,7 +60,7 @@ const CONTACT_COLORS = [
   "linear-gradient(135deg,#f7c6c6,#e89aa0)",
   "linear-gradient(135deg,#c7d9f7,#9db8e8)",
   "linear-gradient(135deg,#f7e2b8,#e8b98a)",
-  "linear-gradient(135deg,#fff0f3,#fff0f3)",
+  "linear-gradient(135deg,#fff8fa,#fff8fa)",
 ];
 
 export default function CoupleWeddingPage() {
@@ -334,7 +334,7 @@ export default function CoupleWeddingPage() {
   }, [project]);
   const doneCount = chapters.filter((c) => c.done).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
 
   // Initiales pour l'avatar
   const initials = (project?.name || "Mon mariage")
@@ -364,7 +364,7 @@ export default function CoupleWeddingPage() {
   const priorityLabel = PRIORITY_OPTIONS.find((p) => p.value === project?.mainPriority)?.label || "À définir";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Mon espace"
@@ -381,7 +381,7 @@ export default function CoupleWeddingPage() {
               <div
                 className="relative h-[180px] sm:h-[230px] overflow-hidden"
                 style={{
-                  background: "repeating-linear-gradient(100deg, #e6e4dd 0px, #e6e4dd 42px, #fff0f3 42px, #fff0f3 84px)",
+                  background: "repeating-linear-gradient(100deg, #e6e4dd 0px, #e6e4dd 42px, #fff8fa 42px, #fff8fa 84px)",
                 }}
               >
                 {/* Figure décorative */}

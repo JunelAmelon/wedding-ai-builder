@@ -302,9 +302,9 @@ export default function CoupleBudgetPage() {
     setExpenses([]);
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
   if (error) return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white flex items-center justify-center px-6">
       <div className="bg-white border border-[#fce7f3] rounded-2xl p-6 text-center max-w-md">
         <p className="text-[#831843]">{error}</p>
       </div>
@@ -312,7 +312,7 @@ export default function CoupleBudgetPage() {
   );
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff8fa] to-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
         <PageHeader eyebrow="Suivi financier" title="Mon budget">
           <button
@@ -501,7 +501,7 @@ export default function CoupleBudgetPage() {
                   <p className="text-sm text-[#8b8b86]">Aucune transaction</p>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-[360px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#fff0f3] [&::-webkit-scrollbar-thumb]:bg-[#FBE1E6] [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="space-y-3 max-h-[360px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#fff8fa] [&::-webkit-scrollbar-thumb]:bg-[#FBE1E6] [&::-webkit-scrollbar-thumb]:rounded-full">
                   {recentExpenses.map((expense) => {
                     const colors = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS["Autre"];
                     return (

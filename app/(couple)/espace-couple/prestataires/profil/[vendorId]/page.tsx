@@ -148,7 +148,7 @@ export default function VendorProfileForCouplePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[80dvh] flex items-center justify-center bg-gradient-to-b from-[#fff0f3] to-white">
+      <div className="min-h-[80dvh] flex items-center justify-center bg-gradient-to-b from-[#fff8fa] to-white">
         <Loader2 size={32} className="animate-spin text-[#1c1c1c]" />
       </div>
     );
@@ -213,7 +213,7 @@ export default function VendorProfileForCouplePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff0f3] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
       <Link
         href="/espace-couple/prestataires"
@@ -226,7 +226,7 @@ export default function VendorProfileForCouplePage() {
         {/* Portfolio - gauche */}
         <div className="min-w-0">
           <div className="mb-4">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-b from-[#fff0f3] to-white border border-black/[0.06]">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-b from-[#fff8fa] to-white border border-black/[0.06]">
               {selectedImage ? (
                 <Image
                   src={selectedImage}
@@ -288,7 +288,7 @@ export default function VendorProfileForCouplePage() {
               </h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 {vendor.portfolio?.videos?.map((video, i) => (
-                  <div key={i} className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-b from-[#fff0f3] to-white border border-black/[0.06]">
+                  <div key={i} className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-b from-[#fff8fa] to-white border border-black/[0.06]">
                     <video src={video} controls className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -573,7 +573,7 @@ export default function VendorProfileForCouplePage() {
                   <button
                     key={img.publicId || i}
                     onClick={() => setSelectedImage(img.url)}
-                    className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-[#fff0f3] to-white border border-black/[0.06]"
+                    className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-[#fff8fa] to-white border border-black/[0.06]"
                   >
                     <Image
                       src={img.url}

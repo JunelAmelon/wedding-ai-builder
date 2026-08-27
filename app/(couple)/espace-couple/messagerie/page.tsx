@@ -194,7 +194,7 @@ export default function CoupleMessagingPage() {
   const lastMessage = (p: ProposalWithDetails) => p.lastMessage || messages.filter((m) => m.proposalId === p.id).pop() || null;
   const unreadCount = (p: ProposalWithDetails) => p.unreadCount ?? messages.filter((m) => m.proposalId === p.id && m.senderRole !== "couple" && !m.readAt).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
 
   return (
     <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
