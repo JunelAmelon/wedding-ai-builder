@@ -6,12 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/Dialog";
-import {
   Loader2,
   ArrowLeft,
   MapPin,
@@ -20,16 +14,10 @@ import {
   MessageCircle,
   Sparkles,
   Send,
-  Phone,
-  Mail,
-  Globe,
-  Instagram,
   CheckCircle2,
   X,
-  Plus,
 } from "lucide-react";
 import type { VendorProfile, WeddingProject } from "@/types/marketplace";
-import TenderFormModal from "@/components/couple/TenderFormModal";
 
 function ExperienceIcon({ className = "" }: { className?: string }) {
   return (
@@ -102,7 +90,6 @@ export default function VendorProfileForCouplePage() {
   const [contactProposalId, setContactProposalId] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [togglingFavorite, setTogglingFavorite] = useState(false);
-  const [showTenderForm, setShowTenderForm] = useState(false);
   const [coupleProject, setCoupleProject] = useState<WeddingProject | null>(null);
 
   useEffect(() => {
@@ -312,7 +299,7 @@ export default function VendorProfileForCouplePage() {
 
         {/* Fiche prestataire - droite : dossier / fiche technique */}
         <div className="lg:sticky lg:top-8">
-          <div className="relative rounded-2xl bg-[#D8ECD9] border border-[#1c1c1c]/10 shadow-[0_18px_44px_rgba(11,15,26,0.08)] overflow-hidden">
+          <div className="relative rounded-2xl bg-[#f4f1f7] border border-[#1c1c1c]/10 shadow-[0_18px_44px_rgba(11,15,26,0.08)] overflow-hidden">
             {/* Bandeau de référence dossier */}
             <div className="flex items-center justify-between px-6 py-2.5 bg-[#1c1c1c] border-b border-[#1c1c1c]/10">
               <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-white/80">
@@ -369,7 +356,6 @@ export default function VendorProfileForCouplePage() {
                 <span className="flex items-center gap-1">
                   <MapPin size={14} />
                   {location}
-                  {region ? `, ${region}` : ""}
                 </span>
               </div>
 
@@ -411,24 +397,15 @@ export default function VendorProfileForCouplePage() {
               {/* Ligne perforée — stub à détacher */}
               <div className="relative -mx-6 mt-6 mb-5">
                 <div className="border-t border-dashed border-black/20" />
-                <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#D8ECD9] border border-[#1c1c1c]/15" />
-                <span className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#D8ECD9] border border-[#1c1c1c]/15" />
+                <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#f4f1f7] border border-[#1c1c1c]/15" />
+                <span className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#f4f1f7] border border-[#1c1c1c]/15" />
               </div>
 
               <div className="flex items-center justify-center gap-2 mb-3">
                 <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#1c1c1c]/70">
-                  Détacher pour contacter
+                  Contacter ce prestataire
                 </span>
               </div>
-
-              <Button
-                variant="primary"
-                className="w-full mb-3"
-                iconLeft={<Plus size={18} />}
-                onClick={() => setShowTenderForm(true)}
-              >
-                Créer un appel d'offres
-              </Button>
 
               <Button
                 variant="primary"
@@ -547,7 +524,7 @@ export default function VendorProfileForCouplePage() {
                     Zone d'intervention
                   </div>
                   <p className="text-[#8b8b86] text-sm">
-                    {serviceArea?.regions?.join(", ") || serviceArea?.cities?.slice(0, 3).join(", ") || location}
+                    {serviceArea?.cities?.slice(0, 3).join(", ") || location}
                   </p>
                 </div>
               </div>
@@ -670,112 +647,88 @@ export default function VendorProfileForCouplePage() {
         )}
       </div>
 
-      <Dialog open={contactOpen} onOpenChange={setContactOpen}>
-        <DialogContent className="sm:max-w-lg p-0 overflow-hidden">
-          <div className="relative bg-[#1c1c1c] px-6 py-8 text-white">
+      {/* Modal contact — style témoins/budget */}
+      {contactOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setContactOpen(false)}
-              className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              aria-label="Fermer"
             >
-              <X size={16} />
+              <X size={15} />
             </button>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="h-14 w-14 rounded-full bg-white/20 flex items-center justify-center text-white shrink-0">
-                <MessageCircle size={26} />
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center">
+                <MessageCircle size={26} className="text-[#15181c]" />
               </div>
               <div>
-                <DialogTitle className="font-display text-xl text-white">Contacter {displayName}</DialogTitle>
-                <DialogDescription className="text-white/80 text-sm mt-0.5">
-                  Vos coordonnées se détachent pour envoyer votre message.
-                </DialogDescription>
+                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Messagerie</p>
+                <h2 className="font-display text-2xl font-bold text-[#15181c]">
+                  Contacter {displayName}
+                </h2>
               </div>
             </div>
-          </div>
 
-          <div className="px-6 py-6">
             {contactSent ? (
               <div className="text-center py-6">
                 <div className="h-14 w-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#2e7d5e]/10 text-[#2e7d5e]">
                   <CheckCircle2 size={28} />
                 </div>
                 <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-2">Message envoyé</h3>
-                <p className="text-[#8b8b86] text-sm mb-6">Vous allez être redirigé vers votre messagerie pour poursuivre la conversation avec {displayName}.</p>
-                <Button variant="primary" onClick={() => contactProposalId && router.push(`/espace-couple/messagerie?proposal=${contactProposalId}`)} className="w-full" iconLeft={<MessageCircle size={18} />} disabled={!contactProposalId}>
+                <p className="text-[#8b8b86] text-sm mb-6">
+                  Vous allez être redirigé vers votre messagerie pour poursuivre la conversation avec {displayName}.
+                </p>
+                <button
+                  onClick={() => contactProposalId && router.push(`/espace-couple/messagerie?proposal=${contactProposalId}`)}
+                  disabled={!contactProposalId}
+                  className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  <MessageCircle size={16} />
                   Ouvrir la messagerie
-                </Button>
+                </button>
               </div>
             ) : (
-              <>
-                <div className="rounded-xl bg-gradient-to-b from-[#fff0f3] to-white border border-black/[0.06] p-4 mb-5">
-                  <div className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#8b8b86] mb-3">Coordonnées</div>
-                  <div className="space-y-3">
-                    <a href={`tel:${vendor.phone}`} className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                      <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
-                        <Phone size={15} />
-                      </div>
-                      <span className="font-medium">{vendor.phone || "Non renseigné"}</span>
-                    </a>
-                    <a href={`mailto:${vendor.email}`} className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                      <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
-                        <Mail size={15} />
-                      </div>
-                      <span className="font-medium">{vendor.email || "Non renseigné"}</span>
-                    </a>
-                    {website && (
-                      <a href={website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                        <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
-                          <Globe size={15} />
-                        </div>
-                        <span className="font-medium">Site web</span>
-                      </a>
-                    )}
-                    {instagram && (
-                      <a href={`https://instagram.com/${instagram.replace(/^@/, "")}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-[#1c1c1c] hover:text-[#1c1c1c]">
-                        <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c]">
-                          <Instagram size={15} />
-                        </div>
-                        <span className="font-medium">@{instagram.replace(/^@/, "")}</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-[#1c1c1c] mb-1">Votre message</label>
+              <div className="space-y-5">
+                <div>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
+                    Votre message *
+                  </label>
                   <textarea
                     value={contactMessage}
                     onChange={(e) => setContactMessage(e.target.value)}
-                    rows={4}
+                    rows={5}
                     placeholder="Bonjour, je suis intéressé(e) par votre profil pour notre mariage..."
-                    className="w-full rounded-xl border border-black/[0.08] bg-white px-4 py-3 text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7] focus:border-[#f4f1f7]"
+                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition resize-none"
                   />
                 </div>
-                <Button
-                  variant="primary"
-                  className="w-full"
+
+                <button
                   onClick={sendContact}
                   disabled={contactSending || !contactMessage.trim()}
-                  iconLeft={contactSending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                  className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {contactSending ? "Envoi en cours..." : "Envoyer le message"}
-                </Button>
-              </>
+                  {contactSending ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} />
+                      Envoyer le message
+                    </>
+                  )}
+                </button>
+              </div>
             )}
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
-      <TenderFormModal
-        open={showTenderForm}
-        onClose={() => setShowTenderForm(false)}
-        project={coupleProject}
-        preselectedCategory={category || undefined}
-        onLaunched={() => {
-          router.push("/espace-couple/prestataires");
-        }}
-      />
+      </div>
     </div>
-  </div>
   );
 }
 

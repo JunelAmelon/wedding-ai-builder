@@ -23,10 +23,84 @@ import {
 import type { WeddingProject, WeddingExpense } from "@/types/marketplace";
 import type { BudgetBreakdown } from "@/types/domain";
 
-const CATEGORIES = ["Lieu","Traiteur","Photo & vidéo","Musique","Décoration","Fleuriste","Tenue","Transport","Imprévus","Autre"];
+const CATEGORIES = [
+  "Lieu","Traiteur","Photo & vidéo","Vidéo","Musique","Décoration","Fleuriste",
+  "Tenue","Alliances","Beauté","Papeterie","Transport","Hébergement",
+  "Gâteau","Wedding Planner","Officiant","Cadeaux / Dragées","Imprévus","Autre",
+];
 const BUDGET_LABELS: Record<string,string> = {
-  venue:"Lieu", catering:"Traiteur", photography:"Photo & vidéo",
-  music:"Musique", decoration:"Décoration", contingency:"Imprévus",
+  venue: "Lieu",
+  catering: "Traiteur",
+  photography: "Photo & vidéo",
+  videography: "Vidéo",
+  video: "Vidéo",
+  music: "Musique",
+  decoration: "Décoration",
+  flowers: "Fleuriste",
+  floral: "Fleuriste",
+  attire: "Tenue",
+  dress: "Tenue",
+  rings: "Alliances",
+  jewelry: "Alliances",
+  beauty: "Beauté",
+  hairMakeup: "Beauté",
+  stationery: "Papeterie",
+  invitations: "Papeterie",
+  transport: "Transport",
+  accommodation: "Hébergement",
+  lodging: "Hébergement",
+  cake: "Gâteau",
+  pastry: "Gâteau",
+  weddingPlanner: "Wedding Planner",
+  planner: "Wedding Planner",
+  officiant: "Officiant",
+  ceremony: "Officiant",
+  giftsFavours: "Cadeaux / Dragées",
+  gifts: "Cadeaux / Dragées",
+  favours: "Cadeaux / Dragées",
+  contingency: "Imprévus",
+  imprevus: "Imprévus",
+  provision: "Imprévus",
+  honeymoon: "Lune de miel",
+  fireworks: "Animations",
+  childCare: "Autre",
+};
+const BUDGET_CATEGORY_FROM_KEY: Record<string,string> = {
+  venue: "Lieu",
+  catering: "Traiteur",
+  photography: "Photo & vidéo",
+  videography: "Vidéo",
+  video: "Vidéo",
+  music: "Musique",
+  decoration: "Décoration",
+  flowers: "Fleuriste",
+  floral: "Fleuriste",
+  attire: "Tenue",
+  dress: "Tenue",
+  rings: "Alliances",
+  jewelry: "Alliances",
+  beauty: "Beauté",
+  hairMakeup: "Beauté",
+  stationery: "Papeterie",
+  invitations: "Papeterie",
+  transport: "Transport",
+  accommodation: "Hébergement",
+  lodging: "Hébergement",
+  cake: "Gâteau",
+  pastry: "Gâteau",
+  weddingPlanner: "Wedding Planner",
+  planner: "Wedding Planner",
+  officiant: "Officiant",
+  ceremony: "Officiant",
+  giftsFavours: "Cadeaux / Dragées",
+  gifts: "Cadeaux / Dragées",
+  favours: "Cadeaux / Dragées",
+  contingency: "Imprévus",
+  imprevus: "Imprévus",
+  provision: "Imprévus",
+  honeymoon: "Autre",
+  fireworks: "Autre",
+  childCare: "Autre",
 };
 
 const fmt = (n: number) => n.toLocaleString("fr-FR");
@@ -35,12 +109,22 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; icon: string }
   "Lieu": { bg: "#efe9ff", text: "#6a4bff", icon: "🏛️" },
   "Traiteur": { bg: "#fff2e2", text: "#f59e0b", icon: "🍽️" },
   "Photo & vidéo": { bg: "#eaf3ff", text: "#3b82f6", icon: "📸" },
+  "Vidéo": { bg: "#e0e7ff", text: "#4f46e5", icon: "🎥" },
   "Musique": { bg: "#ffeef4", text: "#ec4899", icon: "🎵" },
   "Décoration": { bg: "#eaf9f2", text: "#22b573", icon: "🎨" },
   "Fleuriste": { bg: "#fdf5da", text: "#eab308", icon: "💐" },
   "Tenue": { bg: "#f1f1f3", text: "#6b7280", icon: "👗" },
+  "Alliances": { bg: "#fef3c7", text: "#b45309", icon: "💍" },
+  "Beauté": { bg: "#fce7f3", text: "#be185d", icon: "💄" },
+  "Papeterie": { bg: "#f3e8ff", text: "#7c3aed", icon: "✉️" },
   "Transport": { bg: "#e0f2fe", text: "#0ea5e9", icon: "🚗" },
+  "Hébergement": { bg: "#ecfccb", text: "#4d7c0f", icon: "🏨" },
+  "Gâteau": { bg: "#fff7ed", text: "#c2410c", icon: "🎂" },
+  "Wedding Planner": { bg: "#f0fdf4", text: "#15803d", icon: "📋" },
+  "Officiant": { bg: "#fef9c3", text: "#a16207", icon: "⛪" },
+  "Cadeaux / Dragées": { bg: "#fdf2f8", text: "#be185d", icon: "🎁" },
   "Imprévus": { bg: "#fef3c7", text: "#d97706", icon: "⚡" },
+  "Lune de miel": { bg: "#e0f2fe", text: "#0369a1", icon: "🏝️" },
   "Autre": { bg: "#f3f4f6", text: "#4b5563", icon: "📦" },
 };
 
@@ -91,7 +175,7 @@ export default function CoupleBudgetPage() {
       const entries = Object.entries(aiBudget.breakdown as Record<string, number>).map(([k, v]) => ({
         projectId: project.id,
         label: BUDGET_LABELS[k] || k,
-        category: BUDGET_LABELS[k] || "Autre",
+        category: BUDGET_CATEGORY_FROM_KEY[k] || "Autre",
         plannedAmount: Math.round(v),
         actualAmount: null,
         currency: cur,
@@ -198,7 +282,7 @@ export default function CoupleBudgetPage() {
   }, [expenses]);
 
   const recentExpenses = useMemo(() => {
-    return [...expenses].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()).slice(0, 5);
+    return [...expenses].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
   }, [expenses]);
 
   const filteredExpenses = useMemo(() => {
@@ -417,7 +501,7 @@ export default function CoupleBudgetPage() {
                   <p className="text-sm text-[#8b8b86]">Aucune transaction</p>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-[360px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#fff0f3] [&::-webkit-scrollbar-thumb]:bg-[#FBE1E6] [&::-webkit-scrollbar-thumb]:rounded-full">
                   {recentExpenses.map((expense) => {
                     const colors = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS["Autre"];
                     return (

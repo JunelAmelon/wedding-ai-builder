@@ -99,8 +99,9 @@ export async function POST(req: Request) {
     const match = await matchRepo.get(matchId);
     if (!match || match.vendorId !== profile.id) return NextResponse.json({ error: "Opportunité introuvable" }, { status: 404 });
 
-    if (profile.credits < 2) {
-      return NextResponse.json({ error: "Roses insuffisantes", needsCredits: true }, { status: 402 });
+    const existing = await proposalRepo.getByMatchAndVendor(matchId, profile.id);
+    if (existing) {
+      return NextResponse.json({ error: "Vous avez déjà répondu à cet appel d'offres" }, { status: 409 });
     }
 
     const proposal = await proposalRepo.create({
@@ -116,10 +117,9 @@ export async function POST(req: Request) {
       responseDelayHours: responseDelayHours ?? null,
       attachments: [],
       status: "pending",
-      creditsUsed: 2,
+      creditsUsed: 0,
     });
 
-    await vendorProfileRepo.updateCredits(profile.id, profile.credits - 2);
     await matchRepo.update(matchId, { status: "contacted" });
 
     if (match.tenderId) {
@@ -140,7 +140,7 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({ proposal, remainingCredits: profile.credits - 2 }, { status: 201 });
+    return NextResponse.json({ proposal }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

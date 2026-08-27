@@ -25,10 +25,19 @@ interface Milestone {
   monthsBeforeWedding: number;
   title: string;
   tasks: string[];
+  priority?: "low" | "medium" | "high" | "critical";
+  urgency?: "early" | "soon" | "urgent" | "late";
+  idealDeadline?: string;
+  timeNeeded?: string;
+  consequences?: string;
+  dependencies?: string[];
+  status?: "completed" | "in_progress" | "upcoming" | "overdue";
 }
 
 interface Timeline {
   milestones: Milestone[];
+  globalProgress?: number;
+  nextCriticalStep?: { title: string; deadline: string; daysLeft?: number } | null;
 }
 
 type PlanningTask = TimelineTask & { dueDate?: string };
@@ -72,6 +81,9 @@ export default function CouplePlanningPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Day tasks popup
+  const [dayPopupTasks, setDayPopupTasks] = useState<{ date: Date; tasks: PlanningTask[] } | null>(null);
+
   useEffect(() => {
     async function load() {
       try {
@@ -96,13 +108,25 @@ export default function CouplePlanningPage() {
             null;
           setTimeline(aiTimeline);
 
-          if (existingTasks.length === 0 && aiTimeline?.milestones?.length) {
+          // Import AI timeline tasks if there are none yet, or if the AI plan has
+          // more milestones than what's currently stored (plan was enriched).
+          const aiMilestoneCount = aiTimeline?.milestones?.length ?? 0;
+          const currentMilestoneMonths = new Set(existingTasks.map((t: PlanningTask) => t.monthsBeforeWedding));
+          const hasNewMilestones = aiTimeline?.milestones?.some(
+            (m: Milestone) => !currentMilestoneMonths.has(m.monthsBeforeWedding)
+          ) ?? false;
+
+          if (aiTimeline?.milestones?.length && (existingTasks.length === 0 || hasNewMilestones)) {
+            // Build a set of existing task titles to avoid duplicates
+            const existingTitles = new Set(existingTasks.map((t: PlanningTask) => t.title));
             const toImport = aiTimeline.milestones.flatMap((m: Milestone) =>
-              m.tasks.map((title: string) => ({
-                projectId: projectData.id,
-                title,
-                monthsBeforeWedding: m.monthsBeforeWedding,
-              }))
+              m.tasks
+                .filter((title: string) => !existingTitles.has(title))
+                .map((title: string) => ({
+                  projectId: projectData.id,
+                  title,
+                  monthsBeforeWedding: m.monthsBeforeWedding,
+                }))
             );
             const imported: PlanningTask[] = [];
             for (const t of toImport) {
@@ -114,7 +138,9 @@ export default function CouplePlanningPage() {
               const json = await res.json();
               if (res.ok) imported.push(json.task as PlanningTask);
             }
-            setTasks(imported);
+            if (imported.length > 0) {
+              setTasks((prev) => [...prev, ...imported]);
+            }
           }
         }
       } catch {
@@ -132,7 +158,12 @@ export default function CouplePlanningPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, completed }),
     });
-    if (res.ok) setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, completed } : t)));
+    if (res.ok) {
+      setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, completed } : t)));
+      if (selectedTask?.id === id) {
+        setSelectedTask((prev) => (prev ? { ...prev, completed } : null));
+      }
+    }
   }
 
   async function saveTask() {
@@ -451,9 +482,12 @@ export default function CouplePlanningPage() {
                             );
                           })}
                           {dayTasks.length > 3 && (
-                            <div className="text-[9px] text-[#8b8b86] pl-2">
+                            <button
+                              onClick={() => setDayPopupTasks({ date: day, tasks: dayTasks })}
+                              className="text-[9px] text-[#8b8b86] pl-2 hover:text-[#1c1c1c] hover:underline transition"
+                            >
                               +{dayTasks.length - 3} autres
-                            </div>
+                            </button>
                           )}
                         </div>
                       </div>
@@ -672,6 +706,61 @@ export default function CouplePlanningPage() {
                   </>
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Day Tasks Popup */}
+      {dayPopupTasks && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+          onClick={() => setDayPopupTasks(null)}
+        >
+          <div
+            className="relative w-full max-w-md bg-white border border-[#e6e4dd] rounded-3xl p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setDayPopupTasks(null)}
+              className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              aria-label="Fermer"
+            >
+              <X size={14} />
+            </button>
+            <h3 className="font-bold text-[#1c1c1c] mb-1">
+              {dayPopupTasks.date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+            </h3>
+            <p className="text-xs text-[#8b8b86] mb-4">{dayPopupTasks.tasks.length} étapes</p>
+            <div className="space-y-2">
+              {dayPopupTasks.tasks.map((task) => {
+                const color = task.completed
+                  ? { bg: "#f4f1f7", text: "#8b8b86" }
+                  : getTaskColor(task.id || task.title);
+                return (
+                  <button
+                    key={task.id}
+                    onClick={() => {
+                      setDayPopupTasks(null);
+                      openEditTask(task);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition text-left"
+                  >
+                    <div
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                      style={{ borderColor: task.completed ? "#ffbfca" : "#8b8b86", backgroundColor: task.completed ? "#ffbfca" : "transparent" }}
+                    >
+                      {task.completed && <Check size={10} className="text-[#1c1c1c]" />}
+                    </div>
+                    <span
+                      className="flex-1 text-sm leading-tight"
+                      style={{ color: color.text, textDecoration: task.completed ? "line-through" : "none" }}
+                    >
+                      {task.title}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

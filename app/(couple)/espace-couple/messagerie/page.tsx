@@ -209,7 +209,7 @@ export default function CoupleMessagingPage() {
           </div>
         </div>
       ) : (
-        <div className={`grid h-full ${mobileOpen ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-[300px_1fr]"} ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
+        <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
           {/* Sidebar */}
           <div className={`flex flex-col border-r border-black/[0.06] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
             <div className="p-4 border-b border-black/[0.06]">

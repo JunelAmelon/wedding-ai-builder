@@ -104,7 +104,7 @@ export default function VendorProjectDetailPage() {
   }, [matchId]);
 
   async function respond() {
-    if (!data || !message.trim()) return;
+    if (!data || !message.trim() || submitting) return;
     setSubmitting(true);
     try {
       const res = await fetch("/api/vendor/proposals", {
@@ -116,6 +116,13 @@ export default function VendorProjectDetailPage() {
       if (!res.ok) {
         if (res.status === 402 && body.needsSubscription) {
           router.push("/espace-prestataire/offres");
+          return;
+        }
+        if (res.status === 409) {
+          setShowDialog(false);
+          setMessage("");
+          setSuccess(true);
+          router.refresh();
           return;
         }
         throw new Error(body.error || "Échec de l'envoi");

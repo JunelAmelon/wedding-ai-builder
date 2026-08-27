@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import {
   Send,
   Loader2,
@@ -22,9 +21,6 @@ import {
   Info,
   Wallet,
   Users,
-  FileText,
-  ExternalLink,
-  Star,
 } from "lucide-react";
 import Image from "next/image";
 import type { Message, Proposal, WeddingProject } from "@/types/marketplace";
@@ -40,14 +36,13 @@ function formatFullDate(iso: string) {
 }
 
 function Avatar({ name, src, className, online }: { name: string; src?: string; className?: string; online?: boolean }) {
-  const initials = name.slice(0, 2).toUpperCase();
   return (
     <div className={`relative shrink-0 ${className}`}>
       {src ? (
-        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-[#e6e4dd]" unoptimized />
+        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-black/[0.06]" unoptimized />
       ) : (
         <div className="rounded-full bg-[#f4f1f7] text-[#1c1c1c] font-display font-semibold flex items-center justify-center h-full w-full">
-          {initials}
+          {name.slice(0, 2).toUpperCase()}
         </div>
       )}
       {online && <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#3C8552] border-2 border-white" />}
@@ -78,7 +73,7 @@ export default function VendorMessagingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [phoneUnavailable, setPhoneUnavailable] = useState(false);
-  const [vendorLogo, setVendorLogo] = useState<string | null>(null);
+  const [vendorInfo, setVendorInfo] = useState<{ companyName?: string; brandName?: string; logoUrl?: string | null }>({});
   const [attachments, setAttachments] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -94,7 +89,7 @@ export default function VendorMessagingPage() {
         const json = await res.json();
         const list = (json.proposals || []) as ProposalWithDetails[];
         setProposals(list);
-        const preselected = list.find((p) => p.id === proposalId) || list[0];
+        const preselected = list.find((p) => p.id === proposalId) || list[0] || null;
         setSelected(preselected);
       } catch {
         // ignore
@@ -106,6 +101,27 @@ export default function VendorMessagingPage() {
   }, [router, proposalId]);
 
   useEffect(() => {
+    async function loadVendor() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const json = await res.json();
+          const v = json.vendor || {};
+          setVendorInfo({
+            companyName: v.companyName,
+            brandName: v.brandName,
+            logoUrl: v.logo?.url || null,
+          });
+        }
+      } catch {
+        // ignore
+      }
+    }
+    loadVendor();
+  }, []);
+
+  useEffect(() => {
+    if (!selected) return;
     async function loadMessages() {
       if (!selected) return;
       try {
@@ -126,7 +142,7 @@ export default function VendorMessagingPage() {
   }, [messages]);
 
   const filteredProposals = useMemo(() => {
-    if (!search) return proposals;
+    if (!search.trim()) return proposals;
     const lower = search.toLowerCase();
     return proposals.filter(
       (p) =>
@@ -162,23 +178,17 @@ export default function VendorMessagingPage() {
         const res = await fetch("/api/vendor/messages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            proposalId: selected.id,
-            content: message,
-          }),
+          body: JSON.stringify({ proposalId: selected.id, content: text }),
         });
         if (!res.ok) throw new Error("Échec de l'envoi");
         const json = await res.json();
-        setMessages([...messages, json.message]);
+        setMessages((prev) => [...prev, json.message]);
       }
       for (const att of attachments) {
         const res = await fetch("/api/vendor/messages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            proposalId: selected.id,
-            content: att,
-          }),
+          body: JSON.stringify({ proposalId: selected.id, content: att }),
         });
         const json = await res.json();
         if (res.ok) setMessages((prev) => [...prev, json.message]);
@@ -192,239 +202,303 @@ export default function VendorMessagingPage() {
     }
   }
 
+  const lastMessage = (p: ProposalWithDetails) => p.lastMessage || messages.filter((m) => m.proposalId === p.id).pop() || null;
+  const unreadCount = (p: ProposalWithDetails) => p.unreadCount ?? messages.filter((m) => m.proposalId === p.id && m.senderRole !== "vendor" && !m.readAt).length;
+
   if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
 
-  return (
-    <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-8">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[#8b8b86] mb-2">Messagerie</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#1c1c1c]">
-            Vos conversations
-          </h1>
-          <p className="text-[#8b8b86] mt-2">
-            Discutez avec vos matches.
-          </p>
-        </div>
-      </div>
+  const vendorDisplayName = vendorInfo.brandName || vendorInfo.companyName || "V";
 
-      <div className="rounded-[32px] bg-white border border-[#e6e4dd] shadow-[0_40px_120px_rgba(14,14,16,0.18)] overflow-hidden min-h-[600px]">
-        {/* List View */}
-        <div className="flex h-full">
+  return (
+    <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
+      {proposals.length === 0 ? (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+          <div className="bg-white border border-black/[0.06] rounded-2xl p-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-5 bg-[#f4f1f7]">
+              <Inbox size={28} className="text-[#1c1c1c]" />
+            </div>
+            <h2 className="font-display text-xl font-semibold mb-2">Aucune conversation</h2>
+            <p className="text-[#8b8b86] max-w-md mx-auto">Vous n'avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d'offres.</p>
+          </div>
+        </div>
+      ) : (
+        <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
           {/* Sidebar */}
-          <div className="w-full sm:w-80 border-r border-[#e6e4dd] flex flex-col">
-            <div className="p-4 border-b border-[#e6e4dd]">
+          <div className={`flex flex-col border-r border-black/[0.06] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
+            <div className="p-4 border-b border-black/[0.06]">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-display text-xl font-semibold text-[#1c1c1c]">Messages</h2>
+                <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#8b8b86] bg-white px-2 py-1 rounded-full border border-black/[0.06]">
+                  {proposals.length}
+                </span>
+              </div>
               <div className="relative">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
                 <input
-                  type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full pl-10 pr-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-lg text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
+                  className="w-full rounded-full bg-white border border-black/[0.08] pl-9 pr-4 py-2 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/40"
                 />
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
-              {filteredProposals.length === 0 ? (
-                <div className="p-8 text-center">
-                  <Inbox size={32} className="text-[#8b8b86] mx-auto mb-2" />
-                  <p className="text-sm text-[#8b8b86]">Aucune conversation</p>
-                </div>
-              ) : (
-                filteredProposals.map((proposal) => (
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {filteredProposals.map((p) => {
+                const isActive = selected?.id === p.id;
+                const lm = lastMessage(p);
+                const unread = unreadCount(p);
+                const coupleName = `${p.couple?.firstName || ""} ${p.couple?.lastName || ""}`.trim() || "Couple";
+                return (
                   <button
-                    key={proposal.id}
+                    key={p.id}
                     onClick={() => {
-                      setSelected(proposal);
-                      setMobileOpen(false);
+                      setSelected(p);
+                      setMobileOpen(true);
                     }}
-                    className={`w-full p-4 border-b border-[#e6e4dd] text-left hover:bg-[#f7f7f9] transition ${
-                      selected?.id === proposal.id ? "bg-[#f7f7f9]" : ""
+                    className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
+                      isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        name={`${proposal.couple?.firstName || ""} ${proposal.couple?.lastName || ""}`}
-                        src={proposal.couple?.avatarUrl || undefined}
-                        className="h-10 w-10"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-medium text-[#1c1c1c] truncate">
-                            {proposal.couple?.firstName} {proposal.couple?.lastName}
+                    <Avatar name={coupleName} src={p.couple?.avatarUrl || undefined} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-semibold text-[#1c1c1c] truncate text-sm">{coupleName}</span>
+                        {lm && <span className="font-semibold text-[10px] text-[#8b8b86] shrink-0">{formatDate(lm.createdAt)}</span>}
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={`text-xs truncate ${unread ? "text-[#1c1c1c] font-medium" : "text-[#8b8b86]"}`}>
+                          {lm ? (lm.senderRole === "vendor" ? "Vous : " : "") + lm.content : "Pas encore de message"}
+                        </span>
+                        {unread > 0 && (
+                          <span className="h-5 min-w-[20px] rounded-full bg-[#1c1c1c] text-white text-[10px] font-semibold flex items-center justify-center px-1.5">
+                            {unread}
                           </span>
-                          {proposal.lastMessage && (
-                            <span className="text-[10px] text-[#8b8b86]">{formatDate(proposal.lastMessage.createdAt)}</span>
-                          )}
-                        </div>
-                        <p className="text-sm text-[#8b8b86] truncate">{proposal.project?.name || "Projet sans nom"}</p>
+                        )}
                       </div>
                     </div>
                   </button>
-                ))
-              )}
+                );
+              })}
             </div>
           </div>
 
-          {/* Chat View */}
-          {selected ? (
-            <div className="flex-1 flex flex-col hidden sm:flex">
-              {/* Header */}
-              <div className="p-4 border-b border-[#e6e4dd] flex items-center justify-between">
-                <div className="flex items-center gap-3">
+          {/* Chat area */}
+          <div className={`flex flex-col bg-white ${mobileOpen ? "flex" : "hidden lg:flex"}`}>
+            {selected ? (
+              <>
+                <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-white/50">
+                  <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
+                    <ChevronLeft size={20} className="text-[#8b8b86]" />
+                  </button>
                   <Avatar
                     name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`}
                     src={selected.couple?.avatarUrl || undefined}
-                    className="h-10 w-10"
+                    className="h-11 w-11 text-base"
+                    online={selected.status === "accepted"}
                   />
-                  <div>
-                    <h3 className="font-medium text-[#1c1c1c]">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-[#1c1c1c] truncate">
                       {selected.couple?.firstName} {selected.couple?.lastName}
-                    </h3>
-                    <p className="text-sm text-[#8b8b86]">{selected.project?.name || "Projet sans nom"}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setInfoOpen(!infoOpen)}
-                  className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]"
-                >
-                  <Info size={18} />
-                </button>
-              </div>
-
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.length === 0 ? (
-                  <div className="text-center py-8">
-                    <MessageSquare size={32} className="text-[#8b8b86] mx-auto mb-2" />
-                    <p className="text-sm text-[#8b8b86]">Aucun message</p>
-                  </div>
-                ) : (
-                  messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`flex ${msg.senderId === "vendor" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div
-                        className={`max-w-[70%] p-3 rounded-2xl ${
-                          msg.senderId === "vendor"
-                            ? "bg-[#1c1c1c] text-white"
-                            : "bg-[#f7f7f9] text-[#1c1c1c]"
-                        }`}
-                      >
-                        {msg.content.startsWith("data:image") ? (
-                          <img src={msg.content} alt="Pièce jointe" className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover" />
-                        ) : msg.content.startsWith("data:") ? (
-                          <a href={msg.content} target="_blank" rel="noreferrer" className="underline text-inherit text-sm">Voir le document</a>
-                        ) : (
-                          <p className="text-sm">{msg.content}</p>
-                        )}
-                        <div className="flex items-center justify-end gap-1 mt-1">
-                          <span className="text-[10px] opacity-70">{formatTime(msg.createdAt)}</span>
-                          {msg.senderId === "vendor" && (
-                            <CheckCheck size={12} className="opacity-70" />
-                          )}
-                        </div>
-                      </div>
                     </div>
-                  ))
-                )}
-                <div ref={bottomRef} />
-              </div>
-
-              {/* Input */}
-              <div className="p-4 border-t border-[#e6e4dd]">
-                {attachments.length > 0 && (
-                  <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
-                    {attachments.map((att, i) => (
-                      <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#e6e4dd] shrink-0">
-                        {att.startsWith("data:image") ? (
-                          <img src={att} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full bg-[#f7f7f9] flex items-center justify-center text-[10px] text-[#8b8b86] text-center p-1">Fichier</div>
-                        )}
-                        <button
-                          onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
-                          className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center text-[10px]"
-                        >×</button>
-                      </div>
-                    ))}
+                    <div className="text-xs text-[#8b8b86]">
+                      {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
+                    </div>
                   </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="file"
-                    multiple
-                    hidden
-                    ref={fileRef}
-                    onChange={handleFiles}
-                  />
-                  <button onClick={() => fileRef.current?.click()} className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#8b8b86]">
-                    <Paperclip size={18} />
-                  </button>
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                    placeholder="Écrivez votre message..."
-                    className="flex-1 px-4 py-2 bg-[#f7f7f9] border border-[#e6e4dd] rounded-full text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
-                  />
-                  <button
-                    onClick={sendMessage}
-                    disabled={sending || (!message.trim() && attachments.length === 0)}
-                    className="p-2 rounded-full bg-[#1c1c1c] hover:bg-[#333] text-white disabled:opacity-50 transition"
-                  >
-                    {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Info Panel */}
-              {infoOpen && (
-                <div className="absolute right-0 top-0 bottom-0 w-80 bg-white border-l border-[#e6e4dd] p-4 overflow-y-auto">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-display text-lg font-bold text-[#1c1c1c]">Détails du projet</h3>
-                    <button onClick={() => setInfoOpen(false)} className="p-2 rounded-full hover:bg-[#f4f1f7]">
-                      <X size={18} />
+                  <div className="flex items-center gap-1">
+                    <button
+                      className="p-2 hover:bg-black/[0.06] rounded-full text-[#8b8b86] relative"
+                      onClick={() => setPhoneUnavailable(true)}
+                      title="Appel téléphonique"
+                    >
+                      {phoneUnavailable ? <PhoneOff size={20} className="text-rose-500" /> : <Phone size={20} />}
                     </button>
+                    <button
+                      className="hidden xl:flex p-2 hover:bg-black/[0.06] rounded-full text-[#8b8b86]"
+                      onClick={() => setInfoOpen((v) => !v)}
+                      title="Informations"
+                    >
+                      <Info size={20} />
+                    </button>
+                    <button className="p-2 hover:bg-black/[0.06] rounded-full text-[#8b8b86]"><MoreVertical size={20} /></button>
                   </div>
-                  {selected.project && (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-                        <Calendar size={16} />
-                        {selected.project.weddingDate ? formatFullDate(selected.project.weddingDate) : "Date non précisée"}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-                        <MapPin size={16} />
-                        {selected.project.location?.city || "Lieu non précisé"}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-                        <Users size={16} />
-                        {selected.project.guestCount || "—"} invités
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-[#8b8b86]">
-                        <Wallet size={16} />
-                        Budget {selected.project.budget?.amount?.toLocaleString("fr-FR") || "—"} {selected.project.budget?.currency || "EUR"}
-                      </div>
+                </div>
+
+                {phoneUnavailable && (
+                  <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center justify-between">
+                    <span>L'appel téléphonique n'est pas encore disponible. Utilisez la messagerie.</span>
+                    <button onClick={() => setPhoneUnavailable(false)} className="p-1 hover:bg-amber-100 rounded"><X size={14} /></button>
+                  </div>
+                )}
+
+                <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-white/30">
+                  {messages.length === 0 && (
+                    <div className="flex-1 flex flex-col items-center justify-center text-[#8b8b86] text-center min-h-[200px]">
+                      <MessageSquare size={40} className="text-[#8b8b86]/30 mb-3" />
+                      <p className="text-sm">Démarrez la conversation avec {selected.couple?.firstName} {selected.couple?.lastName}</p>
                     </div>
                   )}
+                  {messages.map((m, idx) => {
+                    const isMe = m.senderRole === "vendor";
+                    const showDate = idx === 0 || new Date(m.createdAt).toDateString() !== new Date(messages[idx - 1].createdAt).toDateString();
+                    return (
+                      <div key={m.id}>
+                        {showDate && (
+                          <div className="flex items-center justify-center my-4">
+                            <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#8b8b86] bg-white border border-black/[0.06] px-3 py-1 rounded-full">
+                              {formatDate(m.createdAt)}
+                            </span>
+                          </div>
+                        )}
+                        <div className={`flex ${isMe ? "justify-end" : "justify-start"} gap-2`}>
+                          {!isMe ? (
+                            <Avatar
+                              name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`}
+                              src={selected.couple?.avatarUrl || undefined}
+                              className="h-8 w-8 text-[10px] self-end mb-1"
+                            />
+                          ) : (
+                            <Avatar
+                              name={vendorDisplayName}
+                              src={vendorInfo.logoUrl || undefined}
+                              className="h-8 w-8 text-[10px] self-end mb-1"
+                            />
+                          )}
+                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-[#1c1c1c] text-white rounded-br-md" : "bg-white text-[#1c1c1c] border border-black/[0.06] rounded-bl-md"}`}>
+                            {m.content.startsWith("data:image") ? (
+                              <img src={m.content} alt="Pièce jointe" className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover" />
+                            ) : m.content.startsWith("data:") ? (
+                              <a href={m.content} target="_blank" rel="noreferrer" className="underline text-inherit">Voir le document</a>
+                            ) : (
+                              <p className="leading-relaxed">{m.content}</p>
+                            )}
+                            <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-[#8b8b86]"}`}>
+                              <span>{formatTime(m.createdAt)}</span>
+                              {isMe && (
+                                <span>{m.readAt ? <CheckCheck size={11} /> : <Check size={11} />}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div ref={bottomRef} />
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
-                <MessageSquare size={48} className="text-[#8b8b86] mx-auto mb-4" />
-                <p className="text-[#8b8b86]">Sélectionnez une conversation</p>
+
+                <div className="p-3 sm:p-4 border-t border-black/[0.06] bg-white">
+                  {attachments.length > 0 && (
+                    <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
+                      {attachments.map((att, i) => (
+                        <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-black/[0.08] shrink-0">
+                          {att.startsWith("data:image") ? (
+                            <img src={att} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-white flex items-center justify-center text-[10px] text-[#8b8b86] text-center p-1">Fichier</div>
+                          )}
+                          <button
+                            onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
+                            className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center text-[10px]"
+                          >×</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 rounded-full border border-black/[0.08] bg-white px-2 py-1.5">
+                    <input
+                      type="file"
+                      multiple
+                      hidden
+                      ref={fileRef}
+                      onChange={handleFiles}
+                    />
+                    <button onClick={() => fileRef.current?.click()} className="p-2 text-[#8b8b86] hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
+                    <input
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                      placeholder="Écrivez votre message..."
+                      className="flex-1 bg-transparent px-2 py-2 text-sm text-[#1c1c1c] focus:outline-none"
+                    />
+                    <button
+                      onClick={sendMessage}
+                      disabled={sending || (!message.trim() && attachments.length === 0)}
+                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center bg-[#1c1c1c] text-white hover:bg-[#333] disabled:opacity-50 transition"
+                    >
+                      {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                    </button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center text-[#8b8b86] p-8 text-center">
+                <div className="h-16 w-16 rounded-2xl bg-[#f4f1f7] flex items-center justify-center mb-4">
+                  <MessageSquare size={32} className="text-[#1c1c1c]" />
+                </div>
+                <p className="font-medium text-[#1c1c1c]">Sélectionnez une conversation</p>
+                <p className="text-sm">Discutez avec vos couples en toute simplicité.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Info panel */}
+          {infoOpen && selected && (
+            <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-white w-[300px] shrink-0">
+              <div className="p-5 border-b border-black/[0.06] text-center">
+                <Avatar
+                  name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`}
+                  src={selected.couple?.avatarUrl || undefined}
+                  className="h-20 w-20 text-xl mx-auto mb-3"
+                  online={selected.status === "accepted"}
+                />
+                <h3 className="font-semibold text-[#1c1c1c]">
+                  {selected.couple?.firstName} {selected.couple?.lastName}
+                </h3>
+                <p className="text-sm text-[#8b8b86]">{selected.project?.name || "Projet"}</p>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 space-y-5">
+                <div>
+                  <h4 className="text-xs uppercase tracking-[0.14em] text-[#8b8b86] font-medium mb-2">Statut</h4>
+                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-[#f4f1f7] text-[#1c1c1c]" : "bg-amber-100 text-amber-700"}`}>
+                    {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs uppercase tracking-[0.14em] text-[#8b8b86] font-medium mb-2">Projet</h4>
+                  <div className="space-y-2 text-sm">
+                    {selected.project?.weddingDate && (
+                      <div className="flex items-center gap-2 text-[#8b8b86]">
+                        <Calendar size={14} className="text-[#1c1c1c]" />
+                        <span>{formatFullDate(selected.project.weddingDate)}</span>
+                      </div>
+                    )}
+                    {selected.project?.location?.city && (
+                      <div className="flex items-center gap-2 text-[#8b8b86]">
+                        <MapPin size={14} className="text-[#1c1c1c]" />
+                        <span>{selected.project.location.city}</span>
+                      </div>
+                    )}
+                    {selected.project?.budget?.amount && (
+                      <div className="flex items-center gap-2 text-[#8b8b86]">
+                        <Wallet size={14} className="text-[#1c1c1c]" />
+                        <span>Budget {selected.project.budget.amount.toLocaleString("fr-FR")} {selected.project.budget.currency}</span>
+                      </div>
+                    )}
+                    {selected.project?.guestCount && (
+                      <div className="flex items-center gap-2 text-[#8b8b86]">
+                        <Users size={14} className="text-[#1c1c1c]" />
+                        <span>{selected.project.guestCount} invités</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
-

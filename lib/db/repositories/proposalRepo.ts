@@ -68,6 +68,16 @@ export const proposalRepo = {
     return doc.exists ? (doc.data() as Proposal) : null;
   },
 
+  async getByMatchAndVendor(matchId: string, vendorId: string): Promise<Proposal | null> {
+    if (isLocalMode()) {
+      const all = await localStore.all<Proposal>(COLLECTION);
+      return all.find((p) => p.matchId === matchId && p.vendorId === vendorId) || null;
+    }
+    const col = await getFirestoreCol();
+    const snap = await col.where("matchId", "==", matchId).where("vendorId", "==", vendorId).get();
+    return snap.empty ? null : (snap.docs[0].data() as Proposal);
+  },
+
   async update(id: string, data: Partial<Proposal>): Promise<Proposal> {
     const now = new Date().toISOString();
     if (isLocalMode()) {

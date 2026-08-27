@@ -64,7 +64,7 @@ export default function VendorOpportunitiesPage() {
   }, [router]);
 
   async function respond() {
-    if (!selected || !message.trim()) return;
+    if (!selected || !message.trim() || submitting) return;
     setSubmitting(true);
     try {
       const res = await fetch('/api/vendor/proposals', {
@@ -79,6 +79,12 @@ export default function VendorOpportunitiesPage() {
       if (!res.ok) {
         if (res.status === 402 && json.needsSubscription) {
           router.push('/espace-prestataire/offres');
+          return;
+        }
+        if (res.status === 409) {
+          setSelected(null);
+          setMessage('');
+          setSuccess(true);
           return;
         }
         throw new Error(json.error || `Échec de l'envoi`);
