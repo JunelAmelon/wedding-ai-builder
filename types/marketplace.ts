@@ -285,6 +285,8 @@ export interface ProposalDetail extends Proposal {
   project: WeddingProject;
   vendor: VendorProfile;
   couple: CoupleProfile;
+  lastMessage?: Message | null;
+  unreadCount?: number;
 }
 
 export interface Witness {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star, Zap, Check, Shield, Sparkles, TrendingUp } from "lucide-react";
 
 const PLANS = [
@@ -75,6 +75,27 @@ const COMPARISON = [
 
 export default function VendorOffresPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [activePlanId, setActivePlanId] = useState<string | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [loadingPlan, setLoadingPlan] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/vendor/dashboard");
+        const json = await res.json();
+        if (json.subscription?.planId) {
+          setActivePlanId(json.subscription.planId);
+          setSubscriptionStatus(json.subscription.status);
+        }
+      } catch {
+        // ignore
+      } finally {
+        setLoadingPlan(false);
+      }
+    }
+    load();
+  }, []);
 
   async function choosePlan(planName: string) {
     setLoading(planName);
@@ -115,18 +136,23 @@ export default function VendorOffresPage() {
 
         <div className="grid md:grid-cols-3 gap-6 mb-16">
           {PLANS.map((plan) => (
-            <div
-              key={plan.name}
-              className={`relative rounded-[32px] p-6 sm:p-8 shadow-[0_18px_60px_rgba(21,24,28,0.1)] border border-[#ececec] flex flex-col ${
-                plan.popular ? "ring-2 ring-[#fde68a]" : ""
-              }`}
-              style={{ backgroundColor: plan.color }}
-            >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#15181c] px-3 py-1 text-xs text-white font-medium flex items-center gap-1.5">
-                  <Star size={12} /> Plus populaire
-                </div>
-              )}
+              <div
+                key={plan.name}
+                className={`relative rounded-[32px] p-6 sm:p-8 shadow-[0_18px_60px_rgba(21,24,28,0.1)] border border-[#ececec] flex flex-col ${
+                  plan.popular ? "ring-2 ring-[#fde68a]" : ""
+                }`}
+                style={{ backgroundColor: plan.color }}
+              >
+                {plan.popular && activePlanId !== PLAN_IDS[plan.name] && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#15181c] px-3 py-1 text-xs text-white font-medium flex items-center gap-1.5">
+                    <Star size={12} /> Plus populaire
+                  </div>
+                )}
+                {!loadingPlan && activePlanId === PLAN_IDS[plan.name] && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#2e7d5e] px-3 py-1 text-xs text-white font-medium flex items-center gap-1.5">
+                    <Check size={12} /> Plan actif
+                  </div>
+                )}
 
               <div className="flex items-center gap-3 mb-6">
                 <div
@@ -162,17 +188,33 @@ export default function VendorOffresPage() {
                 ))}
               </ul>
 
-              <button
-                onClick={() => choosePlan(plan.name)}
-                disabled={!!loading}
-                className={`w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 ${
-                  plan.name === "Elite Performance"
-                    ? "bg-[#fde68a] text-[#15181c] hover:bg-[#fcd34d]"
-                    : "bg-[#15181c] text-white hover:bg-[#2c3036]"
-                }`}
-              >
-                <Zap size={16} /> {loading === plan.name ? "Chargement..." : "Choisir"}
-              </button>
+              {loadingPlan ? (
+                <button
+                  disabled
+                  className="w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 bg-[#f4f1f7] text-[#6b7076] cursor-default"
+                >
+                  <Zap size={16} /> Chargement...
+                </button>
+              ) : activePlanId === PLAN_IDS[plan.name] ? (
+                <button
+                  disabled
+                  className="w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 bg-[#e4f4ed] text-[#2e7d5e] cursor-default"
+                >
+                  <Check size={16} /> Plan actif
+                </button>
+              ) : (
+                <button
+                  onClick={() => choosePlan(plan.name)}
+                  disabled={!!loading}
+                  className={`w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 ${
+                    plan.name === "Elite Performance"
+                      ? "bg-[#fde68a] text-[#15181c] hover:bg-[#fcd34d]"
+                      : "bg-[#15181c] text-white hover:bg-[#2c3036]"
+                  }`}
+                >
+                  <Zap size={16} /> {loading === plan.name ? "Chargement..." : "Choisir"}
+                </button>
+              )}
             </div>
           ))}
         </div>

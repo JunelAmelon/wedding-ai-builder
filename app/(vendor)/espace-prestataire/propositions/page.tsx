@@ -16,6 +16,7 @@ import {
   Banknote,
   CheckCircle2,
   ArrowUpRight,
+  RotateCcw,
 } from "lucide-react";
 import type { ProposalDetail, DashboardStats } from "@/types/marketplace";
 
@@ -37,6 +38,11 @@ const STATUS_META: Record<string, { label: string; color: string; icon: React.Re
 const DAY_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const CATEGORIES = ["Traiteur", "Photo", "Fleurs", "Musique", "Lieu", "Coiffure", "Organisateur", "Lune de miel"];
+
+function isLastMessageFromVendor(proposal: ProposalDetail): boolean {
+  if (proposal.lastMessage) return proposal.lastMessage.senderRole === "vendor";
+  return !!proposal.matchId; // propositions créées par le prestataire n'ont pas de message, seulement un matchId
+}
 
 export default function VendorProposalsPage() {
   const router = useRouter();
@@ -306,7 +312,9 @@ export default function VendorProposalsPage() {
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium uppercase tracking-[0.06em] ${STATUS_META[proposal.status]?.color}`}
                           >
                             {STATUS_META[proposal.status]?.icon}
-                            {STATUS_META[proposal.status]?.label}
+                            {proposal.status === "pending" && isLastMessageFromVendor(proposal)
+                              ? "En attente du couple"
+                              : STATUS_META[proposal.status]?.label}
                           </span>
                         </div>
                         <h3 className="font-display text-lg font-bold text-[#15181c] mb-2">
@@ -333,6 +341,7 @@ export default function VendorProposalsPage() {
                       <div className="flex items-center gap-2 shrink-0">
                         <Link
                           href={`/espace-prestataire/appels-offres/${proposal.tenderId || ""}`}
+                          title="Voir l'appel d'offres"
                           className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#6b7076]"
                         >
                           <ArrowUpRight size={18} />
@@ -342,30 +351,43 @@ export default function VendorProposalsPage() {
 
                     <div className="flex items-center gap-3">
                       <div className="flex-1 p-3 rounded-xl bg-[#fff0f3] border border-[#f4f1f7]">
-                        <p className="text-sm text-[#6b7076] line-clamp-2">{proposal.message}</p>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] uppercase tracking-wider text-grey font-semibold">
+                            {proposal.lastMessage?.senderRole === "couple"
+                              ? "Message du couple"
+                              : isLastMessageFromVendor(proposal)
+                                ? "Votre réponse"
+                                : "Message"}
+                          </span>
+                        </div>
+                        <p className="text-sm text-[#6b7076] line-clamp-2">{proposal.lastMessage?.content || proposal.message}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        {proposal.status === "pending" && (
+                        {proposal.status === "pending" && !isLastMessageFromVendor(proposal) && (
                           <>
-                            <button
-                              onClick={() => updateStatus(proposal.id, "accepted")}
-                              disabled={updating === proposal.id}
-                              className="p-2 rounded-full bg-[#f4f1f7] hover:bg-[#15181c] hover:text-white text-[#15181c] disabled:opacity-50 transition"
+                            <Link
+                              href={`/espace-prestataire/messagerie?proposal=${proposal.id}`}
+                              title="Répondre"
+                              className="p-2 rounded-full bg-[#e4f4ed] hover:bg-[#2e7d5e] hover:text-white text-[#2e7d5e] transition"
                             >
-                              <BadgeCheck size={18} />
-                            </button>
+                              <MessageSquare size={18} />
+                            </Link>
                             <button
                               onClick={() => updateStatus(proposal.id, "declined")}
                               disabled={updating === proposal.id}
+                              title="Refuser"
                               className="p-2 rounded-full bg-[#fff0f3] hover:bg-[#6b7076] hover:text-white text-[#6b7076] disabled:opacity-50 transition"
                             >
-                              <X size={18} />la page calendrier du prestaire; on aure exacrement ce style; 
+                              <X size={18} />
                             </button>
                           </>
                         )}
+                        {proposal.status === "pending" && isLastMessageFromVendor(proposal) && (
+                          <span className="text-[11px] text-[#6b7076] italic">Le couple n'a pas encore répondu</span>
+                        )}
                         {proposal.status === "accepted" && (
                           <Link
-                            href={`/espace-prestataire/messagerie`}
+                            href={`/espace-prestataire/messagerie?proposal=${proposal.id}`}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#15181c] text-white hover:bg-[#fde68a] hover:text-[#15181c] transition"
                           >
                             <MessageSquare size={16} /> Discuter
@@ -375,9 +397,20 @@ export default function VendorProposalsPage() {
                           <button
                             onClick={() => updateStatus(proposal.id, "archived")}
                             disabled={updating === proposal.id}
+                            title="Désactiver / Archiver"
                             className="p-2 rounded-full hover:bg-[#f4f1f7] text-[#6b7076] disabled:opacity-50 transition"
                           >
                             <Archive size={18} />
+                          </button>
+                        )}
+                        {proposal.status === "archived" && (
+                          <button
+                            onClick={() => updateStatus(proposal.id, "pending")}
+                            disabled={updating === proposal.id}
+                            title="Désarchiver"
+                            className="p-2 rounded-full bg-[#fde68a] hover:bg-[#15181c] hover:text-white text-[#15181c] disabled:opacity-50 transition"
+                          >
+                            <RotateCcw size={18} />
                           </button>
                         )}
                       </div>

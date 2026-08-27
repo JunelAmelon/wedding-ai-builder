@@ -22,6 +22,7 @@ import {
   FileText,
   Lock,
   Crown,
+  Check,
 } from 'lucide-react';
 import type { ProjectVendorMatch, WeddingProject } from '@/types/marketplace';
 
@@ -41,6 +42,7 @@ export default function VendorOpportunitiesPage() {
   const [success, setSuccess] = useState(false);
   const [page, setPage] = useState(1);
   const [subscriptionActive, setSubscriptionActive] = useState(true);
+  const [plan, setPlan] = useState<{ name: string; status: string }>({ name: "Gratuit", status: "inactive" });
   const pageSize = 5;
 
   useEffect(() => {
@@ -54,6 +56,7 @@ export default function VendorOpportunitiesPage() {
         const oppJson = await oppRes.json();
         setOpportunities(oppJson.opportunities || []);
         setSubscriptionActive(oppJson.subscriptionActive ?? true);
+        setPlan(oppJson.plan || { name: "Gratuit", status: "inactive" });
       } catch {
         // ignore
       } finally {
@@ -279,7 +282,12 @@ export default function VendorOpportunitiesPage() {
                           </td>
                           <td className='py-4 px-5 text-right'>
                             <div className='flex items-center justify-end gap-2'>
-                              {!subscriptionActive ? (
+                              {match.status === "contacted" ? (
+                                <span className='h-9 px-4 rounded-full bg-[#e4f4ed] text-[#2e7d5e] text-xs font-bold flex items-center gap-1.5'>
+                                  <Check className='w-3.5 h-3.5' />
+                                  Répondu
+                                </span>
+                              ) : !subscriptionActive ? (
                                 <Link
                                   href='/espace-prestataire/offres'
                                   className='h-9 px-4 rounded-full bg-[#fde68a] text-[#15181c] text-xs font-bold hover:bg-[#fcd34d] transition flex items-center gap-1.5'
@@ -400,7 +408,7 @@ export default function VendorOpportunitiesPage() {
             className='rounded-[20px] bg-[#f4f1f7] p-6 shadow-md flex flex-col justify-end h-[140px] cursor-pointer active:scale-[0.99] transition group'
           >
             <p className='text-xs text-[#6b7076] font-semibold uppercase tracking-wider'>
-              Plan actif
+              {plan.status === 'active' ? 'Plan actif' : 'Plan inactif'}
             </p>
             <svg viewBox='0 0 160 36' className='w-full h-9 overflow-visible my-3'>
               <defs>
@@ -419,7 +427,10 @@ export default function VendorOpportunitiesPage() {
               />
             </svg>
             <div className='flex items-baseline gap-1.5'>
-              <span className='text-lg font-bold text-[#15181c]'>Gratuit</span>
+              <span className='text-lg font-bold text-[#15181c]'>{plan.name}</span>
+              {plan.status !== 'active' && (
+                <span className='text-xs font-semibold text-[#6b7076]'>({plan.status})</span>
+              )}
             </div>
           </div>
 
@@ -623,7 +634,11 @@ function DossierCard({
         >
           {!subscriptionActive && <Lock size={14} />} Voir
         </button>
-        {subscriptionActive ? (
+        {match.status === "contacted" ? (
+          <span className='flex-1 py-3 px-4 rounded-full bg-[#e4f4ed] text-sm font-bold text-[#2e7d5e] flex items-center justify-center gap-2'>
+            <Check size={16} /> Répondu
+          </span>
+        ) : subscriptionActive ? (
           <button
             onClick={onRespond}
             className='flex-1 py-3 px-4 rounded-full bg-[#15181c] text-sm font-bold text-white hover:bg-[#2c3036] transition flex items-center justify-center gap-2'

@@ -249,6 +249,9 @@ export default function VendorMessagingPage() {
                 const lm = lastMessage(p);
                 const unread = unreadCount(p);
                 const coupleName = `${p.couple?.firstName || ""} ${p.couple?.lastName || ""}`.trim() || "Couple";
+                const isFromVendor = lm ? lm.senderRole === "vendor" : !!p.matchId;
+                const preview = lm ? lm.content : p.message || null;
+                const previewDate = lm ? formatDate(lm.createdAt) : "";
                 return (
                   <button
                     key={p.id}
@@ -264,11 +267,11 @@ export default function VendorMessagingPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-semibold text-[#1c1c1c] truncate text-sm">{coupleName}</span>
-                        {lm && <span className="font-semibold text-[10px] text-[#8b8b86] shrink-0">{formatDate(lm.createdAt)}</span>}
+                        {previewDate && <span className="font-semibold text-[10px] text-[#8b8b86] shrink-0">{previewDate}</span>}
                       </div>
                       <div className="flex items-center justify-between gap-2">
                         <span className={`text-xs truncate ${unread ? "text-[#1c1c1c] font-medium" : "text-[#8b8b86]"}`}>
-                          {lm ? (lm.senderRole === "vendor" ? "Vous : " : "") + lm.content : "Pas encore de message"}
+                          {preview ? (isFromVendor ? "Vous : " : "") + preview : "Pas encore de message"}
                         </span>
                         {unread > 0 && (
                           <span className="h-5 min-w-[20px] rounded-full bg-[#1c1c1c] text-white text-[10px] font-semibold flex items-center justify-center px-1.5">

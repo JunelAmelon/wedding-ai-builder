@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   Calendar,
@@ -84,6 +84,7 @@ export default function VendorProjectDetailPage() {
 
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
   const [showDialog, setShowDialog] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -104,7 +105,8 @@ export default function VendorProjectDetailPage() {
   }, [matchId]);
 
   async function respond() {
-    if (!data || !message.trim() || submitting) return;
+    if (!data || !message.trim() || submittingRef.current) return;
+    submittingRef.current = true;
     setSubmitting(true);
     try {
       const res = await fetch("/api/vendor/proposals", {
@@ -135,6 +137,7 @@ export default function VendorProjectDetailPage() {
       alert(err instanceof Error ? err.message : "Erreur");
     } finally {
       setSubmitting(false);
+      submittingRef.current = false;
     }
   }
 
@@ -290,14 +293,14 @@ export default function VendorProjectDetailPage() {
               </span>
             )}
           </div>
-          <button
-            onClick={() => setShowDialog(true)}
-            disabled={isContacted}
-            className="inline-flex items-center gap-1.5 rounded-full bg-[#15181c] text-white px-4 py-2 text-[12px] sm:text-[13px] font-bold hover:bg-[#6b7076] transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Send size={15} />
-            {isContacted ? "Déjà répondu" : "Répondre"}
-          </button>
+          {!isContacted && (
+            <button
+              onClick={() => setShowDialog(true)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#15181c] text-white px-4 py-2 text-[12px] sm:text-[13px] font-bold hover:bg-[#6b7076] transition"
+            >
+              <Send size={15} /> Répondre
+            </button>
+          )}
         </div>
 
         {/* ================= MOBILE: FICHE TECHNIQUE (before match reasons) ================= */}
@@ -530,16 +533,15 @@ function FicheTechnique({
         {summary?.style && <SpecRow label="Style" value={summary.style} />}
       </div>
       <div className="border-t border-[#ececec] px-5 py-4">
-        <button
-          onClick={onRespond}
-          disabled={isContacted}
-          className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-full bg-[#fde68a] text-[#15181c] font-bold text-[13px] hover:bg-[#fcd34d] transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Send size={16} />
-          {isContacted ? "Déjà répondu" : "Répondre à l'appel"}
-        </button>
-        {isContacted && (
-          <div className="flex items-center gap-2 rounded-2xl bg-[#f4f1f7] text-[#15181c] text-[12px] px-4 py-2.5 mt-2.5">
+        {!isContacted ? (
+          <button
+            onClick={onRespond}
+            className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-full bg-[#fde68a] text-[#15181c] font-bold text-[13px] hover:bg-[#fcd34d] transition"
+          >
+            <Send size={16} /> Répondre à l'appel
+          </button>
+        ) : (
+          <div className="flex items-center gap-2 rounded-2xl bg-[#f4f1f7] text-[#15181c] text-[12px] px-4 py-2.5">
             <Check size={14} />
             Proposition envoyée
           </div>

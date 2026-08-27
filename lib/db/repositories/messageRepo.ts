@@ -63,4 +63,23 @@ export const messageRepo = {
     });
     await batch.commit();
   },
+
+  async update(id: string, data: Partial<Message>): Promise<Message> {
+    if (isLocalMode()) {
+      return localStore.update<Message>(COLLECTION, id, data);
+    }
+    const col = await getFirestoreCol();
+    await col.doc(id).update(data);
+    const doc = await col.doc(id).get();
+    return doc.data() as Message;
+  },
+
+  async delete(id: string): Promise<void> {
+    if (isLocalMode()) {
+      await localStore.delete(COLLECTION, id);
+      return;
+    }
+    const col = await getFirestoreCol();
+    await col.doc(id).delete();
+  },
 };

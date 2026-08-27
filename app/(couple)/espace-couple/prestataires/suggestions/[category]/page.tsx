@@ -5,8 +5,8 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import PageHeader from "@/components/couple/PageHeader";
-import { ArrowLeft, ChevronRight, MapPin, Star, Plus } from "lucide-react";
-import type { VendorProfile, WeddingProject } from "@/types/marketplace";
+import { ArrowLeft, ChevronRight, MapPin, Star, Plus, Check } from "lucide-react";
+import type { VendorProfile, WeddingProject, Proposal } from "@/types/marketplace";
 import TenderFormModal from "@/components/couple/TenderFormModal";
 import { ExpandableText } from "@/components/couple/ExpandableText";
 
@@ -100,6 +100,7 @@ type EnrichedVendor = Omit<VendorProfile, "serviceArea"> & {
 interface SuggestionItem {
   match: { id: string; category: string; score: number; summary: string | null; vendorId: string };
   vendor: EnrichedVendor | null;
+  proposal: Proposal | null;
 }
 
 function initials(name?: string) {
@@ -116,6 +117,31 @@ export default function CategorySuggestionsPage() {
   const [viewMode, setViewMode] = useState<"liste" | "dossier">("dossier");
   const [showTenderForm, setShowTenderForm] = useState(false);
   const [coupleProject, setCoupleProject] = useState<WeddingProject | null>(null);
+  const [validating, setValidating] = useState<string | null>(null);
+
+  async function validateMatch(matchId: string) {
+    const item = suggestions.find((s) => s.match.id === matchId);
+    if (!item?.proposal) return;
+    setValidating(matchId);
+    try {
+      const res = await fetch("/api/proposals", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ proposalId: item.proposal.id, status: "accepted" }),
+      });
+      if (!res.ok) throw new Error("Erreur");
+      const json = await res.json();
+      setSuggestions((prev) =>
+        prev.map((s) =>
+          s.match.id === matchId ? { ...s, proposal: json.proposal } : s
+        )
+      );
+    } catch {
+      alert("Impossible de valider cette proposition.");
+    } finally {
+      setValidating(null);
+    }
+  }
 
   useEffect(() => {
     async function load() {
@@ -398,14 +424,30 @@ export default function CategorySuggestionsPage() {
                         >
                           Voir le profil
                         </Link>
-                        <Button
-                          variant="primary"
-                          className="flex-1 rounded-full text-[12px] font-bold px-3 py-2.5"
-                          onClick={launchTender}
-                          iconLeft={<Plus size={14} />}
-                        >
-                          Appeler
-                        </Button>
+                        {item.proposal?.status === "accepted" ? (
+                          <span className="flex-1 text-center rounded-full bg-[#e4f4ed] text-[#2e7d5e] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
+                            <Check size={14} /> Validé
+                          </span>
+                        ) : item.proposal ? (
+                          <Button
+                            variant="primary"
+                            className="flex-1 rounded-full text-[12px] font-bold px-3 py-2.5"
+                            onClick={() => validateMatch(item.match.id)}
+                            disabled={validating === item.match.id}
+                            iconLeft={<Check size={14} />}
+                          >
+                            {validating === item.match.id ? "Validation..." : "Valider"}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="primary"
+                            className="flex-1 rounded-full text-[12px] font-bold px-3 py-2.5"
+                            onClick={launchTender}
+                            iconLeft={<Plus size={14} />}
+                          >
+                            Appeler
+                          </Button>
+                        )}
                       </div>
                     </div>
                   );

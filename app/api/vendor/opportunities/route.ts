@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { isVendorSubscriptionActive } from "@/lib/subscription-guard";
+import { getVendorPlanById } from "@/lib/subscriptions";
+import { adminRepo } from "@/lib/db/repositories/adminRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
@@ -33,7 +35,17 @@ export async function GET() {
       })
     );
 
-    return NextResponse.json({ opportunities: opportunities.filter((o) => o.project), subscriptionActive });
+    const subscription = await adminRepo.getUserSubscriptionByUserId(user.id).catch(() => null);
+    const plan = subscription?.planId ? getVendorPlanById(subscription.planId) : undefined;
+
+    return NextResponse.json({
+      opportunities: opportunities.filter((o) => o.project),
+      subscriptionActive,
+      plan: {
+        name: plan?.name || (subscriptionActive ? "Abonnement" : "Gratuit"),
+        status: subscription?.status || (subscriptionActive ? "active" : "inactive"),
+      },
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

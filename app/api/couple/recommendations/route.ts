@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
+import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
@@ -21,6 +22,7 @@ export async function GET() {
 
     const recommendations = await Promise.all(
       matches.map(async (m) => {
+        if (m.status === "rejected") return null;
         const vendor = await vendorProfileRepo.get(m.vendorId);
         if (!vendor) return null;
         // Filter out vendors whose subscription is no longer active or who are unavailable on the wedding date
@@ -28,7 +30,8 @@ export async function GET() {
         if (!isActive) return null;
         const weddingDate = project.weddingDate;
         if (weddingDate && vendor.availability?.unavailableDates?.includes(weddingDate)) return null;
-        return { match: m, vendor };
+        const proposal = m.status === "contacted" ? await proposalRepo.getByMatchAndVendor(m.id, m.vendorId) : null;
+        return { match: m, vendor, proposal };
       })
     );
 
@@ -62,13 +65,15 @@ export async function POST(req: Request) {
 
     const recommendations = await Promise.all(
       result.matches.map(async (m) => {
+        if (m.status === "rejected") return null;
         const vendor = await vendorProfileRepo.get(m.vendorId);
         if (!vendor) return null;
         const isActive = await isVendorSubscriptionActive(vendor.userId);
         if (!isActive) return null;
         const weddingDate = project.weddingDate;
         if (weddingDate && vendor.availability?.unavailableDates?.includes(weddingDate)) return null;
-        return { match: m, vendor };
+        const proposal = m.status === "contacted" ? await proposalRepo.getByMatchAndVendor(m.id, m.vendorId) : null;
+        return { match: m, vendor, proposal };
       })
     );
 
