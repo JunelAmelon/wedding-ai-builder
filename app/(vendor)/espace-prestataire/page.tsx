@@ -152,7 +152,7 @@ export default function VendorDashboardPage() {
           {toast.message}
         </div>
       )}
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-4 sm:py-10">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-5 mb-4 sm:mb-10">
           <div>

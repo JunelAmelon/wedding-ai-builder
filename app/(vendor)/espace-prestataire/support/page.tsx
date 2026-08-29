@@ -70,7 +70,7 @@ export default function VendorSupportPage() {
 
   return (
     <div className="min-h-screen bg-[#fef2f4] font-sans">
-      <div className="max-w-3xl mx-auto px-5 sm:px-8 py-4 sm:py-10">
+      <div className="max-w-3xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
         {/* Header */}
         <div className="mb-6 sm:mb-10">
           <h1 className="font-allura text-3xl sm:text-4xl font-normal text-[#0E0E10]">

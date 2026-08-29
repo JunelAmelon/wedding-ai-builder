@@ -256,7 +256,7 @@ export default function VendorLayoutClient({
         </div>
       </nav>
 
-      <main className="pt-24 lg:pt-28 pb-24 lg:pb-8 px-4 sm:px-6 lg:px-10">
+      <main className="lg:pt-28 pb-24 lg:pb-8">
         {children}
       </main>
     </div>

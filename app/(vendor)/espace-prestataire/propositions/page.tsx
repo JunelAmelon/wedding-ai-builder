@@ -150,6 +150,17 @@ export default function VendorProposalsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#fef2f4] to-white p-3 sm:p-4 lg:p-6">
       <div className="max-w-[1200px] mx-auto p-3 sm:p-4 lg:p-6 rounded-[28px]">
+        {/* Header */}
+        <div className="mb-8">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#6B6B72] mb-2">Suivi</p>
+          <h1 className="font-allura text-3xl sm:text-4xl font-normal text-[#0E0E10]">
+            Mes <span className="text-[#e64a5d]">propositions</span>
+          </h1>
+          <p className="text-sm sm:text-base text-[#6B6B72] mt-2">
+            Suivez l'état de vos propositions envoyées aux couples.
+          </p>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main */}
           <main className="flex-[1.8] min-w-0 space-y-6">
