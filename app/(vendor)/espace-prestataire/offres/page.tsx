@@ -7,8 +7,8 @@ const PLANS = [
   {
     name: "Essentiel",
     price: 49,
-    color: "#fff8fa",
-    accent: "#15181c",
+    color: "#ffffff",
+    accent: "#0E0E10",
     popular: false,
     icon: Shield,
     features: [
@@ -22,8 +22,8 @@ const PLANS = [
   {
     name: "Premium Business",
     price: 69,
-    color: "#fde68a",
-    accent: "#15181c",
+    color: "#ffffff",
+    accent: "#0E0E10",
     popular: true,
     icon: Sparkles,
     features: [
@@ -37,8 +37,8 @@ const PLANS = [
   {
     name: "Elite Performance",
     price: 149,
-    color: "#15181c",
-    accent: "#fde68a",
+    color: "#0E0E10",
+    accent: "#fef2f4",
     popular: false,
     icon: TrendingUp,
     features: [
@@ -120,16 +120,16 @@ export default function VendorOffresPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fff8fa] text-[#15181c] font-sans">
+    <div className="min-h-screen bg-[#fef2f4] text-[#0E0E10] font-sans">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
         <div className="text-center mb-12">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[#6b7076] mb-3">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#6B6B72] mb-3">
             Abonnements
           </p>
-          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#15181c] mb-3">
-            Choisissez votre formule
+          <h1 className="font-allura text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-[#0E0E10] mb-3">
+            Choisissez votre <span className="text-[#e64a5d]">formule</span>
           </h1>
-          <p className="text-[#6b7076] max-w-xl mx-auto">
+          <p className="text-[#6B6B72] max-w-xl mx-auto">
             Des abonnements pensés pour faire croître votre activité de prestataire mariage.
           </p>
         </div>
@@ -138,13 +138,13 @@ export default function VendorOffresPage() {
           {PLANS.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative rounded-[32px] p-6 sm:p-8 shadow-[0_18px_60px_rgba(21,24,28,0.1)] border border-[#ececec] flex flex-col ${
-                  plan.popular ? "ring-2 ring-[#fde68a]" : ""
+                className={`relative rounded-[32px] p-6 sm:p-8 shadow-[0_18px_60px_rgba(21,24,28,0.1)] border border-[#EDEDF0] flex flex-col ${
+                  plan.popular ? "ring-2 ring-[#e64a5d]" : ""
                 }`}
                 style={{ backgroundColor: plan.color }}
               >
                 {plan.popular && activePlanId !== PLAN_IDS[plan.name] && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#15181c] px-3 py-1 text-xs text-white font-medium flex items-center gap-1.5">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#0E0E10] px-3 py-1 text-xs text-white font-medium flex items-center gap-1.5">
                     <Star size={12} /> Plus populaire
                   </div>
                 )}
@@ -156,16 +156,16 @@ export default function VendorOffresPage() {
 
               <div className="flex items-center gap-3 mb-6">
                 <div
-                  className="h-12 w-12 rounded-2xl flex items-center justify-center"
-                  style={{ backgroundColor: plan.accent === "#15181c" ? "#ffffff" : "#15181c", color: plan.accent }}
+                  className="h-12 w-12 rounded-[28px] flex items-center justify-center"
+                  style={{ backgroundColor: plan.color === "#0E0E10" ? "#ffffff" : "#0E0E10", color: plan.accent }}
                 >
                   <plan.icon size={24} strokeWidth={1.8} />
                 </div>
                 <div>
-                  <h2 className="font-display text-xl font-bold" style={{ color: plan.name === "Elite Performance" ? "#ffffff" : "#15181c" }}>
+                  <h2 className="font-allura text-xl font-normal" style={{ color: plan.name === "Elite Performance" ? "#ffffff" : "#0E0E10" }}>
                     {plan.name}
                   </h2>
-                  <p className="text-sm font-semibold" style={{ color: plan.name === "Elite Performance" ? "#cbd5e1" : "#6b7076" }}>
+                  <p className="text-sm font-semibold" style={{ color: plan.name === "Elite Performance" ? "#E4DBFB" : "#6B6B72" }}>
                     {plan.price} €<span className="text-xs font-normal"> /mois</span>
                   </p>
                 </div>
@@ -176,12 +176,12 @@ export default function VendorOffresPage() {
                   <li
                     key={feature}
                     className="flex items-start gap-2.5 text-sm"
-                    style={{ color: plan.name === "Elite Performance" ? "#f4f1f7" : "#6b7076" }}
+                    style={{ color: plan.name === "Elite Performance" ? "#fef2f4" : "#6B6B72" }}
                   >
                     <Check
                       size={16}
                       className="shrink-0 mt-0.5"
-                      style={{ color: plan.name === "Elite Performance" ? "#fde68a" : "#15181c" }}
+                      style={{ color: plan.name === "Elite Performance" ? "#fef2f4" : "#0E0E10" }}
                     />
                     {feature}
                   </li>
@@ -191,7 +191,7 @@ export default function VendorOffresPage() {
               {loadingPlan ? (
                 <button
                   disabled
-                  className="w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 bg-[#f4f1f7] text-[#6b7076] cursor-default"
+                  className="w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 bg-[#fef2f4] text-[#6B6B72] cursor-default"
                 >
                   <Zap size={16} /> Chargement...
                 </button>
@@ -208,8 +208,8 @@ export default function VendorOffresPage() {
                   disabled={!!loading}
                   className={`w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 ${
                     plan.name === "Elite Performance"
-                      ? "bg-[#fde68a] text-[#15181c] hover:bg-[#fcd34d]"
-                      : "bg-[#15181c] text-white hover:bg-[#2c3036]"
+                      ? "bg-[#fef2f4] text-[#0E0E10] hover:bg-[#FEF3C7]"
+                      : "bg-[#e64a5d] text-white hover:brightness-110"
                   }`}
                 >
                   <Zap size={16} /> {loading === plan.name ? "Chargement..." : "Choisir"}
@@ -219,35 +219,35 @@ export default function VendorOffresPage() {
           ))}
         </div>
 
-        <div className="rounded-[32px] bg-white border border-[#ececec] shadow-[0_18px_60px_rgba(21,24,28,0.08)] p-6 sm:p-10 overflow-x-auto">
-          <h2 className="font-display text-2xl font-bold text-[#15181c] mb-6">
+        <div className="rounded-[32px] bg-white border border-[#EDEDF0] shadow-[0_18px_60px_rgba(21,24,28,0.08)] p-6 sm:p-10 overflow-x-auto">
+          <h2 className="font-allura text-2xl font-normal text-[#0E0E10] mb-6">
             Tableau comparatif
           </h2>
           <table className="w-full text-left min-w-[640px]">
             <thead>
-              <tr className="border-b border-[#ececec]">
-                <th className="py-3.5 pr-4 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]">
+              <tr className="border-b border-[#EDEDF0]">
+                <th className="py-3.5 pr-4 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]">
                   Fonctionnalités
                 </th>
-                <th className="py-3.5 px-4 text-center text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]">
+                <th className="py-3.5 px-4 text-center text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]">
                   Essentiel
                 </th>
-                <th className="py-3.5 px-4 text-center text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]">
+                <th className="py-3.5 px-4 text-center text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]">
                   Premium
                 </th>
-                <th className="py-3.5 px-4 text-center text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]">
+                <th className="py-3.5 px-4 text-center text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]">
                   Elite
                 </th>
               </tr>
             </thead>
             <tbody>
               {COMPARISON.map((row) => (
-                <tr key={row.feature} className="border-b border-[#ececec] last:border-0">
-                  <td className="py-3.5 pr-4 text-sm text-[#15181c]">{row.feature}</td>
-                  <td className="py-3.5 px-4 text-center text-sm text-[#6b7076]">
+                <tr key={row.feature} className="border-b border-[#EDEDF0] last:border-0">
+                  <td className="py-3.5 pr-4 text-sm text-[#0E0E10]">{row.feature}</td>
+                  <td className="py-3.5 px-4 text-center text-sm text-[#6B6B72]">
                     {typeof row.essentiel === "boolean" ? (
                       row.essentiel ? (
-                        <Check size={16} className="mx-auto text-[#15181c]" />
+                        <Check size={16} className="mx-auto text-[#0E0E10]" />
                       ) : (
                         "—"
                       )
@@ -255,10 +255,10 @@ export default function VendorOffresPage() {
                       row.essentiel
                     )}
                   </td>
-                  <td className="py-3.5 px-4 text-center text-sm text-[#6b7076]">
+                  <td className="py-3.5 px-4 text-center text-sm text-[#6B6B72]">
                     {typeof row.premium === "boolean" ? (
                       row.premium ? (
-                        <Check size={16} className="mx-auto text-[#15181c]" />
+                        <Check size={16} className="mx-auto text-[#0E0E10]" />
                       ) : (
                         "—"
                       )
@@ -266,10 +266,10 @@ export default function VendorOffresPage() {
                       row.premium
                     )}
                   </td>
-                  <td className="py-3.5 px-4 text-center text-sm text-[#6b7076]">
+                  <td className="py-3.5 px-4 text-center text-sm text-[#6B6B72]">
                     {typeof row.elite === "boolean" ? (
                       row.elite ? (
-                        <Check size={16} className="mx-auto text-[#15181c]" />
+                        <Check size={16} className="mx-auto text-[#0E0E10]" />
                       ) : (
                         "—"
                       )

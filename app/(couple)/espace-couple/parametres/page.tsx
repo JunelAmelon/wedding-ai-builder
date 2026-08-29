@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
@@ -91,29 +92,29 @@ export default function CoupleSettingsPage() {
 
   const initials = `${firstName[0] || ""}${lastName[0] || ""}`.toUpperCase();
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight={"80dvh"} />;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      <PageHeader eyebrow="Compte" title="Paramètres" description="Gérez votre compte et vos préférences." />
+      <PageHeader eyebrow="Compte" title={<>Paramètres</>} titleClassName="font-allura font-normal" description="Gérez votre compte et vos préférences." />
 
       <div className="space-y-6">
-        <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(11,15,26,0.06)]">
+        <div className="rounded-[28px] border border-[#EDEDF0] bg-white p-6 shadow-[0_20px_60px_rgba(14,14,16,0.05)]">
           <div className="flex items-center gap-3 mb-4">
-            <User size={20} className="text-primary" />
-            <h2 className="font-display text-xl font-semibold">Compte</h2>
+            <User size={20} className="text-[#e64a5d]" />
+            <h2 className="font-allura text-xl font-normal">Compte</h2>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
             <div className="relative h-24 w-24">
               {avatarUrl ? (
-                <Image src={avatarUrl} alt="Photo de profil" fill sizes="96px" className="rounded-full object-cover border border-black/10" unoptimized />
+                <Image src={avatarUrl} alt="Photo de profil" fill sizes="96px" className="rounded-full object-cover border border-[#EDEDF0]" unoptimized />
               ) : (
-                <span className="h-24 w-24 rounded-full bg-primary text-white text-2xl font-semibold flex items-center justify-center">
+                <span className="h-24 w-24 rounded-full bg-[#e64a5d] text-white text-2xl font-semibold flex items-center justify-center">
                   {initials || "·"}
                 </span>
               )}
-              <label className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center cursor-pointer shadow-md hover:bg-primary/90 transition">
+              <label className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#e64a5d] text-white flex items-center justify-center cursor-pointer shadow-md hover:brightness-110 transition">
                 <Camera size={14} />
                 <input
                   type="file"
@@ -128,9 +129,9 @@ export default function CoupleSettingsPage() {
               <p className="text-sm font-medium text-text-primary">Photo de profil</p>
               <p className="text-xs text-text-secondary mb-2">Visible dans votre espace et vos conversations.</p>
               {uploading && <p className="text-xs text-text-secondary flex items-center gap-1"><Loader2 size={12} className="animate-spin" /> Envoi en cours...</p>}
-              {uploadError && <p className="text-xs text-rose-600">{uploadError}</p>}
+              {uploadError && <p className="text-xs #e64a5d">{uploadError}</p>}
               {avatarUrl && (
-                <button onClick={() => setAvatarUrl(null)} className="text-xs text-rose-600 hover:text-rose-700 flex items-center gap-1 mt-1">
+                <button onClick={() => setAvatarUrl(null)} className="text-xs #e64a5d hover:#c43a4a flex items-center gap-1 mt-1">
                   <X size={12} /> Supprimer la photo
                 </button>
               )}
@@ -143,29 +144,29 @@ export default function CoupleSettingsPage() {
               placeholder="Prénom"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary"
+              className="w-full rounded-[28px] border border-[#EDEDF0] px-4 py-3 text-text-primary"
             />
             <input
               type="text"
               placeholder="Nom"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-primary"
+              className="w-full rounded-[28px] border border-[#EDEDF0] px-4 py-3 text-text-primary"
             />
             <input
               type="email"
               placeholder="Email"
               value={email}
               disabled
-              className="w-full rounded-xl border border-black/10 px-4 py-3 text-text-secondary bg-black/[0.02]"
+              className="w-full rounded-[28px] border border-[#EDEDF0] px-4 py-3 text-text-secondary bg-[#fef2f4]"
             />
           </div>
         </div>
 
-        <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(11,15,26,0.06)]">
+        <div className="rounded-[28px] border border-[#EDEDF0] bg-white p-6 shadow-[0_20px_60px_rgba(14,14,16,0.05)]">
           <div className="flex items-center gap-3 mb-4">
-            <Bell size={20} className="text-primary" />
-            <h2 className="font-display text-xl font-semibold">Notifications</h2>
+            <Bell size={20} className="text-[#e64a5d]" />
+            <h2 className="font-allura text-xl font-normal">Notifications</h2>
           </div>
           <div className="space-y-4">
             <label className="flex items-center justify-between">
@@ -174,7 +175,7 @@ export default function CoupleSettingsPage() {
                 type="checkbox"
                 checked={emailNotifications}
                 onChange={(e) => setEmailNotifications(e.target.checked)}
-                className="h-5 w-5 accent-primary"
+                className="h-5 w-5 accent-[#e64a5d]"
               />
             </label>
             <label className="flex items-center justify-between">
@@ -183,20 +184,20 @@ export default function CoupleSettingsPage() {
                 type="checkbox"
                 checked={proposalAlerts}
                 onChange={(e) => setProposalAlerts(e.target.checked)}
-                className="h-5 w-5 accent-primary"
+                className="h-5 w-5 accent-[#e64a5d]"
               />
             </label>
           </div>
         </div>
 
-        <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_rgba(11,15,26,0.06)]">
+        <div className="rounded-[28px] border border-[#EDEDF0] bg-white p-6 shadow-[0_20px_60px_rgba(14,14,16,0.05)]">
           <div className="flex items-center gap-3 mb-4">
-            <Shield size={20} className="text-primary" />
-            <h2 className="font-display text-xl font-semibold">Sécurité</h2>
+            <Shield size={20} className="text-[#e64a5d]" />
+            <h2 className="font-allura text-xl font-normal">Sécurité</h2>
           </div>
           <div className="space-y-3">
-            <input type="password" placeholder="Mot de passe actuel" className="w-full rounded-xl border border-black/10 px-4 py-3" />
-            <input type="password" placeholder="Nouveau mot de passe" className="w-full rounded-xl border border-black/10 px-4 py-3" />
+            <input type="password" placeholder="Mot de passe actuel" className="w-full rounded-[28px] border border-[#EDEDF0] px-4 py-3" />
+            <input type="password" placeholder="Nouveau mot de passe" className="w-full rounded-[28px] border border-[#EDEDF0] px-4 py-3" />
             <Button variant="secondary">Changer le mot de passe</Button>
           </div>
         </div>

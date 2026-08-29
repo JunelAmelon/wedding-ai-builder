@@ -35,7 +35,7 @@ export default function CoupleDocumentsPage() {
           <Link
             key={doc.id}
             href={doc.href}
-            className="group flex items-center justify-between rounded-2xl border border-black/10 bg-white p-5 shadow-[0_12px_40px_rgba(11,15,26,0.06)] hover:border-primary/30 transition-colors"
+            className="group flex items-center justify-between rounded-[28px] border border-black/10 bg-white p-5 shadow-[0_12px_40px_rgba(11,15,26,0.06)] hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-xl bg-white border border-black/10 flex items-center justify-center text-primary">
@@ -53,7 +53,7 @@ export default function CoupleDocumentsPage() {
         ))}
       </div>
 
-      <div className="mt-10 rounded-2xl border border-dashed border-black/20 p-8 text-center">
+      <div className="mt-10 rounded-[28px] border border-dashed border-black/20 p-8 text-center">
         <FileText size={40} className="text-text-secondary mx-auto mb-3" />
         <p className="text-text-secondary text-sm max-w-md mx-auto">
           L'ajout de contrats, devis et factures personnels sera disponible prochainement.

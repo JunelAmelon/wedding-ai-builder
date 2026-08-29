@@ -194,7 +194,7 @@ export default function LandingPage() {
         {/* HERO */}
         <section className="hero">
           <div className="wrap pt-6 sm:pt-10">
-            <h1 className="text-[1.85rem] sm:text-[2.6rem] lg:text-[3.6rem] font-bold leading-[1.15]">Votre mariage prêt <span style={{ background: "linear-gradient(to right, #D77779, #FFBFCA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>en 5 minutes avec les bons pros.</span></h1>
+            <h1 className="font-allura text-[1.85rem] sm:text-[2.6rem] lg:text-[3.6rem] font-normal leading-[1.15]">Votre mariage prêt <span style={{ background: "linear-gradient(to right, #D77779, #FFBFCA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>en 5 minutes avec les bons pros.</span></h1>
             <p className="lead">
               Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère un plan complet et trouve votre âme sœur professionnelle.
             </p>

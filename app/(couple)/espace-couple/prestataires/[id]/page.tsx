@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
+
 import { useEffect, useState, type ReactElement } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -56,9 +58,9 @@ function DashIcon({ size = 14, className = "" }: { size?: number; className?: st
 }
 
 const STATUS_META: Record<string, { label: string; Icon: (p: { size?: number; className?: string }) => ReactElement; chip: string }> = {
-  searching: { label: "En recherche", Icon: HourglassIcon, chip: "bg-[#f4f1f7]/20 text-[#1c1c1c]" },
+  searching: { label: "En recherche", Icon: HourglassIcon, chip: "bg-[#fef2f4]/20 text-[#0E0E10]" },
   responded: { label: "Réponses reçues", Icon: EnvelopeOpenIcon, chip: "bg-[#dbeafe] text-[#1e3a8a]" },
-  closed: { label: "Clôturé", Icon: SealCheckIcon, chip: "bg-[#f4f1f7] text-[#1c1c1c]" },
+  closed: { label: "Clôturé", Icon: SealCheckIcon, chip: "bg-[#fef2f4] text-[#0E0E10]" },
 };
 
 const TOTAL_SLOTS = 3;
@@ -143,7 +145,7 @@ export default function TenderDetailPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight={"80dvh"} />;
   if (!tender)
     return (
       <div className="max-w-6xl mx-auto px-6 py-14 text-center text-text-secondary">Appel d'offres introuvable.</div>
@@ -162,11 +164,11 @@ export default function TenderDetailPage() {
   const emptySlots = TOTAL_SLOTS - proposals.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fef2f4] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <Link
           href="/espace-couple/prestataires"
-          className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-[#8b8b86] hover:text-[#1c1c1c] mb-10"
+          className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-[#6B6B72] hover:text-[#0E0E10] mb-10"
         >
           <ArrowLeft size={14} /> Retour aux appels d'offres
         </Link>
@@ -195,7 +197,7 @@ export default function TenderDetailPage() {
           <div className="flex flex-col lg:flex-row lg:items-end gap-5 lg:gap-8 flex-wrap">
             {/* Avatar */}
             <div
-              className="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] rounded-[24px] border-[4px] border-white shrink-0 flex items-center justify-center text-[28px] sm:text-[40px] font-bold text-[#1c1c1c] shadow-[0_10px_30px_rgba(0,0,0,0.12)] bg-[#f4f1f7]"
+              className="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] rounded-[24px] border-[4px] border-white shrink-0 flex items-center justify-center text-[28px] sm:text-[40px] font-bold text-[#0E0E10] shadow-[0_10px_30px_rgba(0,0,0,0.12)] bg-[#fef2f4]"
             >
               {initials(tender.category).slice(0, 2)}
             </div>
@@ -205,19 +207,19 @@ export default function TenderDetailPage() {
               <div className="flex items-center gap-2.5 flex-wrap mb-1.5">
                 <h1 className="text-xl sm:text-2xl font-extrabold text-[#161616]">{tender.category}</h1>
               </div>
-              <p className="text-[13.5px] text-[#8b8b86] leading-relaxed mb-4 max-w-xl">
+              <p className="text-[13.5px] text-[#6B6B72] leading-relaxed mb-4 max-w-xl">
                 {tender.requirements?.join(" · ") || tender.notes || `Besoin d'un prestataire pour ${tender.category.toLowerCase()}.`}
               </p>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <button
                   onClick={() => router.push("/espace-couple/prestataires")}
-                  className="rounded-full bg-[#1c1c1c] text-white px-5 py-2.5 text-[13px] font-bold hover:bg-[#333] transition"
+                  className="rounded-full bg-[#0E0E10] text-white px-5 py-2.5 text-[13px] font-bold hover:bg-[#333] transition"
                 >
                   Retour
                 </button>
                 <button
                   onClick={() => setViewMode(viewMode === "dossier" ? "liste" : "dossier")}
-                  className="rounded-full bg-white text-[#1c1c1c] border-[1.5px] border-[#ececef] px-5 py-2.5 text-[13px] font-bold hover:bg-[#f8f8fa] transition"
+                  className="rounded-full bg-white text-[#0E0E10] border-[1.5px] border-[#ececef] px-5 py-2.5 text-[13px] font-bold hover:bg-[#f8f8fa] transition"
                 >
                   Changer de vue
                 </button>
@@ -227,15 +229,15 @@ export default function TenderDetailPage() {
             {/* Stats */}
             <div className="flex gap-8 sm:gap-10 flex-wrap pb-1">
               <div>
-                <div className="text-[12.5px] text-[#8b8b86] mb-1">Propositions</div>
+                <div className="text-[12.5px] text-[#6B6B72] mb-1">Propositions</div>
                 <div className="text-[22px] font-extrabold text-[#161616]">{receivedCount}</div>
               </div>
               <div>
-                <div className="text-[12.5px] text-[#8b8b86] mb-1">Compatibles</div>
+                <div className="text-[12.5px] text-[#6B6B72] mb-1">Compatibles</div>
                 <div className="text-[22px] font-extrabold text-[#161616]">{receivedCount}</div>
               </div>
               <div>
-                <div className="text-[12.5px] text-[#8b8b86] mb-1">Jours restants</div>
+                <div className="text-[12.5px] text-[#6B6B72] mb-1">Jours restants</div>
                 <div className="text-[22px] font-extrabold text-[#161616]">{daysLeft(tender.weddingDate) ?? "—"}</div>
               </div>
             </div>
@@ -250,7 +252,7 @@ export default function TenderDetailPage() {
                 <span>{receivedCount}</span>
                 <span className="hidden sm:inline opacity-90 text-[10px]">reçue</span>
               </div>
-              <div title={`${validatedCount} proposition${validatedCount > 1 ? "s" : ""} validée${validatedCount > 1 ? "s" : ""}`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#1c1c1c]">
+              <div title={`${validatedCount} proposition${validatedCount > 1 ? "s" : ""} validée${validatedCount > 1 ? "s" : ""}`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#0E0E10]">
                 <span>{validatedCount}</span>
                 <span className="hidden sm:inline opacity-90 text-[10px]">validée</span>
               </div>
@@ -264,19 +266,19 @@ export default function TenderDetailPage() {
             type="button"
             onClick={() => setViewMode("dossier")}
             className={`flex items-center gap-1.5 text-[13.5px] font-semibold pb-3.5 transition ${
-              viewMode === "dossier" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#8b8b86] hover:text-[#161616]"
+              viewMode === "dossier" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#6B6B72] hover:text-[#161616]"
             }`}
           >
-            Dossiers <sup className="bg-[#f1f0f5] text-[#8b8b86] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
+            Dossiers <sup className="bg-[#f1f0f5] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
           </button>
           <button
             type="button"
             onClick={() => setViewMode("liste")}
             className={`flex items-center gap-1.5 text-[13.5px] font-semibold pb-3.5 transition ${
-              viewMode === "liste" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#8b8b86] hover:text-[#161616]"
+              viewMode === "liste" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#6B6B72] hover:text-[#161616]"
             }`}
           >
-            Liste <sup className="bg-[#f1f0f5] text-[#8b8b86] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
+            Liste <sup className="bg-[#f1f0f5] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
           </button>
         </div>
 
@@ -298,12 +300,12 @@ export default function TenderDetailPage() {
         {/* ================= CONTENT ================= */}
         {proposals.length === 0 ? (
           <div className="mx-0 sm:mx-2 bg-white border border-[#ececef] rounded-[18px] px-6 sm:px-8 py-16 text-center">
-            <div className="h-12 w-12 rounded-full border border-[#f4f1f7] flex items-center justify-center mx-auto mb-5">
-              <HourglassIcon size={20} className="text-[#1c1c1c]" />
+            <div className="h-12 w-12 rounded-full border border-[#fef2f4] flex items-center justify-center mx-auto mb-5">
+              <HourglassIcon size={20} className="text-[#0E0E10]" />
             </div>
-            <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#1c1c1c] mb-3">En attente</p>
+            <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#0E0E10] mb-3">En attente</p>
             <h2 className="text-xl font-bold text-[#161616] mb-2">Aucune proposition pour l'instant</h2>
-            <p className="text-[#8b8b86] max-w-md mx-auto text-sm leading-relaxed">
+            <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed">
               Les professionnels compatibles sont en train d'être contactés. Leurs dossiers apparaîtront ici dès réception.
             </p>
           </div>
@@ -321,16 +323,16 @@ export default function TenderDetailPage() {
                           style={{ background: EMPTY_GRADIENTS[i % EMPTY_GRADIENTS.length] }}
                         >
                           <div className="text-center px-4">
-                            <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-3 text-[#8b8b86]">
+                            <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-3 text-[#6B6B72]">
                               <span className="text-lg">?</span>
                             </div>
-                            <p className="text-[13px] font-bold text-[#8b8b86]">À venir</p>
-                            <p className="text-[11px] text-[#8b8b86]/70 mt-1">Un prestataire répondra bientôt ici.</p>
+                            <p className="text-[13px] font-bold text-[#6B6B72]">À venir</p>
+                            <p className="text-[11px] text-[#6B6B72]/70 mt-1">Un prestataire répondra bientôt ici.</p>
                           </div>
                         </div>
                         <div className="mt-3 px-1">
-                          <div className="text-[14px] font-bold text-[#8b8b86]">—</div>
-                          <div className="text-[11.5px] text-[#8b8b86]/70">En attente de réponse</div>
+                          <div className="text-[14px] font-bold text-[#6B6B72]">—</div>
+                          <div className="text-[11.5px] text-[#6B6B72]/70">En attente de réponse</div>
                         </div>
                       </div>
                     );
@@ -372,7 +374,7 @@ export default function TenderDetailPage() {
                           <div className="text-[14px] font-bold text-[#161616] truncate">
                             {vendor.companyName || vendor.brandName || "Professionnel"}
                           </div>
-                          <div className="text-[11.5px] text-[#8b8b86]">
+                          <div className="text-[11.5px] text-[#6B6B72]">
                             {vendor.serviceCategory || tender.category} · {vendor.yearsOfExperience || 0} ans d'expérience
                           </div>
                         </div>
@@ -391,7 +393,7 @@ export default function TenderDetailPage() {
                       </div>
 
                       {proposal.message && (
-                        <p className="mt-2 px-1 text-[13px] text-[#8b8b86] leading-relaxed line-clamp-3">
+                        <p className="mt-2 px-1 text-[13px] text-[#6B6B72] leading-relaxed line-clamp-3">
                           « {proposal.message} »
                         </p>
                       )}
@@ -421,7 +423,7 @@ export default function TenderDetailPage() {
                           </Button>
                         )}
                         {isSelected && (
-                          <span className="flex-1 text-center rounded-full bg-[#f4f1f7] text-[#1c1c1c] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
+                          <span className="flex-1 text-center rounded-full bg-[#fef2f4] text-[#0E0E10] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
                             <SealCheckIcon size={14} /> Validé
                           </span>
                         )}
@@ -469,7 +471,7 @@ export default function TenderDetailPage() {
                             {proposalMeta.label}
                           </span>
                         </div>
-                        <p className="text-sm text-[#8b8b86] mt-1 line-clamp-1 max-w-[90%]">
+                        <p className="text-sm text-[#6B6B72] mt-1 line-clamp-1 max-w-[90%]">
                           {proposal.message || "Aucun message"}
                         </p>
                       </div>
@@ -481,7 +483,7 @@ export default function TenderDetailPage() {
                   );
                 })}
                 {emptySlots > 0 && (
-                  <div className="px-5 py-5 text-[13px] text-[#8b8b86] border-t border-[#ececef]">
+                  <div className="px-5 py-5 text-[13px] text-[#6B6B72] border-t border-[#ececef]">
                     + {emptySlots} proposition{emptySlots > 1 ? "s" : ""} à venir
                   </div>
                 )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import {
   Calendar,
   ChevronLeft,
@@ -147,23 +148,21 @@ export default function VendorPlanningPage() {
     }
   }
 
-  if (loading) return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#f4f1f7] to-white" />
-  );
+  if (loading) return <LoadingScreen minHeight="80dvh" />;
 
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-8">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[#6b7076] mb-2">Planning</p>
-            <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#15181c]">
-              Mon calendrier
+            <p className="text-[11px] uppercase tracking-[0.18em] text-[#6B6B72] mb-2">Planning</p>
+            <h1 className="font-allura text-3xl sm:text-4xl font-normal tracking-tight text-[#0E0E10]">
+              Mon <span className="text-[#e64a5d]">calendrier</span>
             </h1>
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="self-start sm:self-auto inline-flex items-center gap-2 rounded-full bg-[#15181c] px-4 py-2 text-sm font-semibold text-white hover:bg-[#333] transition-colors"
+            className="self-start sm:self-auto inline-flex items-center gap-2 rounded-full bg-[#e64a5d] px-4 py-2 text-sm font-semibold text-white hover:brightness-110 transition-colors"
           >
             <Plus size={15} strokeWidth={2} /> Indisponibilité
           </button>
@@ -171,28 +170,28 @@ export default function VendorPlanningPage() {
 
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
-              <Calendar size={20} className="text-[#15181c]" />
+            <div className="w-10 h-10 rounded-[28px] bg-white flex items-center justify-center">
+              <Calendar size={20} className="text-[#0E0E10]" />
             </div>
             <div>
-              <h2 className="font-bold text-[#15181c] text-lg">Calendrier</h2>
-              <p className="text-xs text-[#6b7076]">Vos indisponibilités et mariages</p>
+              <h2 className="font-bold text-[#0E0E10] text-lg">Calendrier</h2>
+              <p className="text-xs text-[#6B6B72]">Vos indisponibilités et mariages</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate(-1)}
-              className="w-8 h-8 rounded-lg border border-[#ececec] bg-white flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] transition"
+              className="w-8 h-8 rounded-[28px] border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition"
             >
               <ChevronLeft size={16} />
             </button>
-            <div className="px-4 py-2 bg-white border border-[#ececec] rounded-lg text-[13px] font-semibold text-[#15181c] min-w-[160px] text-center capitalize">
+            <div className="px-4 py-2 bg-white border border-[#EDEDF0] rounded-[28px] text-[13px] font-semibold text-[#0E0E10] min-w-[160px] text-center capitalize">
               {monthName}
             </div>
             <button
               onClick={() => navigate(1)}
-              className="w-8 h-8 rounded-lg border border-[#ececec] bg-white flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] transition"
+              className="w-8 h-8 rounded-[28px] border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition"
             >
               <ChevronRight size={16} />
             </button>
@@ -201,10 +200,10 @@ export default function VendorPlanningPage() {
 
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
-            <div className="bg-white rounded-2xl border border-[#ececec] overflow-hidden">
-              <div className="grid grid-cols-7 border-b border-[#ececec]">
+            <div className="bg-white rounded-[28px] border border-[#EDEDF0] overflow-hidden">
+              <div className="grid grid-cols-7 border-b border-[#EDEDF0]">
                 {DAYS_SHORT.map((d) => (
-                  <div key={d} className="py-3 text-center text-xs font-semibold text-[#6b7076] uppercase">
+                  <div key={d} className="py-3 text-center text-xs font-semibold text-[#6B6B72] uppercase">
                     {d}
                   </div>
                 ))}
@@ -216,25 +215,25 @@ export default function VendorPlanningPage() {
                   const key = toISODate(day);
                   const isUnavailable = unavailableSet.has(key);
                   const dayEvents = eventByDate.get(key) || [];
-                  const baseBg = isUnavailable ? "bg-[#f4f1f7]" : isCurrentMonth ? "bg-white" : "bg-[#f4f1f7]/50";
+                  const baseBg = isUnavailable ? "bg-[#FBE1E6]" : isCurrentMonth ? "bg-white" : "bg-[#E4DBFB]/30";
 
                   return (
                     <div
                       key={idx}
-                      className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#ececec] relative ${baseBg} ${isToday ? "ring-2 ring-inset ring-[#fde68a]" : ""}`}
+                      className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#EDEDF0] relative ${baseBg} ${isToday ? "ring-2 ring-inset ring-[#E4DBFB]" : ""}`}
                     >
-                      <div className={`text-xs font-medium mb-1 ${isToday ? "text-[#15181c]" : "text-[#6b7076]"}`}>
+                      <div className={`text-xs font-medium mb-1 ${isToday ? "text-[#0E0E10]" : "text-[#6B6B72]"}`}>
                         {day.getDate()}
                       </div>
                       <div className="space-y-1">
                         {isUnavailable && (
-                          <div className="flex items-center justify-between px-2 py-1 rounded-lg text-[10px] font-medium leading-tight bg-[#f4f1f7] text-[#6b7076]">
+                          <div className="flex items-center justify-between px-2 py-1 rounded-lg text-[10px] font-medium leading-tight bg-[#FBE1E6] text-[#8C2F39]">
                             <span className="flex items-center gap-1">
                               <AlertCircle size={10} /> Indisponible
                             </span>
                             <button
                               onClick={() => removeUnavailable(key)}
-                              className="hover:text-[#15181c] disabled:opacity-50"
+                              className="hover:text-[#0E0E10] disabled:opacity-50"
                               disabled={deleting === key}
                               aria-label="Supprimer"
                             >
@@ -245,14 +244,14 @@ export default function VendorPlanningPage() {
                         {dayEvents.slice(0, 2).map((e) => (
                           <div
                             key={e.id}
-                            className="w-full px-2 py-1 rounded-lg text-[10px] font-medium leading-tight truncate bg-[#15181c] text-white"
+                            className="w-full px-2 py-1 rounded-lg text-[10px] font-medium leading-tight truncate bg-[#e64a5d] text-white hover:brightness-110"
                             title={`${e.coupleName} — ${e.location}`}
                           >
                             {e.coupleName}
                           </div>
                         ))}
                         {dayEvents.length > 2 && (
-                          <div className="text-[9px] text-[#6b7076] pl-2">+{dayEvents.length - 2} autres</div>
+                          <div className="text-[9px] text-[#6B6B72] pl-2">+{dayEvents.length - 2} autres</div>
                         )}
                       </div>
                     </div>
@@ -263,49 +262,49 @@ export default function VendorPlanningPage() {
           </div>
 
           <div className="w-full lg:w-72 space-y-6">
-            <div className="bg-[#f4f1f7] rounded-2xl p-6 border border-[#ececec]">
-              <h4 className="text-sm font-bold text-[#15181c] mb-4 flex items-center gap-2">
-                <Calendar size={14} className="text-[#15181c]" />
+            <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <h4 className="text-sm font-bold text-[#0E0E10] mb-4 flex items-center gap-2">
+                <Calendar size={14} className="text-[#0E0E10]" />
                 Résumé
               </h4>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-white rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#FEF3C7] rounded-[28px]">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#f4f1f7] rounded-lg">
-                      <AlertCircle size={16} className="text-[#15181c]" />
+                    <div className="p-2 bg-white rounded-lg">
+                      <AlertCircle size={16} className="text-[#78350f]" />
                     </div>
-                    <span className="text-sm text-[#15181c]">Indisponibilités</span>
+                    <span className="text-sm text-[#0E0E10]">Indisponibilités</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#15181c]">{unavailableDates.length}</span>
+                  <span className="text-sm font-semibold text-[#0E0E10]">{unavailableDates.length}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-white rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#D8ECD9] rounded-[28px]">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#cbd5e1] rounded-lg">
-                      <Calendar size={16} className="text-[#15181c]" />
+                    <div className="p-2 bg-white rounded-lg">
+                      <Calendar size={16} className="text-[#2a6b3e]" />
                     </div>
-                    <span className="text-sm text-[#15181c]">Mariages</span>
+                    <span className="text-sm text-[#0E0E10]">Mariages</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#15181c]">{events.length}</span>
+                  <span className="text-sm font-semibold text-[#0E0E10]">{events.length}</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-[#f4f1f7] rounded-2xl p-6 border border-[#ececec]">
-              <h4 className="text-sm font-bold text-[#15181c] mb-4 flex items-center gap-2">
-                <AlertCircle size={14} className="text-[#15181c]" />
+            <div className="bg-[#FEF3C7] rounded-[28px] p-6 border border-[#fde68a]">
+              <h4 className="text-sm font-bold text-[#0E0E10] mb-4 flex items-center gap-2">
+                <AlertCircle size={14} className="text-[#0E0E10]" />
                 Indisponibilités à venir
               </h4>
               {upcomingUnavailable.length === 0 ? (
-                <p className="text-xs text-[#6b7076]">Aucune indisponibilité programmée.</p>
+                <p className="text-xs text-[#6B6B72]">Aucune indisponibilité programmée.</p>
               ) : (
                 <div className="space-y-2">
                   {upcomingUnavailable.map((d) => (
-                    <div key={d} className="flex items-center justify-between p-3 bg-white rounded-xl">
-                      <span className="text-sm text-[#15181c]">{formatLocalDate(d)}</span>
+                    <div key={d} className="flex items-center justify-between p-3 bg-white rounded-[28px]">
+                      <span className="text-sm text-[#0E0E10]">{formatLocalDate(d)}</span>
                       <button
                         onClick={() => removeUnavailable(d)}
                         disabled={deleting === d}
-                        className="p-2 rounded-full bg-[#f4f1f7] hover:bg-[#15181c] hover:text-white text-[#15181c] disabled:opacity-50 transition"
+                        className="p-2 rounded-full bg-[#FBE1E6] hover:bg-[#e64a5d] hover:text-white text-[#8C2F39] disabled:opacity-50 transition"
                         aria-label="Supprimer"
                       >
                         {deleting === d ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
@@ -316,19 +315,19 @@ export default function VendorPlanningPage() {
               )}
             </div>
 
-            <div className="bg-[#cbd5e1] rounded-2xl p-6 border border-[#ececec]">
-              <h4 className="text-sm font-bold text-[#15181c] mb-4">Prochains mariages</h4>
+            <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <h4 className="text-sm font-bold text-[#0E0E10] mb-4">Prochains mariages</h4>
               {upcomingEvents.length === 0 ? (
-                <p className="text-xs text-[#6b7076]">Aucun mariage confirmé.</p>
+                <p className="text-xs text-[#6B6B72]">Aucun mariage confirmé.</p>
               ) : (
                 <div className="space-y-3">
                   {upcomingEvents.map((e) => (
-                    <div key={e.id} className="p-3 bg-white rounded-xl">
-                      <div className="text-[13px] font-bold text-[#15181c]">{e.coupleName}</div>
-                      <div className="text-[11px] text-[#6b7076] flex items-center gap-1 mt-1">
+                    <div key={e.id} className="p-3 bg-[#E4DBFB]/40 rounded-[28px]">
+                      <div className="text-[13px] font-bold text-[#0E0E10]">{e.coupleName}</div>
+                      <div className="text-[11px] text-[#6B6B72] flex items-center gap-1 mt-1">
                         <Calendar size={10} /> {formatLocalDate(e.date)}
                       </div>
-                      <div className="text-[11px] text-[#6b7076] flex items-center gap-1 mt-0.5">
+                      <div className="text-[11px] text-[#6B6B72] flex items-center gap-1 mt-0.5">
                         <MapPin size={10} /> {e.location}
                       </div>
                     </div>
@@ -337,15 +336,15 @@ export default function VendorPlanningPage() {
               )}
             </div>
 
-            <div className="bg-[#fde68a] rounded-2xl p-6 border border-[#ececec]">
+            <div className="bg-[#fef2f4] rounded-[28px] p-6 border border-[#EDEDF0]">
               <button
                 onClick={() => setShowModal(true)}
-                className="w-full flex items-center gap-3 p-3 rounded-xl bg-white/60 hover:bg-white transition text-left"
+                className="w-full flex items-center gap-3 p-3 rounded-[28px] bg-white/60 hover:bg-white transition text-left"
               >
                 <div className="p-2 bg-white rounded-lg">
-                  <CalendarPlus size={16} className="text-[#15181c]" />
+                  <CalendarPlus size={16} className="text-[#0E0E10]" />
                 </div>
-                <span className="text-sm text-[#15181c] font-semibold">Bloquer une date</span>
+                <span className="text-sm text-[#0E0E10] font-semibold">Bloquer une date</span>
               </button>
             </div>
           </div>
@@ -354,42 +353,42 @@ export default function VendorPlanningPage() {
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#fde68a] flex items-center justify-center">
-                <Calendar size={26} className="text-[#15181c]" />
+              <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center">
+                <Calendar size={26} className="text-[#0E0E10]" />
               </div>
               <div>
-                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Planning</p>
-                <h2 className="font-display text-2xl font-bold text-[#15181c]">Bloquer une date</h2>
+                <p className="text-[#6B6B72] text-xs font-bold font-sans uppercase tracking-wider">Planning</p>
+                <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">Bloquer une date</h2>
               </div>
             </div>
 
             <div className="space-y-5">
               <div>
-                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
                   Date d'indisponibilité
                 </label>
                 <input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#fff8fa] transition"
+                  className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                 />
               </div>
 
               <button
                 onClick={addUnavailable}
                 disabled={saving || !selectedDate}
-                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <>

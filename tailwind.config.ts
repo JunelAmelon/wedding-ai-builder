@@ -7,7 +7,7 @@ const config: Config = {
     extend: {
       colors: {
         primary: "#0E0E10",
-        "cta-secondary": "#F2704A",
+        "cta-secondary": "#e64a5d",
         background: "#FFFFFF",
         surface: "#F7F7F9",
         success: "#3C8552",
@@ -21,7 +21,7 @@ const config: Config = {
         yellow: "#F4D93E",
         lavender: "#E4DBFB",
         "lavender-deep": "#8B7BD8",
-        coral: "#F2704A",
+        coral: "#e64a5d",
         "sage-chip": "#D8ECD9",
         sage: "#3C8552",
         "rose-chip": "#FBE1E6",
@@ -31,6 +31,7 @@ const config: Config = {
         sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
         serif: ["var(--font-serif)", "Space Grotesk", "ui-serif", "Georgia", "serif"],
         display: ["Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif"],
+        allura: ["var(--font-allura)", "cursive"],
       },
       borderRadius: {
         "r-lg": "28px",

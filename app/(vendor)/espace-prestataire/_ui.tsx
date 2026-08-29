@@ -9,7 +9,7 @@ export function SealTag({ ok }: { ok: boolean }) {
   return (
     <div
       className={`inline-flex items-center gap-2 rounded-full px-4 py-2 font-sans text-[10.5px] uppercase tracking-[0.1em] ${
-        ok ? "bg-[#f4f1f7]/20 text-[#1c1c1c]" : "bg-sky-100 text-sky-700"
+        ok ? "bg-[#fef2f4]/20 text-[#0E0E10]" : "bg-sky-100 text-sky-700"
       }`}
     >
       <span
@@ -45,7 +45,7 @@ export function PageHeader({
             <p className="font-sans text-[10px] uppercase tracking-[0.22em] text-text-secondary">{label}</p>
           </div>
         )}
-        <h1 className="font-serif text-4xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="font-allura text-4xl font-normal tracking-tight">{title}</h1>
         {subtitle && <p className="text-text-secondary italic mt-2 max-w-md">{subtitle}</p>}
       </div>
       {action && (
@@ -72,10 +72,10 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={`relative bg-white rounded-2xl border border-black/[0.06] shadow-[0_8px_24px_rgba(11,15,26,0.04)] p-6 ${className}`}>
+    <div className={`relative bg-white rounded-[28px] border border-black/[0.06] shadow-[0_8px_24px_rgba(11,15,26,0.04)] p-6 ${className}`}>
       {(title || action) && (
         <div className="relative flex items-center justify-between mb-5">
-          {title && <h2 className="font-serif text-xl font-semibold text-text-primary">{title}</h2>}
+          {title && <h2 className="font-allura text-xl font-normal text-text-primary">{title}</h2>}
           {action && (
             <Link
               href={action.href}

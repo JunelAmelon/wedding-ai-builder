@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import {
   Loader2,
   ArrowLeft,
@@ -146,19 +147,13 @@ export default function VendorProfileForCouplePage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-[80dvh] flex items-center justify-center bg-gradient-to-b from-[#fff8fa] to-white">
-        <Loader2 size={32} className="animate-spin text-[#1c1c1c]" />
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen minHeight="80dvh" />;
 
   if (error || !vendor) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <h1 className="font-display text-2xl font-semibold text-[#1c1c1c] mb-3">Profil introuvable</h1>
-        <p className="text-[#8b8b86] mb-6">{error || "Ce professionnel n'existe pas ou n'est plus disponible."}</p>
+        <h1 className="font-allura text-2xl font-normal text-[#0E0E10] mb-3">Profil introuvable</h1>
+        <p className="text-[#6B6B72] mb-6">{error || "Ce professionnel n'existe pas ou n'est plus disponible."}</p>
         <Button variant="primary" onClick={() => router.push("/espace-couple/prestataires")}>
           Retour à mes appels d'offres
         </Button>
@@ -213,11 +208,11 @@ export default function VendorProfileForCouplePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fef2f4] to-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
       <Link
         href="/espace-couple/prestataires"
-        className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-[#8b8b86] hover:text-[#1c1c1c] mb-10"
+        className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-[#6B6B72] hover:text-[#0E0E10] mb-10"
       >
         <ArrowLeft size={14} /> Retour à mes appels d'offres
       </Link>
@@ -226,7 +221,7 @@ export default function VendorProfileForCouplePage() {
         {/* Portfolio - gauche */}
         <div className="min-w-0">
           <div className="mb-4">
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-b from-[#fff8fa] to-white border border-black/[0.06]">
+            <div className="relative aspect-[4/3] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#fef2f4] to-white border border-black/[0.06]">
               {selectedImage ? (
                 <Image
                   src={selectedImage}
@@ -236,7 +231,7 @@ export default function VendorProfileForCouplePage() {
                   sizes="(max-width: 1024px) 100vw, 60vw"
                 />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-[#8b8b86]">
+                <div className="absolute inset-0 flex items-center justify-center text-[#6B6B72]">
                   <Heart size={48} className="opacity-20" />
                 </div>
               )}
@@ -244,7 +239,7 @@ export default function VendorProfileForCouplePage() {
                 onClick={toggleFavorite}
                 disabled={togglingFavorite}
                 className={`absolute top-4 right-4 h-10 w-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center transition-colors ${
-                  isFavorite ? "text-rose-500" : "text-[#8b8b86] hover:text-[#1c1c1c]"
+                  isFavorite ? "text-rose-500" : "text-[#6B6B72] hover:text-[#0E0E10]"
                 }`}
                 aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
               >
@@ -260,7 +255,7 @@ export default function VendorProfileForCouplePage() {
                   key={img.publicId || i}
                   onClick={() => setSelectedImage(img.url)}
                   className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                    selectedImage === img.url ? "border-[#f4f1f7]" : "border-transparent"
+                    selectedImage === img.url ? "border-[#fef2f4]" : "border-transparent"
                   }`}
                 >
                   <Image
@@ -282,13 +277,13 @@ export default function VendorProfileForCouplePage() {
 
           {(vendor.portfolio?.videos?.length ?? 0) > 0 && (
             <div className="mt-8">
-              <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-4 flex items-center gap-2">
-                <Sparkles size={18} className="text-[#1c1c1c]" />
+              <h3 className="font-allura text-lg font-semibold text-[#0E0E10] mb-4 flex items-center gap-2">
+                <Sparkles size={18} className="text-[#0E0E10]" />
                 Vidéos de présentation
               </h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 {vendor.portfolio?.videos?.map((video, i) => (
-                  <div key={i} className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-b from-[#fff8fa] to-white border border-black/[0.06]">
+                  <div key={i} className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-b from-[#fef2f4] to-white border border-black/[0.06]">
                     <video src={video} controls className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -299,9 +294,9 @@ export default function VendorProfileForCouplePage() {
 
         {/* Fiche prestataire - droite : dossier / fiche technique */}
         <div className="lg:sticky lg:top-8">
-          <div className="relative rounded-2xl bg-[#f4f1f7] border border-[#1c1c1c]/10 shadow-[0_18px_44px_rgba(11,15,26,0.08)] overflow-hidden">
+          <div className="relative rounded-[28px] bg-[#fef2f4] border border-[#0E0E10]/10 shadow-[0_18px_44px_rgba(11,15,26,0.08)] overflow-hidden">
             {/* Bandeau de référence dossier */}
-            <div className="flex items-center justify-between px-6 py-2.5 bg-[#1c1c1c] border-b border-[#1c1c1c]/10">
+            <div className="flex items-center justify-between px-6 py-2.5 bg-[#0E0E10] border-b border-[#0E0E10]/10">
               <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-white/80">
                 Fiche prestataire
               </span>
@@ -323,30 +318,30 @@ export default function VendorProfileForCouplePage() {
 
             <div className="px-6 pt-6 pb-5">
               <div className="flex items-center gap-4 mb-5">
-                <div className="relative h-20 w-20 rounded-2xl border border-[#1c1c1c]/10 bg-white shadow-[0_4px_14px_rgba(11,15,26,0.08)] overflow-hidden flex items-center justify-center shrink-0">
+                <div className="relative h-20 w-20 rounded-[28px] border border-[#0E0E10]/10 bg-white shadow-[0_4px_14px_rgba(11,15,26,0.08)] overflow-hidden flex items-center justify-center shrink-0">
                   {vendor.logo?.url ? (
                     <Image src={vendor.logo.url} alt={displayName} fill sizes="80px" className="object-cover" />
                   ) : (
-                    <span className="font-display text-xl font-semibold text-[#1c1c1c]">
+                    <span className="font-allura text-xl font-semibold text-[#0E0E10]">
                       {(displayName || "P").slice(0, 2).toUpperCase()}
                     </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-[10px] uppercase tracking-[0.14em] text-[#1c1c1c]/70 mb-1">
+                  <div className="font-semibold text-[10px] uppercase tracking-[0.14em] text-[#0E0E10]/70 mb-1">
                     {category}
                   </div>
-                  <h1 className="font-display text-2xl font-semibold text-[#1c1c1c] pr-14 leading-tight">
+                  <h1 className="font-allura text-2xl font-normal text-[#0E0E10] pr-14 leading-tight">
                     {displayName}
                   </h1>
                 </div>
               </div>
-              <p className="text-[#1c1c1c]/80 text-sm italic mb-5 pr-8">
+              <p className="text-[#0E0E10]/80 text-sm italic mb-5 pr-8">
                 {description?.slice(0, 120)}{description?.length > 120 ? "..." : ""}
               </p>
 
-              <div className="flex items-center gap-3 pb-5 mb-5 border-b border-dashed border-[#1c1c1c]/15 text-sm text-[#1c1c1c]/80">
-                <span className="flex items-center gap-1 text-[#1c1c1c] font-medium">
+              <div className="flex items-center gap-3 pb-5 mb-5 border-b border-dashed border-[#0E0E10]/15 text-sm text-[#0E0E10]/80">
+                <span className="flex items-center gap-1 text-[#0E0E10] font-medium">
                   <Star size={14} className="text-amber-400 fill-amber-400" />
                   {averageRating}
                 </span>
@@ -389,7 +384,7 @@ export default function VendorProfileForCouplePage() {
               </div>
 
               {pricingDetails && (
-                <p className="text-xs text-[#1c1c1c]/70 mt-4 mb-6 leading-relaxed">
+                <p className="text-xs text-[#0E0E10]/70 mt-4 mb-6 leading-relaxed">
                   {pricingDetails}
                 </p>
               )}
@@ -397,12 +392,12 @@ export default function VendorProfileForCouplePage() {
               {/* Ligne perforée — stub à détacher */}
               <div className="relative -mx-6 mt-6 mb-5">
                 <div className="border-t border-dashed border-black/20" />
-                <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#f4f1f7] border border-[#1c1c1c]/15" />
-                <span className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#f4f1f7] border border-[#1c1c1c]/15" />
+                <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#fef2f4] border border-[#0E0E10]/15" />
+                <span className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#fef2f4] border border-[#0E0E10]/15" />
               </div>
 
               <div className="flex items-center justify-center gap-2 mb-3">
-                <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#1c1c1c]/70">
+                <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#0E0E10]/70">
                   Contacter ce prestataire
                 </span>
               </div>
@@ -418,34 +413,34 @@ export default function VendorProfileForCouplePage() {
 
               {/* Coordonnées */}
               <div>
-                <div className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#1c1c1c]/70 mb-3">
+                <div className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#0E0E10]/70 mb-3">
                   Coordonnées
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex gap-3">
-                    <span className="font-semibold text-[10px] text-[#1c1c1c]/70 w-10 shrink-0 pt-0.5">
+                    <span className="font-semibold text-[10px] text-[#0E0E10]/70 w-10 shrink-0 pt-0.5">
                       Tél
                     </span>
-                    <span className="text-[#1c1c1c]">{vendor.phone || "Non renseigné"}</span>
+                    <span className="text-[#0E0E10]">{vendor.phone || "Non renseigné"}</span>
                   </div>
                   <div className="flex gap-3">
-                    <span className="font-semibold text-[10px] text-[#1c1c1c]/70 w-10 shrink-0 pt-0.5">
+                    <span className="font-semibold text-[10px] text-[#0E0E10]/70 w-10 shrink-0 pt-0.5">
                       Mail
                     </span>
-                    <span className="text-[#1c1c1c] break-all">
+                    <span className="text-[#0E0E10] break-all">
                       {vendor.email || "Non renseigné"}
                     </span>
                   </div>
                   {website && (
                     <div className="flex gap-3">
-                      <span className="font-semibold text-[10px] text-[#1c1c1c]/70 w-10 shrink-0 pt-0.5">
+                      <span className="font-semibold text-[10px] text-[#0E0E10]/70 w-10 shrink-0 pt-0.5">
                         Web
                       </span>
                       <a
                         href={website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#1c1c1c] hover:underline break-all"
+                        className="text-[#0E0E10] hover:underline break-all"
                       >
                         Site web
                       </a>
@@ -453,14 +448,14 @@ export default function VendorProfileForCouplePage() {
                   )}
                   {instagram && (
                     <div className="flex gap-3">
-                      <span className="font-semibold text-[10px] text-[#1c1c1c]/70 w-10 shrink-0 pt-0.5">
+                      <span className="font-semibold text-[10px] text-[#0E0E10]/70 w-10 shrink-0 pt-0.5">
                         IG
                       </span>
                       <a
                         href={`https://instagram.com/${instagram.replace(/^@/, "")}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#1c1c1c] hover:underline"
+                        className="text-[#0E0E10] hover:underline"
                       >
                         @{instagram.replace(/^@/, "")}
                       </a>
@@ -481,12 +476,12 @@ export default function VendorProfileForCouplePage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`pb-3 font-semibold text-[11px] uppercase tracking-[0.1em] transition-colors relative ${
-                activeTab === tab.id ? "text-[#1c1c1c]" : "text-[#8b8b86] hover:text-[#1c1c1c]"
+                activeTab === tab.id ? "text-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10]"
               }`}
             >
               {tab.label}
               {activeTab === tab.id && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1c1c1c]" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0E0E10]" />
               )}
             </button>
           ))}
@@ -496,34 +491,34 @@ export default function VendorProfileForCouplePage() {
       <div className="mt-8">
         {activeTab === "informations" && (
           <div className="max-w-3xl">
-            <h2 className="font-display text-2xl font-semibold text-[#1c1c1c] mb-4">Informations</h2>
-            <p className="text-[#8b8b86] leading-relaxed mb-8">
+            <h2 className="font-allura text-2xl font-normal text-[#0E0E10] mb-4">Informations</h2>
+            <p className="text-[#6B6B72] leading-relaxed mb-8">
               {description || "Aucune description disponible."}
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4 mb-8">
               <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
+                <div className="h-9 w-9 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] shrink-0">
                   <ExperienceIcon className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] mb-1">
+                  <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#0E0E10] mb-1">
                     Expérience
                   </div>
-                  <p className="text-[#8b8b86] text-sm">
+                  <p className="text-[#6B6B72] text-sm">
                     {experience > 0 ? `${experience} ans d'expérience dans le domaine.` : "Expérience non précisée."}
                   </p>
                 </div>
               </div>
               <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] shrink-0">
+                <div className="h-9 w-9 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] shrink-0">
                   <ZoneIcon className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c] mb-1">
+                  <div className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#0E0E10] mb-1">
                     Zone d'intervention
                   </div>
-                  <p className="text-[#8b8b86] text-sm">
+                  <p className="text-[#6B6B72] text-sm">
                     {serviceArea?.cities?.slice(0, 3).join(", ") || location}
                   </p>
                 </div>
@@ -532,12 +527,12 @@ export default function VendorProfileForCouplePage() {
 
             {styles.length > 0 && (
               <div className="mb-8">
-                <h3 className="font-medium text-[#1c1c1c] mb-3">Styles proposés</h3>
+                <h3 className="font-medium text-[#0E0E10] mb-3">Styles proposés</h3>
                 <div className="flex flex-wrap gap-2">
                   {styles.map((style: string) => (
                     <span
                       key={style}
-                      className="inline-flex items-center rounded-full px-3 py-1.5 text-sm text-[#1c1c1c] bg-white/70 backdrop-blur border border-white/40 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+                      className="inline-flex items-center rounded-full px-3 py-1.5 text-sm text-[#0E0E10] bg-white/70 backdrop-blur border border-white/40 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                     >
                       {style}
                     </span>
@@ -548,15 +543,15 @@ export default function VendorProfileForCouplePage() {
 
             {vendor.trainingDescription && (
               <div className="mb-8">
-                <h3 className="font-medium text-[#1c1c1c] mb-3">Formation</h3>
-                <p className="text-[#8b8b86] text-sm leading-relaxed">{vendor.trainingDescription}</p>
+                <h3 className="font-medium text-[#0E0E10] mb-3">Formation</h3>
+                <p className="text-[#6B6B72] text-sm leading-relaxed">{vendor.trainingDescription}</p>
               </div>
             )}
 
             {vendor.availability?.noticePeriod && (
               <div className="mb-8">
-                <h3 className="font-medium text-[#1c1c1c] mb-3">Disponibilité</h3>
-                <p className="text-[#8b8b86] text-sm leading-relaxed">
+                <h3 className="font-medium text-[#0E0E10] mb-3">Disponibilité</h3>
+                <p className="text-[#6B6B72] text-sm leading-relaxed">
                   Délai de réponse : {vendor.availability.noticePeriod}
                 </p>
               </div>
@@ -566,14 +561,14 @@ export default function VendorProfileForCouplePage() {
 
         {activeTab === "portfolio" && (
           <div>
-            <h2 className="font-display text-2xl font-semibold text-[#1c1c1c] mb-6">Portfolio</h2>
+            <h2 className="font-allura text-2xl font-normal text-[#0E0E10] mb-6">Portfolio</h2>
             {hasImages ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {images.map((img, i) => (
                   <button
                     key={img.publicId || i}
                     onClick={() => setSelectedImage(img.url)}
-                    className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-[#fff8fa] to-white border border-black/[0.06]"
+                    className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-[#fef2f4] to-white border border-black/[0.06]"
                   >
                     <Image
                       src={img.url}
@@ -586,62 +581,62 @@ export default function VendorProfileForCouplePage() {
                 ))}
               </div>
             ) : (
-              <p className="text-[#8b8b86]">Aucune image dans le portfolio.</p>
+              <p className="text-[#6B6B72]">Aucune image dans le portfolio.</p>
             )}
           </div>
         )}
 
         {activeTab === "avis" && (
           <div>
-            <h2 className="font-display text-2xl font-semibold text-[#1c1c1c] mb-6">Avis</h2>
+            <h2 className="font-allura text-2xl font-normal text-[#0E0E10] mb-6">Avis</h2>
             {reviews.length > 0 ? (
               <div className="grid sm:grid-cols-2 gap-4">
                 {reviews.map((review, i) => (
                   <div key={i} className="rounded-xl bg-white border border-black/[0.06] p-5">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="h-8 w-8 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] font-semibold text-xs">
+                      <div className="h-8 w-8 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] font-semibold text-xs">
                         {(review.author || "A").slice(0, 1).toUpperCase()}
                       </div>
                       <div>
-                        <div className="font-medium text-[#1c1c1c] text-sm">{review.author || "Client"}</div>
-                        <div className="text-xs text-[#8b8b86]">{review.date ? new Date(review.date).toLocaleDateString("fr-FR") : ""}</div>
+                        <div className="font-medium text-[#0E0E10] text-sm">{review.author || "Client"}</div>
+                        <div className="text-xs text-[#6B6B72]">{review.date ? new Date(review.date).toLocaleDateString("fr-FR") : ""}</div>
                       </div>
                       <div className="ml-auto flex items-center gap-1 text-amber-400">
                         <Star size={14} className="fill-amber-400" />
-                        <span className="text-sm font-medium text-[#1c1c1c]">{review.rating || 5}</span>
+                        <span className="text-sm font-medium text-[#0E0E10]">{review.rating || 5}</span>
                       </div>
                     </div>
-                    <p className="text-[#8b8b86] text-sm leading-relaxed">{review.text}</p>
+                    <p className="text-[#6B6B72] text-sm leading-relaxed">{review.text}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[#8b8b86]">Aucun avis pour le moment.</p>
+              <p className="text-[#6B6B72]">Aucun avis pour le moment.</p>
             )}
           </div>
         )}
 
         {activeTab === "faq" && (
           <div>
-            <h2 className="font-display text-2xl font-semibold text-[#1c1c1c] mb-6">FAQ</h2>
+            <h2 className="font-allura text-2xl font-normal text-[#0E0E10] mb-6">FAQ</h2>
             {faq.length > 0 ? (
               <div className="space-y-4 max-w-3xl">
                 {faq.map((item, i) => (
                   <div key={i} className="rounded-xl bg-white border border-black/[0.06] p-5">
                     <div className="flex items-start gap-3">
-                      <div className="h-7 w-7 rounded-full bg-[#f4f1f7] flex items-center justify-center text-[#1c1c1c] font-display text-sm shrink-0 mt-0.5">
+                      <div className="h-7 w-7 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] font-allura text-sm shrink-0 mt-0.5">
                         {i + 1}
                       </div>
                       <div>
-                        <h3 className="font-medium text-[#1c1c1c] mb-1">{item.question}</h3>
-                        <p className="text-[#8b8b86] text-sm leading-relaxed">{item.answer}</p>
+                        <h3 className="font-medium text-[#0E0E10] mb-1">{item.question}</h3>
+                        <p className="text-[#6B6B72] text-sm leading-relaxed">{item.answer}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-[#8b8b86]">Aucune FAQ renseignée par ce professionnel.</p>
+              <p className="text-[#6B6B72]">Aucune FAQ renseignée par ce professionnel.</p>
             )}
           </div>
         )}
@@ -650,22 +645,22 @@ export default function VendorProfileForCouplePage() {
       {/* Modal contact — style témoins/budget */}
       {contactOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setContactOpen(false)}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center">
-                <MessageCircle size={26} className="text-[#15181c]" />
+              <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center">
+                <MessageCircle size={26} className="text-[#0E0E10]" />
               </div>
               <div>
-                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Messagerie</p>
-                <h2 className="font-display text-2xl font-bold text-[#15181c]">
+                <p className="text-[#6B6B72] text-xs font-bold font-sans uppercase tracking-wider">Messagerie</p>
+                <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">
                   Contacter {displayName}
                 </h2>
               </div>
@@ -676,14 +671,14 @@ export default function VendorProfileForCouplePage() {
                 <div className="h-14 w-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#2e7d5e]/10 text-[#2e7d5e]">
                   <CheckCircle2 size={28} />
                 </div>
-                <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-2">Message envoyé</h3>
-                <p className="text-[#8b8b86] text-sm mb-6">
+                <h3 className="font-allura text-lg font-semibold text-[#0E0E10] mb-2">Message envoyé</h3>
+                <p className="text-[#6B6B72] text-sm mb-6">
                   Vous allez être redirigé vers votre messagerie pour poursuivre la conversation avec {displayName}.
                 </p>
                 <button
                   onClick={() => contactProposalId && router.push(`/espace-couple/messagerie?proposal=${contactProposalId}`)}
                   disabled={!contactProposalId}
-                  className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <MessageCircle size={16} />
                   Ouvrir la messagerie
@@ -692,7 +687,7 @@ export default function VendorProfileForCouplePage() {
             ) : (
               <div className="space-y-5">
                 <div>
-                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
                     Votre message *
                   </label>
                   <textarea
@@ -700,14 +695,14 @@ export default function VendorProfileForCouplePage() {
                     onChange={(e) => setContactMessage(e.target.value)}
                     rows={5}
                     placeholder="Bonjour, je suis intéressé(e) par votre profil pour notre mariage..."
-                    className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition resize-none"
+                    className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition resize-none"
                   />
                 </div>
 
                 <button
                   onClick={sendContact}
                   disabled={contactSending || !contactMessage.trim()}
-                  className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {contactSending ? (
                     <>
@@ -745,17 +740,17 @@ function LedgerRow({
 }) {
   return (
     <div className="flex items-baseline gap-2">
-      <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#1c1c1c]/70 shrink-0">
+      <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#0E0E10]/70 shrink-0">
         {label}
       </span>
-      <span className="flex-1 border-b border-dotted border-[#1c1c1c]/25 translate-y-[-3px]" />
+      <span className="flex-1 border-b border-dotted border-[#0E0E10]/25 translate-y-[-3px]" />
       <span
         className={`shrink-0 ${
           emphasis
-            ? "font-display text-lg font-semibold text-[#1c1c1c]"
+            ? "font-allura text-lg font-semibold text-[#0E0E10]"
             : success
             ? "text-sm font-medium text-[#2e7d5e]"
-            : "text-sm text-[#1c1c1c]"
+            : "text-sm text-[#0E0E10]"
         }`}
       >
         {value}

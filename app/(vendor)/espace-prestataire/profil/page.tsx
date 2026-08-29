@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import {
   ChevronLeft,
   ChevronRight,
@@ -199,51 +200,45 @@ export default function VendorProfilePage() {
   }
 
   const inputClass =
-    "w-full px-4 py-3 bg-white border border-[#cbd5e1] rounded-xl text-[14px] text-[#15181c] placeholder:text-[#6b7076] focus:outline-none focus:ring-2 focus:ring-[#fde68a] transition";
-  const labelClass = "block text-sm font-semibold text-[#15181c] mb-2";
+    "w-full px-4 py-3 bg-white border border-[#E4DBFB] rounded-xl text-[14px] text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:ring-2 focus:ring-[#fef2f4] transition";
+  const labelClass = "block text-sm font-semibold text-[#0E0E10] mb-2";
   const cardClass =
-    "rounded-3xl bg-white border border-[#f4f1f7] shadow-[0_20px_60px_rgba(21,24,28,0.08)] p-6 sm:p-8";
+    "rounded-[28px] bg-white border border-[#fef2f4] shadow-[0_20px_60px_rgba(21,24,28,0.08)] p-6 sm:p-8";
 
-  if (loading) {
-    return (
-      <div className="min-h-[80dvh] flex items-center justify-center bg-[#fff8fa]">
-        <Loader2 className="animate-spin text-[#15181c]" size={32} />
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen minHeight="80dvh" />;
 
   return (
-    <div className="min-h-screen bg-[#fff8fa] pb-12">
+    <div className="min-h-screen bg-[#fef2f4] pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 lg:py-14">
         <div className="mb-6 sm:mb-8">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[#6b7076] mb-2">Mon compte</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#15181c]">
-            Mon profil
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[#6B6B72] mb-2">Mon compte</p>
+          <h1 className="font-allura text-3xl sm:text-4xl font-normal tracking-tight text-[#0E0E10]">
+            Mon <span className="text-[#e64a5d]">profil</span>
           </h1>
         </div>
 
         <div className={cardClass}>
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-[#15181c]">
+              <span className="text-sm font-semibold text-[#0E0E10]">
                 Complétion du profil : {completion}%
               </span>
-              <span className="text-sm text-[#6b7076]">{completion}%</span>
+              <span className="text-sm text-[#6B6B72]">{completion}%</span>
             </div>
-            <div className="h-2.5 w-full bg-[#f4f1f7] rounded-full overflow-hidden">
+            <div className="h-2.5 w-full bg-[#fef2f4] rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#fde68a] transition-all duration-500"
+                className="h-full bg-[#fef2f4] transition-all duration-500"
                 style={{ width: `${completion}%` }}
               />
             </div>
-            <p className="mt-2 flex items-center gap-2 text-sm text-[#6b7076]">
+            <p className="mt-2 flex items-center gap-2 text-sm text-[#6B6B72]">
               <AlertCircle size={16} className="shrink-0" />
               Un profil incomplet ne sera pas proposé aux couples.
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 rounded-2xl bg-[#fce7f3] text-[#831843] p-4 text-sm flex items-center gap-2">
+            <div className="mb-6 rounded-[28px] bg-[#fce7f3] text-[#831843] p-4 text-sm flex items-center gap-2">
               <AlertCircle size={18} /> {error}
             </div>
           )}
@@ -255,10 +250,10 @@ export default function VendorProfilePage() {
                 onClick={() => setStep(index)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition ${
                   index === step
-                    ? "bg-[#15181c] text-white"
+                    ? "bg-[#e64a5d] text-white hover:brightness-110"
                     : index < step
-                    ? "bg-[#f4f1f7] text-[#15181c]"
-                    : "bg-white border border-[#cbd5e1] text-[#6b7076]"
+                    ? "bg-[#fef2f4] text-[#0E0E10]"
+                    : "bg-white border border-[#E4DBFB] text-[#6B6B72]"
                 }`}
               >
                 <span className="mr-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[11px]">
@@ -280,10 +275,10 @@ export default function VendorProfilePage() {
                       alt="Logo"
                       width={80}
                       height={80}
-                      className="h-20 w-20 rounded-2xl object-cover border border-[#f4f1f7]"
+                      className="h-20 w-20 rounded-[28px] object-cover border border-[#fef2f4]"
                     />
                   ) : (
-                    <div className="h-20 w-20 rounded-2xl bg-[#f4f1f7] flex items-center justify-center text-[#6b7076]">
+                    <div className="h-20 w-20 rounded-[28px] bg-[#fef2f4] flex items-center justify-center text-[#6B6B72]">
                       <UploadCloud size={24} />
                     </div>
                   )}
@@ -298,7 +293,7 @@ export default function VendorProfilePage() {
                     <button
                       onClick={() => fileInputRef.current?.click()}
                       disabled={logoUploading}
-                      className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#15181c] text-sm font-semibold text-[#15181c] hover:bg-[#15181c] hover:text-white transition disabled:opacity-50"
+                      className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-[#e64a5d] text-sm font-semibold text-[#e64a5d] hover:bg-[#e64a5d] hover:text-white transition disabled:opacity-50"
                     >
                       {logoUploading ? (
                         <Loader2 size={16} className="animate-spin" />
@@ -527,8 +522,8 @@ export default function VendorProfilePage() {
                         onClick={() => toggleStyle(style)}
                         className={`px-3 py-1.5 rounded-full text-sm border transition ${
                           active
-                            ? "bg-[#15181c] text-white border-[#15181c]"
-                            : "bg-white text-[#6b7076] border-[#cbd5e1] hover:border-[#15181c]"
+                            ? "bg-[#e64a5d] text-white hover:brightness-110 border-[#0E0E10]"
+                            : "bg-white text-[#6B6B72] border-[#E4DBFB] hover:border-[#0E0E10]"
                         }`}
                       >
                         {style}
@@ -690,8 +685,8 @@ export default function VendorProfilePage() {
                         onClick={() => togglePeakSeason(season)}
                         className={`px-3 py-1.5 rounded-full text-sm border transition ${
                           active
-                            ? "bg-[#15181c] text-white border-[#15181c]"
-                            : "bg-white text-[#6b7076] border-[#cbd5e1] hover:border-[#15181c]"
+                            ? "bg-[#e64a5d] text-white hover:brightness-110 border-[#0E0E10]"
+                            : "bg-white text-[#6B6B72] border-[#E4DBFB] hover:border-[#0E0E10]"
                         }`}
                       >
                         {season}
@@ -701,14 +696,14 @@ export default function VendorProfilePage() {
                 </div>
               </div>
 
-              <label className="flex items-start gap-3 p-4 rounded-2xl border border-[#cbd5e1] bg-white cursor-pointer">
+              <label className="flex items-start gap-3 p-4 rounded-[28px] border border-[#E4DBFB] bg-white cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.acceptedTerms || false}
                   onChange={(e) => updateForm("acceptedTerms", e.target.checked)}
-                  className="mt-1 h-5 w-5 accent-[#15181c]"
+                  className="mt-1 h-5 w-5 accent-[#0E0E10]"
                 />
-                <span className="text-sm text-[#6b7076]">
+                <span className="text-sm text-[#6B6B72]">
                   J'accepte les conditions générales et certifie l'exactitude des
                   informations fournies. *
                 </span>
@@ -720,7 +715,7 @@ export default function VendorProfilePage() {
             <button
               onClick={() => setStep((s) => Math.max(0, s - 1))}
               disabled={step === 0}
-              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full border border-[#cbd5e1] bg-white text-sm font-semibold text-[#15181c] hover:bg-[#f4f1f7] transition disabled:opacity-40"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full border border-[#E4DBFB] bg-white text-sm font-semibold text-[#0E0E10] hover:bg-[#fef2f4] transition disabled:opacity-40"
             >
               <ChevronLeft size={18} /> Précédent
             </button>
@@ -729,7 +724,7 @@ export default function VendorProfilePage() {
               {step < STEPS.length - 1 ? (
                 <button
                   onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
-                  className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#15181c] text-sm font-semibold text-white hover:bg-[#333] transition"
+                  className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#e64a5d] text-sm font-semibold text-white hover:brightness-110 transition"
                 >
                   Suivant <ChevronRight size={18} />
                 </button>
@@ -737,7 +732,7 @@ export default function VendorProfilePage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#15181c] text-sm font-semibold text-white hover:bg-[#333] transition disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#e64a5d] text-sm font-semibold text-white hover:brightness-110 transition disabled:opacity-50"
                 >
                   {saving ? (
                     <Loader2 size={18} className="animate-spin" />

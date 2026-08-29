@@ -12,10 +12,10 @@ const STATUS_LABELS: Record<string, string> = {
   closed: "Fermé",
 };
 const STATUS_STYLES: Record<string, string> = {
-  open: "bg-rose-50 text-rose-700 border-rose-200",
-  in_progress: "bg-amber-50 text-amber-700 border-amber-200",
+  open: "bg-[#fef2f4] text-[#c43a4a] border-[#fef2f4]",
+  in_progress: "bg-[#FEF3C7] text-[#D4B520] border-[#FEF3C7]",
   resolved: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  closed: "bg-slate-100 text-slate-500 border-slate-200",
+  closed: "bg-[#f3f4f6] text-[#6B6B72] border-[#EDEDF0]",
 };
 
 export default function CoupleSupportPage() {
@@ -70,11 +70,12 @@ export default function CoupleSupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fef2f4] to-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Mon espace"
-          title="Support & Assistance"
+          title={<>Support & <span className="text-[#c43a4a]">Assistance</span></>}
+          titleClassName="font-allura font-normal"
           description="Une question, un bug, une demande ? Notre équipe vous répond rapidement."
         />
 
@@ -82,7 +83,7 @@ export default function CoupleSupportPage() {
           {/* Mes tickets */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display text-lg font-bold text-ink">Mes tickets</h2>
+              <h2 className="font-allura text-lg font-normal text-ink">Mes tickets</h2>
               {!loadingTickets && tickets.length > 0 && (
                 <span className="text-xs text-text-secondary">{tickets.length} ticket(s)</span>
               )}
@@ -93,8 +94,8 @@ export default function CoupleSupportPage() {
                 <Loader2 size={20} className="animate-spin text-text-secondary" />
               </div>
             ) : tickets.length === 0 ? (
-              <div className="rounded-2xl border border-line bg-white p-6 text-center">
-                <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-[#fff8fa] mb-3">
+              <div className="rounded-[28px] border border-line bg-white p-6 text-center shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+                <div className="inline-flex items-center justify-center h-12 w-12 rounded-[28px] bg-[#fef2f4] mb-3">
                   <MessageSquare size={22} className="text-text-secondary" />
                 </div>
                 <p className="text-sm text-text-secondary">Vous n'avez pas encore de ticket.</p>
@@ -102,7 +103,7 @@ export default function CoupleSupportPage() {
             ) : (
               <div className="space-y-3">
                 {tickets.map((t) => (
-                  <div key={t.id} className="rounded-2xl border border-line bg-white p-5">
+                  <div key={t.id} className="rounded-[28px] border border-line bg-white p-5 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <h3 className="font-semibold text-sm text-ink">{t.subject}</h3>
                       <span className={`shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium border ${STATUS_STYLES[t.status]}`}>
@@ -121,24 +122,24 @@ export default function CoupleSupportPage() {
 
           {/* Nouveau ticket */}
           <section>
-            <h2 className="font-display text-lg font-bold text-ink mb-4">Nouveau message</h2>
+            <h2 className="font-allura text-lg font-normal text-ink mb-4">Nouveau message</h2>
 
             {submitted ? (
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-                <CheckCircle2 size={40} className="mx-auto text-emerald-600 mb-3" />
+              <div className="rounded-[28px] border border-emerald-200 bg-[#D8ECD9] p-6 text-center">
+                <CheckCircle2 size={40} className="mx-auto text-[#3C8552] mb-3" />
                 <h3 className="font-semibold text-ink mb-1">Message envoyé !</h3>
                 <p className="text-sm text-text-secondary mb-4">
                   Votre ticket a été créé. Nous vous répondrons par email dans les plus brefs délais.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-ink text-white hover:bg-ink/90 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold bg-[#e64a5d] text-white hover:brightness-110 transition-colors"
                 >
                   Nouveau message <ChevronRight size={16} />
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="rounded-2xl border border-line bg-white p-6 space-y-5">
+              <form onSubmit={handleSubmit} className="rounded-[28px] border border-line bg-white p-6 space-y-5 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
                 <div>
                   <label className="block text-sm font-medium text-ink mb-1.5">Sujet *</label>
                   <input
@@ -149,7 +150,7 @@ export default function CoupleSupportPage() {
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
                     placeholder="Ex: Problème avec mon compte"
-                    className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/15 focus:border-ink/20 transition"
+                    className="w-full rounded-[28px] border border-line bg-white px-4 py-3 text-sm text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-[#e64a5d]/15 focus:border-[#e64a5d]/20 transition"
                   />
                 </div>
 
@@ -163,12 +164,12 @@ export default function CoupleSupportPage() {
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     placeholder="Décrivez votre problème ou votre question en détail..."
-                    className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/15 focus:border-ink/20 transition resize-y"
+                    className="w-full rounded-[28px] border border-line bg-white px-4 py-3 text-sm text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-[#e64a5d]/15 focus:border-[#e64a5d]/20 transition resize-y"
                   />
                 </div>
 
                 {error && (
-                  <div className="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700">
+                  <div className="rounded-[28px] bg-[#fef2f4] border border-rose-200 px-4 py-3 text-sm text-rose-700">
                     {error}
                   </div>
                 )}
@@ -176,7 +177,7 @@ export default function CoupleSupportPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-semibold bg-ink text-white hover:bg-ink/90 transition-colors disabled:opacity-60"
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-semibold bg-[#e64a5d] text-white hover:brightness-110 transition-colors disabled:opacity-60"
                 >
                   {submitting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                   {submitting ? "Envoi..." : "Envoyer le message"}
@@ -187,8 +188,8 @@ export default function CoupleSupportPage() {
 
           {/* Info cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-2xl border border-line bg-white p-5 flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#fff8fa] flex items-center justify-center shrink-0">
+            <div className="rounded-[28px] border border-line bg-white p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <div className="h-10 w-10 rounded-[28px] bg-[#fef2f4] flex items-center justify-center shrink-0">
                 <Mail size={18} className="text-text-secondary" />
               </div>
               <div>
@@ -196,8 +197,8 @@ export default function CoupleSupportPage() {
                 <p className="text-xs text-text-secondary mt-0.5">support@mariagefacile.fr</p>
               </div>
             </div>
-            <div className="rounded-2xl border border-line bg-white p-5 flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#fff8fa] flex items-center justify-center shrink-0">
+            <div className="rounded-[28px] border border-line bg-white p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <div className="h-10 w-10 rounded-[28px] bg-[#fef2f4] flex items-center justify-center shrink-0">
                 <Clock size={18} className="text-text-secondary" />
               </div>
               <div>
@@ -205,8 +206,8 @@ export default function CoupleSupportPage() {
                 <p className="text-xs text-text-secondary mt-0.5">Sous 24-48h</p>
               </div>
             </div>
-            <div className="rounded-2xl border border-line bg-white p-5 flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-[#fff8fa] flex items-center justify-center shrink-0">
+            <div className="rounded-[28px] border border-line bg-white p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <div className="h-10 w-10 rounded-[28px] bg-[#fef2f4] flex items-center justify-center shrink-0">
                 <LifeBuoy size={18} className="text-text-secondary" />
               </div>
               <div>

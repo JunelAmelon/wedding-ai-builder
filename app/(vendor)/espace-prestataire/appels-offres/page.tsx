@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import Link from "next/link";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import {
   MapPin,
   Calendar,
@@ -127,18 +128,18 @@ export default function VendorOpportunitiesPage() {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  if (loading) return <div className='min-h-screen bg-[#fff8fa]' />;
+  if (loading) return <LoadingScreen minHeight="100dvh" />;
 
   return (
-    <div className='min-h-screen bg-[#fff8fa] text-[#15181c] font-sans'>
+    <div className='min-h-screen bg-[#fef2f4] text-[#0E0E10] font-sans'>
       <div className='max-w-[1400px] mx-auto px-10 sm:px-20 py-12'>
         {/* Header */}
         <header className='flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-10'>
           <div className='text-center lg:text-left'>
-            <h1 className='font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#15181c]'>
-              Appels d'offres
+            <h1 className='font-allura text-4xl sm:text-5xl font-normal tracking-tight text-[#0E0E10]'>
+              Appels d'<span className='text-[#e64a5d]'>offres</span>
             </h1>
-            <p className='text-sm sm:text-base text-[#6b7076] font-medium mt-1'>
+            <p className='text-sm sm:text-base text-[#6B6B72] font-medium mt-1'>
               Découvrez les couples qui correspondent à votre univers
             </p>
           </div>
@@ -146,7 +147,7 @@ export default function VendorOpportunitiesPage() {
           <div className='flex items-center justify-center lg:justify-end gap-3'>
             <Link
               href='/espace-prestataire'
-              className='w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] transition active:scale-95'
+              className='w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition active:scale-95'
               title='Retour'
             >
               <ArrowLeft className='w-5 h-5 stroke-[1.8]' />
@@ -154,7 +155,7 @@ export default function VendorOpportunitiesPage() {
 
             <Link
               href='/espace-prestataire/offres'
-              className='w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] transition active:scale-95'
+              className='w-11 h-11 rounded-full bg-white shadow-md flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition active:scale-95'
               title='Offres'
             >
               <Star className='w-5 h-5 stroke-[1.8]' />
@@ -165,13 +166,13 @@ export default function VendorOpportunitiesPage() {
         {/* Dashboard */}
         <main className='flex flex-col gap-6'>
           {!subscriptionActive && (
-            <div className='rounded-3xl bg-gradient-to-r from-[#15181c] to-[#2c3036] p-6 sm:p-8 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg'>
+            <div className='rounded-[28px] bg-gradient-to-r from-[#0E0E10] to-[#0E0E10] p-6 sm:p-8 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg'>
               <div className='flex items-center gap-4'>
-                <div className='w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center shrink-0'>
-                  <Crown className='w-7 h-7 text-[#fde68a]' />
+                <div className='w-14 h-14 rounded-[28px] bg-white/10 flex items-center justify-center shrink-0'>
+                  <Crown className='w-7 h-7 text-[#fef2f4]' />
                 </div>
                 <div>
-                  <h3 className='font-display text-lg font-bold mb-0.5'>Activez votre abonnement</h3>
+                  <h3 className='font-allura text-lg font-normal mb-0.5'>Activez votre abonnement</h3>
                   <p className='text-sm text-white/70'>
                     Vous avez {sorted.length} opportunité{sorted.length > 1 ? 's' : ''} qui vous attend{sorted.length > 1 ? 'ent' : ''}. Activez un plan pour voir les détails et répondre aux couples.
                   </p>
@@ -179,25 +180,25 @@ export default function VendorOpportunitiesPage() {
               </div>
               <Link
                 href='/espace-prestataire/offres'
-                className='shrink-0 inline-flex items-center gap-2 h-12 px-6 rounded-full bg-[#fde68a] text-[#15181c] font-bold text-sm hover:bg-[#fcd34d] transition'
+                className='shrink-0 inline-flex items-center gap-2 h-12 px-6 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold text-sm hover:bg-[#FEF3C7] transition'
               >
                 <Crown size={18} /> Voir les offres
               </Link>
             </div>
           )}
           <div className='flex flex-col gap-5'>
-            <div className='h-[500px] lg:h-[540px] bg-white border border-[#ececec] shadow-md overflow-hidden flex flex-col'>
-              <div className='flex items-center justify-between p-5 border-b border-[#ececec]'>
+            <div className='h-[500px] lg:h-[540px] bg-white border border-[#EDEDF0] shadow-md overflow-hidden flex flex-col'>
+              <div className='flex items-center justify-between p-5 border-b border-[#EDEDF0]'>
                 <div>
-                  <h2 className='font-display text-xl font-bold text-[#15181c]'>
+                  <h2 className='font-allura text-xl font-normal text-[#0E0E10]'>
                     Vos appels d'offres
                   </h2>
-                  <p className='text-sm text-[#6b7076] mt-0.5'>
+                  <p className='text-sm text-[#6B6B72] mt-0.5'>
                     {sorted.length} opportunité{sorted.length > 1 ? 's' : ''} reçue
                     {sorted.length > 1 ? 's' : ''}
                   </p>
                 </div>
-                <div className='w-10 h-10 rounded-full bg-[#fff8fa] flex items-center justify-center text-[#15181c]'>
+                <div className='w-10 h-10 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10]'>
                   <TrendingUp className='w-5 h-5 stroke-[2]' />
                 </div>
               </div>
@@ -205,21 +206,21 @@ export default function VendorOpportunitiesPage() {
               {/* Tableau desktop */}
               <div className='overflow-x-auto hidden lg:block'>
                 <table className='w-full text-left border-collapse'>
-                  <thead className='bg-[#fff8fa]'>
+                  <thead className='bg-[#fef2f4]'>
                     <tr>
-                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]'>
                         Projet
                       </th>
-                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]'>
                         Catégorie
                       </th>
-                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]'>
                         Lieu
                       </th>
-                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076]'>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72]'>
                         Score
                       </th>
-                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6b7076] text-right'>
+                      <th className='py-3.5 px-5 text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B6B72] text-right'>
                         Action
                       </th>
                     </tr>
@@ -228,11 +229,11 @@ export default function VendorOpportunitiesPage() {
                     {sorted.length === 0 ? (
                       <tr>
                         <td colSpan={5} className='py-16 px-5 text-center'>
-                          <div className='flex flex-col items-center gap-3 text-[#6b7076]'>
-                            <div className='w-14 h-14 rounded-full bg-[#fff8fa] flex items-center justify-center text-[#15181c]'>
+                          <div className='flex flex-col items-center gap-3 text-[#6B6B72]'>
+                            <div className='w-14 h-14 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10]'>
                               <FileText className='w-6 h-6' />
                             </div>
-                            <p className='text-base font-semibold text-[#15181c]'>
+                            <p className='text-base font-semibold text-[#0E0E10]'>
                               Aucun appel d'offre reçu
                             </p>
                             <p className='text-sm'>
@@ -251,15 +252,15 @@ export default function VendorOpportunitiesPage() {
                               `/espace-prestataire/appels-offres/${match.id}`
                             )
                           }
-                          className='border-t border-[#ececec] hover:bg-[#f4f1f7] cursor-pointer transition group'
+                          className='border-t border-[#EDEDF0] hover:bg-[#fef2f4] cursor-pointer transition group'
                         >
                           <td className='py-4 px-5'>
-                            <div className='font-semibold text-[#15181c] flex items-center gap-2'>
-                              {!subscriptionActive && <Lock size={12} className='text-[#6b7076]' />}
+                            <div className='font-semibold text-[#0E0E10] flex items-center gap-2'>
+                              {!subscriptionActive && <Lock size={12} className='text-[#6B6B72]' />}
                               {project?.name || 'Projet sans nom'}
                             </div>
                             {project?.weddingDate && (
-                              <div className='text-xs text-[#6b7076] mt-0.5'>
+                              <div className='text-xs text-[#6B6B72] mt-0.5'>
                                 {new Date(
                                   project.weddingDate
                                 ).toLocaleDateString('fr-FR')}
@@ -267,15 +268,15 @@ export default function VendorOpportunitiesPage() {
                             )}
                           </td>
                           <td className='py-4 px-5'>
-                            <span className='inline-flex items-center rounded-full bg-[#fff8fa] text-[#15181c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] border border-[#ececec]'>
+                            <span className='inline-flex items-center rounded-full bg-[#fef2f4] text-[#0E0E10] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] border border-[#EDEDF0]'>
                               {match.category}
                             </span>
                           </td>
-                          <td className='py-4 px-5 text-sm text-[#6b7076]'>
+                          <td className='py-4 px-5 text-sm text-[#6B6B72]'>
                             {project?.location?.city || 'Lieu non précisé'}
                           </td>
                           <td className='py-4 px-5'>
-                            <div className='inline-flex items-center gap-1 bg-[#fff8fa] px-2.5 py-1 rounded-full text-xs font-bold text-[#15181c]'>
+                            <div className='inline-flex items-center gap-1 bg-[#fef2f4] px-2.5 py-1 rounded-full text-xs font-bold text-[#0E0E10]'>
                               <Sparkles className='w-3.5 h-3.5' />
                               {match.score}
                             </div>
@@ -290,7 +291,7 @@ export default function VendorOpportunitiesPage() {
                               ) : !subscriptionActive ? (
                                 <Link
                                   href='/espace-prestataire/offres'
-                                  className='h-9 px-4 rounded-full bg-[#fde68a] text-[#15181c] text-xs font-bold hover:bg-[#fcd34d] transition flex items-center gap-1.5'
+                                  className='h-9 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] text-xs font-bold hover:bg-[#FEF3C7] transition flex items-center gap-1.5'
                                 >
                                   <Crown className='w-3.5 h-3.5' />
                                   Activer
@@ -301,7 +302,7 @@ export default function VendorOpportunitiesPage() {
                                     e.stopPropagation();
                                     setSelected({ match, project });
                                   }}
-                                  className='h-9 px-4 rounded-full bg-[#15181c] text-white text-xs font-bold hover:bg-[#2c3036] transition flex items-center gap-1.5'
+                                  className='h-9 px-4 rounded-full bg-[#e64a5d] text-white hover:brightness-110 text-xs font-bold transition flex items-center gap-1.5'
                                 >
                                   <Send className='w-3.5 h-3.5' />
                                   Répondre
@@ -312,7 +313,7 @@ export default function VendorOpportunitiesPage() {
                                   e.stopPropagation();
                                   ignore(match.id);
                                 }}
-                                className='h-9 w-9 rounded-full border border-[#ececec] bg-white text-[#6b7076] hover:bg-[#f4f1f7] hover:text-[#15181c] transition flex items-center justify-center'
+                                className='h-9 w-9 rounded-full border border-[#EDEDF0] bg-white text-[#6B6B72] hover:bg-[#fef2f4] hover:text-[#0E0E10] transition flex items-center justify-center'
                                 aria-label='Ignorer'
                               >
                                 <X className='w-4 h-4' />
@@ -330,11 +331,11 @@ export default function VendorOpportunitiesPage() {
               <div className='lg:hidden p-5'>
                 {sorted.length === 0 ? (
                   <div className='py-12 text-center'>
-                    <div className='flex flex-col items-center gap-3 text-[#6b7076]'>
-                      <div className='w-14 h-14 rounded-full bg-[#fff8fa] flex items-center justify-center text-[#15181c]'>
+                    <div className='flex flex-col items-center gap-3 text-[#6B6B72]'>
+                      <div className='w-14 h-14 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10]'>
                         <FileText className='w-6 h-6' />
                       </div>
-                      <p className='text-base font-semibold text-[#15181c]'>
+                      <p className='text-base font-semibold text-[#0E0E10]'>
                         Aucun appel d'offre reçu
                       </p>
                       <p className='text-sm'>
@@ -370,7 +371,7 @@ export default function VendorOpportunitiesPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className='w-10 h-10 rounded-2xl border border-[#ececec] bg-white flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition'
+                  className='w-10 h-10 rounded-[28px] border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] disabled:opacity-50 disabled:cursor-not-allowed transition'
                 >
                   <ChevronLeft size={18} />
                 </button>
@@ -379,10 +380,10 @@ export default function VendorOpportunitiesPage() {
                     <button
                       key={p}
                       onClick={() => setPage(p)}
-                      className={`w-10 h-10 rounded-2xl border flex items-center justify-center text-sm font-semibold transition ${
+                      className={`w-10 h-10 rounded-[28px] border flex items-center justify-center text-sm font-semibold transition ${
                         page === p
-                          ? 'bg-[#15181c] text-white border-[#15181c]'
-                          : 'bg-white text-[#6b7076] border-[#ececec] hover:bg-[#f4f1f7]'
+                          ? 'bg-[#e64a5d] text-white hover:brightness-110 border-[#0E0E10]'
+                          : 'bg-white text-[#6B6B72] border-[#EDEDF0] hover:bg-[#fef2f4]'
                       }`}
                     >
                       {p}
@@ -392,7 +393,7 @@ export default function VendorOpportunitiesPage() {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className='w-10 h-10 rounded-2xl border border-[#ececec] bg-white flex items-center justify-center text-[#15181c] hover:bg-[#f4f1f7] disabled:opacity-50 disabled:cursor-not-allowed transition'
+                  className='w-10 h-10 rounded-[28px] border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] disabled:opacity-50 disabled:cursor-not-allowed transition'
                 >
                   <ChevronRight size={18} />
                 </button>
@@ -402,68 +403,68 @@ export default function VendorOpportunitiesPage() {
         </main>
 
         {/* 3 cartes smart home en bas */}
-        <section className='mt-6 grid grid-cols-2 sm:grid-cols-3 gap-5'>
+        <section className='mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4'>
           <div
             onClick={() => router.push('/espace-prestataire/offres')}
-            className='rounded-[20px] bg-[#f4f1f7] p-6 shadow-md flex flex-col justify-end h-[140px] cursor-pointer active:scale-[0.99] transition group'
+            className='rounded-[28px] bg-[#FBE1E6] p-5 shadow-md flex flex-col justify-end h-[130px] cursor-pointer active:scale-[0.99] transition group border border-[#EDEDF0] overflow-hidden'
           >
-            <p className='text-xs text-[#6b7076] font-semibold uppercase tracking-wider'>
+            <p className='text-xs text-[#6B6B72] font-semibold uppercase tracking-wider truncate'>
               {plan.status === 'active' ? 'Plan actif' : 'Plan inactif'}
             </p>
-            <svg viewBox='0 0 160 36' className='w-full h-9 overflow-visible my-3'>
+            <svg viewBox='0 0 160 28' className='w-full h-7 overflow-visible my-2'>
               <defs>
                 <linearGradient id='propGrad' x1='0' y1='0' x2='0' y2='1'>
-                  <stop offset='0%' stopColor='#15181c' stopOpacity='0.2' />
-                  <stop offset='100%' stopColor='#15181c' stopOpacity='0' />
+                  <stop offset='0%' stopColor='#0E0E10' stopOpacity='0.2' />
+                  <stop offset='100%' stopColor='#0E0E10' stopOpacity='0' />
                 </linearGradient>
               </defs>
               <path
-                d='M 0 28 L 25 24 L 55 26 L 85 29 L 115 17 L 135 23 L 160 21'
+                d='M 0 22 L 25 18 L 55 20 L 85 23 L 115 13 L 135 18 L 160 16'
                 fill='url(#propGrad)'
-                stroke='#15181c'
-                strokeWidth='2.2'
+                stroke='#0E0E10'
+                strokeWidth='2'
                 strokeLinecap='round'
                 strokeLinejoin='round'
               />
             </svg>
-            <div className='flex items-baseline gap-1.5'>
-              <span className='text-lg font-bold text-[#15181c]'>{plan.name}</span>
+            <div className='flex items-baseline gap-1.5 min-w-0'>
+              <span className='text-base font-bold text-[#0E0E10] truncate'>{plan.name}</span>
               {plan.status !== 'active' && (
-                <span className='text-xs font-semibold text-[#6b7076]'>({plan.status})</span>
+                <span className='text-xs font-semibold text-[#6B6B72] shrink-0'>({plan.status})</span>
               )}
             </div>
           </div>
 
           <div
             onClick={() => featured && setSelected({ match: featured.match, project: featured.project })}
-            className='rounded-[20px] bg-[#cbd5e1] p-6 shadow-md flex flex-col items-center justify-end h-[140px] cursor-pointer active:scale-[0.99] transition group text-center'
+            className='rounded-[28px] bg-[#E4DBFB] p-5 shadow-md flex flex-col items-center justify-end h-[130px] cursor-pointer active:scale-[0.99] transition group text-center overflow-hidden'
           >
-            <div className='w-11 h-11 rounded-full bg-white/60 flex items-center justify-center text-[#15181c] mb-2'>
-              <Send className='w-5 h-5 stroke-[2]' />
+            <div className='w-10 h-10 rounded-full bg-white/60 flex items-center justify-center text-[#0E0E10] mb-2 shrink-0'>
+              <Send className='w-4 h-4 stroke-[2]' />
             </div>
-            <p className='text-xs text-[#15181c] font-semibold uppercase tracking-wider'>
+            <p className='text-xs text-[#0E0E10] font-semibold uppercase tracking-wider'>
               Réponse
             </p>
-            <p className='text-base font-bold text-[#15181c]'>Répondre maintenant</p>
+            <p className='text-sm font-bold text-[#0E0E10] truncate w-full'>Répondre maintenant</p>
           </div>
 
           <div
             onClick={() => setPage(1)}
-            className='col-span-2 sm:col-span-1 rounded-[20px] bg-[#fde68a] p-6 shadow-md flex flex-col justify-between h-[140px] cursor-pointer active:scale-[0.99] transition'
+            className='rounded-[28px] bg-[#FEF3C7] p-5 shadow-md flex flex-col justify-between h-[130px] cursor-pointer active:scale-[0.99] transition border border-[#EDEDF0] overflow-hidden'
           >
-            <p className='text-xs text-[#15181c] font-semibold uppercase tracking-wider'>
+            <p className='text-xs text-[#0E0E10] font-semibold uppercase tracking-wider'>
               Catégories
             </p>
-            <div className='flex items-center justify-center gap-2 flex-wrap'>
+            <div className='flex items-center justify-center gap-1.5 flex-wrap overflow-hidden'>
               {sorted.length === 0 ? (
-                <span className='text-xs font-semibold px-3 py-1.5 rounded-full bg-white/60 text-[#15181c]'>
+                <span className='text-xs font-semibold px-2.5 py-1 rounded-full bg-white/60 text-[#0E0E10]'>
                   Mariage
                 </span>
               ) : (
                 Array.from(new Set(sorted.map((o) => o.match.category))).slice(0, 3).map((cat) => (
                   <span
                     key={cat}
-                    className='text-xs font-semibold px-3 py-1.5 rounded-full bg-white/60 text-[#15181c]'
+                    className='text-xs font-semibold px-2.5 py-1 rounded-full bg-white/60 text-[#0E0E10] truncate max-w-[100px]'
                   >
                     {cat}
                   </span>
@@ -480,39 +481,39 @@ export default function VendorOpportunitiesPage() {
               className='absolute inset-0'
               onClick={() => setSelected(null)}
             />
-            <div className='relative w-full max-w-lg bg-white border border-[#ececec] rounded-[20px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto'>
+            <div className='relative w-full max-w-lg bg-white border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto'>
               <button
                 onClick={() => setSelected(null)}
-                className='absolute top-5 right-5 h-10 w-10 rounded-full bg-white border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#f4f1f7] transition'
+                className='absolute top-5 right-5 h-10 w-10 rounded-full bg-white border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition'
                 aria-label='Fermer'
               >
                 <X size={18} />
               </button>
 
               <div className='flex items-center gap-3 mb-6'>
-                <div className='w-14 h-14 rounded-2xl bg-[#fff8fa] flex items-center justify-center'>
-                  <Send size={26} className='text-[#15181c]' />
+                <div className='w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center'>
+                  <Send size={26} className='text-[#0E0E10]' />
                 </div>
                 <div>
-                  <p className='text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider'>
+                  <p className='text-[#6B6B72] text-xs font-bold font-sans uppercase tracking-wider'>
                     Réponse
                   </p>
-                  <h3 className='font-display text-2xl font-bold text-[#15181c]'>
+                  <h3 className='font-allura text-2xl font-normal text-[#0E0E10]'>
                     Répondre à l'appel d'offres
                   </h3>
                 </div>
               </div>
 
-              <div className='mb-6 p-4 rounded-2xl bg-[#fff8fa] border border-[#ececec]'>
+              <div className='mb-6 p-4 rounded-[28px] bg-[#fef2f4] border border-[#EDEDF0]'>
                 <div className='flex items-center gap-2 mb-2'>
-                  <span className='inline-flex items-center rounded-full bg-white text-[#15181c] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em]'>
+                  <span className='inline-flex items-center rounded-full bg-white text-[#0E0E10] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em]'>
                     {selected.match.category}
                   </span>
-                  <span className='text-sm text-[#6b7076]'>
+                  <span className='text-sm text-[#6B6B72]'>
                     Score : {selected.match.score}
                   </span>
                 </div>
-                <div className='text-sm text-[#6b7076]'>
+                <div className='text-sm text-[#6B6B72]'>
                   Budget :{' '}
                   {selected.project?.budget?.amount?.toLocaleString('fr-FR') ||
                     '—'}{' '}
@@ -520,28 +521,28 @@ export default function VendorOpportunitiesPage() {
                 </div>
               </div>
 
-              <label className='block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2'>
+              <label className='block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2'>
                 Votre message
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder='Votre message de réponse...'
-                className='w-full bg-white border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#cbd5e1] transition min-h-[120px] resize-none'
+                className='w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition min-h-[120px] resize-none'
               />
 
               <div className='flex items-center justify-end mt-6'>
                 <div className='flex gap-3'>
                   <button
                     onClick={() => setSelected(null)}
-                    className='py-3.5 px-5 rounded-full border-2 border-[#ececec] bg-white text-sm font-bold font-sans text-[#15181c] hover:bg-[#f4f1f7] transition'
+                    className='py-3.5 px-5 rounded-full border-2 border-[#EDEDF0] bg-white text-sm font-bold font-sans text-[#0E0E10] hover:bg-[#fef2f4] transition'
                   >
                     Annuler
                   </button>
                   <button
                     onClick={respond}
                     disabled={submitting || !message.trim()}
-                    className='py-3.5 px-5 rounded-full bg-[#15181c] text-white font-bold font-sans hover:bg-[#2c3036] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+                    className='py-3.5 px-5 rounded-full bg-[#e64a5d] text-white hover:brightness-110 font-bold font-sans transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
                   >
                     {submitting ? (
                       <Loader2 size={16} className='animate-spin' />
@@ -554,8 +555,8 @@ export default function VendorOpportunitiesPage() {
               </div>
 
               {success && (
-                <div className='mt-4 p-4 rounded-xl bg-[#fff8fa] border border-[#fff8fa]/20'>
-                  <p className='text-sm text-[#15181c]'>
+                <div className='mt-4 p-4 rounded-xl bg-[#fef2f4] border border-[#fef2f4]/20'>
+                  <p className='text-sm text-[#0E0E10]'>
                     Proposition envoyée avec succès !
                   </p>
                 </div>
@@ -584,44 +585,44 @@ function DossierCard({
   onIgnore: () => void;
 }) {
   return (
-    <div className='rounded-[20px] bg-white border border-[#ececec] p-6 shadow-md hover:shadow-lg transition group'>
+    <div className='rounded-[28px] bg-white border border-[#EDEDF0] p-6 shadow-md hover:shadow-lg transition group'>
       <div className='flex items-start justify-between mb-5'>
         <div className='flex items-center gap-2 flex-wrap'>
-          <span className='inline-flex items-center rounded-full bg-[#fff8fa] text-[#15181c] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em]'>
+          <span className='inline-flex items-center rounded-full bg-[#fef2f4] text-[#0E0E10] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.06em]'>
             {match.category}
           </span>
-          <div className='flex items-center gap-1 bg-[#fff8fa] px-2.5 py-1 rounded-full'>
-            <Sparkles size={13} className='text-[#15181c]' />
-            <span className='text-xs font-bold text-[#15181c]'>
+          <div className='flex items-center gap-1 bg-[#fef2f4] px-2.5 py-1 rounded-full'>
+            <Sparkles size={13} className='text-[#0E0E10]' />
+            <span className='text-xs font-bold text-[#0E0E10]'>
               {match.score}
             </span>
           </div>
         </div>
         <button
           onClick={onIgnore}
-          className='h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#f4f1f7] text-[#6b7076] transition'
+          className='h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#fef2f4] text-[#6B6B72] transition'
         >
           <X size={16} />
         </button>
       </div>
 
-      <div className='space-y-2.5 mb-6 text-sm text-[#6b7076]'>
+      <div className='space-y-2.5 mb-6 text-sm text-[#6B6B72]'>
         <div className='flex items-center gap-2.5'>
-          <MapPin size={16} className='text-[#cbd5e1]' />
+          <MapPin size={16} className='text-[#E4DBFB]' />
           {project?.location?.city || 'Lieu non précisé'}
         </div>
         <div className='flex items-center gap-2.5'>
-          <Calendar size={16} className='text-[#cbd5e1]' />
+          <Calendar size={16} className='text-[#E4DBFB]' />
           {project?.weddingDate
             ? new Date(project.weddingDate).toLocaleDateString('fr-FR')
             : 'Date non précisée'}
         </div>
         <div className='flex items-center gap-2.5'>
-          <Users size={16} className='text-[#cbd5e1]' />
+          <Users size={16} className='text-[#E4DBFB]' />
           {project?.guestCount || '—'} invités
         </div>
         <div className='flex items-center gap-2.5'>
-          <Banknote size={16} className='text-[#cbd5e1]' />
+          <Banknote size={16} className='text-[#E4DBFB]' />
           Budget {project?.budget?.amount?.toLocaleString('fr-FR') || '—'}{' '}
           {project?.budget?.currency || 'EUR'}
         </div>
@@ -630,7 +631,7 @@ function DossierCard({
       <div className='flex gap-3'>
         <button
           onClick={onView}
-          className='flex-1 py-3 px-4 rounded-full border border-[#ececec] bg-white text-sm font-bold text-[#15181c] hover:bg-[#f4f1f7] transition flex items-center justify-center gap-2'
+          className='flex-1 py-3 px-4 rounded-full border border-[#EDEDF0] bg-white text-sm font-bold text-[#0E0E10] hover:bg-[#fef2f4] transition flex items-center justify-center gap-2'
         >
           {!subscriptionActive && <Lock size={14} />} Voir
         </button>
@@ -641,14 +642,14 @@ function DossierCard({
         ) : subscriptionActive ? (
           <button
             onClick={onRespond}
-            className='flex-1 py-3 px-4 rounded-full bg-[#15181c] text-sm font-bold text-white hover:bg-[#2c3036] transition flex items-center justify-center gap-2'
+            className='flex-1 py-3 px-4 rounded-full bg-[#e64a5d] text-sm font-bold text-white hover:brightness-110 transition flex items-center justify-center gap-2'
           >
             <Send size={16} /> Répondre
           </button>
         ) : (
           <Link
             href='/espace-prestataire/offres'
-            className='flex-1 py-3 px-4 rounded-full bg-[#fde68a] text-[#15181c] text-sm font-bold hover:bg-[#fcd34d] transition flex items-center justify-center gap-2'
+            className='flex-1 py-3 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] text-sm font-bold hover:bg-[#FEF3C7] transition flex items-center justify-center gap-2'
           >
             <Crown size={16} /> Activer
           </Link>

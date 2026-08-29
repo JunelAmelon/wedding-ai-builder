@@ -53,7 +53,7 @@ export default function BlueprintSection({
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight mt-3">
               {conceptName}
             </h2>
-            <p className="text-text-secondary mt-4 leading-relaxed text-lg italic">{emotionalSummary}</p>
+            <p className="text-text-secondary mt-4 leading-relaxed text-lg">{emotionalSummary}</p>
 
             {isCustomStyle && customStyle && (
               <div className="mt-6 rounded-2xl border border-primary/15 bg-primary/5 p-5">

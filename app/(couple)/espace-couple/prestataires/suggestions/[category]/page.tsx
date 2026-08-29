@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
+
 import { useEffect, useState, type ReactElement } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -64,15 +66,15 @@ function DashIcon({ size = 14, className = "" }: { size?: number; className?: st
 const TOTAL_SLOTS = 3;
 
 const CARD_GRADIENTS = [
-  "linear-gradient(145deg, #f0e6d0, #d4c0a8)",
-  "linear-gradient(145deg, #d4e0f0, #a8bcd0)",
-  "linear-gradient(145deg, #e8d8c0, #c8b090)",
+  "#fef2f4",
+  "#E4DBFB",
+  "#FEF3C7",
 ];
 
 const EMPTY_GRADIENTS = [
-  "linear-gradient(145deg, #f5f5f7, #e8e8ec)",
-  "linear-gradient(145deg, #f0f0f2, #e3e3e7)",
-  "linear-gradient(145deg, #f8f8fa, #ececef)",
+  "#fef2f4",
+  "#E4DBFB",
+  "#FEF3C7",
 ];
 
 const CATEGORY_IMAGES: Record<string, string> = {
@@ -174,7 +176,7 @@ export default function CategorySuggestionsPage() {
     setShowTenderForm(true);
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight={"80dvh"} />;
   if (error && suggestions.length === 0)
     return (
       <div className="max-w-6xl mx-auto px-6 py-14 text-center text-text-secondary">{error}</div>
@@ -189,27 +191,27 @@ export default function CategorySuggestionsPage() {
   const heroImage = CATEGORY_IMAGES[rawCategory] || CATEGORY_IMAGES["Autre"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fef2f4] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <Link
           href="/espace-couple/prestataires"
-          className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-[#8b8b86] hover:text-[#1c1c1c] mb-10"
+          className="inline-flex items-center gap-2 font-semibold text-[10px] uppercase tracking-[0.12em] text-[#6B6B72] hover:text-[#0E0E10] mb-10"
         >
           <ArrowLeft size={14} /> Retour aux prestataires
         </Link>
 
-        <PageHeader eyebrow="Suggestions automatiques" title={rawCategory}>
-          <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold text-[10px] uppercase tracking-[0.08em] bg-[#f4f1f7]/20 text-[#1c1c1c]">
+        <PageHeader eyebrow="Suggestions automatiques" title={rawCategory} titleClassName="font-allura font-normal">
+          <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold text-[10px] uppercase tracking-[0.08em] bg-[#fef2f4]/20 text-[#0E0E10]">
             <SparkleIcon size={14} />
             {receivedCount} suggestion{receivedCount > 1 ? "s" : ""}
           </span>
         </PageHeader>
 
-        {error && <p className="text-sm text-red-600 mb-6">{error}</p>}
+        {error && <p className="text-sm text-[#e64a5d] mb-6">{error}</p>}
 
         {/* ================= HERO IMAGE BANNER ================= */}
         <div
-          className="relative h-[160px] sm:h-[220px] rounded-[22px] overflow-hidden mx-0 lg:mx-0 bg-cover bg-center"
+          className="relative h-[160px] sm:h-[220px] rounded-[28px] overflow-hidden mx-0 lg:mx-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
         >
           <div className="absolute inset-0 bg-black/20" />
@@ -220,7 +222,7 @@ export default function CategorySuggestionsPage() {
           <div className="flex flex-col lg:flex-row lg:items-end gap-5 lg:gap-8 flex-wrap">
             {/* Avatar */}
             <div
-              className="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] rounded-[24px] border-[4px] border-white shrink-0 flex items-center justify-center text-[28px] sm:text-[40px] font-bold text-[#1c1c1c] shadow-[0_10px_30px_rgba(0,0,0,0.12)] bg-[#f4f1f7]"
+              className="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] rounded-[28px] border-[4px] border-white shrink-0 flex items-center justify-center text-[28px] sm:text-[40px] font-bold text-[#0E0E10] shadow-[0_10px_30px_rgba(0,0,0,0.12)] bg-[#fef2f4]"
             >
               {initials(rawCategory).slice(0, 2)}
             </div>
@@ -228,21 +230,21 @@ export default function CategorySuggestionsPage() {
             {/* Meta */}
             <div className="flex-1 min-w-[220px] pb-1">
               <div className="flex items-center gap-2.5 flex-wrap mb-1.5">
-                <h1 className="text-xl sm:text-2xl font-extrabold text-[#161616]">{rawCategory}</h1>
+                <h1 className="text-xl sm:text-2xl font-extrabold text-[#0E0E10]">{rawCategory}</h1>
               </div>
-              <p className="text-[13.5px] text-[#8b8b86] leading-relaxed mb-4 max-w-xl">
+              <p className="text-[13.5px] text-[#6B6B72] leading-relaxed mb-4 max-w-xl">
                 Voici les prestataires automatiquement sélectionnés pour votre projet. Lancez un appel d'offres pour recevoir des propositions détaillées.
               </p>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <button
                   onClick={() => router.push("/espace-couple/prestataires")}
-                  className="rounded-full bg-[#1c1c1c] text-white px-5 py-2.5 text-[13px] font-bold hover:bg-[#333] transition"
+                  className="rounded-full bg-[#e64a5d] text-white px-5 py-2.5 text-[13px] font-bold hover:brightness-110 transition"
                 >
                   Retour
                 </button>
                 <button
                   onClick={() => setViewMode(viewMode === "dossier" ? "liste" : "dossier")}
-                  className="rounded-full bg-white text-[#1c1c1c] border-[1.5px] border-[#ececef] px-5 py-2.5 text-[13px] font-bold hover:bg-[#f8f8fa] transition"
+                  className="rounded-full bg-white text-[#0E0E10] border-[1.5px] border-[#EDEDF0] px-5 py-2.5 text-[13px] font-bold hover:bg-[#fef2f4] transition"
                 >
                   Changer de vue
                 </button>
@@ -252,26 +254,26 @@ export default function CategorySuggestionsPage() {
             {/* Stats */}
             <div className="flex gap-8 sm:gap-10 flex-wrap pb-1">
               <div>
-                <div className="text-[12.5px] text-[#8b8b86] mb-1">Suggestions</div>
-                <div className="text-[22px] font-extrabold text-[#161616]">{receivedCount}</div>
+                <div className="text-[12.5px] text-[#6B6B72] mb-1">Suggestions</div>
+                <div className="text-[22px] font-extrabold text-[#0E0E10]">{receivedCount}</div>
               </div>
               <div>
-                <div className="text-[12.5px] text-[#8b8b86] mb-1">Meilleur score</div>
-                <div className="text-[22px] font-extrabold text-[#161616]">{receivedCount > 0 ? `${bestScore}%` : "—"}</div>
+                <div className="text-[12.5px] text-[#6B6B72] mb-1">Meilleur score</div>
+                <div className="text-[22px] font-extrabold text-[#0E0E10]">{receivedCount > 0 ? `${bestScore}%` : "—"}</div>
               </div>
               <div>
-                <div className="text-[12.5px] text-[#8b8b86] mb-1">En attente</div>
-                <div className="text-[22px] font-extrabold text-[#161616]">{emptySlots}</div>
+                <div className="text-[12.5px] text-[#6B6B72] mb-1">En attente</div>
+                <div className="text-[22px] font-extrabold text-[#0E0E10]">{emptySlots}</div>
               </div>
             </div>
 
             {/* Badges */}
             <div className="flex gap-2 pb-1 lg:ml-auto">
-              <div title={`${receivedCount} suggestion${receivedCount > 1 ? "s" : ""}`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#8a7bff]">
+              <div title={`${receivedCount} suggestion${receivedCount > 1 ? "s" : ""}`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#5B4FC4]">
                 <span>{receivedCount}</span>
                 <span className="hidden sm:inline opacity-90 text-[10px]">suggestion</span>
               </div>
-              <div title={`${emptySlots} en attente`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#ff6a3d]">
+              <div title={`${emptySlots} en attente`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#e64a5d]">
                 <span>{emptySlots}</span>
                 <span className="hidden sm:inline opacity-90 text-[10px]">en attente</span>
               </div>
@@ -280,42 +282,42 @@ export default function CategorySuggestionsPage() {
         </div>
 
         {/* ================= TABS ================= */}
-        <div className="flex gap-6 sm:gap-8 border-b border-[#ececef] px-0 sm:px-2 flex-wrap mb-6">
+        <div className="flex gap-6 sm:gap-8 border-b border-[#EDEDF0] px-0 sm:px-2 flex-wrap mb-6">
           <button
             type="button"
             onClick={() => setViewMode("dossier")}
             className={`flex items-center gap-1.5 text-[13.5px] font-semibold pb-3.5 transition ${
-              viewMode === "dossier" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#8b8b86] hover:text-[#161616]"
+              viewMode === "dossier" ? "text-[#0E0E10] border-b-[2.5px] border-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10]"
             }`}
           >
-            Dossiers <sup className="bg-[#f1f0f5] text-[#8b8b86] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
+            Dossiers <sup className="bg-[#E4DBFB] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
           </button>
           <button
             type="button"
             onClick={() => setViewMode("liste")}
             className={`flex items-center gap-1.5 text-[13.5px] font-semibold pb-3.5 transition ${
-              viewMode === "liste" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#8b8b86] hover:text-[#161616]"
+              viewMode === "liste" ? "text-[#0E0E10] border-b-[2.5px] border-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10]"
             }`}
           >
-            Liste <sup className="bg-[#f1f0f5] text-[#8b8b86] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
+            Liste <sup className="bg-[#E4DBFB] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
           </button>
         </div>
 
         {/* ================= CTA — Lancer un appel d'offres ================= */}
-        <div className="mx-0 sm:mx-2 mb-6 bg-[#f4f1f7]/30 border border-[#ececef] rounded-[18px] px-5 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
-          <div className="w-11 h-11 rounded-full bg-[#1c1c1c] flex items-center justify-center text-white shrink-0">
+        <div className="mx-0 sm:mx-2 mb-6 bg-[#fef2f4]/30 border border-[#EDEDF0] rounded-[28px] px-5 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
+          <div className="w-11 h-11 rounded-full bg-[#e64a5d] flex items-center justify-center text-white shrink-0">
             <Plus size={20} />
           </div>
           <div className="flex-1">
-            <h4 className="text-[14px] font-bold text-[#161616] mb-0.5">Ces suggestions ne vous conviennent pas ?</h4>
-            <p className="text-[13px] text-[#8b8b86]">
+            <h4 className="text-[14px] font-bold text-[#0E0E10] mb-0.5">Ces suggestions ne vous conviennent pas ?</h4>
+            <p className="text-[13px] text-[#6B6B72]">
               Lancez votre propre appel d'offres pour recevoir des propositions personnalisées.
             </p>
           </div>
           <Button
             variant="primary"
             onClick={launchTender}
-            className="rounded-full bg-[#1c1c1c] text-white px-5 py-2.5 text-[13px] font-bold"
+            className="rounded-full bg-[#e64a5d] text-white px-5 py-2.5 text-[13px] font-bold hover:brightness-110 transition border-0"
             iconLeft={<Plus size={14} />}
           >
             Lancer un appel d'offres
@@ -324,13 +326,13 @@ export default function CategorySuggestionsPage() {
 
         {/* ================= CONTENT ================= */}
         {suggestions.length === 0 ? (
-          <div className="mx-0 sm:mx-2 bg-white border border-[#ececef] rounded-[18px] px-6 sm:px-8 py-16 text-center">
-            <div className="h-12 w-12 rounded-full border border-[#f4f1f7] flex items-center justify-center mx-auto mb-5">
-              <HourglassIcon size={20} className="text-[#1c1c1c]" />
+          <div className="mx-0 sm:mx-2 bg-white border border-[#EDEDF0] rounded-[28px] px-6 sm:px-8 py-16 text-center shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+            <div className="h-12 w-12 rounded-full border border-[#fef2f4] flex items-center justify-center mx-auto mb-5">
+              <HourglassIcon size={20} className="text-[#0E0E10]" />
             </div>
-            <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#1c1c1c] mb-3">En attente</p>
-            <h2 className="text-xl font-bold text-[#161616] mb-2">Aucune suggestion pour l'instant</h2>
-            <p className="text-[#8b8b86] max-w-md mx-auto text-sm leading-relaxed">
+            <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#0E0E10] mb-3">En attente</p>
+            <h2 className="text-xl font-bold text-[#0E0E10] mb-2">Aucune suggestion pour l'instant</h2>
+            <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed">
               Notre moteur de matching recherche les meilleurs prestataires pour votre projet. Revenez bientôt ou lancez un appel d'offres.
             </p>
           </div>
@@ -344,32 +346,32 @@ export default function CategorySuggestionsPage() {
                     return (
                       <div key={`empty-${i}`} className="group flex flex-col">
                         <div
-                          className="relative rounded-[18px] overflow-hidden aspect-[4/3] flex items-center justify-center"
+                          className="relative rounded-[28px] overflow-hidden aspect-[4/3] flex items-center justify-center"
                           style={{ background: EMPTY_GRADIENTS[i % EMPTY_GRADIENTS.length] }}
                         >
                           <div className="text-center px-4">
-                            <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-3 text-[#8b8b86]">
+                            <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-3 text-[#6B6B72]">
                               <span className="text-lg">?</span>
                             </div>
-                            <p className="text-[13px] font-bold text-[#8b8b86]">À venir</p>
-                            <p className="text-[11px] text-[#8b8b86]/70 mt-1">Un prestataire sera bientôt suggéré ici.</p>
+                            <p className="text-[13px] font-bold text-[#6B6B72]">À venir</p>
+                            <p className="text-[11px] text-[#6B6B72]/70 mt-1">Un prestataire sera bientôt suggéré ici.</p>
                           </div>
                         </div>
                         <div className="mt-3 px-1">
-                          <div className="text-[14px] font-bold text-[#8b8b86]">—</div>
-                          <div className="text-[11.5px] text-[#8b8b86]/70">En attente de matching</div>
+                          <div className="text-[14px] font-bold text-[#6B6B72]">—</div>
+                          <div className="text-[11.5px] text-[#6B6B72]/70">En attente de matching</div>
                         </div>
                       </div>
                     );
                   }
 
                   const vendor: Partial<EnrichedVendor> = item.vendor ?? {};
-                  const matchMeta = { label: `${item.match.score}% match`, Icon: SparkleIcon, bg: "#8a7bff" };
+                  const matchMeta = { label: `${item.match.score}% match`, Icon: SparkleIcon, bg: "#5B4FC4" };
 
                   return (
                     <div key={item.match.id} className="group flex flex-col">
                       <div
-                        className="relative rounded-[18px] overflow-hidden aspect-[4/3] flex items-end"
+                        className="relative rounded-[28px] overflow-hidden aspect-[4/3] flex items-end"
                         style={{ background: vendor.logo?.url ? `url(${vendor.logo.url}) center/cover` : CARD_GRADIENTS[i % CARD_GRADIENTS.length] }}
                       >
                         <div className="absolute top-3 right-3 flex gap-1.5">
@@ -390,21 +392,21 @@ export default function CategorySuggestionsPage() {
 
                       <div className="mt-3 flex items-start justify-between gap-3 px-1">
                         <div className="min-w-0">
-                          <div className="text-[14px] font-bold text-[#161616] truncate">
+                          <div className="text-[14px] font-bold text-[#0E0E10] truncate">
                             {vendor.companyName || vendor.brandName || "Professionnel"}
                           </div>
-                          <div className="text-[11.5px] text-[#8b8b86]">
+                          <div className="text-[11.5px] text-[#6B6B72]">
                             {vendor.serviceCategory || rawCategory} · {vendor.yearsOfExperience || 0} ans d'expérience
                           </div>
                         </div>
                         <div className="flex gap-1.5 shrink-0">
                           {vendor.serviceArea?.cities?.[0] && (
-                            <span className="inline-flex items-center gap-1 bg-[#f5f5f7] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#555] whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 bg-[#fef2f4] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#6B6B72] whitespace-nowrap">
                               <MapPin size={10} /> {vendor.serviceArea.cities[0]}
                             </span>
                           )}
                           {vendor.rating && (
-                            <span className="inline-flex items-center gap-1 bg-[#f5f5f7] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#555] whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 bg-[#fef2f4] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#6B6B72] whitespace-nowrap">
                               <Star size={10} /> {vendor.rating}
                             </span>
                           )}
@@ -412,7 +414,7 @@ export default function CategorySuggestionsPage() {
                       </div>
 
                       {item.match.summary && (
-                        <div className="mt-2 px-1 text-[13px] text-[#8b8b86] leading-relaxed">
+                        <div className="mt-2 px-1 text-[13px] text-[#6B6B72] leading-relaxed">
                           <ExpandableText text={item.match.summary} lines={3} prefix="« " suffix=" »" />
                         </div>
                       )}
@@ -420,12 +422,12 @@ export default function CategorySuggestionsPage() {
                       <div className="mt-auto pt-4 flex gap-2">
                         <Link
                           href={`/espace-couple/prestataires/profil/${vendor.id}`}
-                          className="flex-1 text-center rounded-full border-[1.5px] border-[#ececef] text-[#161616] text-[12px] font-bold px-3 py-2.5 hover:bg-[#f8f8fa] transition"
+                          className="flex-1 text-center rounded-full border-[1.5px] border-[#EDEDF0] text-[#0E0E10] text-[12px] font-bold px-3 py-2.5 hover:bg-[#fef2f4] transition"
                         >
                           Voir le profil
                         </Link>
                         {item.proposal?.status === "accepted" ? (
-                          <span className="flex-1 text-center rounded-full bg-[#e4f4ed] text-[#2e7d5e] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
+                          <span className="flex-1 text-center rounded-full bg-[#D8ECD9] text-[#3C8552] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
                             <Check size={14} /> Validé
                           </span>
                         ) : item.proposal ? (
@@ -454,7 +456,7 @@ export default function CategorySuggestionsPage() {
                 })}
               </div>
             ) : (
-              <div className="rounded-[18px] border border-[#ececef] bg-white overflow-hidden">
+              <div className="rounded-[28px] border border-[#EDEDF0] bg-white overflow-hidden shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
                 {suggestions.map((item, i) => {
                   const vendor: Partial<EnrichedVendor> = item.vendor ?? {};
                   const num = String(i + 1).padStart(2, "0");
@@ -464,12 +466,12 @@ export default function CategorySuggestionsPage() {
                     <Link
                       key={item.match.id}
                       href={`/espace-couple/prestataires/profil/${vendor.id}`}
-                      className={`flex flex-col sm:flex-row sm:items-center gap-4 px-5 py-5 hover:bg-[#f8f8fa] transition-colors ${isLast ? "" : "border-b border-[#ececef]"}`}
+                      className={`flex flex-col sm:flex-row sm:items-center gap-4 px-5 py-5 hover:bg-[#fef2f4] transition-colors ${isLast ? "" : "border-b border-[#EDEDF0]"}`}
                     >
                       <div className="flex items-center gap-3 shrink-0 w-24">
                         <span
                           className="inline-flex items-center justify-center h-8 w-8 rounded-lg font-bold text-xs text-white"
-                          style={{ background: "#8a7bff" }}
+                          style={{ background: "#5B4FC4" }}
                         >
                           {num}
                         </span>
@@ -477,27 +479,27 @@ export default function CategorySuggestionsPage() {
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-lg font-bold text-[#161616] truncate">
+                          <h4 className="text-lg font-bold text-[#0E0E10] truncate">
                             {vendor.companyName || vendor.brandName || "Professionnel"}
                           </h4>
-                          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: "#8a7bff" }}>
+                          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: "#5B4FC4" }}>
                             <SparkleIcon size={10} />
                             {item.match.score}%
                           </span>
                         </div>
-                        <p className="text-sm text-[#8b8b86] mt-1 line-clamp-1 max-w-[90%]">
+                        <p className="text-sm text-[#6B6B72] mt-1 line-clamp-1 max-w-[90%]">
                           {item.match.summary || "Aucun résumé disponible"}
                         </p>
                       </div>
 
-                      <span className="inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-[0.1em] text-[#6c5ce7] self-start sm:self-auto shrink-0">
+                      <span className="inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-[0.1em] text-[#5B4FC4] self-start sm:self-auto shrink-0">
                         Ouvrir <ChevronRight size={13} />
                       </span>
                     </Link>
                   );
                 })}
                 {emptySlots > 0 && (
-                  <div className="px-5 py-5 text-[13px] text-[#8b8b86] border-t border-[#ececef]">
+                  <div className="px-5 py-5 text-[13px] text-[#6B6B72] border-t border-[#EDEDF0]">
                     + {emptySlots} suggestion{emptySlots > 1 ? "s" : ""} à venir
                   </div>
                 )}

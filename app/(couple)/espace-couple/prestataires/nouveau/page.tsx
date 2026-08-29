@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -140,7 +142,7 @@ export default function NewTenderPage() {
     }
   }
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight={"80dvh"} />;
 
   return (
     <div className="max-w-4xl mx-auto px-6 lg:px-10 py-10 lg:py-14">
@@ -171,7 +173,7 @@ export default function NewTenderPage() {
             <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-primary">
               Nouveau faire-part
             </p>
-            <h2 className="font-display text-2xl font-semibold text-text-primary mt-3 mb-4">
+            <h2 className="font-allura text-2xl font-normal text-text-primary mt-3 mb-4">
               Lancer un appel d'offres
             </h2>
             <p className="text-text-secondary text-sm mb-10 max-w-sm mx-auto leading-relaxed">
@@ -275,10 +277,10 @@ export default function NewTenderPage() {
 
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto text-center">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto text-center">
             <button
               onClick={() => setShowSuccess(false)}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition z-10"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition z-10"
               aria-label="Fermer"
             >
               <X size={18} />
@@ -290,17 +292,17 @@ export default function NewTenderPage() {
             <CornerFlourish className="bottom-3 right-3 scale-[-1]" />
 
             <div className="relative">
-              <div className="w-14 h-14 rounded-2xl bg-[#cbd5e1] flex items-center justify-center mx-auto mb-5">
-                <CheckCircle2 size={26} className="text-[#15181c]" />
+              <div className="w-14 h-14 rounded-[28px] bg-[#E4DBFB] flex items-center justify-center mx-auto mb-5">
+                <CheckCircle2 size={26} className="text-[#0E0E10]" />
               </div>
-              <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C'est scellé.</h3>
-              <p className="text-[#6b7076] text-sm mb-8 leading-relaxed">
+              <h3 className="font-allura text-2xl font-bold text-[#0E0E10] mb-3">C'est scellé.</h3>
+              <p className="text-[#6B6B72] text-sm mb-8 leading-relaxed">
                 Votre faire-part est en route. Dans quelques instants, les trois prestataires les plus proches de
                 votre univers vous contacteront pour que vous puissiez choisir en toute sérénité.
               </p>
               <button
                 onClick={() => router.push("/espace-couple/prestataires")}
-                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition"
+                className="w-full py-3.5 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold font-sans hover:bg-[#94a3b8] transition"
               >
                 Voir mes appels
               </button>

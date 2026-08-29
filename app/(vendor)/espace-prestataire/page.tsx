@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import LoadingScreen from "@/components/shared/LoadingScreen";
 import { ChevronRight, MapPin, ArrowUpRight, Wallet, Inbox, Send, Trophy, UserCircle, Target, Check, X } from "lucide-react";
 import type { ProjectVendorMatch, WeddingProject } from "@/types/marketplace";
 
@@ -89,16 +90,11 @@ export default function VendorDashboardPage() {
     }
   }, [searchParams]);
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff8fa] text-[#6b7076] font-sans">
-        Chargement du tableau de bord…
-      </div>
-    );
+  if (loading) return <LoadingScreen minHeight="100dvh" />;
 
   if (!data)
     return (
-      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fff8fa] text-[#6b7076] font-sans">
+      <div className="min-h-screen flex items-center justify-center p-5 bg-[#fef2f4] text-[#6B6B72] font-sans">
         Impossible de charger le tableau de bord. Vérifiez votre connexion ou réessayez.
       </div>
     );
@@ -114,7 +110,7 @@ export default function VendorDashboardPage() {
       title: "Appels d'offres",
       description: "Trouver de nouveaux couples",
       href: "/espace-prestataire/appels-offres",
-      color: "bg-[#f4f1f7]",
+      color: "bg-[#fef2f4]",
       icon: Inbox,
       image: "https://images.unsplash.com/photo-1741893043659-ca8b82a8b637?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGludml0YXRpb24lMjBtYXJpYWdlfGVufDB8fDB8fHww",
     },
@@ -122,7 +118,7 @@ export default function VendorDashboardPage() {
       title: "Mon profil",
       description: "Rester visible & complet",
       href: "/espace-prestataire/profil",
-      color: "bg-[#cbd5e1]",
+      color: "bg-[#E4DBFB]",
       icon: UserCircle,
       image: "https://images.unsplash.com/photo-1522202801620-eb6f71f5bf05?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
@@ -130,7 +126,7 @@ export default function VendorDashboardPage() {
       title: "Mes offres",
       description: "Gérer mon abonnement",
       href: "/espace-prestataire/offres",
-      color: "bg-[#fde68a]",
+      color: "bg-[#fef2f4]",
       icon: Wallet,
       image: "https://images.unsplash.com/photo-1651173889287-58ec0df699c2?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
@@ -145,11 +141,11 @@ export default function VendorDashboardPage() {
   const isActive = sub?.status === "active" || sub?.status === "trialing";
 
   return (
-    <div className="min-h-screen bg-[#fff8fa] font-sans">
+    <div className="min-h-screen bg-[#fef2f4] font-sans">
       {toast && (
         <div
           className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full shadow-lg text-sm font-semibold flex items-center gap-2 ${
-            toast.type === "success" ? "bg-[#15181c] text-white" : "bg-rose-600 text-white"
+            toast.type === "success" ? "bg-[#e64a5d] text-white hover:brightness-110" : "bg-[#0E0E10] text-white"
           }`}
         >
           {toast.type === "success" ? <Check size={16} /> : <X size={16} />}
@@ -160,33 +156,33 @@ export default function VendorDashboardPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-5 mb-4 sm:mb-10">
           <div>
-            <h1 className="font-display text-3xl sm:text-4xl font-bold text-[#15181c]">
-              Tableau de bord
+            <h1 className="font-allura text-3xl sm:text-4xl font-normal text-[#0E0E10]">
+              Tableau de <span className="text-[#e64a5d]">bord</span>
             </h1>
-            <p className="text-sm sm:text-base text-[#6b7076] mt-2">
+            <p className="text-sm sm:text-base text-[#6B6B72] mt-2">
               Retrouvez vos opportunités, matches et abonnement au même endroit.
             </p>
           </div>
 
           <div className="flex flex-col sm:items-end gap-3">
-            <div className="h-9 p-1 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center w-fit">
+            <div className="h-9 p-1 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center w-fit">
               <div
                 className={`h-7 px-3.5 rounded-full flex items-center text-xs font-semibold transition ${
-                  isActive ? "bg-[#15181c] text-white" : "text-[#6b7076]"
+                  isActive ? "bg-[#e64a5d] text-white hover:brightness-110" : "text-[#6B6B72]"
                 }`}
               >
                 {isActive ? "Abonné" : "Gratuit"}
               </div>
               {!isActive && (
-                <div className="h-7 px-3.5 rounded-full flex items-center text-xs font-semibold bg-[#15181c] text-white transition">
+                <div className="h-7 px-3.5 rounded-full flex items-center text-xs font-semibold bg-[#e64a5d] text-white hover:brightness-110 transition">
                   Gratuit
                 </div>
               )}
             </div>
             {now && (
               <div className="text-left sm:text-right">
-                <p className="text-xl font-semibold text-[#15181c] font-sans">{formatTime(now)}</p>
-                <p className="text-xs text-[#6b7076] capitalize">{formatDate(now)}</p>
+                <p className="text-xl font-semibold text-[#0E0E10] font-sans">{formatTime(now)}</p>
+                <p className="text-xs text-[#6B6B72] capitalize">{formatDate(now)}</p>
               </div>
             )}
           </div>
@@ -194,47 +190,47 @@ export default function VendorDashboardPage() {
 
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          <div className="rounded-3xl border border-[#ececec] bg-[#f4f1f7] p-5 flex flex-col justify-between">
-            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+          <div className="rounded-[28px] border border-[#EDEDF0] bg-[#FEF3C7] p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+            <div className="flex items-center gap-2 text-[#6B6B72] font-semibold text-sm mb-2">
               <Wallet size={18} />
               Plan actif
             </div>
-            <p className="font-display text-3xl font-bold text-[#15181c]">
+            <p className="font-allura text-3xl font-bold text-[#0E0E10]">
               {sub?.planName ?? "Gratuit"}
             </p>
-            <p className="text-xs text-[#6b7076] mt-1">
+            <p className="text-xs text-[#6B6B72] mt-1">
               {sub ? `Paiement à jour jusqu'au ${new Date(sub.currentPeriodEnd).toLocaleDateString("fr-FR")}` : "Aucun abonnement en cours"}
             </p>
           </div>
 
-          <div className="rounded-3xl border border-[#ececec] bg-[#cbd5e1] p-5 flex flex-col justify-between">
-            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+          <div className="rounded-[28px] border border-[#EDEDF0] bg-[#E4DBFB] p-5 flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-[#6B6B72] font-semibold text-sm mb-2">
               <Inbox size={18} />
               Opportunités
             </div>
-            <p className="font-display text-3xl font-bold text-[#15181c]">{s?.newOpportunities ?? 0}</p>
+            <p className="font-allura text-3xl font-bold text-[#0E0E10]">{s?.newOpportunities ?? 0}</p>
           </div>
 
-          <div className="rounded-3xl border border-[#ececec] bg-[#fde68a] p-5 flex flex-col justify-between">
-            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+          <div className="rounded-[28px] border border-[#EDEDF0] bg-white p-5 flex flex-col justify-between shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+            <div className="flex items-center gap-2 text-[#6B6B72] font-semibold text-sm mb-2">
               <Send size={18} />
               Propositions
             </div>
-            <p className="font-display text-3xl font-bold text-[#15181c]">{s?.activeProposals ?? 0}</p>
+            <p className="font-allura text-3xl font-bold text-[#0E0E10]">{s?.activeProposals ?? 0}</p>
           </div>
 
-          <div className="rounded-3xl border border-[#ececec] bg-[#ffffff] p-5 flex flex-col justify-between">
-            <div className="flex items-center gap-2 text-[#6b7076] font-semibold text-sm mb-2">
+          <div className="rounded-[28px] border border-[#EDEDF0] bg-[#D8ECD9] p-5 flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-[#6B6B72] font-semibold text-sm mb-2">
               <Trophy size={18} />
               Contrats gagnés
             </div>
-            <p className="font-display text-3xl font-bold text-[#15181c]">{s?.wonContracts ?? 0}</p>
+            <p className="font-allura text-3xl font-bold text-[#0E0E10]">{s?.wonContracts ?? 0}</p>
           </div>
         </div>
 
         {/* Opportunité en vedette */}
         <section className="mb-10">
-          <div className="relative overflow-hidden rounded-3xl min-h-[420px] p-6 sm:p-8 flex flex-col justify-end group">
+          <div className="relative overflow-hidden rounded-[28px] min-h-[420px] p-6 sm:p-8 flex flex-col justify-end group">
             <img
               src={weddingImage}
               alt=""
@@ -243,19 +239,19 @@ export default function VendorDashboardPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <div className="relative z-10">
               <div className="flex flex-wrap gap-2 mb-4">
-                <span className="px-3 py-1.5 rounded-full bg-white text-[10px] font-bold text-[#15181c]">
+                <span className="px-3 py-1.5 rounded-full bg-white text-[10px] font-bold text-[#0E0E10]">
                   {matches[0]?.category || "Mariage"}
                 </span>
                 {s?.verified && (
-                  <span className="px-3 py-1.5 rounded-full bg-[#fde68a] text-[10px] font-bold text-[#15181c]">
+                  <span className="px-3 py-1.5 rounded-full bg-[#fef2f4] text-[10px] font-bold text-[#0E0E10]">
                     Vérifié
                   </span>
                 )}
-                <span className="px-3 py-1.5 rounded-full bg-[#15181c]/50 backdrop-blur-sm text-white text-[10px] font-bold">
+                <span className="px-3 py-1.5 rounded-full bg-[#0E0E10]/50 backdrop-blur-sm text-white text-[10px] font-bold">
                   {matches[0]?.score || s?.averageCompatibility || 0}% compatibilité
                 </span>
               </div>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2">
+              <h2 className="font-allura text-2xl sm:text-3xl font-normal text-white mb-2">
                 {matches[0]?.project?.location?.city
                   ? `Projet à ${matches[0].project.location.city}`
                   : "Votre prochaine opportunité"}
@@ -267,7 +263,7 @@ export default function VendorDashboardPage() {
               </p>
               <Link
                 href="/espace-prestataire/appels-offres"
-                className="inline-flex items-center gap-2 bg-white text-[#15181c] text-sm font-bold px-5 py-2.5 rounded-full hover:bg-[#fde68a] transition"
+                className="inline-flex items-center gap-2 bg-[#e64a5d] text-white text-sm font-bold px-5 py-2.5 rounded-full hover:brightness-110 transition"
               >
                 Voir les appels d'offres <ChevronRight size={16} />
               </Link>
@@ -279,19 +275,19 @@ export default function VendorDashboardPage() {
         <section className="mb-10">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="font-display text-2xl font-bold text-[#15181c]">Derniers matches</h3>
-              <p className="text-sm text-[#6b7076]">{matches.length} correspondances</p>
+              <h3 className="font-allura text-2xl font-bold text-[#0E0E10]">Derniers matches</h3>
+              <p className="text-sm text-[#6B6B72]">{matches.length} correspondances</p>
             </div>
             <Link
               href="/espace-prestataire/appels-offres"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-[#15181c] hover:text-[#6b7076] transition"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[#0E0E10] hover:text-[#6B6B72] transition"
             >
               Tout voir <ArrowUpRight size={14} />
             </Link>
           </div>
 
-          <div className="rounded-3xl bg-white border border-[#ececec] overflow-hidden">
-            <div className="hidden sm:grid grid-cols-5 gap-4 p-4 bg-[#f4f1f7] text-xs font-bold text-[#15181c] uppercase tracking-wide">
+          <div className="rounded-[28px] bg-white border border-[#EDEDF0] overflow-hidden">
+            <div className="hidden sm:grid grid-cols-5 gap-4 p-4 bg-[#fef2f4] text-xs font-bold text-[#0E0E10] uppercase tracking-wide">
               <span>Projet</span>
               <span>Catégorie</span>
               <span>Lieu</span>
@@ -301,49 +297,59 @@ export default function VendorDashboardPage() {
 
             {matches.length === 0 ? (
               <div className="p-8 sm:p-10 text-center">
-                <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-[#f4f1f7] mb-4">
-                  <Target size={28} className="text-[#15181c]" />
+                <div className="inline-flex items-center justify-center h-14 w-14 rounded-[28px] bg-[#fef2f4] mb-4">
+                  <Target size={28} className="text-[#0E0E10]" />
                 </div>
-                <p className="font-display text-lg font-bold text-[#15181c] mb-1">Aucune correspondance</p>
-                <p className="text-sm text-[#6b7076] max-w-sm mx-auto mb-5">
+                <p className="font-allura text-lg font-bold text-[#0E0E10] mb-1">Aucune correspondance</p>
+                <p className="text-sm text-[#6B6B72] max-w-sm mx-auto mb-5">
                   Les prochains couples correspondant à votre profil apparaîtront ici.
                 </p>
                 <Link
                   href="/espace-prestataire/appels-offres"
-                  className="inline-flex items-center gap-2 bg-[#fde68a] text-[#15181c] text-sm font-bold px-5 py-2.5 rounded-full hover:bg-[#fcd34d] transition"
+                  className="inline-flex items-center gap-2 bg-[#e64a5d] text-white text-sm font-bold px-5 py-2.5 rounded-full hover:brightness-110 transition"
                 >
                   Explorer les opportunités <ArrowUpRight size={16} />
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-[#ececec]">
+              <div className="divide-y divide-[#EDEDF0]">
                 {matches.slice(0, 6).map((match) => {
                   const initials = match.category?.slice(0, 2).toUpperCase() || "PR";
                   return (
                     <Link
                       key={match.id}
                       href={`/espace-prestataire/appels-offres/${match.id}`}
-                      className="grid sm:grid-cols-5 gap-2 sm:gap-4 p-4 items-center hover:bg-[#fff8fa]/50 transition group"
+                      className="block sm:grid sm:grid-cols-5 gap-2 sm:gap-4 p-4 items-center hover:bg-[#fef2f4]/50 transition group"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-2xl bg-[#f4f1f7] flex items-center justify-center text-xs font-bold text-[#15181c]">
-                          {initials}
+                      {/* Mobile: card layout */}
+                      <div className="flex items-center justify-between mb-2 sm:mb-0">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="h-10 w-10 rounded-[28px] bg-[#fef2f4] flex items-center justify-center text-xs font-bold text-[#0E0E10] shrink-0">
+                            {initials}
+                          </div>
+                          <span className="font-allura text-sm font-bold text-[#0E0E10] truncate">
+                            {`Projet ${match.category || "mariage"}`}
+                          </span>
                         </div>
-                        <span className="font-display text-sm font-bold text-[#15181c] truncate">
-                          {`Projet ${match.category || "mariage"}`}
+                        <span className="text-sm font-bold text-[#e64a5d] shrink-0 sm:hidden">
+                          {match.score ?? s?.averageCompatibility ?? 0}%
                         </span>
                       </div>
-                      <span className="text-sm text-[#6b7076] hidden sm:block">{match.category || "—"}</span>
-                      <p className="text-xs sm:text-sm text-[#6b7076] flex items-center gap-1">
-                        <MapPin size={12} />
+                      {/* Desktop: category column */}
+                      <span className="text-sm text-[#6B6B72] hidden sm:block">{match.category || "—"}</span>
+                      {/* Desktop + mobile: location */}
+                      <p className="text-xs sm:text-sm text-[#6B6B72] flex items-center gap-1 mb-2 sm:mb-0">
+                        <MapPin size={12} className="shrink-0" />
                         {match.project?.location?.city || "Ville non précisée"}
                       </p>
-                      <span className="text-sm font-bold text-[#15181c]">
+                      {/* Desktop: score */}
+                      <span className="text-sm font-bold text-[#0E0E10] hidden sm:block">
                         {match.score ?? s?.averageCompatibility ?? 0}%
                       </span>
+                      {/* Action */}
                       <div className="flex items-center justify-end">
-                        <span className="text-sm font-semibold text-[#15181c] flex items-center gap-1">
-                          Voir <ChevronRight size={16} className="text-[#94a3b8] group-hover:text-[#15181c] transition" />
+                        <span className="text-sm font-semibold text-[#0E0E10] flex items-center gap-1">
+                          Voir <ChevronRight size={16} className="text-[#94a3b8] group-hover:text-[#0E0E10] transition" />
                         </span>
                       </div>
                     </Link>
@@ -356,7 +362,7 @@ export default function VendorDashboardPage() {
 
         {/* Actions rapides */}
         <section className="mb-4">
-          <h3 className="font-display text-2xl font-bold text-[#15181c] mb-5">Actions rapides</h3>
+          <h3 className="font-allura text-2xl font-bold text-[#0E0E10] mb-5">Actions rapides</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {quickActions.map((action) => {
               const Icon = action.icon;
@@ -364,7 +370,7 @@ export default function VendorDashboardPage() {
                 <Link
                   key={action.title}
                   href={action.href}
-                  className="relative overflow-hidden rounded-3xl p-5 min-h-[220px] flex flex-col justify-end group"
+                  className="relative overflow-hidden rounded-[28px] p-5 min-h-[220px] flex flex-col justify-end group"
                 >
                   <img
                     src={action.image}
@@ -373,10 +379,10 @@ export default function VendorDashboardPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
                   <div className="relative z-10">
-                    <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mb-3">
-                      <Icon size={24} strokeWidth={1.75} className="text-[#15181c]" />
+                    <div className="h-12 w-12 rounded-[28px] bg-white flex items-center justify-center mb-3">
+                      <Icon size={24} strokeWidth={1.75} className="text-[#e64a5d]" />
                     </div>
-                    <h4 className="font-display text-lg font-bold text-white mb-1">{action.title}</h4>
+                    <h4 className="font-allura text-lg font-bold text-white mb-1">{action.title}</h4>
                     <p className="text-sm text-white/85">{action.description}</p>
                   </div>
                 </Link>

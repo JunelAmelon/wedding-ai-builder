@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
+
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -52,9 +54,9 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
   return (
     <div className={`relative shrink-0 ${className}`}>
       {src ? (
-        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-black/[0.06]" unoptimized />
+        <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-[#EDEDF0]" unoptimized />
       ) : (
-        <div className="rounded-full bg-primary/10 text-primary font-display font-semibold flex items-center justify-center h-full w-full">
+        <div className="rounded-full bg-primary/10 text-primary font-allura font-semibold flex items-center justify-center h-full w-full">
           {name.slice(0, 2).toUpperCase()}
         </div>
       )}
@@ -194,28 +196,28 @@ export default function CoupleMessagingPage() {
   const lastMessage = (p: ProposalWithDetails) => p.lastMessage || messages.filter((m) => m.proposalId === p.id).pop() || null;
   const unreadCount = (p: ProposalWithDetails) => p.unreadCount ?? messages.filter((m) => m.proposalId === p.id && m.senderRole !== "couple" && !m.readAt).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight={"80dvh"} />;
 
   return (
     <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
       {proposals.length === 0 ? (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <div className="bg-white border border-black/[0.06] rounded-2xl p-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-5 bg-primary/10">
+          <div className="bg-white border border-[#EDEDF0] rounded-[28px] p-12 text-center shadow-[0_8px_24px_rgba(14,14,16,0.05)]">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-[28px] mb-5 bg-primary/10">
               <Inbox size={28} className="text-primary" />
             </div>
-            <h2 className="font-display text-xl font-semibold mb-2">Aucune conversation</h2>
+            <h2 className="font-allura text-xl font-normal mb-2">Aucune <span className="text-[#c43a4a]">conversation</span></h2>
             <p className="text-text-secondary max-w-md mx-auto">Acceptez une proposition ou contactez un professionnel pour démarrer la conversation.</p>
           </div>
         </div>
       ) : (
-        <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
+        <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-[#EDEDF0] bg-white`}>
           {/* Sidebar */}
-          <div className={`flex flex-col border-r border-black/[0.06] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
-            <div className="p-4 border-b border-black/[0.06]">
+          <div className={`flex flex-col border-r border-[#EDEDF0] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
+            <div className="p-4 border-b border-[#EDEDF0]">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-xl font-semibold">Messages</h2>
-                <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white px-2 py-1 rounded-full border border-black/[0.06]">
+                <h2 className="font-allura text-xl font-normal"><span className="text-[#c43a4a]">Messages</span></h2>
+                <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white px-2 py-1 rounded-full border border-[#EDEDF0]">
                   {proposals.length}
                 </span>
               </div>
@@ -225,7 +227,7 @@ export default function CoupleMessagingPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full rounded-full bg-white border border-black/[0.08] pl-9 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="w-full rounded-full bg-white border border-[#EDEDF0] pl-9 pr-4 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
             </div>
@@ -243,7 +245,7 @@ export default function CoupleMessagingPage() {
                       setMobileOpen(true);
                     }}
                     className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
-                      isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
+                      isActive ? "bg-white shadow-[0_2px_8px_rgba(14,14,16,0.06)] border border-[#EDEDF0]" : "hover:bg-white/60 border border-transparent"
                     }`}
                   >
                     <Avatar name={p.vendor?.companyName || "P"} src={p.vendor?.logo?.url} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
@@ -273,7 +275,7 @@ export default function CoupleMessagingPage() {
           <div className={`flex flex-col bg-white ${mobileOpen ? "flex" : "hidden lg:flex"}`}>
             {selected ? (
               <>
-                <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-white/50">
+                <div className="p-3 sm:p-4 border-b border-[#EDEDF0] flex items-center gap-3 bg-white/50">
                   <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
                     <ChevronLeft size={20} className="text-text-secondary" />
                   </button>
@@ -290,7 +292,7 @@ export default function CoupleMessagingPage() {
                       onClick={() => setPhoneUnavailable(true)}
                       title="Appel téléphonique"
                     >
-                      {phoneUnavailable ? <PhoneOff size={20} className="text-rose-500" /> : <Phone size={20} />}
+                      {phoneUnavailable ? <PhoneOff size={20} className="text-[#e64a5d]" /> : <Phone size={20} />}
                     </button>
                     <button
                       className="hidden xl:flex p-2 hover:bg-black/[0.06] rounded-full text-text-secondary"
@@ -306,7 +308,7 @@ export default function CoupleMessagingPage() {
                 {phoneUnavailable && (
                   <div className="px-4 py-2 bg-amber-50 border-b border-amber-100 text-xs text-amber-800 flex items-center justify-between">
                     <span>L'appel téléphonique n'est pas encore disponible. Utilisez la messagerie.</span>
-                    <button onClick={() => setPhoneUnavailable(false)} className="p-1 hover:bg-amber-100 rounded"><X size={14} /></button>
+                    <button onClick={() => setPhoneUnavailable(false)} className="p-1 hover:bg-[#fef2f4] rounded"><X size={14} /></button>
                   </div>
                 )}
 
@@ -324,7 +326,7 @@ export default function CoupleMessagingPage() {
                       <div key={m.id}>
                         {showDate && (
                           <div className="flex items-center justify-center my-4">
-                            <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white border border-black/[0.06] px-3 py-1 rounded-full">
+                            <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-text-secondary bg-white border border-[#EDEDF0] px-3 py-1 rounded-full">
                               {formatDate(m.createdAt)}
                             </span>
                           </div>
@@ -339,7 +341,7 @@ export default function CoupleMessagingPage() {
                               className="h-8 w-8 text-[10px] self-end mb-1"
                             />
                           )}
-                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-primary text-white rounded-br-md" : "bg-white text-text-primary border border-black/[0.06] rounded-bl-md"}`}>
+                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-[28px] px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-primary text-white rounded-br-md" : "bg-white text-text-primary border border-[#EDEDF0] rounded-bl-md"}`}>
                             {m.content.startsWith("data:image") ? (
                               <img src={m.content} alt="Pièce jointe" className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover" />
                             ) : m.content.startsWith("data:") ? (
@@ -361,11 +363,11 @@ export default function CoupleMessagingPage() {
                   <div ref={bottomRef} />
                 </div>
 
-                <div className="p-3 sm:p-4 border-t border-black/[0.06] bg-white">
+                <div className="p-3 sm:p-4 border-t border-[#EDEDF0] bg-white">
                   {attachments.length > 0 && (
                     <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                       {attachments.map((att, i) => (
-                        <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-black/[0.08] shrink-0">
+                        <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#EDEDF0] shrink-0">
                           {att.startsWith("data:image") ? (
                             <img src={att} alt="" className="w-full h-full object-cover" />
                           ) : (
@@ -379,7 +381,7 @@ export default function CoupleMessagingPage() {
                       ))}
                     </div>
                   )}
-                  <div className="flex items-center gap-2 rounded-full border border-black/[0.08] bg-white px-2 py-1.5">
+                  <div className="flex items-center gap-2 rounded-full border border-[#EDEDF0] bg-white px-2 py-1.5">
                     <input
                       type="file"
                       multiple
@@ -399,7 +401,7 @@ export default function CoupleMessagingPage() {
                     <button
                       onClick={sendMessage}
                       disabled={sending || (!message.trim() && attachments.length === 0)}
-                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center bg-[#1c1c1c] text-white hover:bg-[#333] disabled:opacity-50 transition"
+                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center bg-[#e64a5d] text-white hover:brightness-110 disabled:opacity-50 transition"
                     >
                       {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                     </button>
@@ -408,7 +410,7 @@ export default function CoupleMessagingPage() {
               </>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-text-secondary p-8 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+                <div className="h-16 w-16 rounded-[28px] bg-primary/10 flex items-center justify-center mb-4">
                   <MessageSquare size={32} className="text-primary" />
                 </div>
                 <p className="font-medium text-text-primary">Sélectionnez une conversation</p>
@@ -419,8 +421,8 @@ export default function CoupleMessagingPage() {
 
           {/* Info panel */}
           {infoOpen && selected && (
-            <div className="hidden xl:flex flex-col border-l border-black/[0.06] bg-white w-[300px] shrink-0">
-              <div className="p-5 border-b border-black/[0.06] text-center">
+            <div className="hidden xl:flex flex-col border-l border-[#EDEDF0] bg-white w-[300px] shrink-0">
+              <div className="p-5 border-b border-[#EDEDF0] text-center">
                 <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-20 w-20 text-xl mx-auto mb-3" online={selected.status === "accepted"} />
                 <h3 className="font-semibold text-text-primary">{selected.vendor?.companyName || "Prestataire"}</h3>
                 <p className="text-sm text-text-secondary">{selected.vendor?.serviceCategory}</p>
@@ -429,7 +431,7 @@ export default function CoupleMessagingPage() {
               <div className="flex-1 overflow-y-auto p-4 space-y-5">
                 <div>
                   <h4 className="text-xs uppercase tracking-[0.14em] text-text-secondary font-medium mb-2">Statut</h4>
-                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-white/20 text-[#1c1c1c]" : "bg-amber-100 text-amber-700"}`}>
+                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-white/20 text-[#e64a5d]" : "bg-[#FEF3C7] text-[#D4B520]"}`}>
                     {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
                   </div>
                 </div>

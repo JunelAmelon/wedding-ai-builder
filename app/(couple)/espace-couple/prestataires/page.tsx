@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -66,20 +68,20 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
 
 // Chips colorés pour toutes les catégories (style Connectify)
 const CHIP_CATEGORIES = [
-  { category: "Photographe / Vidéaste", emoji: "📸", bg: "#f4f1f7", color: "#1c1c1c" },
-  { category: "Musique / DJ / Orchestre", emoji: "🎵", bg: "#c9b6ee", color: "#1c1c1c" },
-  { category: "Traiteur", emoji: "🥐", bg: "#f7e2b8", color: "#1c1c1c" },
-  { category: "Lieu de réception", emoji: "🏰", bg: "#b9b3ba", color: "#1c1c1c" },
-  { category: "Décoration / Fleuriste", emoji: "💐", bg: "#a9c9f5", color: "#1c1c1c" },
-  { category: "Wedding planner", emoji: "📋", bg: "#fbcfe8", color: "#1c1c1c" },
-  { category: "Maquilleur / Coiffeur", emoji: "💄", bg: "#fde68a", color: "#1c1c1c" },
-  { category: "Animation", emoji: "🎉", bg: "#fed7aa", color: "#1c1c1c" },
-  { category: "Transport", emoji: "🚗", bg: "#d1fae5", color: "#1c1c1c" },
-  { category: "Hébergement", emoji: "🏠", bg: "#e0e7ff", color: "#1c1c1c" },
-  { category: "Conception de robe de mariée", emoji: "👗", bg: "#f5d0fe", color: "#1c1c1c" },
-  { category: "Bijoutier", emoji: "💍", bg: "#fef3c7", color: "#1c1c1c" },
-  { category: "Officiant", emoji: "⛪", bg: "#dbeafe", color: "#1c1c1c" },
-  { category: "Autre", emoji: "✨", bg: "#f3f4f6", color: "#1c1c1c" },
+  { category: "Photographe / Vidéaste", emoji: "📸", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Musique / DJ / Orchestre", emoji: "🎵", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Traiteur", emoji: "🥐", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Lieu de réception", emoji: "🏰", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Décoration / Fleuriste", emoji: "💐", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Wedding planner", emoji: "📋", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Maquilleur / Coiffeur", emoji: "💄", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Animation", emoji: "🎉", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Transport", emoji: "🚗", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Hébergement", emoji: "🏠", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Conception de robe de mariée", emoji: "👗", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Bijoutier", emoji: "💍", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Officiant", emoji: "⛪", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Autre", emoji: "✨", bg: "#f3f4f6", color: "#0E0E10" },
 ];
 
 // Images par défaut pour chaque catégorie de prestataire
@@ -102,10 +104,10 @@ const CATEGORY_IMAGES: Record<string, string> = {
 
 // Couleurs pour les avatars contacts
 const CONTACT_COLORS = [
-  "linear-gradient(135deg,#f7c6c6,#e89aa0)",
-  "linear-gradient(135deg,#c7d9f7,#9db8e8)",
-  "linear-gradient(135deg,#f7e2b8,#e8b98a)",
-  "linear-gradient(135deg,#f4f1f7,#f4f1f7)",
+  "linear-gradient(135deg,#e64a5d,#c43a4a)",
+  "linear-gradient(135deg,#8B7BD8,#5B4FC4)",
+  "linear-gradient(135deg,#F4D93E,#D4B520)",
+  "linear-gradient(135deg,#3C8552,#2a6b3e)",
 ];
 
 interface VendorPreview {
@@ -224,21 +226,22 @@ export default function CoupleVendorsPage() {
   // Vérifier si une catégorie a déjà un appel d'offres
   const hasTenderForCategory = (cat: string) => tenders.some((t) => t.category === cat);
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight={"80dvh"} />;
   if (error) return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white flex items-center justify-center px-6">
-      <div className="bg-white border border-[#fce7f3] rounded-2xl p-6 text-center max-w-md">
-        <p className="text-[#831843]">{error}</p>
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fef2f4] to-white flex items-center justify-center px-6">
+      <div className="bg-white border border-[#fef2f4] rounded-[28px] p-6 text-center max-w-md">
+        <p className="text-[#c43a4a]">{error}</p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fff8fa] to-white">
+    <div className="min-h-screen bg-gradient-to-b from-[#fef2f4] to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 lg:py-12">
         <PageHeader
           eyebrow="Appels d'offres"
-          title="Mes prestataires"
+          title={<>Mes <span className="text-[#c43a4a]">prestataires</span></>}
+          titleClassName="font-allura font-normal"
           description="Lancez une demande, recevez des propositions ciblées, comparez et choisissez sereinement."
         />
 
@@ -248,7 +251,7 @@ export default function CoupleVendorsPage() {
             {/* ---- SECTION 1 : Choisissez vos prestataires (chips) ---- */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="font-display text-2xl font-bold text-[#1c1c1c] tracking-tight">
+                <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
                   Choisissez vos prestataires
                 </h2>
                 <button
@@ -256,7 +259,7 @@ export default function CoupleVendorsPage() {
                     setCategory("");
                     setShowForm(true);
                   }}
-                  className="text-[12.5px] text-[#8b8b86] hover:text-[#1c1c1c] transition-colors flex items-center gap-1"
+                  className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1"
                 >
                   <Plus size={14} />
                   Ajouter d'autres
@@ -275,19 +278,19 @@ export default function CoupleVendorsPage() {
                     <button
                       key={chip.category}
                       onClick={() => openCategory(chip.category)}
-                      className="rounded-[18px] p-4 flex flex-col justify-between min-h-[90px] text-left transition-transform hover:-translate-y-0.5 snap-start shrink-0 w-[140px] sm:w-auto"
+                      className="rounded-[28px] p-4 flex flex-col justify-between min-h-[90px] text-left transition-transform hover:-translate-y-0.5 snap-start shrink-0 w-[140px] sm:w-auto border border-[#EDEDF0] shadow-sm"
                       style={{ background: chip.bg, color: chip.color }}
                     >
                       <div className="flex items-start justify-between">
                         <span className="text-[22px]">{chip.emoji}</span>
                         {matchCount > 0 && (
-                          <span className="h-6 min-w-6 px-1.5 rounded-full bg-white/60 flex items-center justify-center text-[11px] font-bold text-[#1c1c1c]">
+                          <span className="h-6 min-w-6 px-1.5 rounded-full bg-white/60 flex items-center justify-center text-[11px] font-bold text-[#0E0E10]">
                             {matchCount}
                           </span>
                         )}
                         {hasTender && (
                           <span className="h-6 w-6 rounded-full bg-white/60 flex items-center justify-center">
-                            <CheckCircle2 size={12} className="text-[#1c1c1c]" />
+                            <CheckCircle2 size={12} className="text-[#0E0E10]" />
                           </span>
                         )}
                       </div>
@@ -299,7 +302,7 @@ export default function CoupleVendorsPage() {
                 })}
                 </div>
                 {/* Indicateur de défilement subtil — visible uniquement sur mobile */}
-                <div className="flex sm:hidden items-center justify-center gap-1.5 mt-3 text-[#8b8b86]">
+                <div className="flex sm:hidden items-center justify-center gap-1.5 mt-3 text-[#6B6B72]">
                   <span className="text-[11px] font-medium">Glissez pour voir plus</span>
                   <svg width="16" height="10" viewBox="0 0 16 10" fill="none" className="animate-pulse">
                     <path d="M1 5h13M9 1l5 4-5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -327,7 +330,7 @@ export default function CoupleVendorsPage() {
                     <Link
                       key={tender.id}
                       href={`/espace-couple/prestataires/${tender.id}`}
-                      className="relative rounded-2xl overflow-hidden aspect-square flex flex-col justify-end p-4 text-white group"
+                      className="relative rounded-[28px] overflow-hidden aspect-square flex flex-col justify-end p-4 text-white group"
                     >
                       {/* Image de fond par catégorie ou prestataire */}
                       <div
@@ -386,7 +389,7 @@ export default function CoupleVendorsPage() {
                 {recommendations.length > 0 ? (
                   <>
                     <div className="flex items-center justify-between mb-5">
-                      <h2 className="font-display text-2xl font-bold text-[#1c1c1c] tracking-tight">
+                      <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
                         Suggestions automatiques
                       </h2>
                       <button
@@ -401,7 +404,7 @@ export default function CoupleVendorsPage() {
                           }
                         }}
                         disabled={refreshing}
-                        className="text-[12.5px] text-[#8b8b86] hover:text-[#1c1c1c] transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                        className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1.5 disabled:opacity-50"
                       >
                         <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
                         Rafraîchir
@@ -426,7 +429,7 @@ export default function CoupleVendorsPage() {
                               <Link
                                 key={cat}
                                 href={`/espace-couple/prestataires/suggestions/${encodeURIComponent(cat)}`}
-                                className="relative rounded-2xl overflow-hidden aspect-square flex flex-col justify-end p-4 text-white group text-left transition-transform hover:-translate-y-0.5"
+                                className="relative rounded-[28px] overflow-hidden aspect-square flex flex-col justify-end p-4 text-white group text-left transition-transform hover:-translate-y-0.5"
                               >
                                 <div
                                   className="absolute inset-0 bg-cover bg-center"
@@ -474,14 +477,14 @@ export default function CoupleVendorsPage() {
                     })()}
                   </>
                 ) : (
-                  <div className="rounded-2xl bg-white border border-[#e4e2db] p-8 text-center">
-                    <div className="h-14 w-14 rounded-2xl bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
-                      <Sparkles size={22} className="text-[#1c1c1c]" />
+                  <div className="rounded-[28px] bg-white border border-[#EDEDF0] p-8 shadow-[0_4px_20px_rgba(14,14,16,0.05)] text-center">
+                    <div className="h-14 w-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
+                      <Sparkles size={22} className="text-[#0E0E10]" />
                     </div>
-                    <h3 className="font-display text-lg font-semibold text-[#1c1c1c] mb-2">
+                    <h3 className="font-allura text-lg font-semibold text-[#0E0E10] mb-2">
                       Aucun appel d'offres pour l'instant
                     </h3>
-                    <p className="text-[#8b8b86] text-sm mb-6 max-w-sm mx-auto">
+                    <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
                       Cliquez sur un type de prestataire ci-dessus pour lancer votre premier appel d'offres.
                     </p>
                   </div>
@@ -491,12 +494,12 @@ export default function CoupleVendorsPage() {
           </div>
 
           {/* ===== PANNEAU LATÉRAL ===== */}
-          <div className="w-full lg:w-[230px] shrink-0 lg:border-l lg:border-[#e4e2db] lg:pl-6 space-y-6">
+          <div className="w-full lg:w-[230px] shrink-0 lg:border-l lg:border-[#EDEDF0] lg:pl-6 space-y-6">
             {/* Contact : prestataires validés */}
             <div>
-              <h3 className="font-bold text-[16px] text-[#1c1c1c] mb-4">Contact</h3>
+              <h3 className="font-bold text-[16px] text-[#0E0E10] mb-4">Contact</h3>
               {confirmedVendors.length === 0 ? (
-                <p className="text-[13px] text-[#8b8b86] leading-relaxed">
+                <p className="text-[13px] text-[#6B6B72] leading-relaxed">
                   Aucun prestataire confirmé pour l'instant. Validez une proposition pour voir vos contacts ici.
                 </p>
               ) : (
@@ -512,10 +515,10 @@ export default function CoupleVendorsPage() {
                           }}
                         />
                         <div className="flex-1 min-w-0">
-                          <div className="text-[13px] font-semibold text-[#1c1c1c] truncate">
+                          <div className="text-[13px] font-semibold text-[#0E0E10] truncate">
                             {vendor.businessName || vendor.name || vendor.companyName || "Prestataire"}
                           </div>
-                          <div className="text-[10.5px] text-[#8b8b86] truncate">
+                          <div className="text-[10.5px] text-[#6B6B72] truncate">
                             {vendor.category}
                           </div>
                         </div>
@@ -528,28 +531,28 @@ export default function CoupleVendorsPage() {
 
             {/* Groups : catégories d'appels d'offres */}
             <div>
-              <h3 className="font-bold text-[16px] text-[#1c1c1c] mb-4">Catégories</h3>
+              <h3 className="font-bold text-[16px] text-[#0E0E10] mb-4">Catégories</h3>
               {tenders.length === 0 ? (
-                <p className="text-[13px] text-[#8b8b86]">Aucune catégorie active.</p>
+                <p className="text-[13px] text-[#6B6B72]">Aucune catégorie active.</p>
               ) : (
                 <ul className="space-y-4">
                   {Array.from(new Set(tenders.map((t) => t.category))).slice(0, 4).map((cat, i) => {
                     const Icon = CATEGORY_ICON[cat] || Sparkle;
                     const count = tenders.filter((t) => t.category === cat).length;
-                    const groupColors = ["#ffe08a", "#7bd9d9", "#f3b6d0", "#a9c9f5"];
+                    const groupColors = ["#FEF3C7", "#D8ECD9", "#FBE1E6", "#E4DBFB"];
                     return (
                       <li key={cat} className="flex items-center gap-2.5">
                         <div
                           className="h-8 w-8 rounded-[10px] flex items-center justify-center shrink-0"
                           style={{ background: groupColors[i % groupColors.length] }}
                         >
-                          <Icon size={15} className="text-[#1c1c1c]" />
+                          <Icon size={15} className="text-[#0E0E10]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-[12.5px] font-semibold text-[#1c1c1c] truncate">{cat}</div>
-                          <div className="text-[10px] text-[#8b8b86]">{count} appel{count > 1 ? "s" : ""}</div>
+                          <div className="text-[12.5px] font-semibold text-[#0E0E10] truncate">{cat}</div>
+                          <div className="text-[10px] text-[#6B6B72]">{count} appel{count > 1 ? "s" : ""}</div>
                         </div>
-                        <span className="min-w-[17px] h-[17px] rounded-full bg-[#a9c9f5] text-[#1c2a4a] text-[10px] font-bold flex items-center justify-center">
+                        <span className="min-w-[17px] h-[17px] rounded-full bg-[#fef2f4] text-[#0E0E10] text-[10px] font-bold flex items-center justify-center">
                           {count}
                         </span>
                       </li>
@@ -594,22 +597,22 @@ export default function CoupleVendorsPage() {
       {/* ===== MODALE — confirmation ===== */}
       {showSuccess && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto text-center">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto text-center">
             <button
               onClick={() => setShowSuccess(false)}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
               aria-label="Fermer"
             >
               <X size={18} />
             </button>
-            <div className="w-14 h-14 rounded-2xl bg-[#fde68a] flex items-center justify-center mx-auto mb-5">
-              <CheckCircle2 size={26} className="text-[#15181c]" />
+            <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-5">
+              <CheckCircle2 size={26} className="text-[#0E0E10]" />
             </div>
-            <h3 className="font-display text-2xl font-bold text-[#15181c] mb-3">C'est envoyé !</h3>
-            <p className="text-[#6b7076] text-sm mb-7 leading-relaxed">
+            <h3 className="font-allura text-2xl font-bold text-[#0E0E10] mb-3">C'est envoyé !</h3>
+            <p className="text-[#6B6B72] text-sm mb-7 leading-relaxed">
               Votre demande est en route. Les prestataires les plus adaptés à votre budget et votre style vous répondront sous peu.
             </p>
-            <Button onClick={() => setShowSuccess(false)} variant="primary" className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition">
+            <Button onClick={() => setShowSuccess(false)} variant="primary" className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition">
               Parfait
             </Button>
           </div>
@@ -619,22 +622,22 @@ export default function CoupleVendorsPage() {
       {/* ===== MODALE — détail catégorie (suggestions auto) ===== */}
       {selectedCategory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeCategory}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#cbd5e1] flex items-center justify-center">
-                {React.createElement(CATEGORY_ICON[selectedCategory] || Sparkle, { size: 26, className: "text-[#15181c]" })}
+              <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center">
+                {React.createElement(CATEGORY_ICON[selectedCategory] || Sparkle, { size: 26, className: "text-[#0E0E10]" })}
               </div>
               <div>
-                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Suggestions auto</p>
-                <h2 className="font-display text-2xl font-bold text-[#15181c]">{selectedCategory}</h2>
+                <p className="text-[#6B6B72] text-xs font-bold font-sans uppercase tracking-wider">Suggestions auto</p>
+                <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">{selectedCategory}</h2>
               </div>
             </div>
 
@@ -645,10 +648,10 @@ export default function CoupleVendorsPage() {
               if (catRecs.length === 0) {
                 return (
                   <div className="text-center py-10">
-                    <div className="h-12 w-12 rounded-full bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
-                      <Sparkles size={22} className="text-[#1c1c1c]" />
+                    <div className="h-12 w-12 rounded-full bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
+                      <Sparkles size={22} className="text-[#0E0E10]" />
                     </div>
-                    <p className="text-[#8b8b86] text-sm mb-6 max-w-sm mx-auto">
+                    <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
                       Aucune suggestion automatique pour cette catégorie pour le moment. Lancez votre propre appel d'offres pour recevoir des propositions.
                     </p>
                     <Button
@@ -658,7 +661,7 @@ export default function CoupleVendorsPage() {
                         setCategory(selectedCategory);
                         setShowForm(true);
                       }}
-                      className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition flex items-center justify-center gap-2"
+                      className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition flex items-center justify-center gap-2"
                       iconLeft={<Plus size={16} />}
                     >
                       Lancer mon appel d'offres
@@ -670,7 +673,7 @@ export default function CoupleVendorsPage() {
               return (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm text-[#6b7076]">
+                    <p className="text-sm text-[#6B6B72]">
                       {catRecs.length} prestataire{catRecs.length > 1 ? "s" : ""} correspondent à votre projet
                     </p>
                     <button
@@ -685,7 +688,7 @@ export default function CoupleVendorsPage() {
                         }
                       }}
                       disabled={refreshing}
-                      className="text-[12.5px] text-[#8b8b86] hover:text-[#1c1c1c] transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                      className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1.5 disabled:opacity-50"
                     >
                       <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
                       Rafraîchir
@@ -697,27 +700,27 @@ export default function CoupleVendorsPage() {
                       const vendor = rec.vendor;
                       const logoUrl = typeof vendor?.logo === "string" ? vendor.logo : (vendor?.logo as { url?: string } | undefined)?.url;
                       return (
-                        <div key={rec.match.id} className="rounded-2xl bg-white border border-[#e4e2db] p-4 flex items-start gap-4">
+                        <div key={rec.match.id} className="rounded-[28px] bg-white border border-[#EDEDF0] p-4 shadow-[0_4px_20px_rgba(14,14,16,0.05)] flex items-start gap-4">
                           <div
-                            className="h-14 w-14 rounded-2xl bg-cover bg-center shrink-0"
+                            className="h-14 w-14 rounded-[28px] bg-cover bg-center shrink-0"
                             style={{ backgroundImage: logoUrl ? `url(${logoUrl})` : `url(${CATEGORY_IMAGES[selectedCategory] || CATEGORY_IMAGES["Autre"]})` }}
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-display text-sm font-bold text-[#1c1c1c] truncate">
+                              <h3 className="font-allura text-sm font-bold text-[#0E0E10] truncate">
                                 {vendor?.companyName || vendor?.businessName || vendor?.name || "Prestataire"}
                               </h3>
-                              <span className="text-[10px] font-bold bg-[#f4f1f7] text-[#1c1c1c] px-2 py-0.5 rounded-full">
+                              <span className="text-[10px] font-bold bg-[#fef2f4] text-[#0E0E10] px-2 py-0.5 rounded-full">
                                 {rec.match.score}%
                               </span>
                             </div>
                             {vendor?.serviceArea?.cities?.[0] && (
-                              <p className="text-[11px] text-[#8b8b86] flex items-center gap-1 mb-1">
+                              <p className="text-[11px] text-[#6B6B72] flex items-center gap-1 mb-1">
                                 <MapPin size={10} /> {vendor.serviceArea.cities[0]}
                               </p>
                             )}
                             {rec.match.summary && (
-                              <div className="text-[12px] text-[#4a4a4a] mt-1">
+                              <div className="text-[12px] text-[#6B6B72] mt-1">
                                 <ExpandableText text={rec.match.summary} lines={2} />
                               </div>
                             )}
@@ -725,7 +728,7 @@ export default function CoupleVendorsPage() {
                               <Link
                                 href={`/espace-couple/prestataires/profil/${vendor?.id}`}
                                 onClick={closeCategory}
-                                className="text-[12px] font-bold text-[#1c1c1c] hover:underline flex items-center gap-1"
+                                className="text-[12px] font-bold text-[#0E0E10] hover:underline flex items-center gap-1"
                               >
                                 Voir le profil <ArrowRight size={12} />
                               </Link>
@@ -740,18 +743,18 @@ export default function CoupleVendorsPage() {
                     <Link
                       href={`/espace-couple/prestataires/${catTender.id}`}
                       onClick={closeCategory}
-                      className="block rounded-2xl bg-[#f4f1f7] border border-[#ececec] p-4 mb-4 hover:bg-[#ececef] transition"
+                      className="block rounded-[28px] bg-[#fef2f4] border border-[#EDEDF0] p-4 mb-4 hover:bg-[#ececef] transition"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6b7076]">Appel d'offres en cours</p>
-                          <p className="text-sm font-bold text-[#1c1c1c] mt-0.5">
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B6B72]">Appel d'offres en cours</p>
+                          <p className="text-sm font-bold text-[#0E0E10] mt-0.5">
                             {catTender.status === "searching" ? "En recherche" : catTender.status === "responded" ? "Réponses reçues" : "Clôturé"}
                             {" — "}
                             {(catTender.proposals || []).length} proposition{(catTender.proposals || []).length > 1 ? "s" : ""}
                           </p>
                         </div>
-                        <ArrowRight size={18} className="text-[#1c1c1c]" />
+                        <ArrowRight size={18} className="text-[#0E0E10]" />
                       </div>
                     </Link>
                   )}
@@ -763,7 +766,7 @@ export default function CoupleVendorsPage() {
                         closeCategory();
                         tryLaunchTender(selectedCategory);
                       }}
-                      className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition flex items-center justify-center gap-2"
+                      className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition flex items-center justify-center gap-2"
                       iconLeft={<Plus size={16} />}
                     >
                       Lancer mon propre appel
@@ -779,34 +782,34 @@ export default function CoupleVendorsPage() {
       {/* ===== DIALOG — remplacer ou conserver les suggestions ===== */}
       {showReplaceDialog && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+          <div className="bg-white rounded-[28px] max-w-md w-full p-6 sm:p-8 shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 rounded-full bg-[#fde68a] flex items-center justify-center">
-                <Sparkles size={20} className="text-[#15181c]" />
+              <div className="h-10 w-10 rounded-full bg-[#fef2f4] flex items-center justify-center">
+                <Sparkles size={20} className="text-[#0E0E10]" />
               </div>
-              <h3 className="font-display text-lg font-bold text-[#15181c]">
+              <h3 className="font-allura text-lg font-bold text-[#0E0E10]">
                 Nouvelles suggestions ou en plus ?
               </h3>
             </div>
-            <p className="text-sm text-[#6b7076] mb-6">
+            <p className="text-sm text-[#6B6B72] mb-6">
               Vous avez déjà des suggestions pour <strong>{pendingCategory}</strong>. Souhaitez-vous remplacer les suggestions actuelles par de nouvelles, ou les conserver et ajouter de nouveaux prestataires ?
             </p>
             <div className="flex flex-col gap-3">
               <button
                 onClick={() => confirmReplace("replace")}
-                className="w-full px-4 py-3.5 rounded-2xl bg-[#15181c] text-white text-sm font-bold hover:bg-[#2a2d33] transition flex items-center justify-center gap-2"
+                className="w-full px-4 py-3.5 rounded-[28px] bg-[#e64a5d] text-white text-sm font-bold hover:brightness-110 transition flex items-center justify-center gap-2"
               >
                 Remplacer les suggestions
               </button>
               <button
                 onClick={() => confirmReplace("keep")}
-                className="w-full px-4 py-3.5 rounded-2xl border-2 border-[#ececec] text-sm font-bold text-[#6b7076] hover:bg-[#f4f1f7] transition"
+                className="w-full px-4 py-3.5 rounded-[28px] border-2 border-[#EDEDF0] text-sm font-bold text-[#6B6B72] hover:bg-[#fef2f4] transition"
               >
                 Conserver + ajouter de nouvelles
               </button>
               <button
                 onClick={() => setShowReplaceDialog(false)}
-                className="w-full px-4 py-2 text-sm text-[#8b8b86] hover:text-[#1c1c1c] transition"
+                className="w-full px-4 py-2 text-sm text-[#6B6B72] hover:text-[#0E0E10] transition"
               >
                 Annuler
               </button>

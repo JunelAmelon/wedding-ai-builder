@@ -79,14 +79,14 @@ export default function CoupleLayoutClient({
   }
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff8fa] to-white text-text-primary">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fef2f4] to-white text-text-primary">
       <div
         className={`hidden lg:block fixed inset-x-0 z-40 px-6 transition-all duration-300 ${
           scrolled ? "top-0 py-3 bg-white/75 backdrop-blur-xl border-b border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.06)]" : "top-5"
         }`}
       >
-        <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-2xl bg-white/40 border border-black/[0.04]" : ""}`}>
-          <Link href="/espace-couple/result" className="font-display text-xl font-semibold text-[#1c1c1c]">
+        <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-[28px] bg-white/40 border border-black/[0.04]" : ""}`}>
+          <Link href="/espace-couple/result" className="font-allura text-xl font-semibold text-[#0E0E10]">
             Mariage Facile
           </Link>
 
@@ -119,7 +119,7 @@ export default function CoupleLayoutClient({
               </button>
 
               {moreOpen && (
-                <div className="absolute top-full right-0 mt-3 w-56 rounded-2xl bg-white border border-black/[0.06] shadow-[0_20px_60px_rgba(11,15,26,0.12)] p-2">
+                <div className="absolute top-full right-0 mt-3 w-56 rounded-[28px] bg-white border border-black/[0.06] shadow-[0_20px_60px_rgba(11,15,26,0.12)] p-2">
                   {COUPLE_NAV_SECONDARY.map((item) => (
                     <Link
                       key={item.href}
@@ -136,7 +136,7 @@ export default function CoupleLayoutClient({
                       setMoreOpen(false);
                       handleLogout();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#e64a5d] hover:bg-[#fef2f4] transition-colors"
                   >
                     <LogOut size={16} strokeWidth={1.75} />
                     Déconnexion
@@ -167,7 +167,7 @@ export default function CoupleLayoutClient({
       </div>
 
       <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-white/90 backdrop-blur-xl">
-        <Link href="/espace-couple/result" className="font-display text-xl font-semibold text-[#1c1c1c]">
+        <Link href="/espace-couple/result" className="font-allura text-xl font-semibold text-[#0E0E10]">
           Mariage Facile
         </Link>
         <button
@@ -184,7 +184,7 @@ export default function CoupleLayoutClient({
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setMoreOpen(false)} />
           <div className="relative ml-auto h-full w-72 bg-white p-5 flex flex-col">
             <div className="flex items-center justify-between mb-6">
-              <span className="font-display text-base font-semibold">Menu</span>
+              <span className="font-allura text-base font-semibold">Menu</span>
               <button onClick={() => setMoreOpen(false)} className="h-8 w-8 rounded-full flex items-center justify-center hover:bg-black/[0.04]">
                 <X size={18} />
               </button>
@@ -216,7 +216,9 @@ export default function CoupleLayoutClient({
                   {item.label}
                 </Link>
               ))}
-              {COUPLE_NAV_SECONDARY.map((item) => (
+              {COUPLE_NAV_SECONDARY.filter(
+                (item) => !MOBILE_MORE.some((m) => m.href === item.href)
+              ).map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -233,7 +235,7 @@ export default function CoupleLayoutClient({
                 setMoreOpen(false);
                 handleLogout();
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-rose-600 hover:bg-rose-50 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[#e64a5d] hover:bg-[#fef2f4] transition-colors"
             >
               <LogOut size={17} strokeWidth={1.75} />
               Déconnexion
@@ -263,7 +265,7 @@ export default function CoupleLayoutClient({
               <Link
                 key={tab.href}
                 href={tab.href}
-                className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-2xl text-[10px] font-medium transition-colors ${
+                className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-[28px] text-[10px] font-medium transition-colors ${
                   active ? "text-ink" : "text-text-secondary"
                 }`}
               >
@@ -274,7 +276,7 @@ export default function CoupleLayoutClient({
           })}
           <button
             onClick={() => setMoreOpen(true)}
-            className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-2xl text-[10px] font-medium transition-colors ${
+            className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-[28px] text-[10px] font-medium transition-colors ${
               moreOpen ? "text-ink" : "text-text-secondary"
             }`}
             aria-label="Plus"

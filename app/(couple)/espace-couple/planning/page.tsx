@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
+
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageHeader from "@/components/couple/PageHeader";
@@ -45,16 +47,16 @@ type PlanningTask = TimelineTask & { dueDate?: string };
 const DAYS_SHORT = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const TASK_COLORS = [
-  { bg: "#f4f1f7", text: "#1c1c1c" },      // jaune DA
-  { bg: "#dbeafe", text: "#1e3a8a" },      // bleu
-  { bg: "#f4f1f7", text: "#1c1c1c" },      // vert
-  { bg: "#fce7f3", text: "#831843" },      // rose
-  { bg: "#ffedd5", text: "#7c2d12" },      // orange
-  { bg: "#ede9fe", text: "#4c1d95" },      // violet
-  { bg: "#cffafe", text: "#164e63" },      // cyan
-  { bg: "#fef3c7", text: "#78350f" },      // ambre
-  { bg: "#f3e8ff", text: "#581c87" },      // lavande
-  { bg: "#d1fae5", text: "#064e3b" },      // menthe
+  { bg: "#fef2f4", text: "#c43a4a" },      // coral
+  { bg: "#E4DBFB", text: "#5B4FC4" },      // lavender
+  { bg: "#FEF3C7", text: "#D4B520" },      // yellow
+  { bg: "#D8ECD9", text: "#2a6b3e" },      // sage
+  { bg: "#FBE1E6", text: "#8C2F39" },      // bordeaux
+  { bg: "#ede9fe", text: "#5B4FC4" },      // violet
+  { bg: "#fef2f4", text: "#0E0E10" },      // coral light
+  { bg: "#FEF3C7", text: "#78350f" },      // ambre
+  { bg: "#E4DBFB", text: "#581c87" },      // lavande
+  { bg: "#D8ECD9", text: "#064e3b" },      // menthe
 ];
 
 function getTaskColor(seed: string) {
@@ -326,22 +328,22 @@ export default function CouplePlanningPage() {
     });
   };
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight={"80dvh"} />;
   if (error) return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white flex items-center justify-center px-6">
-      <div className="bg-white border border-[#fce7f3] rounded-2xl p-6 text-center max-w-md">
-        <p className="text-[#831843]">{error}</p>
+    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fef2f4] to-white flex items-center justify-center px-6">
+      <div className="bg-white border border-[#fef2f4] rounded-[28px] p-6 text-center max-w-md">
+        <p className="text-[#c43a4a]">{error}</p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff8fa] to-white">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fef2f4] to-white">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 lg:py-14">
-        <PageHeader eyebrow="Organisation" title="Mon planning">
+        <PageHeader eyebrow="Organisation" title={<>Mon <span className="text-[#c43a4a]">planning</span></>} titleClassName="font-allura font-normal">
           <button
             onClick={openNewTask}
-            className="self-start sm:self-auto inline-flex items-center gap-2 rounded-full bg-[#1c1c1c] px-4 py-2 text-sm font-semibold text-white hover:bg-[#333] transition-colors"
+            className="self-start sm:self-auto inline-flex items-center gap-2 rounded-full bg-[#e64a5d] px-4 py-2 text-sm font-semibold text-white hover:brightness-110 transition"
           >
             <Plus size={15} strokeWidth={2} /> Nouvelle étape
           </button>
@@ -350,13 +352,13 @@ export default function CouplePlanningPage() {
         {/* Search Bar */}
         <div className="mb-8">
           <div className="relative max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b8b86]" size={16} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B6B72]" size={16} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Rechercher des tâches, étapes..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#ffbfca]"
+              className="w-full pl-11 pr-4 py-3 bg-white border border-[#EDEDF0] rounded-xl text-[14px] text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:ring-2 focus:ring-[#e64a5d]"
             />
           </div>
         </div>
@@ -365,11 +367,11 @@ export default function CouplePlanningPage() {
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
-              <Calendar size={20} className="text-[#1c1c1c]" />
+              <Calendar size={20} className="text-[#0E0E10]" />
             </div>
             <div>
-              <h2 className="font-bold text-[#1c1c1c] text-lg">Calendrier</h2>
-              <p className="text-xs text-[#8b8b86]">Vue mensuelle de vos étapes</p>
+              <h2 className="font-bold text-[#0E0E10] text-lg">Calendrier</h2>
+              <p className="text-xs text-[#6B6B72]">Vue mensuelle de vos étapes</p>
             </div>
           </div>
 
@@ -377,16 +379,16 @@ export default function CouplePlanningPage() {
           <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate(-1)} 
-              className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
+              className="w-8 h-8 rounded-lg border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition"
             >
               <ChevronLeft size={16} />
             </button>
-            <div className="px-4 py-2 bg-white border border-[#e6e4dd] rounded-lg text-[13px] font-semibold text-[#1c1c1c] min-w-[160px] text-center capitalize">
+            <div className="px-4 py-2 bg-white border border-[#EDEDF0] rounded-lg text-[13px] font-semibold text-[#0E0E10] min-w-[160px] text-center capitalize">
               {monthName} {year}
             </div>
             <button 
               onClick={() => navigate(1)} 
-              className="w-8 h-8 rounded-lg border border-[#e6e4dd] bg-white flex items-center justify-center text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
+              className="w-8 h-8 rounded-lg border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition"
             >
               <ChevronRight size={16} />
             </button>
@@ -398,18 +400,18 @@ export default function CouplePlanningPage() {
           <div className="flex-1">
             {searchQuery.trim() ? (
               // Si recherche active, affiche les résultats filtrés
-              <div className="bg-white rounded-2xl p-6 border border-[#e6e4dd]">
-                <h3 className="font-bold text-[#1c1c1c] mb-4">
+              <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+                <h3 className="font-bold text-[#0E0E10] mb-4">
                   Résultats de recherche ({filteredTasks.length})
                 </h3>
                 {filteredTasks.length === 0 ? (
-                  <p className="text-[#8b8b86]">Aucune étape ne correspond à votre recherche.</p>
+                  <p className="text-[#6B6B72]">Aucune étape ne correspond à votre recherche.</p>
                 ) : (
                   <div className="space-y-2">
                     {filteredTasks.map((task) => (
                       <div
                         key={task.id}
-                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition cursor-pointer"
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#fef2f4] transition cursor-pointer"
                         onClick={() => openEditTask(task)}
                       >
                         <button
@@ -418,12 +420,12 @@ export default function CouplePlanningPage() {
                             toggleTask(task.id, !task.completed);
                           }}
                           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
-                            task.completed ? "bg-white border-[#ffbfca]" : "border-[#8b8b86]"
+                            task.completed ? "bg-white border-[#e64a5d]" : "border-[#6B6B72]"
                           }`}
                         >
-                          {task.completed && <Check size={12} className="text-[#1c1c1c]" />}
+                          {task.completed && <Check size={12} className="text-[#0E0E10]" />}
                         </button>
-                        <span className={`flex-1 text-sm ${task.completed ? "line-through text-[#8b8b86]" : "text-[#1c1c1c]"}`}>
+                        <span className={`flex-1 text-sm ${task.completed ? "line-through text-[#6B6B72]" : "text-[#0E0E10]"}`}>
                           {task.title}
                         </span>
                       </div>
@@ -433,11 +435,11 @@ export default function CouplePlanningPage() {
               </div>
             ) : (
               // Grand calendrier par mois
-              <div className="bg-white rounded-2xl border border-[#e6e4dd] overflow-hidden">
+              <div className="bg-white rounded-[28px] border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)] overflow-hidden">
                 {/* Calendar header */}
-                <div className="grid grid-cols-7 border-b border-[#e6e4dd]">
+                <div className="grid grid-cols-7 border-b border-[#EDEDF0]">
                   {DAYS_SHORT.map((day) => (
-                    <div key={day} className="py-3 text-center text-xs font-semibold text-[#8b8b86] uppercase">
+                    <div key={day} className="py-3 text-center text-xs font-semibold text-[#6B6B72] uppercase">
                       {day}
                     </div>
                   ))}
@@ -453,17 +455,17 @@ export default function CouplePlanningPage() {
                     return (
                       <div
                         key={idx}
-                        className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#e6e4dd] relative ${
-                          isCurrentMonth ? "bg-white" : "bg-[#f4f1f7]/50"
-                        } ${isToday ? "ring-2 ring-inset ring-[#ffbfca]" : ""}`}
+                        className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#EDEDF0] relative ${
+                          isCurrentMonth ? "bg-white" : "bg-[#fef2f4]/50"
+                        } ${isToday ? "ring-2 ring-inset ring-[#e64a5d]" : ""}`}
                       >
-                        <div className={`text-xs font-medium mb-1 ${isToday ? "text-[#1c1c1c]" : "text-[#8b8b86]"}`}>
+                        <div className={`text-xs font-medium mb-1 ${isToday ? "text-[#0E0E10]" : "text-[#6B6B72]"}`}>
                           {day.getDate()}
                         </div>
                         <div className="space-y-1">
                           {dayTasks.slice(0, 3).map((task) => {
                             const color = task.completed
-                              ? { bg: "#f4f1f7", text: "#8b8b86" }
+                              ? { bg: "#fef2f4", text: "#6B6B72" }
                               : getTaskColor(task.id || task.title);
                             return (
                               <button
@@ -484,7 +486,7 @@ export default function CouplePlanningPage() {
                           {dayTasks.length > 3 && (
                             <button
                               onClick={() => setDayPopupTasks({ date: day, tasks: dayTasks })}
-                              className="text-[9px] text-[#8b8b86] pl-2 hover:text-[#1c1c1c] hover:underline transition"
+                              className="text-[9px] text-[#6B6B72] pl-2 hover:text-[#0E0E10] hover:underline transition"
                             >
                               +{dayTasks.length - 3} autres
                             </button>
@@ -501,59 +503,60 @@ export default function CouplePlanningPage() {
           {/* Sidebar - visible sur mobile aussi */}
           <div className="w-full lg:w-72 space-y-6">
             {/* This Week Stats */}
-            <div className="bg-white rounded-2xl p-6 border border-[#e6e4dd]">
-              <h4 className="text-sm font-bold text-[#1c1c1c] mb-4 flex items-center gap-2">
-                <Sparkles size={14} className="text-[#1c1c1c]" />
+            <div className="bg-[#E4DBFB] rounded-[28px] p-6 border border-[#d8d0f5]">
+              <h4 className="text-sm font-bold text-[#0E0E10] mb-4 flex items-center gap-2">
+                <Sparkles size={14} className="text-[#0E0E10]" />
                 Cette semaine
               </h4>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#fef2f4] rounded-xl">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg">
-                      <ListChecks size={16} className="text-[#1c1c1c]" />
+                      <ListChecks size={16} className="text-[#0E0E10]" />
                     </div>
-                    <span className="text-sm text-[#1c1c1c]">Complétées</span>
+                    <span className="text-sm text-[#0E0E10]">Complétées</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#1c1c1c]">{done}</span>
+                  <span className="text-sm font-semibold text-[#0E0E10]">{done}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#fef2f4] rounded-xl">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg">
-                      <Target size={16} className="text-[#1c1c1c]" />
+                      <Target size={16} className="text-[#0E0E10]" />
                     </div>
-                    <span className="text-sm text-[#1c1c1c]">Restantes</span>
+                    <span className="text-sm text-[#0E0E10]">Restantes</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#1c1c1c]">{total - done}</span>
+                  <span className="text-sm font-semibold text-[#0E0E10]">{total - done}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-[#f4f1f7] rounded-xl">
+                <div className="flex items-center justify-between p-3 bg-[#fef2f4] rounded-xl">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg">
-                      <Clock size={16} className="text-[#1c1c1c]" />
+                      <Clock size={16} className="text-[#0E0E10]" />
                     </div>
-                    <span className="text-sm text-[#1c1c1c]">Mois restants</span>
+                    <span className="text-sm text-[#0E0E10]">Mois restants</span>
                   </div>
-                  <span className="text-sm font-semibold text-[#1c1c1c]">{monthsLeft ?? "—"}</span>
+                  <span className="text-sm font-semibold text-[#0E0E10]">{monthsLeft ?? "—"}</span>
                 </div>
               </div>
             </div>
 
             {/* Upcoming milestones */}
-            <div className="bg-white rounded-2xl p-6 border border-[#e6e4dd]">
-              <h4 className="text-sm font-bold text-[#1c1c1c] mb-4">Prochaines étapes</h4>
+            <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <h4 className="text-sm font-bold text-[#0E0E10] mb-4">Prochaines étapes</h4>
               <div className="space-y-3">
-                {byMonth.slice(0, 3).map(([month, monthTasks]) => {
+                {byMonth.slice(0, 3).map(([month, monthTasks], idx) => {
                   const completedCount = monthTasks.filter((t) => t.completed).length;
                   const milestoneTitle = timeline?.milestones?.find((m) => m.monthsBeforeWedding === month)?.title;
+                  const milestoneBg = ["bg-rose-chip", "bg-yellow/30", "bg-sage-chip"][idx];
                   return (
                     <div
                       key={month}
-                      className="p-3 bg-[#f4f1f7] rounded-xl cursor-pointer hover:bg-[#e6e4dd] transition"
+                      className={`p-3 rounded-xl cursor-pointer transition hover:opacity-90 ${milestoneBg}`}
                       onClick={() => openEditTask(monthTasks[0])}
                     >
-                      <div className="text-[13px] font-bold text-[#1c1c1c] mb-1">
+                      <div className="text-[13px] font-bold text-ink mb-1">
                         {milestoneTitle || `M-${month}`}
                       </div>
-                      <div className="text-[11px] text-[#8b8b86]">
+                      <div className="text-[11px] text-ink/70">
                         {completedCount}/{monthTasks.length} tâches
                       </div>
                     </div>
@@ -563,44 +566,44 @@ export default function CouplePlanningPage() {
             </div>
 
             {/* Quick actions */}
-            <div className="bg-white rounded-2xl p-6 border border-[#e6e4dd]">
-              <h4 className="text-sm font-bold text-[#1c1c1c] mb-4">Actions rapides</h4>
+            <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <h4 className="text-sm font-bold text-ink mb-4">Actions rapides</h4>
               <div className="space-y-2">
                 <button
                   onClick={openNewTask}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl transition text-left bg-coral hover:brightness-110"
                 >
-                  <div className="p-2 bg-white rounded-lg">
-                    <CalendarPlus size={16} className="text-[#1c1c1c]" />
+                  <div className="p-2 bg-white/90 rounded-lg">
+                    <CalendarPlus size={16} className="text-coral" />
                   </div>
-                  <span className="text-sm text-[#1c1c1c]">Planifier une étape</span>
+                  <span className="text-sm text-white font-semibold">Planifier une étape</span>
                 </button>
                 <button
                   onClick={openNewTask}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition text-left"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl transition text-left bg-coral hover:brightness-110"
                 >
-                  <div className="p-2 bg-white rounded-lg">
-                    <Plus size={16} className="text-[#1c1c1c]" />
+                  <div className="p-2 bg-white/90 rounded-lg">
+                    <Plus size={16} className="text-coral" />
                   </div>
-                  <span className="text-sm text-[#1c1c1c]">Créer une tâche</span>
+                  <span className="text-sm text-white font-semibold">Créer une tâche</span>
                 </button>
               </div>
             </div>
 
-            {/* Progress - Jaune DA sans gradient */}
-            <div className="bg-white rounded-2xl p-6">
-              <h4 className="text-sm font-bold text-[#1c1c1c] mb-3">Progression globale</h4>
-              <div className="text-3xl font-bold text-[#1c1c1c] mb-1">
+            {/* Progress - Lavender DA */}
+            <div className="bg-[#E4DBFB] rounded-[28px] p-6 border border-[#d8d0f5]">
+              <h4 className="text-sm font-bold text-[#0E0E10] mb-3">Progression globale</h4>
+              <div className="text-3xl font-bold text-[#0E0E10] mb-1">
                 {total > 0 ? Math.round((done / total) * 100) : 0}%
               </div>
-              <div className="text-sm text-[#1c1c1c]/70 mb-3">de votre planning complété</div>
-              <div className="h-2 bg-[#1c1c1c]/20 rounded-full overflow-hidden">
+              <div className="text-sm text-[#0E0E10]/70 mb-3">de votre planning complété</div>
+              <div className="h-2 bg-[#0E0E10]/20 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#1c1c1c] rounded-full transition-all"
+                  className="h-full bg-[#0E0E10] rounded-full transition-all"
                   style={{ width: `${total > 0 ? (done / total) * 100 : 0}%` }}
                 />
               </div>
-              <div className="text-xs text-[#1c1c1c]/60 mt-2">
+              <div className="text-xs text-[#0E0E10]/60 mt-2">
                 {done} sur {total} tâches
               </div>
             </div>
@@ -611,22 +614,22 @@ export default function CouplePlanningPage() {
       {/* Modal - Style témoin */}
       {showTaskModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#ececec] rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
               aria-label="Fermer"
             >
               <X size={15} />
             </button>
 
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-[#fde68a] flex items-center justify-center">
-                <Calendar size={26} className="text-[#15181c]" />
+              <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center">
+                <Calendar size={26} className="text-[#0E0E10]" />
               </div>
               <div>
-                <p className="text-[#6b7076] text-xs font-bold font-sans uppercase tracking-wider">Planning</p>
-                <h2 className="font-display text-2xl font-bold text-[#15181c]">
+                <p className="text-[#6B6B72] text-xs font-bold font-sans uppercase tracking-wider">Planning</p>
+                <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">
                   {selectedTask ? "Modifier l'étape" : "Nouvelle étape"}
                 </h2>
               </div>
@@ -634,7 +637,7 @@ export default function CouplePlanningPage() {
 
             <div className="space-y-5">
               <div>
-                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
                   Titre de l'étape *
                 </label>
                 <input
@@ -642,18 +645,18 @@ export default function CouplePlanningPage() {
                   value={taskForm.title}
                   onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
                   placeholder="Ex: Réserver le lieu de réception"
-                  className="w-full bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition"
+                  className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                 />
               </div>
 
               <div>
-                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6b7076] mb-2">
+                <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
                   Mois avant le mariage
                 </label>
                 <select
                   value={taskForm.monthsBeforeWedding}
                   onChange={(e) => setTaskForm({ ...taskForm, monthsBeforeWedding: Number(e.target.value) })}
-                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#ececec] rounded-2xl text-[#15181c] px-4 py-3.5 focus:outline-none focus:border-[#f4f1f7] transition cursor-pointer"
+                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition cursor-pointer"
                 >
                   {[...Array(25)].map((_, i) => (
                     <option key={i} value={i}>
@@ -664,16 +667,16 @@ export default function CouplePlanningPage() {
               </div>
 
               {selectedTask && (
-                <div className="flex items-center gap-3 p-3 bg-white border border-[#e4e2db] rounded-xl">
+                <div className="flex items-center gap-3 p-3 bg-white border border-[#EDEDF0] rounded-xl">
                   <button
                     onClick={() => toggleTask(selectedTask.id, !selectedTask.completed)}
                     className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
-                      selectedTask.completed ? "bg-white border-[#ffbfca]" : "border-[#8b8b86]"
+                      selectedTask.completed ? "bg-white border-[#e64a5d]" : "border-[#6B6B72]"
                     }`}
                   >
-                    {selectedTask.completed && <Check size={10} className="text-[#1c1c1c]" />}
+                    {selectedTask.completed && <Check size={10} className="text-[#0E0E10]" />}
                   </button>
-                  <span className="text-[13px] text-[#1c1c1c]">
+                  <span className="text-[13px] text-[#0E0E10]">
                     {selectedTask.completed ? "Marquer comme non terminée" : "Marquer comme terminée"}
                   </span>
                 </div>
@@ -682,7 +685,7 @@ export default function CouplePlanningPage() {
               {selectedTask && (
                 <button
                   onClick={() => deleteTask(selectedTask.id)}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-full border-2 border-red-200 bg-red-50 text-sm font-bold font-sans text-red-600 hover:bg-red-100 transition"
+                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-full border-2 border-[#fef2f4] bg-[#fef2f4] text-sm font-bold font-sans text-[#e64a5d] hover:brightness-95 transition"
                 >
                   <Trash2 size={16} />
                   Supprimer cette étape
@@ -692,7 +695,7 @@ export default function CouplePlanningPage() {
               <button
                 onClick={saveTask}
                 disabled={saving || !taskForm.title.trim()}
-                className="w-full py-3.5 px-4 rounded-full bg-[#f4f1f7] text-[#15181c] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (
                   <>
@@ -718,24 +721,24 @@ export default function CouplePlanningPage() {
           onClick={() => setDayPopupTasks(null)}
         >
           <div
-            className="relative w-full max-w-md bg-white border border-[#e6e4dd] rounded-3xl p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
+            className="relative w-full max-w-md bg-white border border-[#EDEDF0] rounded-[28px] p-6 shadow-2xl max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setDayPopupTasks(null)}
-              className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white border border-[#ececec] flex items-center justify-center text-[#6b7076] hover:text-[#15181c] hover:bg-[#ececec] transition"
+              className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
               aria-label="Fermer"
             >
               <X size={14} />
             </button>
-            <h3 className="font-bold text-[#1c1c1c] mb-1">
+            <h3 className="font-bold text-[#0E0E10] mb-1">
               {dayPopupTasks.date.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
             </h3>
-            <p className="text-xs text-[#8b8b86] mb-4">{dayPopupTasks.tasks.length} étapes</p>
+            <p className="text-xs text-[#6B6B72] mb-4">{dayPopupTasks.tasks.length} étapes</p>
             <div className="space-y-2">
               {dayPopupTasks.tasks.map((task) => {
                 const color = task.completed
-                  ? { bg: "#f4f1f7", text: "#8b8b86" }
+                  ? { bg: "#fef2f4", text: "#6B6B72" }
                   : getTaskColor(task.id || task.title);
                 return (
                   <button
@@ -744,13 +747,13 @@ export default function CouplePlanningPage() {
                       setDayPopupTasks(null);
                       openEditTask(task);
                     }}
-                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#f4f1f7] transition text-left"
+                    className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#fef2f4] transition text-left"
                   >
                     <div
                       className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
-                      style={{ borderColor: task.completed ? "#ffbfca" : "#8b8b86", backgroundColor: task.completed ? "#ffbfca" : "transparent" }}
+                      style={{ borderColor: task.completed ? "#e64a5d" : "#6B6B72", backgroundColor: task.completed ? "#e64a5d" : "transparent" }}
                     >
-                      {task.completed && <Check size={10} className="text-[#1c1c1c]" />}
+                      {task.completed && <Check size={10} className="text-[#0E0E10]" />}
                     </div>
                     <span
                       className="flex-1 text-sm leading-tight"

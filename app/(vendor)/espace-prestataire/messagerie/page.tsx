@@ -1,5 +1,7 @@
 "use client";
 
+import LoadingScreen from "@/components/shared/LoadingScreen";
+
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -41,7 +43,7 @@ function Avatar({ name, src, className, online }: { name: string; src?: string; 
       {src ? (
         <Image src={src} alt={name} fill sizes="40px" className="rounded-full object-cover border border-black/[0.06]" unoptimized />
       ) : (
-        <div className="rounded-full bg-[#f4f1f7] text-[#1c1c1c] font-display font-semibold flex items-center justify-center h-full w-full">
+        <div className="rounded-full bg-[#fef2f4] text-[#0E0E10] font-allura font-semibold flex items-center justify-center h-full w-full">
           {name.slice(0, 2).toUpperCase()}
         </div>
       )}
@@ -205,7 +207,7 @@ export default function VendorMessagingPage() {
   const lastMessage = (p: ProposalWithDetails) => p.lastMessage || messages.filter((m) => m.proposalId === p.id).pop() || null;
   const unreadCount = (p: ProposalWithDetails) => p.unreadCount ?? messages.filter((m) => m.proposalId === p.id && m.senderRole !== "vendor" && !m.readAt).length;
 
-  if (loading) return <div className="min-h-[80dvh] bg-gradient-to-b from-[#fff8fa] to-white" />;
+  if (loading) return <LoadingScreen minHeight="80dvh" />
 
   const vendorDisplayName = vendorInfo.brandName || vendorInfo.companyName || "V";
 
@@ -213,12 +215,12 @@ export default function VendorMessagingPage() {
     <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
       {proposals.length === 0 ? (
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <div className="bg-white border border-black/[0.06] rounded-2xl p-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl mb-5 bg-[#f4f1f7]">
-              <Inbox size={28} className="text-[#1c1c1c]" />
+          <div className="bg-white border border-black/[0.06] rounded-[28px] p-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-[28px] mb-5 bg-[#fef2f4]">
+              <Inbox size={28} className="text-[#0E0E10]" />
             </div>
-            <h2 className="font-display text-xl font-semibold mb-2">Aucune conversation</h2>
-            <p className="text-[#8b8b86] max-w-md mx-auto">Vous n'avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d'offres.</p>
+            <h2 className="font-allura text-xl font-normal mb-2">Aucune conversation</h2>
+            <p className="text-[#6B6B72] max-w-md mx-auto">Vous n'avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d'offres.</p>
           </div>
         </div>
       ) : (
@@ -227,18 +229,18 @@ export default function VendorMessagingPage() {
           <div className={`flex flex-col border-r border-black/[0.06] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
             <div className="p-4 border-b border-black/[0.06]">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-xl font-semibold text-[#1c1c1c]">Messages</h2>
-                <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#8b8b86] bg-white px-2 py-1 rounded-full border border-black/[0.06]">
+                <h2 className="font-allura text-xl font-normal text-[#0E0E10]">Messages</h2>
+                <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#6B6B72] bg-white px-2 py-1 rounded-full border border-black/[0.06]">
                   {proposals.length}
                 </span>
               </div>
               <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8b8b86]" />
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B72]" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Rechercher..."
-                  className="w-full rounded-full bg-white border border-black/[0.08] pl-9 pr-4 py-2 text-sm text-[#1c1c1c] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/40"
+                  className="w-full rounded-full bg-white border border-black/[0.08] pl-9 pr-4 py-2 text-sm text-[#0E0E10] focus:outline-none focus:ring-2 focus:ring-[#fef2f4]/40"
                 />
               </div>
             </div>
@@ -266,15 +268,15 @@ export default function VendorMessagingPage() {
                     <Avatar name={coupleName} src={p.couple?.avatarUrl || undefined} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-[#1c1c1c] truncate text-sm">{coupleName}</span>
-                        {previewDate && <span className="font-semibold text-[10px] text-[#8b8b86] shrink-0">{previewDate}</span>}
+                        <span className="font-semibold text-[#0E0E10] truncate text-sm">{coupleName}</span>
+                        {previewDate && <span className="font-semibold text-[10px] text-[#6B6B72] shrink-0">{previewDate}</span>}
                       </div>
                       <div className="flex items-center justify-between gap-2">
-                        <span className={`text-xs truncate ${unread ? "text-[#1c1c1c] font-medium" : "text-[#8b8b86]"}`}>
+                        <span className={`text-xs truncate ${unread ? "text-[#0E0E10] font-medium" : "text-[#6B6B72]"}`}>
                           {preview ? (isFromVendor ? "Vous : " : "") + preview : "Pas encore de message"}
                         </span>
                         {unread > 0 && (
-                          <span className="h-5 min-w-[20px] rounded-full bg-[#1c1c1c] text-white text-[10px] font-semibold flex items-center justify-center px-1.5">
+                          <span className="h-5 min-w-[20px] rounded-full bg-[#e64a5d] text-white hover:brightness-110 text-[10px] font-semibold flex items-center justify-center px-1.5">
                             {unread}
                           </span>
                         )}
@@ -292,7 +294,7 @@ export default function VendorMessagingPage() {
               <>
                 <div className="p-3 sm:p-4 border-b border-black/[0.06] flex items-center gap-3 bg-white/50">
                   <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
-                    <ChevronLeft size={20} className="text-[#8b8b86]" />
+                    <ChevronLeft size={20} className="text-[#6B6B72]" />
                   </button>
                   <Avatar
                     name={`${selected.couple?.firstName || ""} ${selected.couple?.lastName || ""}`}
@@ -301,29 +303,29 @@ export default function VendorMessagingPage() {
                     online={selected.status === "accepted"}
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-[#1c1c1c] truncate">
+                    <div className="font-semibold text-[#0E0E10] truncate">
                       {selected.couple?.firstName} {selected.couple?.lastName}
                     </div>
-                    <div className="text-xs text-[#8b8b86]">
+                    <div className="text-xs text-[#6B6B72]">
                       {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <button
-                      className="p-2 hover:bg-black/[0.06] rounded-full text-[#8b8b86] relative"
+                      className="p-2 hover:bg-black/[0.06] rounded-full text-[#6B6B72] relative"
                       onClick={() => setPhoneUnavailable(true)}
                       title="Appel téléphonique"
                     >
                       {phoneUnavailable ? <PhoneOff size={20} className="text-rose-500" /> : <Phone size={20} />}
                     </button>
                     <button
-                      className="hidden xl:flex p-2 hover:bg-black/[0.06] rounded-full text-[#8b8b86]"
+                      className="hidden xl:flex p-2 hover:bg-black/[0.06] rounded-full text-[#6B6B72]"
                       onClick={() => setInfoOpen((v) => !v)}
                       title="Informations"
                     >
                       <Info size={20} />
                     </button>
-                    <button className="p-2 hover:bg-black/[0.06] rounded-full text-[#8b8b86]"><MoreVertical size={20} /></button>
+                    <button className="p-2 hover:bg-black/[0.06] rounded-full text-[#6B6B72]"><MoreVertical size={20} /></button>
                   </div>
                 </div>
 
@@ -336,8 +338,8 @@ export default function VendorMessagingPage() {
 
                 <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-white/30">
                   {messages.length === 0 && (
-                    <div className="flex-1 flex flex-col items-center justify-center text-[#8b8b86] text-center min-h-[200px]">
-                      <MessageSquare size={40} className="text-[#8b8b86]/30 mb-3" />
+                    <div className="flex-1 flex flex-col items-center justify-center text-[#6B6B72] text-center min-h-[200px]">
+                      <MessageSquare size={40} className="text-[#6B6B72]/30 mb-3" />
                       <p className="text-sm">Démarrez la conversation avec {selected.couple?.firstName} {selected.couple?.lastName}</p>
                     </div>
                   )}
@@ -348,7 +350,7 @@ export default function VendorMessagingPage() {
                       <div key={m.id}>
                         {showDate && (
                           <div className="flex items-center justify-center my-4">
-                            <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#8b8b86] bg-white border border-black/[0.06] px-3 py-1 rounded-full">
+                            <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#6B6B72] bg-white border border-black/[0.06] px-3 py-1 rounded-full">
                               {formatDate(m.createdAt)}
                             </span>
                           </div>
@@ -367,7 +369,7 @@ export default function VendorMessagingPage() {
                               className="h-8 w-8 text-[10px] self-end mb-1"
                             />
                           )}
-                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-[#1c1c1c] text-white rounded-br-md" : "bg-white text-[#1c1c1c] border border-black/[0.06] rounded-bl-md"}`}>
+                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-[28px] px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-[#e64a5d] text-white hover:brightness-110 rounded-br-md" : "bg-white text-[#0E0E10] border border-black/[0.06] rounded-bl-md"}`}>
                             {m.content.startsWith("data:image") ? (
                               <img src={m.content} alt="Pièce jointe" className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover" />
                             ) : m.content.startsWith("data:") ? (
@@ -375,7 +377,7 @@ export default function VendorMessagingPage() {
                             ) : (
                               <p className="leading-relaxed">{m.content}</p>
                             )}
-                            <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-[#8b8b86]"}`}>
+                            <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-[#6B6B72]"}`}>
                               <span>{formatTime(m.createdAt)}</span>
                               {isMe && (
                                 <span>{m.readAt ? <CheckCheck size={11} /> : <Check size={11} />}</span>
@@ -397,7 +399,7 @@ export default function VendorMessagingPage() {
                           {att.startsWith("data:image") ? (
                             <img src={att} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full bg-white flex items-center justify-center text-[10px] text-[#8b8b86] text-center p-1">Fichier</div>
+                            <div className="w-full h-full bg-white flex items-center justify-center text-[10px] text-[#6B6B72] text-center p-1">Fichier</div>
                           )}
                           <button
                             onClick={() => setAttachments((prev) => prev.filter((_, idx) => idx !== i))}
@@ -415,18 +417,18 @@ export default function VendorMessagingPage() {
                       ref={fileRef}
                       onChange={handleFiles}
                     />
-                    <button onClick={() => fileRef.current?.click()} className="p-2 text-[#8b8b86] hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
+                    <button onClick={() => fileRef.current?.click()} className="p-2 text-[#6B6B72] hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
                     <input
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
                       placeholder="Écrivez votre message..."
-                      className="flex-1 bg-transparent px-2 py-2 text-sm text-[#1c1c1c] focus:outline-none"
+                      className="flex-1 bg-transparent px-2 py-2 text-sm text-[#0E0E10] focus:outline-none"
                     />
                     <button
                       onClick={sendMessage}
                       disabled={sending || (!message.trim() && attachments.length === 0)}
-                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center bg-[#1c1c1c] text-white hover:bg-[#333] disabled:opacity-50 transition"
+                      className="rounded-full h-9 w-9 p-0 flex items-center justify-center bg-[#e64a5d] text-white hover:brightness-110 disabled:opacity-50 transition"
                     >
                       {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                     </button>
@@ -434,11 +436,11 @@ export default function VendorMessagingPage() {
                 </div>
               </>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-[#8b8b86] p-8 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-[#f4f1f7] flex items-center justify-center mb-4">
-                  <MessageSquare size={32} className="text-[#1c1c1c]" />
+              <div className="flex-1 flex flex-col items-center justify-center text-[#6B6B72] p-8 text-center">
+                <div className="h-16 w-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mb-4">
+                  <MessageSquare size={32} className="text-[#0E0E10]" />
                 </div>
-                <p className="font-medium text-[#1c1c1c]">Sélectionnez une conversation</p>
+                <p className="font-medium text-[#0E0E10]">Sélectionnez une conversation</p>
                 <p className="text-sm">Discutez avec vos couples en toute simplicité.</p>
               </div>
             )}
@@ -454,44 +456,44 @@ export default function VendorMessagingPage() {
                   className="h-20 w-20 text-xl mx-auto mb-3"
                   online={selected.status === "accepted"}
                 />
-                <h3 className="font-semibold text-[#1c1c1c]">
+                <h3 className="font-semibold text-[#0E0E10]">
                   {selected.couple?.firstName} {selected.couple?.lastName}
                 </h3>
-                <p className="text-sm text-[#8b8b86]">{selected.project?.name || "Projet"}</p>
+                <p className="text-sm text-[#6B6B72]">{selected.project?.name || "Projet"}</p>
               </div>
 
               <div className="flex-1 overflow-y-auto p-4 space-y-5">
                 <div>
-                  <h4 className="text-xs uppercase tracking-[0.14em] text-[#8b8b86] font-medium mb-2">Statut</h4>
-                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-[#f4f1f7] text-[#1c1c1c]" : "bg-amber-100 text-amber-700"}`}>
+                  <h4 className="text-xs uppercase tracking-[0.14em] text-[#6B6B72] font-medium mb-2">Statut</h4>
+                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${selected.status === "accepted" ? "bg-[#fef2f4] text-[#0E0E10]" : "bg-amber-100 text-amber-700"}`}>
                     {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-xs uppercase tracking-[0.14em] text-[#8b8b86] font-medium mb-2">Projet</h4>
+                  <h4 className="text-xs uppercase tracking-[0.14em] text-[#6B6B72] font-medium mb-2">Projet</h4>
                   <div className="space-y-2 text-sm">
                     {selected.project?.weddingDate && (
-                      <div className="flex items-center gap-2 text-[#8b8b86]">
-                        <Calendar size={14} className="text-[#1c1c1c]" />
+                      <div className="flex items-center gap-2 text-[#6B6B72]">
+                        <Calendar size={14} className="text-[#0E0E10]" />
                         <span>{formatFullDate(selected.project.weddingDate)}</span>
                       </div>
                     )}
                     {selected.project?.location?.city && (
-                      <div className="flex items-center gap-2 text-[#8b8b86]">
-                        <MapPin size={14} className="text-[#1c1c1c]" />
+                      <div className="flex items-center gap-2 text-[#6B6B72]">
+                        <MapPin size={14} className="text-[#0E0E10]" />
                         <span>{selected.project.location.city}</span>
                       </div>
                     )}
                     {selected.project?.budget?.amount && (
-                      <div className="flex items-center gap-2 text-[#8b8b86]">
-                        <Wallet size={14} className="text-[#1c1c1c]" />
+                      <div className="flex items-center gap-2 text-[#6B6B72]">
+                        <Wallet size={14} className="text-[#0E0E10]" />
                         <span>Budget {selected.project.budget.amount.toLocaleString("fr-FR")} {selected.project.budget.currency}</span>
                       </div>
                     )}
                     {selected.project?.guestCount && (
-                      <div className="flex items-center gap-2 text-[#8b8b86]">
-                        <Users size={14} className="text-[#1c1c1c]" />
+                      <div className="flex items-center gap-2 text-[#6B6B72]">
+                        <Users size={14} className="text-[#0E0E10]" />
                         <span>{selected.project.guestCount} invités</span>
                       </div>
                     )}

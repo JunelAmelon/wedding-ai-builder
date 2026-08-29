@@ -41,7 +41,7 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
     { value: "classique", label: "Classique", icon: Crown, bg: "#FBE1E6", iconColor: "#8C2F39", text: "#0E0E10" },
     { value: "moderne", label: "Moderne", icon: Sparkles, bg: "#E4DBFB", iconColor: "#8B7BD8", text: "#0E0E10" },
     { value: "destination", label: "Destination", icon: Plane, bg: "#F4D93E", iconColor: "#0E0E10", text: "#0E0E10" },
-    { value: "rustique", label: "Rustique", icon: Trees, bg: "#F2704A", iconColor: "#fff", text: "#fff" },
+    { value: "rustique", label: "Rustique", icon: Trees, bg: "#e64a5d", iconColor: "#fff", text: "#fff" },
     { value: "luxe", label: "Luxe", icon: Gem, bg: "#8B7BD8", iconColor: "#fff", text: "#fff" },
     { value: "autre", label: "Autre", icon: PenTool, bg: "#F7F7F9", iconColor: "#6B6B72", text: "#0E0E10" },
   ];
