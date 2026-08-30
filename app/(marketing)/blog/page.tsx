@@ -96,15 +96,11 @@ export default function BlogPage() {
 
                 <div className="floating-card fc-left">
                   <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
-                  <div className="fc-title">Budget</div>
-                  <div className="fc-meta">Répartition claire</div>
+                  <div className="fc-title">Nouveau guide</div>
                 </div>
 
                 <div className="badge-pill bp-top-right">
                   <Check size={12} /> 12 000+ lectures
-                </div>
-                <div className="badge-pill bp-mid-right">
-                  <Star size={12} /> Nouveau guide
                 </div>
 
                 <div className="stat-card-green" style={{ background: "var(--coral)" }}>
@@ -112,7 +108,7 @@ export default function BlogPage() {
                   <span>articles publiés</span>
                 </div>
 
-                <div className="floating-card fc-bottom-right">
+                <div className="floating-card fc-bottom-right mobile-hidden">
                   <Image src="https://images.unsplash.com/photo-1550525811-e5869dd03032?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
                   <div className="fc-info">
                     <div className="fc-title">Trouver son style</div>

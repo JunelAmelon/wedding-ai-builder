@@ -77,10 +77,10 @@ export default function ProfessionalMarketingPage() {
                   <div className="fc-meta">Dès 890 €</div>
                 </div>
 
-                <div className="badge-pill bp-top-right">
+                <div className="badge-pill bp-top-right mobile-hidden">
                   <Check size={12} /> {MARKETING_STATS.matchScore}% match
                 </div>
-                <div className="badge-pill bp-mid-right">
+                <div className="badge-pill bp-mid-right mobile-hidden">
                   <MessageCircle size={12} /> 2 messages
                 </div>
 
@@ -89,7 +89,7 @@ export default function ProfessionalMarketingPage() {
                   <span>moins de démarchage</span>
                 </div>
 
-                <div className="floating-card fc-bottom-right">
+                <div className="floating-card fc-bottom-right mobile-hidden">
                   <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
                   <div className="fc-info">
                     <div className="fc-title">Mariage champêtre</div>
@@ -147,18 +147,18 @@ export default function ProfessionalMarketingPage() {
                     <Image src="https://images.pexels.com/photos/17665897/pexels-photo-17665897.jpeg" alt="Matching IA" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                   </div>
 
-                  <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
+                  <div className="rating-badge mobile-hidden"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
 
-                  <div className="floating-card fc-left">
+                  <div className="floating-card fc-left mobile-hidden">
                     <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
                     <div className="fc-title">Budget</div>
                     <div className="fc-meta">2 300 €</div>
                   </div>
 
-                  <div className="badge-pill bp-top-right">
+                  <div className="badge-pill bp-top-right mobile-hidden">
                     <Check size={12} /> Plus d'échanges
                   </div>
-                  <div className="badge-pill bp-mid-right">
+                  <div className="badge-pill bp-mid-right mobile-hidden">
                     <Check size={12} /> {MARKETING_STATS.matchScore}% match
                   </div>
 
@@ -167,7 +167,7 @@ export default function ProfessionalMarketingPage() {
                     <span>taux de réponse</span>
                   </div>
 
-                  <div className="floating-card fc-bottom-right">
+                  <div className="floating-card fc-bottom-right mobile-hidden">
                     <Image src="https://images.pexels.com/photos/3171837/pexels-photo-3171837.jpeg?auto=compress&cs=tinysrgb&w=300&h=200" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
                     <div className="fc-info">
                       <div className="fc-title">Conseil personnalisé</div>
