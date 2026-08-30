@@ -3482,7 +3482,7 @@ main > section { padding: 56px 0; }
     display: flex;
     gap: 12px;
     width: max-content;
-    animation: testi-marquee 60s linear infinite;
+    animation: testi-marquee 30s linear infinite;
   }
   .testi-marquee-track .testi-slide {
     width: 280px;
@@ -3492,9 +3492,13 @@ main > section { padding: 56px 0; }
   .testi-marquee-track:hover { animation-play-state: paused; }
 }
 
-.testi-marquee-track { display: none; }
+@media (min-width: 641px) {
+  .testi-marquee-track { display: none; }
+}
 
 @keyframes testi-marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+
+.badge-pill.fc-left { width: auto; }

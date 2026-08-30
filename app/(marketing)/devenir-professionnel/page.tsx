@@ -462,10 +462,8 @@ export default function ProfessionalRegistrationPage() {
 
                 <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
 
-                <div className="floating-card fc-left">
-                  <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
-                  <div className="fc-title">Top</div>
-                  <div className="fc-meta">pro</div>
+                <div className="badge-pill fc-left">
+                  <Star size={12} /> Top pro
                 </div>
 
                 <div className="badge-pill bp-top-right">

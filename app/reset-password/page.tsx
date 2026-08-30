@@ -69,7 +69,7 @@ function ResetPasswordForm() {
 
   if (success) {
     return (
-      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
+      <div className="min-h-[100dvh] bg-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
         <div className="max-w-md w-full">
           <div className="mb-8">
             <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#0E0E10] hover:text-[#6B6B72] transition">
@@ -90,7 +90,7 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
+    <div className="min-h-[100dvh] bg-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
       <div className="max-w-md w-full">
         <div className="mb-8">
           <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#0E0E10] hover:text-[#6B6B72] transition">
@@ -155,7 +155,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-b from-[#fff0f3] to-white"><Loader2 size={32} className="animate-spin text-[#0E0E10]"/></div>}>
+    <Suspense fallback={<div className="min-h-[100dvh] flex items-center justify-center bg-white"><Loader2 size={32} className="animate-spin text-[#0E0E10]"/></div>}>
       <ResetPasswordForm />
     </Suspense>
   );

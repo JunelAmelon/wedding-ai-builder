@@ -94,10 +94,8 @@ export default function BlogPage() {
 
                 <div className="rating-badge"><span>★★★★★</span> 4.8</div>
 
-                <div className="floating-card fc-left">
-                  <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
-                  <div className="fc-title">Nouveau</div>
-                  <div className="fc-meta">guide</div>
+                <div className="badge-pill fc-left">
+                  <Check size={12} /> Nouveau guide
                 </div>
 
                 <div className="badge-pill bp-top-right">
