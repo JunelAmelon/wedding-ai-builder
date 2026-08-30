@@ -78,20 +78,20 @@ const EMPTY_GRADIENTS = [
 ];
 
 const CATEGORY_IMAGES: Record<string, string> = {
-  "Photographe / Vidéaste": "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=300&fit=crop",
-  "Musique / DJ / Orchestre": "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&h=300&fit=crop",
-  "Traiteur": "https://images.unsplash.com/photo-1555244162-803834f70033?w=800&h=300&fit=crop",
-  "Lieu de réception": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=300&fit=crop",
-  "Décoration / Fleuriste": "https://images.unsplash.com/photo-1469371670807-013114f47f9b?w=800&h=300&fit=crop",
-  "Alliances / Bijoux": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&h=300&fit=crop",
-  "Robe de mariée": "https://images.unsplash.com/photo-1594472302219-22c61b3e6c0e?w=800&h=300&fit=crop",
-  "Costume homme": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&h=300&fit=crop",
-  "Beauty / Maquillage": "https://images.unsplash.com/photo-1596462502278-27bfdc4034e3?w=800&h=300&fit=crop",
-  "Transport": "https://images.pexels.com/photos/29624024/pexels-photo-29624024.jpeg",
-  "Hébergement": "https://images.unsplash.com/photo-1566073771259-6a228608e65d?w=800&h=300&fit=crop",
-  "Papeterie / Invitations": "https://images.unsplash.com/photo-1517842645767-c639042777db?w=800&h=300&fit=crop",
-  "Animations / Festivités": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&h=300&fit=crop",
-  "Autre": "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&h=300&fit=crop",
+  "Photographe / Vidéaste": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Musique / DJ / Orchestre": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Traiteur": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Lieu de réception": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Décoration / Fleuriste": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Alliances / Bijoux": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Robe de mariée": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Costume homme": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Beauty / Maquillage": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Transport": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Hébergement": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Papeterie / Invitations": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Animations / Festivités": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
+  "Autre": "https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg",
 };
 
 type EnrichedVendor = Omit<VendorProfile, "serviceArea"> & {
