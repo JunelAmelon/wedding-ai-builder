@@ -512,6 +512,29 @@ export default function LandingPage() {
                     ))}
                   </div>
                 </div>
+
+                <div className="testi-marquee-track">
+                  {[...testimonials, ...testimonials].map((t, i) => (
+                    <div key={i} className="testi-slide">
+                      <div className="testi-card">
+                        <div className="testi-card-wedding">
+                          <Image src={t.wedding} alt={`Mariage de ${t.name}`} width={600} height={400} className="w-full h-full object-cover" unoptimized />
+                        </div>
+                        <div className="testi-card-body">
+                          <div className="testi-card-head">
+                            <Image src={t.img} alt={t.name} width={48} height={48} className="testi-avatar" unoptimized />
+                            <div>
+                              <div className="testi-name">{t.name}</div>
+                              <div className="testi-meta">{t.meta}</div>
+                            </div>
+                            <span className="testi-badge">Avis vérifié</span>
+                          </div>
+                          <p className="testi-quote">"{t.quote}"</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="stat-stack">

@@ -3475,4 +3475,26 @@ main > section { padding: 56px 0; }
 
 @media (max-width: 640px) {
   .mobile-hidden { display: none !important; }
+
+  .testi-track { display: none; }
+  .testi-controls { display: none; }
+  .testi-marquee-track {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    animation: testi-marquee 60s linear infinite;
+  }
+  .testi-marquee-track .testi-slide {
+    width: 280px;
+    flex: 0 0 280px;
+    padding: 0;
+  }
+  .testi-marquee-track:hover { animation-play-state: paused; }
+}
+
+.testi-marquee-track { display: none; }
+
+@keyframes testi-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
