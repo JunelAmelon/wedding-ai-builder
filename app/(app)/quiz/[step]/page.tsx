@@ -16,6 +16,11 @@ import { QuestionStyle } from "@/components/quiz/QuestionStyle";
 import type { StyleAnswer } from "@/components/quiz/QuestionStyle";
 import { QuestionStress } from "@/components/quiz/QuestionStress";
 import { QuestionPriority } from "@/components/quiz/QuestionPriority";
+import { QuestionCategories } from "@/components/quiz/QuestionCategories";
+import type { CategoriesAnswer } from "@/components/quiz/QuestionCategories";
+import { QuestionNeeds } from "@/components/quiz/QuestionNeeds";
+import type { NeedsAnswer } from "@/components/quiz/QuestionNeeds";
+import type { GuestsAnswer } from "@/components/quiz/QuestionGuests";
 import { track } from "@/lib/analytics/posthog.client";
 import type { QuizStep } from "@/types/domain";
 
@@ -25,6 +30,8 @@ const FIELD_BY_STEP: Record<QuizStep, string> = {
   guests: "guestCount",
   budget: "budget",
   style: "style",
+  categories: "desiredCategories",
+  needs: "dietaryNeeds",
   stress: "stressLevel",
   priority: "mainPriority",
 };
@@ -53,6 +60,14 @@ const HERO_BY_STEP: Record<QuizStep, { url: string; alt: string }> = {
   stress: {
     url: "/stress-mariage.jpg",
     alt: "Moment calme",
+  },
+  categories: {
+    url: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1800&q=80",
+    alt: "Prestataires de mariage",
+  },
+  needs: {
+    url: "https://images.pexels.com/photos/13834521/pexels-photo-13834521.jpeg",
+    alt: "Réception et invités",
   },
   priority: {
     url: "/priorité-mariage.jpg",
@@ -123,6 +138,20 @@ export default function QuizStepPage() {
       setAnswer("style" as never, styleAnswer.style as never);
       setAnswer("customStyle" as never, (styleAnswer.customStyle ?? "") as never);
       setAnswer("customStyleDescription" as never, (styleAnswer.customStyleDescription ?? "") as never);
+      setAnswer("ambiance" as never, (styleAnswer.ambiance ?? []) as never);
+    } else if (step === "guests" && typeof value === "object" && value !== null) {
+      const guestsAnswer = value as GuestsAnswer;
+      setAnswer("guestCount" as never, guestsAnswer.guestCount as never);
+      setAnswer("childrenCount" as never, guestsAnswer.childrenCount as never);
+    } else if (step === "categories" && typeof value === "object" && value !== null) {
+      const catAnswer = value as CategoriesAnswer;
+      setAnswer("desiredCategories" as never, catAnswer.desiredCategories as never);
+    } else if (step === "needs" && typeof value === "object" && value !== null) {
+      const needsAnswer = value as NeedsAnswer;
+      setAnswer("dietaryNeeds" as never, needsAnswer.dietaryNeeds as never);
+      setAnswer("dietaryDetails" as never, needsAnswer.dietaryDetails as never);
+      setAnswer("mobilityNeeds" as never, needsAnswer.mobilityNeeds as never);
+      setAnswer("guestsFromFar" as never, needsAnswer.guestsFromFar as never);
     } else {
       setAnswer(field as never, value as never);
     }
@@ -155,21 +184,21 @@ export default function QuizStepPage() {
   }
 
   if (!ready) {
-    return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white" />;
+    return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fef2f4] to-white" />;
   }
 
   if (error) {
     return (
-      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-6">
-        <div className="max-w-md w-full rounded-3xl border border-black/10 bg-white p-8 shadow-[0_30px_80px_rgba(11,15,26,0.08)] text-center">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-warning/15 border border-warning/25 flex items-center justify-center mb-6">
-            <TriangleAlert className="text-warning" size={32} />
+      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fef2f4] to-white flex items-center justify-center px-6">
+        <div className="max-w-md w-full rounded-[28px] border border-[#EDEDF0] bg-white p-8 shadow-[0_30px_80px_rgba(11,15,26,0.08)] text-center">
+          <div className="mx-auto h-16 w-16 rounded-[28px] bg-[#fef2f4] border border-[#EDEDF0] flex items-center justify-center mb-6">
+            <TriangleAlert className="text-[#e64a5d]" size={32} />
           </div>
-          <h1 className="font-serif text-2xl font-bold text-text-primary">Le quiz ne peut pas démarrer</h1>
-          <p className="text-text-secondary mt-3">{error}</p>
+          <h1 className="font-allura text-2xl font-bold text-[#0E0E10]">Le quiz ne peut pas démarrer</h1>
+          <p className="text-[#6B6B72] mt-3">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-[#8B7BD8] px-6 py-3 text-white font-semibold"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-[#e64a5d] px-6 py-3 text-white font-semibold hover:brightness-110"
           >
             Réessayer
           </button>
@@ -181,13 +210,13 @@ export default function QuizStepPage() {
   const hero = HERO_BY_STEP[step] ?? HERO_BY_STEP.date;
 
   return (
-    <div className="bg-gradient-to-b from-[#fff0f3] to-white min-h-[100dvh]">
+    <div className="bg-gradient-to-b from-[#fef2f4] to-white min-h-[100dvh]">
       <ProgressBar current={stepIndex + 1} total={QUIZ_STEPS.length} />
 
       <div className="grid lg:grid-cols-2 min-h-[100dvh]">
-        <div className="flex items-center justify-center px-6 py-10 lg:py-12">
+        <div className="flex items-center justify-center px-6 pt-16 pb-10 lg:py-12">
           <div className="max-w-xl mx-auto w-full">
-            <div className="relative h-44 sm:h-56 rounded-3xl overflow-hidden border border-black/10 shadow-[0_20px_60px_rgba(11,15,26,0.06)] lg:hidden">
+            <div className="relative h-44 sm:h-56 rounded-[28px] overflow-hidden border border-[#EDEDF0] shadow-[0_20px_60px_rgba(11,15,26,0.06)] lg:hidden">
               <Image src={hero.url} alt={hero.alt} fill className="object-cover" sizes="100vw" priority />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
             </div>
@@ -199,6 +228,8 @@ export default function QuizStepPage() {
                 {step === "guests" && <QuestionGuests key="guests" onAnswer={handleAnswer} />}
                 {step === "budget" && <QuestionBudget key="budget" onAnswer={handleAnswer} />}
                 {step === "style" && <QuestionStyle key="style" onAnswer={handleAnswer} />}
+                {step === "categories" && <QuestionCategories key="categories" onAnswer={handleAnswer} />}
+                {step === "needs" && <QuestionNeeds key="needs" onAnswer={handleAnswer} />}
                 {step === "stress" && <QuestionStress key="stress" onAnswer={handleAnswer} />}
                 {step === "priority" && <QuestionPriority key="priority" onAnswer={handleAnswer} />}
               </AnimatePresence>
@@ -207,7 +238,7 @@ export default function QuizStepPage() {
         </div>
 
         <div className="hidden lg:flex items-center justify-center p-8 xl:p-12">
-          <div className="relative w-full max-w-xl max-h-[calc(100dvh/1.4)] aspect-[3/4] rounded-[2.5rem] overflow-hidden border border-black/10 shadow-[0_30px_80px_rgba(11,15,26,0.12)]">
+          <div className="relative w-full max-w-xl max-h-[calc(100dvh/1.4)] aspect-[3/4] rounded-[2.5rem] overflow-hidden border border-[#EDEDF0] shadow-[0_30px_80px_rgba(11,15,26,0.12)]">
             <Image src={hero.url} alt={hero.alt} fill className="object-cover" sizes="(min-width: 1280px) 33vw, 50vw" priority />
           </div>
         </div>

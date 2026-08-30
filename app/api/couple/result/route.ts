@@ -31,10 +31,17 @@ export async function GET() {
       if (project.weddingDate) fallbackAnswers.weddingDate = project.weddingDate;
       if (project.location) fallbackAnswers.location = project.location;
       if (project.guestCount) fallbackAnswers.guestCount = project.guestCount;
+      if (project.childrenCount) fallbackAnswers.childrenCount = project.childrenCount;
       if (project.budget) fallbackAnswers.budget = project.budget;
       if (project.style) fallbackAnswers.style = project.style;
       if (project.customStyle) fallbackAnswers.customStyle = project.customStyle;
       if (project.customStyleDescription) fallbackAnswers.customStyleDescription = project.customStyleDescription;
+      if (project.ambiance) fallbackAnswers.ambiance = project.ambiance;
+      if (project.desiredCategories) fallbackAnswers.desiredCategories = project.desiredCategories;
+      if (project.dietaryNeeds) fallbackAnswers.dietaryNeeds = project.dietaryNeeds;
+      if (project.dietaryDetails) fallbackAnswers.dietaryDetails = project.dietaryDetails;
+      if (project.mobilityNeeds != null) fallbackAnswers.mobilityNeeds = project.mobilityNeeds;
+      if (project.guestsFromFar != null) fallbackAnswers.guestsFromFar = project.guestsFromFar;
       if (project.mainPriority) fallbackAnswers.mainPriority = project.mainPriority;
       if (project.stressLevel) fallbackAnswers.stressLevel = project.stressLevel;
 

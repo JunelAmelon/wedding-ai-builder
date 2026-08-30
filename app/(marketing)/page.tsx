@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { Header, Footer } from "@/components/layout";
+import { Header, Footer, LogoMarquee } from "@/components/layout";
 import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
 
@@ -121,6 +121,8 @@ export default function LandingPage() {
   const [openValue, setOpenValue] = useState<number | null>(0);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [testiIndex, setTestiIndex] = useState(0);
+  const [testiNoTransition, setTestiNoTransition] = useState(false);
+  const touchStartX = useRef(0);
   const heroStageOuterRef = useRef<HTMLDivElement>(null);
   const heroStageRef = useRef<HTMLDivElement>(null);
 
@@ -176,6 +178,7 @@ export default function LandingPage() {
       meta: "Mariés à Nantes",
       quote: "On a eu notre budget réparti en une soirée, alors qu'on tournait en rond depuis un mois.",
       img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=120&h=120&q=80",
+      wedding: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&h=400&q=85",
     },
     {
       initials: "AK",
@@ -183,8 +186,51 @@ export default function LandingPage() {
       meta: "Mariés à Lyon",
       quote: "Le matching nous a proposé un traiteur qu'on n'aurait jamais trouvé nous-mêmes, dans notre budget.",
       img: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=120&h=120&q=80",
+      wedding: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=600&h=400&q=85",
+    },
+    {
+      initials: "CM",
+      name: "Camille & Mehdi",
+      meta: "Mariés à Bordeaux",
+      quote: "On a trouvé notre photographe en 3 swipes. Le score de match était parfait, et les photos le prouvent.",
+      img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&w=120&h=120&q=80",
+      wedding: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?auto=format&fit=crop&w=600&h=400&q=85",
+    },
+    {
+      initials: "SR",
+      name: "Sarah & Romain",
+      meta: "Mariés à Marseille",
+      quote: "Le plan généré en 5 minutes nous a évité 15h de recherches. On recommande à tous nos amis.",
+      img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&w=120&h=120&q=80",
+      wedding: "https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=600&h=400&q=85",
     },
   ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTestiIndex((i) => i + 1);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
+
+  useEffect(() => {
+    if (testiIndex >= testimonials.length) {
+      const timer = setTimeout(() => {
+        setTestiNoTransition(true);
+        setTestiIndex(0);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [testiIndex, testimonials.length]);
+
+  useEffect(() => {
+    if (testiNoTransition) {
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setTestiNoTransition(false));
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [testiNoTransition]);
 
   return (
     <>
@@ -194,12 +240,12 @@ export default function LandingPage() {
         {/* HERO */}
         <section className="hero">
           <div className="wrap pt-6 sm:pt-10">
-            <h1 className="font-allura text-[1.85rem] sm:text-[2.6rem] lg:text-[3.6rem] font-normal leading-[1.15]">Votre mariage prêt <span style={{ background: "linear-gradient(to right, #D77779, #FFBFCA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>en 5 minutes avec les bons pros.</span></h1>
+            <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Votre mariage prêt en <span className="font-allura text-[#e64a5d]">5 minutes</span> avec les <span className="font-allura text-[#e64a5d]">bons pros</span>.</h1>
             <p className="lead">
               Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère un plan complet et trouve votre âme sœur professionnelle.
             </p>
             <div className="btn-row">
-              <Link href="/quiz" className="btn btn-solid">Trouver mes matches — Gratuit ! <ArrowRight size={16} /></Link>
+              <Link href="/quiz" className="btn btn-solid">Trouver mes matches - Gratuit <ArrowRight size={16} /></Link>
               <Link href="#how" className="btn btn-outline">Voir comment ça marche</Link>
             </div>
 
@@ -230,8 +276,8 @@ export default function LandingPage() {
 
                 <div className="product-card reveal">
                   <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
-                  <div className="n">Studio Lumière</div>
-                  <div className="p">Dès 890 €</div>
+                  <div className="n">Match 94% - Traiteur</div>
+                  <div className="p">Dans votre budget</div>
                 </div>
 
                 <div className="stat-card stat-coral reveal">
@@ -242,22 +288,16 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="logo-strip">
-              <span>Château d'Or</span>
-              <span>Belle Fleur</span>
-              <span>Lumière Studio</span>
-              <span>Maison Rosé</span>
-              <span>Douce Table</span>
-            </div>
+            <LogoMarquee />
           </div>
         </section>
 
         {/* COMMENT CA MARCHE */}
-        <section id="how">
+        <section id="how" className="bg-white">
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">Comment ça marche</span>
-              <h2 style={{ marginTop: 16 }}>L'IA qui trouve votre âme sœur professionnelle</h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 16 }}>L'IA qui trouve vos <span className="text-[#e64a5d]">pros idéaux</span></h2>
               <p>Cinq questions simples, un algorithme de compatibilité, et vos matches parfaits en quelques secondes.</p>
             </div>
             <div className="promo-duo">
@@ -269,7 +309,7 @@ export default function LandingPage() {
                 <div className="promo-text">
                   <span className="eyebrow-pill">Étape 1</span>
                   <h3>Quiz éclair, matching instantané</h3>
-                  <p>Cinq questions, une par écran. Notre IA calcule votre score de compatibilité avec chaque pro.</p>
+                  <p>Cinq questions, un algorithme de compatibilité, et votre score avec chaque pro.</p>
                   <Link href="/quiz" className="btn btn-outline">Trouver mes matches</Link>
                 </div>
               </div>
@@ -302,20 +342,20 @@ export default function LandingPage() {
         </section>
 
         {/* FREE */}
-        <section id="free">
+        <section id="free" className="bg-[#fef2f4]">
           <div className="wrap">
             <div className="colorblock lavender reveal">
               <div className="cb-visual">
                 <div className="cb-img-wrap">
-                  <Image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&h=600&q=85" alt="" width={500} height={600} className="w-full h-full object-cover" unoptimized />
-                  <div className="cb-badge"><b>0 €</b>pour toujours</div>
+                  <Image src="https://images.pexels.com/photos/27638610/pexels-photo-27638610.jpeg" alt="" width={500} height={600} className="w-full h-full object-cover" unoptimized />
+                  <div className="cb-badge"><b>100%</b>gratuit</div>
                 </div>
               </div>
               <div className="cb-text">
-                <span className="eyebrow-pill">Zéro compromis</span>
-                <h2>Zéro envoi, zéro compte</h2>
+                <span className="eyebrow-pill">Gratuit, sans engagement</span>
+                <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 16, marginBottom: 16 }}>Votre plan de mariage, <span className="text-[#e64a5d]">gratuitement</span></h2>
                 <p style={{ marginBottom: 20 }}>
-                  Pas de carte bancaire, pas d'e-mail à confirmer, pas d'appel commercial. Un plan complet, immédiatement, sans rien à donner en échange.
+                 Répondez au quiz et obtenez instantanément un plan personnalisé avec des prestataires compatibles. Aucune carte bancaire requise.
                 </p>
                 <Link href="/quiz" className="btn btn-solid">Créer mon plan</Link>
               </div>
@@ -324,10 +364,10 @@ export default function LandingPage() {
         </section>
 
         {/* VIDEO GRID */}
-        <section>
+        <section className="bg-white">
           <div className="wrap">
-            <span className="eyebrow-pill">Nos prestataires</span>
-            <h2 style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des pros avec qui vous allez matcher</h2>
+            <span className="eyebrow-pill">Des pros sélectionnés pour vous</span>
+            <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18, marginBottom: 32, maxWidth: 560 }}>Des pros avec qui vous allez <span className="text-[#e64a5d]">matcher</span></h2>
             <div className="video-grid reveal">
               {SHOWCASE_MEDIA.map((item) => (
                 <div key={item.id} className={`vc ${item.span}`}>
@@ -372,12 +412,12 @@ export default function LandingPage() {
         </section>
 
         {/* VALUES + RESULTS */}
-        <section>
+        <section className="bg-[#fef2f4]">
           <div className="wrap">
             <div className="side-hero">
               <div>
-                <span className="eyebrow-pill">Nos valeurs</span>
-                <h2 style={{ marginTop: 18, marginBottom: 22 }}>Plus de perte de temps avec les mauvais pros</h2>
+                <span className="eyebrow-pill">Pourquoi nous faire confiance</span>
+                <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18, marginBottom: 22 }}>Des pros faits pour votre <span className="text-[#e64a5d]">mariage</span></h2>
                 <div className="accordion-mini">
                   {VALUES.map((item, i) => {
                     const isOpen = openValue === i;
@@ -417,57 +457,75 @@ export default function LandingPage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="testi">
+        <section id="testi" className="bg-white">
           <div className="wrap">
             <div className="section-head-center">
-              <span className="eyebrow-pill">Ils l'ont testé</span>
-              <h2 style={{ marginTop: 18 }}>Les résultats parlent d'eux-mêmes</h2>
+              <span className="eyebrow-pill">Ils nous ont fait confiance</span>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18 }}>Des mariages <span className="text-[#e64a5d]">réussis</span></h2>
             </div>
 
-            <div className="testi-row">
-              <div className="quote-card reveal">
-                <div className="qc-head">
-                  <div className="qc-brand">
-                    <span className="logo-dot">{testimonials[testiIndex].initials}</span>
-                    <div><div className="n">{testimonials[testiIndex].name}</div><div className="t">{testimonials[testiIndex].meta}</div></div>
-                  </div>
-                  <span className="qc-cta">Témoignage</span>
-                </div>
-                <div className="quote">{testimonials[testiIndex].quote}</div>
-                <div className="qc-foot">
-                  <div className="qc-author">
-                    <Image src={testimonials[testiIndex].img} alt="" width={120} height={120} className="w-full h-full object-cover" unoptimized />
-                    <span className="n">{testimonials[testiIndex].name}</span>
-                  </div>
-                  <div className="qc-nav">
-                    <div className="qc-dots">
-                      {testimonials.map((_, i) => (
-                        <span key={i} className={i === testiIndex ? "on" : ""} />
-                      ))}
+            <div className="testi-layout reveal">
+              <div
+                className="testi-carousel"
+                onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+                onTouchEnd={(e) => {
+                  const diff = touchStartX.current - e.changedTouches[0].clientX;
+                  if (Math.abs(diff) > 40) {
+                    if (diff > 0) {
+                      setTestiIndex((i) => i + 1);
+                    } else {
+                      setTestiIndex((i) => (i <= 0 ? testimonials.length - 1 : i - 1));
+                    }
+                  }
+                }}
+              >
+                <div className="testi-track" style={{ transform: `translateX(-${testiIndex * 50}%)`, transition: testiNoTransition ? "none" : "transform .5s ease" }}>
+                  {[...testimonials, ...testimonials].map((t, i) => (
+                    <div key={i} className="testi-slide">
+                      <div className="testi-card">
+                        <div className="testi-card-wedding">
+                          <Image src={t.wedding} alt={`Mariage de ${t.name}`} width={600} height={400} className="w-full h-full object-cover" unoptimized />
+                        </div>
+                        <div className="testi-card-body">
+                          <div className="testi-card-head">
+                            <Image src={t.img} alt={t.name} width={48} height={48} className="testi-avatar" unoptimized />
+                            <div>
+                              <div className="testi-name">{t.name}</div>
+                              <div className="testi-meta">{t.meta}</div>
+                            </div>
+                            <span className="testi-badge">Avis vérifié</span>
+                          </div>
+                          <p className="testi-quote">"{t.quote}"</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="qc-arrows">
-                      <button onClick={() => setTestiIndex((i) => (i === 0 ? testimonials.length - 1 : i - 1))}><ChevronLeft size={14} /></button>
-                      <button onClick={() => setTestiIndex((i) => (i + 1) % testimonials.length)}><ChevronRight size={14} /></button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              <div className="stat-stack reveal">
+              <div className="stat-stack">
                 <div className="box"><div className="num">3x</div><div className="lbl">Plus rapide qu'une organisation classique</div></div>
                 <div className="box"><div className="num">{MARKETING_STATS.matchScore}%</div><div className="lbl">De couples satisfaits du matching</div></div>
-                <div className="box"><div className="num">{MARKETING_STATS.planGenerationTime}</div><div className="lbl">Pour obtenir un plan complet</div></div>
+                <div className="box"><div className="num">5 min</div><div className="lbl">Pour obtenir un plan complet</div></div>
+              </div>
+            </div>
+
+            <div className="testi-controls">
+              <div className="testi-dots">
+                {testimonials.map((_, i) => (
+                  <button key={i} className={i === testiIndex % testimonials.length ? "on" : ""} onClick={() => setTestiIndex(i)} aria-label={`Témoignage ${i + 1}`} />
+                ))}
               </div>
             </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section id="faq">
+        <section id="faq" className="bg-[#fef2f4]">
           <div className="wrap">
             <div className="section-head-center">
-              <span className="eyebrow-pill">Questions</span>
-              <h2 style={{ marginTop: 18 }}>Vos questions</h2>
+              <span className="eyebrow-pill">Questions fréquentes</span>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18 }}>Vos <span className="text-[#e64a5d]">questions</span></h2>
             </div>
             <div className="faq-wrap reveal">
               {FAQS.map((item, i) => {
@@ -489,13 +547,13 @@ export default function LandingPage() {
         </section>
 
         {/* FINAL CTA */}
-        <section>
+        <section className="bg-white">
           <div className="wrap">
             <div className="final-cta reveal">
-              <h2 style={{ background: "linear-gradient(to right, #D77779, #FFBFCA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 700 }}>Votre plan de mariage est prêt à être créé</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: "#fff" }}>Votre mariage mérite le <span className="font-allura text-[#e64a5d]">meilleur plan</span></h2>
               <p>Rejoignez les couples qui organisent leur mariage sans stress, en commençant par un plan clair et gratuit.</p>
               <div className="btn-row" style={{ justifyContent: "center" }}>
-                <Link href="/quiz" className="btn btn-solid">Créer mon plan — Gratuit ! <ArrowRight size={16} /></Link>
+                <Link href="/quiz" className="btn btn-solid">Créer mon plan - Gratuit <ArrowRight size={16} /></Link>
                 <Link href="/prestataires" className="btn btn-outline">Découvrir les prestataires</Link>
               </div>
             </div>

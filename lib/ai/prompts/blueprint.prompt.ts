@@ -58,14 +58,21 @@ export function buildBlueprintUserPrompt(answers: QuizAnswers): string {
   return `Génère le blueprint pour un mariage avec :
 ${styleLine}
 - Lieu : ${answers.location?.city}, ${answers.location?.country}
-- Nombre d'invités : ${answers.guestCount}
+- Nombre d'invités : ${answers.guestCount}${answers.childrenCount ? ` (dont ${answers.childrenCount} enfants)` : ""}
 - Budget total : ${answers.budget?.amount} ${answers.budget?.currency}
 - Budget par invité : ${Math.round((answers.budget?.amount ?? 0) / Math.max(answers.guestCount ?? 1, 1))} ${answers.budget?.currency}
+- Ambiances recherchées : ${answers.ambiance?.length ? answers.ambiance.join(", ") : "non précisé"}
+- Prestataires recherchés : ${answers.desiredCategories?.length ? answers.desiredCategories.join(", ") : "non précisé"}
+- Besoins alimentaires spécifiques : ${answers.dietaryNeeds?.length ? answers.dietaryNeeds.join(", ") : "aucun"}
+- Personnes à mobilité réduite : ${answers.mobilityNeeds ? "oui" : "non précisé"}
+- Invités venant de loin : ${answers.guestsFromFar ? "oui" : "non précisé"}
 - Priorité principale exprimée : ${answers.mainPriority}
 - Niveau de stress déclaré : ${answers.stressLevel}
 
 Instructions importantes :
 - Si le couple a choisi un thème personnalisé, le "concept" et le "storytelling" doivent s'en inspirer directement.
+- Si des ambiances sont précisées, intègre-les dans le concept et le storytelling.
+- Si des besoins alimentaires spécifiques sont mentionnés, mentionne comment le traiteur peut s'adapter dans les inspirations.
 - Le champ "reformulatedStyle" doit proposer une direction artistique claire, bien écrite, en français, en corrigeant l'orthographe/le style du couple.
 Sois inspirant et concret : le storytelling doit donner envie d'organiser ce mariage tout en rassurant sur la faisabilité du budget et du lieu.`;
 }

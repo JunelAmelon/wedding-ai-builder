@@ -31,13 +31,14 @@ export function fmtCurrency(amount: number, currency = "EUR"): string {
 
 export function fmtDate(iso: string | undefined): string {
   if (!iso) return "Date non précisée";
+  if (iso === "not-fixed") return "Date à définir";
   const d = new Date(iso);
   if (isNaN(d.getTime())) return iso;
   return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 export function daysUntilWedding(weddingDate: string | undefined): number | null {
-  if (!weddingDate) return null;
+  if (!weddingDate || weddingDate === "not-fixed") return null;
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   const wedding = new Date(weddingDate);
@@ -282,6 +283,12 @@ export function computeCompatibility(answers: QuizAnswers, budget: BudgetBreakdo
   } else if (answers.mainPriority === "lieu" && perGuest < 100) {
     incoherent.push("Le lieu est votre priorité, mais le budget par invité laisse peu de marge pour un beau cadre.");
     score -= 8;
+  } else if (answers.mainPriority === "prestataires" && (monthsLeft ?? 12) < 6) {
+    incoherent.push("Trouver les bons prestataires est votre priorité, mais le délai est court pour réserver les meilleurs.");
+    score -= 5;
+  } else if (answers.mainPriority === "coordination" && (answers.stressLevel ?? 5) >= 7) {
+    incoherent.push("Coordonner le jour J est votre priorité avec un stress élevé : envisagez un wedding planner.");
+    score -= 5;
   }
 
   if ((answers.stressLevel ?? 5) >= 8 && (monthsLeft ?? 12) < 6) {
@@ -311,8 +318,10 @@ type OmissionCatalogItem = {
 const OMISSION_CATALOG: OmissionCatalogItem[] = [
   { label: "Assurance mariage", category: "Protection", priority: "medium", suggestion: "Prévoyez une assurance annulation/responsabilité civile 3 mois avant le jour J." },
   { label: "Plan de table", category: "Logistique", priority: "low", suggestion: "Préparez un premier plan de table 2 mois avant et ajustez 1 semaine avant." },
-  { label: "Animation enfants", category: "Invités", priority: "low", suggestion: "Prévoyez un espace ou une baby-sitter si de jeunes invités sont attendus." },
-  { label: "Hébergement des invités", category: "Logistique", priority: "medium", suggestion: "Négociez un bloc de chambres d'hôtel ou listez les options proches du lieu." },
+  { label: "Animation enfants", category: "Invités", priority: (answers) => (answers.childrenCount && answers.childrenCount > 5 ? "high" : "low"), suggestion: "Prévoyez un espace ou une baby-sitter pour les enfants, surtout s'ils sont nombreux." },
+  { label: "Hébergement des invités", category: "Logistique", priority: (answers) => answers.guestsFromFar ? "high" : "medium", suggestion: "Négociez un bloc de chambres d'hôtel ou listez les options proches du lieu, surtout pour les invités venant de loin." },
+  { label: "Accessibilité PMR", category: "Logistique", priority: (answers) => answers.mobilityNeeds ? "high" : "low", suggestion: "Vérifiez l'accès wheelchair, les sanitaires adaptés et réservez des places près de l'allée." },
+  { label: "Régimes alimentaires spécifiques", category: "Invités", priority: (answers) => answers.dietaryNeeds?.length ? "high" : "low", suggestion: "Communiquez tous les régimes et allergies au traiteur au moins 3 semaines avant le jour J." },
   { label: "Transport entre cérémonie et réception", category: "Logistique", priority: "medium", suggestion: "Prévoyez un minibus ou un plan de covoiturage si les lieux sont éloignés." },
   { label: "Cadeaux aux invités / dragées", category: "Détail", priority: "low", suggestion: "Choisissez un petit cadeau personnalisé 2 mois avant." },
   { label: "Playlist et do-not-play list", category: "Musique", priority: "medium", suggestion: "Envoyez au DJ votre ambiance souhaitée et les titres interdits 1 mois avant." },
@@ -363,11 +372,11 @@ export function computeOmissions(answers: QuizAnswers): OmissionItem[] {
 export function computeProviderInsights(answers: QuizAnswers): ProviderInsight[] {
   const monthsLeft = monthsUntilWedding(answers.weddingDate) ?? 12;
   const highSeason = [5, 6, 7, 8, 9];
-  const weddingMonth = answers.weddingDate ? new Date(answers.weddingDate).getMonth() : null;
+  const weddingMonth = answers.weddingDate && answers.weddingDate !== "not-fixed" ? new Date(answers.weddingDate).getMonth() : null;
   const isHighSeason = weddingMonth !== null && highSeason.includes(weddingMonth);
   const tension = isHighSeason && monthsLeft < 9 ? 9 : isHighSeason ? 7 : monthsLeft < 6 ? 6 : 4;
 
-  const insights: ProviderInsight[] = [
+  const allInsights: ProviderInsight[] = [
     {
       category: "Lieu de réception",
       estimatedCount: Math.max(2, Math.min(8, Math.round((answers.guestCount ?? 80) / 20))),
@@ -382,7 +391,7 @@ export function computeProviderInsights(answers: QuizAnswers): ProviderInsight[]
       availability: isHighSeason ? "tight" : "moderate",
       marketTension: tension,
       bookingOrder: 2,
-      advice: "Le traiteur représente 25-35% du budget : sécurisez-le juste après le lieu.",
+      advice: `Le traiteur représente 25-35% du budget : sécurisez-le juste après le lieu.${answers.dietaryNeeds?.length ? " Pensez à mentionner les régimes spécifiques dès le premier contact." : ""}`,
     },
     {
       category: "Photo & vidéo",
@@ -408,9 +417,43 @@ export function computeProviderInsights(answers: QuizAnswers): ProviderInsight[]
       bookingOrder: 5,
       advice: "La déco peut être ajustée tardivement, mais les fleurs de saison coûtent moins cher et sont plus fraîches.",
     },
+    {
+      category: "Coiffure & maquillage",
+      estimatedCount: Math.max(2, Math.min(4, 3)),
+      availability: monthsLeft < 4 ? "tight" : "moderate",
+      marketTension: Math.max(3, tension - 1),
+      bookingOrder: 6,
+      advice: "Réservez un essai coiffure/maquillage 2 mois avant et confirmez le timing du jour J.",
+    },
+    {
+      category: "Hébergement invités",
+      estimatedCount: Math.max(1, Math.min(3, 2)),
+      availability: monthsLeft < 4 ? "tight" : "moderate",
+      marketTension: Math.max(3, tension - 2),
+      bookingOrder: 7,
+      advice: answers.guestsFromFar ? "Des invités viennent de loin : réservez un bloc de chambres dès maintenant." : "Comparez les hôtels proches du lieu et négociez un tarif de groupe.",
+    },
   ];
 
-  return insights;
+  // Filter insights based on desired categories if specified
+  if (answers.desiredCategories?.length) {
+    const catMap: Record<string, string> = {
+      "lieu": "Lieu de réception",
+      "traiteur": "Traiteur & boissons",
+      "photographe": "Photo & vidéo",
+      "videaste": "Photo & vidéo",
+      "dj": "Musique & DJ",
+      "animation": "Musique & DJ",
+      "fleuriste": "Fleurs & décoration",
+      "decoration": "Fleurs & décoration",
+      "coiffeuse-maquilleuse": "Coiffure & maquillage",
+      "hebergement": "Hébergement invités",
+    };
+    const activeLabels = new Set(answers.desiredCategories.map(c => catMap[c]).filter(Boolean));
+    return allInsights.filter(i => activeLabels.has(i.category));
+  }
+
+  return allInsights.slice(0, 5);
 }
 
 export function computeCoachSummary(answers: QuizAnswers, aiOutput: AIOutput): CoachSummary {
@@ -425,6 +468,16 @@ export function computeCoachSummary(answers: QuizAnswers, aiOutput: AIOutput): C
     { label: "Choisir photographe et vidéaste", priority: "high" },
     { label: "Valider la liste d'invités", priority: "medium" },
   ];
+
+  if (answers.dietaryNeeds?.length) {
+    topDecisions.push({ label: "Communiquer les régimes alimentaires au traiteur", priority: "high" });
+  }
+  if (answers.guestsFromFar) {
+    topDecisions.push({ label: "Réserver un bloc d'hébergement pour les invités de loin", priority: "medium" });
+  }
+  if (answers.mobilityNeeds) {
+    topDecisions.push({ label: "Vérifier l'accessibilité PMR du lieu", priority: "medium" });
+  }
 
   if (riskScore > 60) {
     topDecisions.unshift({ label: "Faire un point complet sur le budget et les délais", priority: "high" });

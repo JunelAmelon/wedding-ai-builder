@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { Header, Footer, LogoMarquee } from "@/components/layout";
 import { CloudinaryUpload } from "@/components/vendor/CloudinaryUpload";
 import {
   ArrowLeft,
@@ -242,20 +243,16 @@ export default function ProfessionalRegistrationPage() {
   if (submitted) {
     return (
       <>
-        <div className="topbar">
-          <div className="wrap" style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Link href="/" className="logo">Mariage Facile</Link>
-            <Link href="/prestataires" className="back-link"><ArrowLeft size={16} /> Retour à la page professionnels</Link>
-          </div>
-        </div>
+        <Header ctaHref="/devenir-professionnel" ctaLabel="S'inscrire" />
         <main className="success-screen">
           <div className="check-badge">
             <CheckCircle2 size={40} />
           </div>
-          <h1>Profil envoyé !</h1>
-          <p>Merci pour votre inscription. Notre équipe étudie votre dossier et vous contactera dès que votre profil sera validé. Prêt à matcher avec vos premiers couples !</p>
+          <h1 className="font-allura text-3xl sm:text-4xl font-normal">Profil envoyé !</h1>
+          <p>Merci pour votre inscription. Notre équipe étudie votre dossier et vous contacte sous 48h pour valider votre profil. Vous êtes prêt à recevoir vos premiers couples.</p>
           <Link href="/prestataires" className="btn btn-solid">Retour à la page professionnels <ArrowRight size={18} /></Link>
         </main>
+        <Footer />
       </>
     );
   }
@@ -403,7 +400,7 @@ export default function ProfessionalRegistrationPage() {
       icon: Crown,
       body: (
         <>
-          <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Niveau de gamme ciblé *</label>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--grey)", marginBottom: 8 }}>Niveau de gamme ciblé *</label>
           <div className="tier-mini-grid">
             {TIERS.map((t) => (
               <button
@@ -440,13 +437,7 @@ export default function ProfessionalRegistrationPage() {
 
   return (
     <>
-      {/* TOPBAR */}
-      <div className="topbar">
-        <div className="wrap" style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Link href="/" className="logo">Mariage Facile</Link>
-          <Link href="/prestataires" className="back-link"><ArrowLeft size={16} /> Retour à la page professionnels</Link>
-        </div>
-      </div>
+      <Header ctaHref="#formCard" ctaLabel="S'inscrire" />
 
       <main>
         {/* HERO */}
@@ -455,18 +446,18 @@ export default function ProfessionalRegistrationPage() {
             <div className="join-hero-grid">
               <div className="hero-text">
                 <div className="trust-badge">
-                  <Star size={14} className="stars" style={{ color: "#B8960C", fill: "#B8960C" }} />
-                  <b>{MARKETING_STATS.avgRating}</b> · avis des professionnels inscrits
+                  <Star size={14} className="stars" style={{ color: "var(--coral)", fill: "var(--coral)" }} />
+                  <b>{MARKETING_STATS.avgRating}</b> · les professionnels nous font confiance
                 </div>
-                <h1>Recevez des couples avec qui vous allez matcher</h1>
+                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Recevez les couples qui vous <span className="font-allura text-[#e64a5d]">correspondent</span></h1>
                 <p className="lead">
-                  Créez votre profil intelligent, laissez notre IA analyser chaque projet et ne recevez que les couples avec un score de match élevé.
+                  Créez votre profil en 5 minutes. Notre IA vous envoie uniquement les couples dont le projet correspond à votre savoir-faire. Vous gagnez du temps, vous signez plus.
                 </p>
               </div>
 
               <div className="hero-mockup reveal">
                 <div className="phone-frame">
-                  <Image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=420&h=800&q=85" alt="Professionnel" width={420} height={800} className="w-full h-full object-cover" unoptimized />
+                  <Image src="https://images.pexels.com/photos/31127059/pexels-photo-31127059.jpeg" alt="Professionnel" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                 </div>
 
                 <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
@@ -475,27 +466,25 @@ export default function ProfessionalRegistrationPage() {
                   <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
                   <div className="fc-title">Mariage</div>
                   <div className="fc-meta">Champêtre</div>
-                  <button className="fc-btn">Répondre</button>
                 </div>
 
                 <div className="badge-pill bp-top-right">
                   <Check size={12} /> {MARKETING_STATS.matchScore}% compatibilité
                 </div>
                 <div className="badge-pill bp-mid-right">
-                  <Star size={12} /> 2 roses
+                  <Star size={12} /> Top pro
                 </div>
 
                 <div className="stat-card-green">
-                  <b>0€</b>
-                  <span>coût d'inscription</span>
+                  <b>5min</b>
+                  <span>pour s'inscrire</span>
                 </div>
 
                 <div className="floating-card fc-bottom-right">
-                  <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
+                  <Image src="https://images.pexels.com/photos/31497524/pexels-photo-31497524.jpeg" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
                   <div className="fc-info">
                     <div className="fc-title">Photographe pro</div>
                     <div className="fc-meta">Bordeaux · {MARKETING_STATS.avgRating}/5</div>
-                    <button className="fc-btn">Voir le profil</button>
                   </div>
                 </div>
 
@@ -510,24 +499,18 @@ export default function ProfessionalRegistrationPage() {
               <div className="hero-cta">
                 <div className="btn-row">
                   <Link href="#formCard" className="btn btn-solid">Commencer mon inscription</Link>
-                  <Link href="/prestataires" className="btn btn-outline">Comment ça marche</Link>
+                  <Link href="/prestataires" className="btn btn-outline">En savoir plus</Link>
                 </div>
 
                 <div className="stat-row">
-                  <div className="box"><b>0€</b><span>Coût d'inscription</span></div>
+                  <div className="box"><b>5min</b><span>Inscription rapide</span></div>
                   <div className="box"><b>2-4x</b><span>Demandes plus qualifiées</span></div>
                   <div className="box"><b>48h</b><span>Délai de validation</span></div>
                 </div>
               </div>
             </div>
 
-            <div className="join-logos">
-              <span>Château d'Or</span>
-              <span>Belle Fleur</span>
-              <span>Lumière Studio</span>
-              <span>Maison Rosé</span>
-              <span>Douce Table</span>
-            </div>
+            <LogoMarquee />
           </div>
         </section>
 
@@ -535,7 +518,7 @@ export default function ProfessionalRegistrationPage() {
         <section className="dark-stats">
           <div className="wrap">
             <span className="eyebrow-pill">Ils nous ont rejoint</span>
-            <h2>Un réseau qui grandit chaque semaine</h2>
+            <h2 className="font-allura text-3xl sm:text-4xl font-normal">Un réseau qui <span className="text-[#e64a5d]">grandit</span> chaque semaine</h2>
             <div className="dark-stats-grid">
               <div>
                 <div className="cap">Professionnels inscrits</div>
@@ -562,7 +545,7 @@ export default function ProfessionalRegistrationPage() {
               <span className="eyebrow-pill">
                 <Star size={13} /> Inscription professionnelle
               </span>
-              <h2>Construisez votre profil, section par section</h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-normal">Construisez votre <span className="text-[#e64a5d]">profil</span>, section par section</h2>
               <p>Ouvrez chaque bloc à votre rythme. Votre fiche se construit en direct à droite.</p>
             </div>
 
@@ -628,7 +611,7 @@ export default function ProfessionalRegistrationPage() {
                     <div className="lf-row">
                       <span className="k">Budget cible</span>
                       <span className={`v ${form.priceMin && form.priceMax ? "" : "empty"}`}>
-                        {form.priceMin && form.priceMax ? `${form.priceMin} € – ${form.priceMax} €` : "à renseigner"}
+                        {form.priceMin && form.priceMax ? `${form.priceMin} € - ${form.priceMax} €` : "à renseigner"}
                       </span>
                     </div>
                     <div className="lf-row">
@@ -661,7 +644,7 @@ export default function ProfessionalRegistrationPage() {
             </div>
 
             {error && (
-              <div style={{ maxWidth: 640, margin: "0 auto 20px", color: "var(--bordeaux)", fontSize: 13, textAlign: "center" }}>
+              <div style={{ maxWidth: 640, margin: "0 auto 20px", color: "var(--coral)", fontSize: 13, textAlign: "center" }}>
                 {error}
               </div>
             )}
@@ -682,6 +665,8 @@ export default function ProfessionalRegistrationPage() {
           </div>
         </section>
       </main>
+
+      <Footer />
     </>
   );
 }

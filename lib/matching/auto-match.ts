@@ -11,11 +11,45 @@ export interface AutoMatchResult {
   categoriesMatched: string[];
 }
 
-function buildRequirements(project: WeddingProject): string[] {
+function buildRequirements(project: WeddingProject, category: string): string[] {
   const requirements: string[] = [];
+  const cat = category.toLowerCase().trim();
+
+  // Style description is relevant to all categories
   if (project.customStyleDescription?.trim()) {
     requirements.push(project.customStyleDescription.trim());
   }
+
+  // Ambiance is relevant to venue, decoration, flowers, photography, DJ
+  const ambianceRelevant = ["lieu", "decor", "fleur", "photo", "video", "dj", "animation"];
+  if (project.ambiance?.length && ambianceRelevant.some((c) => cat.includes(c))) {
+    requirements.push(`Ambiances souhaitées : ${project.ambiance.join(", ")}`);
+  }
+
+  // Dietary needs only relevant to traiteur, lieu, pâtissier
+  const dietaryRelevant = ["traiteur", "lieu", "patis", "cake", "buffet"];
+  if (project.dietaryNeeds?.length && dietaryRelevant.some((c) => cat.includes(c))) {
+    requirements.push(`Régimes alimentaires à prévoir : ${project.dietaryNeeds.join(", ")}${project.dietaryDetails ? ` (${project.dietaryDetails})` : ""}`);
+  }
+
+  // Mobility needs relevant to lieu, transport, hébergement
+  const mobilityRelevant = ["lieu", "transport", "heberg", "hotel"];
+  if (project.mobilityNeeds && mobilityRelevant.some((c) => cat.includes(c))) {
+    requirements.push("Accès PMR nécessaire pour certains invités");
+  }
+
+  // Guests from far relevant to hébergement, transport, lieu
+  const farRelevant = ["heberg", "hotel", "transport", "lieu"];
+  if (project.guestsFromFar && farRelevant.some((c) => cat.includes(c))) {
+    requirements.push("Des invités viennent de loin ou de l'étranger");
+  }
+
+  // Children relevant to traiteur, lieu, animation
+  const childrenRelevant = ["traiteur", "lieu", "animation", "dj"];
+  if (project.childrenCount && project.childrenCount > 0 && childrenRelevant.some((c) => cat.includes(c))) {
+    requirements.push(`${project.childrenCount} enfants attendus (prévoir menu enfant et animation si possible)`);
+  }
+
   return requirements;
 }
 
@@ -26,7 +60,7 @@ export async function runAutoMatching(
   const perCategory = options?.perCategory ?? 3;
   const notifyVendors = options?.notifyVendors ?? true;
 
-  const tenderData = {
+  const baseTenderData = {
     budgetRange: project.budget
       ? { min: project.budget.amount * 0.8, max: project.budget.amount * 1.2, currency: project.budget.currency }
       : null,
@@ -35,7 +69,6 @@ export async function runAutoMatching(
     weddingDate: project.weddingDate,
     style: project.style,
     customStyle: project.customStyle,
-    requirements: buildRequirements(project),
     priority: project.mainPriority,
   };
 
@@ -48,7 +81,39 @@ export async function runAutoMatching(
     return { matches: [], categoriesMatched: [] };
   }
 
-  const categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+  // Determine which categories to match against
+  let categories: string[];
+  if (project.desiredCategories?.length) {
+    // Map quiz category values to vendor serviceCategory names
+    const catMap: Record<string, string> = {
+      "lieu": "Lieu de réception",
+      "traiteur": "Traiteur",
+      "photographe": "Photographe",
+      "videaste": "Vidéaste",
+      "dj": "DJ",
+      "fleuriste": "Fleuriste",
+      "wedding-cake": "Pâtissier",
+      "coiffeuse-maquilleuse": "Coiffure & Maquillage",
+      "transport": "Transport",
+      "hebergement": "Hébergement",
+      "alliances": "Bijoutier",
+      "robe": "Robe de mariée",
+      "costume": "Costume",
+      "decoration": "Décorateur",
+      "officiant": "Officiant",
+      "animation": "Animation",
+    };
+    const desiredCats = project.desiredCategories.map(c => catMap[c]).filter(Boolean);
+    // Only match categories that exist among active vendors
+    const vendorCategories = new Set(activeVendors.map((v) => v.serviceCategory.toLowerCase()));
+    categories = desiredCats.filter(c => vendorCategories.has(c.toLowerCase()));
+    // If no overlap found, fall back to all vendor categories
+    if (categories.length === 0) {
+      categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+    }
+  } else {
+    categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+  }
 
   // Load existing non-rejected matches to avoid creating duplicates for the same project/vendor/category
   const existingMatches = await matchRepo.listByProject(project.id);
@@ -62,6 +127,7 @@ export async function runAutoMatching(
 
   for (const category of categories) {
     const aiCache = createMatchAiCache(project.id, category, project.updatedAt);
+    const tenderData = { ...baseTenderData, requirements: buildRequirements(project, category) };
     const topMatches = await findTopMatches(tenderData, project, activeVendors, category, perCategory, aiCache);
     const toCreate = topMatches.filter((m) => !existingKeys.has(`${m.category}:${m.vendorId}`));
     const saved = await Promise.all(

@@ -117,10 +117,17 @@ export interface WeddingProject {
   weddingDate: string | null;
   location: { city: string; country: string; geo?: { lat: number; lng: number } } | null;
   guestCount: number | null;
+  childrenCount: number | null;
   budget: { amount: number; currency: string } | null;
   style: WeddingStyle | null;
   customStyle: string | null;
   customStyleDescription: string | null;
+  ambiance: string[] | null;
+  desiredCategories: string[] | null;
+  dietaryNeeds: string[] | null;
+  dietaryDetails: string | null;
+  mobilityNeeds: boolean | null;
+  guestsFromFar: boolean | null;
   mainPriority: string | null;
   stressLevel: number | null;
   createdAt: string;

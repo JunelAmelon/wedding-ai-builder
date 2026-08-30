@@ -103,11 +103,16 @@ function getNeedContext(tender: Partial<Tender>, project: WeddingProject) {
   return {
     budget: tender.budgetRange ?? project.budget ?? null,
     guestCount: tender.guestCount ?? project.guestCount ?? null,
+    childrenCount: project.childrenCount ?? null,
     location: tender.location ?? project.location ?? null,
-    weddingDate: tender.weddingDate ?? project.weddingDate ?? null,
+    weddingDate: (tender.weddingDate ?? project.weddingDate ?? null) === "not-fixed" ? null : (tender.weddingDate ?? project.weddingDate ?? null),
     style: tender.customStyle || normalizeStyle(tender.style) || project.customStyle || normalizeStyle(project.style) || null,
+    ambiance: project.ambiance ?? null,
     requirements: sanitizeForPrompt(rawRequirements),
     priority: sanitizeString(tender.priority ?? project.mainPriority, 200),
+    dietaryNeeds: project.dietaryNeeds ?? null,
+    mobilityNeeds: project.mobilityNeeds ?? null,
+    guestsFromFar: project.guestsFromFar ?? null,
   };
 }
 
@@ -293,7 +298,7 @@ export function calculateMatchScore(
     }
   }
 
-  if (ctx.weddingDate && vendor.availability?.unavailableDates) {
+  if (ctx.weddingDate && ctx.weddingDate !== "not-fixed" && vendor.availability?.unavailableDates) {
     const unavailable = vendor.availability.unavailableDates.includes(ctx.weddingDate);
     if (!unavailable) {
       score += 10;
@@ -427,11 +432,16 @@ async function scoreBatchWithAI(
         category,
         budget: ctx.budget,
         guestCount: ctx.guestCount,
+        childrenCount: ctx.childrenCount,
         location: ctx.location,
         weddingDate: ctx.weddingDate,
         style: ctx.style,
+        ambiance: ctx.ambiance,
         requirements: ctx.requirements,
         priority: ctx.priority,
+        dietaryNeeds: ctx.dietaryNeeds,
+        mobilityNeeds: ctx.mobilityNeeds,
+        guestsFromFar: ctx.guestsFromFar,
       },
       vendors: vendors.map((v) => ({
         id: v.id,

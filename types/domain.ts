@@ -12,16 +12,61 @@ export type MainPriority =
   | "lieu"
   | "invites"
   | "stress"
-  | "deco";
+  | "deco"
+  | "prestataires"
+  | "coordination";
+
+export type Ambiance =
+  | "chic"
+  | "romantique"
+  | "festif"
+  | "intimiste"
+  | "prestige"
+  | "traditionnel"
+  | "creatif";
+
+export type DietaryNeed =
+  | "vegetarien"
+  | "vegan"
+  | "halal"
+  | "casher"
+  | "sans-gluten"
+  | "allergies"
+  | "autre";
+
+export type DesiredCategory =
+  | "lieu"
+  | "traiteur"
+  | "photographe"
+  | "videaste"
+  | "dj"
+  | "fleuriste"
+  | "wedding-cake"
+  | "coiffeuse-maquilleuse"
+  | "transport"
+  | "hebergement"
+  | "alliances"
+  | "robe"
+  | "costume"
+  | "decoration"
+  | "officiant"
+  | "animation";
 
 export interface QuizAnswers {
-  weddingDate?: string; // ISO date
+  weddingDate?: string; // ISO date or "not-fixed"
   location?: { city: string; country: string };
   guestCount?: number;
+  childrenCount?: number;
   budget?: { amount: number; currency: string };
   style?: WeddingStyle;
-  customStyle?: string; // thème personnalisé quand style = "autre"
-  customStyleDescription?: string; // mini description du thème personnalisé
+  customStyle?: string;
+  customStyleDescription?: string;
+  ambiance?: Ambiance[];
+  desiredCategories?: DesiredCategory[];
+  dietaryNeeds?: DietaryNeed[];
+  dietaryDetails?: string;
+  mobilityNeeds?: boolean;
+  guestsFromFar?: boolean;
   stressLevel?: number; // 1-10
   mainPriority?: MainPriority;
 }
@@ -32,8 +77,10 @@ export const QUIZ_STEPS = [
   "guests",
   "budget",
   "style",
-  "stress",
+  "categories",
+  "needs",
   "priority",
+  "stress",
 ] as const;
 
 export type QuizStep = (typeof QUIZ_STEPS)[number];

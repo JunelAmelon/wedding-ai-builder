@@ -122,11 +122,11 @@ export function fallbackBlueprint(answers: QuizAnswers): WeddingBlueprint {
   return {
     concept: `${reformulated} à ${city}`,
     conceptName: reformulated,
-    emotionalSummary: `Un mariage ${reformulated.toLowerCase()} pour ${answers.guestCount ?? "vos proches"}, entre authenticité et raffinement.`,
+    emotionalSummary: `Un mariage ${reformulated.toLowerCase()} pour ${answers.guestCount ?? "vos proches"}${answers.childrenCount ? ` dont ${answers.childrenCount} enfants` : ""}, entre authenticité et raffinement.`,
     storytelling: `Un mariage ${styleLabel.toLowerCase()} pensé pour ${
       answers.guestCount ?? "vos"
     } invités, où chaque détail raconte votre histoire. L'ambiance générale privilégie la chaleur et l'authenticité, dans une esthétique ${styleLabel.toLowerCase()} ajustée à votre budget et au cadre de ${city}.`,
-    ambiance: ["chaleureux", "authentique", "raffiné", "mémorable"],
+    ambiance: answers.ambiance?.length ? answers.ambiance : ["chaleureux", "authentique", "raffiné", "mémorable"],
     ambianceLevel: 7,
     colorPalette: getPalette(style),
     paletteExplanation: `Cette palette mélange des tons neutres apaisants et une couleur signature plus intense pour structurer la direction visuelle. Elle s'accorde avec l'ambiance ${styleLabel.toLowerCase()} et le cadre de ${city}.`,
@@ -135,12 +135,17 @@ export function fallbackBlueprint(answers: QuizAnswers): WeddingBlueprint {
     inspirations: [
       { category: "Cérémonie", ideas: ["Arche végétale ou drapée", "Sièges disposés en demi-cercle"] },
       { category: "Décoration", ideas: ["Tables décorées avec une dominante de la couleur signature", "Lumière douce et bougies"] },
-      { category: "Repas", ideas: ["Menu de saison inspiré du terroir", "Assiettes personnalisées ou menus calligraphiés"] },
+      { category: "Repas", ideas: [answers.dietaryNeeds?.length ? `Menu adapté aux régimes spécifiques (${answers.dietaryNeeds.join(", ")})` : "Menu de saison inspiré du terroir", "Assiettes personnalisées ou menus calligraphiés"] },
+      ...(answers.guestsFromFar ? [{ category: "Logistique invités", ideas: ["Prévoir un bloc d'hébergement proche du lieu", "Organiser le transport depuis l'aéroport ou la gare"] }] : []),
+      ...(answers.mobilityNeeds ? [{ category: "Accessibilité", ideas: ["Vérifier l'accès PMR du lieu et des sanitaires", "Prévoir des places réservées près de l'allée"] }] : []),
     ],
     mistakesToAvoid: [
       "Ne pas négliger la lumière naturelle du lieu pour la cérémonie.",
       "Éviter de multiplier les couleurs au-delà de trois dominantes.",
       "Ne pas surcharger les tables au détriment des échanges conviviaux.",
+      ...(answers.dietaryNeeds?.length ? ["Ne pas oublier de communiquer les régimes alimentaires spécifiques au traiteur au moins 3 semaines avant."] : []),
+      ...(answers.mobilityNeeds ? ["Ne pas négliger l'accessibilité du lieu pour les personnes à mobilité réduite."] : []),
+      ...(answers.guestsFromFar ? ["Ne pas sous-estimer le besoin d'hébergement pour les invités venant de loin."] : []),
     ],
   };
 }
@@ -249,7 +254,71 @@ export function fallbackBudgetBreakdown(answers: QuizAnswers): BudgetBreakdown {
   const total = answers.budget?.amount ?? 10000;
   const currency = answers.budget?.currency ?? "EUR";
 
-  const ratios = DEFAULT_BUDGET_RATIOS;
+  const ratios = { ...DEFAULT_BUDGET_RATIOS };
+
+  // Adjust ratios based on desired categories
+  if (answers.desiredCategories?.length) {
+    const catMap: Record<string, string> = {
+      "lieu": "venue",
+      "traiteur": "catering",
+      "photographe": "photography",
+      "videaste": "videography",
+      "dj": "music",
+      "fleuriste": "flowers",
+      "wedding-cake": "cake",
+      "coiffeuse-maquilleuse": "beauty",
+      "transport": "transport",
+      "hebergement": "accommodation",
+      "alliances": "rings",
+      "robe": "attire",
+      "costume": "attire",
+      "decoration": "decoration",
+      "officiant": "officiant",
+      "animation": "music",
+    };
+    // Zero out categories not requested
+    const activeBudgetKeys = new Set(answers.desiredCategories.map(c => catMap[c]).filter(Boolean));
+    Object.keys(ratios).forEach((key) => {
+      if (key === "contingency") return;
+      if (!activeBudgetKeys.has(key)) {
+        ratios[key] = 0;
+      }
+    });
+    // Renormalize remaining ratios
+    const sum = Object.values(ratios).reduce((a, b) => a + b, 0);
+    if (sum > 0) {
+      Object.keys(ratios).forEach((key) => {
+        ratios[key] = ratios[key] / sum;
+      });
+    }
+  }
+
+  // Adjust catering if children present (children meals typically cheaper)
+  if (answers.childrenCount && answers.childrenCount > 0 && ratios.catering > 0) {
+    const adultCount = Math.max((answers.guestCount ?? 1) - answers.childrenCount, 1);
+    const childRatio = answers.childrenCount / Math.max(answers.guestCount ?? 1, 1);
+    // Reduce catering by ~30% of child portion
+    ratios.catering = ratios.catering * (1 - childRatio * 0.3);
+    // Renormalize
+    const sum = Object.values(ratios).reduce((a, b) => a + b, 0);
+    if (sum > 0) {
+      Object.keys(ratios).forEach((key) => {
+        ratios[key] = ratios[key] / sum;
+      });
+    }
+  }
+
+  // Increase accommodation if guests from far
+  if (answers.guestsFromFar && ratios.accommodation > 0) {
+    ratios.accommodation = ratios.accommodation * 1.5;
+    const sum = Object.values(ratios).reduce((a, b) => a + b, 0);
+    if (sum > 0) {
+      Object.keys(ratios).forEach((key) => {
+        ratios[key] = ratios[key] / sum;
+      });
+    }
+  }
+
   const breakdown: Record<string, number> = {};
   Object.keys(ratios).forEach((key) => {
     breakdown[key] = Math.round(total * ratios[key]);
@@ -285,7 +354,7 @@ export function fallbackBudgetBreakdown(answers: QuizAnswers): BudgetBreakdown {
 }
 
 function monthsBetween(now: Date, weddingDate: string | undefined): number | null {
-  if (!weddingDate) return null;
+  if (!weddingDate || weddingDate === "not-fixed") return null;
   const wedding = new Date(weddingDate);
   return (wedding.getTime() - now.getTime()) / (1000 * 60 * 60 * 24 * 30);
 }
@@ -460,7 +529,7 @@ export function fallbackRiskEngine(
     });
   }
 
-  if (answers.weddingDate) {
+  if (answers.weddingDate && answers.weddingDate !== "not-fixed") {
     const months =
       (new Date(answers.weddingDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30);
     if (months < 4) {
@@ -486,6 +555,38 @@ export function fallbackRiskEngine(
     score += 10;
     scoreBreakdown.push({ label: "Incohérence budget", points: 10 });
     inconsistencies.push("Écart détecté entre la somme du breakdown et le budget total déclaré.");
+  }
+
+  if (answers.dietaryNeeds?.length) {
+    score += 5;
+    scoreBreakdown.push({ label: "Besoins alimentaires spécifiques", points: 5 });
+    structuredRisks.push({
+      id: `r${idCounter++}`,
+      category: "logistics",
+      title: "Régimes alimentaires spécifiques",
+      description: `Des régimes particuliers (${answers.dietaryNeeds.join(", ")}) nécessitent une coordination renforcée avec le traiteur pour éviter les erreurs le jour J.`,
+      severity: 4,
+      probability: 6,
+      impact: 5,
+      solution: "Communiquez les régimes au traiteur dès la signature du contrat et relancez 2 semaines avant.",
+      priority: 5,
+    });
+  }
+
+  if (answers.guestsFromFar) {
+    score += 3;
+    scoreBreakdown.push({ label: "Invités de loin", points: 3 });
+    structuredRisks.push({
+      id: `r${idCounter++}`,
+      category: "logistics",
+      title: "Logistique invités éloignés",
+      description: `Des invités venant de loin ou de l'étranger nécessitent une anticipation sur l'hébergement et le transport.`,
+      severity: 3,
+      probability: 7,
+      impact: 4,
+      solution: "Réservez un bloc d'hébergement dès maintenant et communiquez les infos logistiques dans les faire-part.",
+      priority: 4,
+    });
   }
 
   if (risks.length === 0) {

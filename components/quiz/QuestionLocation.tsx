@@ -62,7 +62,7 @@ export function QuestionLocation({
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Ville"
-          className="w-full rounded-r-md bg-surface border border-line px-4 py-4 text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
+          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
         />
         <datalist id="city-suggestions">
           {CITY_SUGGESTIONS.map((v) => (
@@ -75,7 +75,7 @@ export function QuestionLocation({
           value={country}
           onChange={(e) => setCountry(e.target.value)}
           placeholder="Pays"
-          className="w-full rounded-r-md bg-surface border border-line px-4 py-4 text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
+          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
         />
         <datalist id="country-suggestions">
           {COUNTRY_SUGGESTIONS.map((v) => (

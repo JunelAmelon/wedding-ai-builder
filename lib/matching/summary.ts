@@ -35,14 +35,14 @@ export async function buildVendorProjectSummary(
 
   const ambiance = blueprint?.ambiance?.join(", ") || null;
 
-  const date = project.weddingDate
+  const date = project.weddingDate && project.weddingDate !== "not-fixed"
     ? new Date(project.weddingDate).toLocaleDateString("fr-FR", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       })
-    : null;
+    : project.weddingDate === "not-fixed" ? "Date à définir" : null;
 
   const location = project.location
     ? [project.location.city, project.location.country].filter(Boolean).join(", ")
@@ -138,10 +138,14 @@ async function generateNeedWithOpenAI(
         style: style || "non précisé",
         ambiance: ambiance || "non précisée",
         guestCount: project.guestCount || null,
+        childrenCount: project.childrenCount || null,
         location: project.location?.city || null,
-        date: project.weddingDate || null,
+        date: project.weddingDate === "not-fixed" ? "Date à définir" : (project.weddingDate || null),
         coupleStory: coupleStory || null,
         budget,
+        dietaryNeeds: project.dietaryNeeds?.length ? project.dietaryNeeds : null,
+        mobilityNeeds: project.mobilityNeeds || null,
+        guestsFromFar: project.guestsFromFar || null,
       },
       null,
       2

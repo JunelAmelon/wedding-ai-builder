@@ -54,6 +54,11 @@ export function buildRiskUserPrompt(answers: QuizAnswers, budgetBreakdown: Budge
 Date du mariage : ${answers.weddingDate}
 Niveau de stress (1-10) : ${answers.stressLevel}
 Style de mariage : ${styleLabel(answers)}
+Ambiances recherchées : ${answers.ambiance?.length ? answers.ambiance.join(", ") : "non précisé"}
+Prestataires recherchés : ${answers.desiredCategories?.length ? answers.desiredCategories.join(", ") : "non précisé"}
+Besoins alimentaires spécifiques : ${answers.dietaryNeeds?.length ? answers.dietaryNeeds.join(", ") : "aucun"}
+Personnes à mobilité réduite : ${answers.mobilityNeeds ? "oui" : "non"}
+Invités venant de loin : ${answers.guestsFromFar ? "oui" : "non"}
 Priorité principale : ${answers.mainPriority}
 Budget breakdown calculé : ${JSON.stringify(budgetBreakdown)}`;
 }

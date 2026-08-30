@@ -42,6 +42,7 @@ const ProjectSchema = z.object({
     z.object({ city: z.string(), country: z.string() }).nullable().optional()
   ),
   guestCount: z.preprocess((v) => cleanNumber(v), z.number().nullable().optional()),
+  childrenCount: z.preprocess((v) => cleanNumber(v), z.number().nullable().optional()),
   budget: z.preprocess(
     (v) => {
       if (!v || typeof v !== "object" || Array.isArray(v)) return null;
@@ -55,6 +56,12 @@ const ProjectSchema = z.object({
   style: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),
   customStyle: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),
   customStyleDescription: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),
+  ambiance: z.array(z.string()).nullable().optional(),
+  desiredCategories: z.array(z.string()).nullable().optional(),
+  dietaryNeeds: z.array(z.string()).nullable().optional(),
+  dietaryDetails: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),
+  mobilityNeeds: z.boolean().nullable().optional(),
+  guestsFromFar: z.boolean().nullable().optional(),
   mainPriority: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),
   stressLevel: z.preprocess((v) => cleanNumber(v), z.number().nullable().optional()),
 });
@@ -97,10 +104,17 @@ export async function POST(req: Request) {
       weddingDate: parsed.data.weddingDate ?? null,
       location,
       guestCount: parsed.data.guestCount ?? null,
+      childrenCount: parsed.data.childrenCount ?? null,
       budget: parsed.data.budget ?? null,
       style: (parsed.data.style as never) ?? null,
       customStyle: parsed.data.customStyle ?? null,
       customStyleDescription: parsed.data.customStyleDescription ?? null,
+      ambiance: parsed.data.ambiance ?? null,
+      desiredCategories: parsed.data.desiredCategories ?? null,
+      dietaryNeeds: parsed.data.dietaryNeeds ?? null,
+      dietaryDetails: parsed.data.dietaryDetails ?? null,
+      mobilityNeeds: parsed.data.mobilityNeeds ?? null,
+      guestsFromFar: parsed.data.guestsFromFar ?? null,
       mainPriority: parsed.data.mainPriority ?? null,
       stressLevel: parsed.data.stressLevel ?? null,
     });
@@ -149,10 +163,17 @@ export async function PUT(req: Request) {
             weddingDate: updated.weddingDate ?? session.quizAnswers.weddingDate,
             location: updated.location ?? session.quizAnswers.location,
             guestCount: updated.guestCount ?? session.quizAnswers.guestCount,
+            childrenCount: updated.childrenCount ?? session.quizAnswers.childrenCount,
             budget: updated.budget ?? session.quizAnswers.budget,
             style: updated.style ?? session.quizAnswers.style,
             customStyle: updated.customStyle ?? session.quizAnswers.customStyle,
             customStyleDescription: updated.customStyleDescription ?? session.quizAnswers.customStyleDescription,
+            ambiance: (updated.ambiance ?? session.quizAnswers.ambiance) as never,
+            desiredCategories: (updated.desiredCategories ?? session.quizAnswers.desiredCategories) as never,
+            dietaryNeeds: (updated.dietaryNeeds ?? session.quizAnswers.dietaryNeeds) as never,
+            dietaryDetails: updated.dietaryDetails ?? session.quizAnswers.dietaryDetails,
+            mobilityNeeds: updated.mobilityNeeds ?? session.quizAnswers.mobilityNeeds,
+            guestsFromFar: updated.guestsFromFar ?? session.quizAnswers.guestsFromFar,
             mainPriority: (updated.mainPriority ?? session.quizAnswers.mainPriority) as never,
             stressLevel: updated.stressLevel ?? session.quizAnswers.stressLevel,
           };

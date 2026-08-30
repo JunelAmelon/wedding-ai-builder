@@ -59,22 +59,22 @@ function DashIcon({ size = 14, className = "" }: { size?: number; className?: st
 
 const STATUS_META: Record<string, { label: string; Icon: (p: { size?: number; className?: string }) => ReactElement; chip: string }> = {
   searching: { label: "En recherche", Icon: HourglassIcon, chip: "bg-[#fef2f4]/20 text-[#0E0E10]" },
-  responded: { label: "Réponses reçues", Icon: EnvelopeOpenIcon, chip: "bg-[#dbeafe] text-[#1e3a8a]" },
+  responded: { label: "Réponses reçues", Icon: EnvelopeOpenIcon, chip: "bg-[#E4DBFB] text-[#0E0E10]" },
   closed: { label: "Clôturé", Icon: SealCheckIcon, chip: "bg-[#fef2f4] text-[#0E0E10]" },
 };
 
 const TOTAL_SLOTS = 3;
 
-const CARD_GRADIENTS = [
-  "linear-gradient(145deg, #f0e6d0, #d4c0a8)",
-  "linear-gradient(145deg, #d4e0f0, #a8bcd0)",
-  "linear-gradient(145deg, #e8d8c0, #c8b090)",
+const EMPTY_GRADIENTS = [
+  "#fef2f4",
+  "#E4DBFB",
+  "#FEF3C7",
 ];
 
-const EMPTY_GRADIENTS = [
-  "linear-gradient(145deg, #f5f5f7, #e8e8ec)",
-  "linear-gradient(145deg, #f0f0f2, #e3e3e7)",
-  "linear-gradient(145deg, #f8f8fa, #ececef)",
+const CARD_GRADIENTS = [
+  "#fef2f4",
+  "#E4DBFB",
+  "#FEF3C7",
 ];
 
 type EnrichedVendor = Omit<VendorProfile, "serviceArea"> & {
@@ -148,7 +148,7 @@ export default function TenderDetailPage() {
   if (loading) return <LoadingScreen minHeight={"80dvh"} />;
   if (!tender)
     return (
-      <div className="max-w-6xl mx-auto px-6 py-14 text-center text-text-secondary">Appel d'offres introuvable.</div>
+      <div className="max-w-6xl mx-auto px-6 py-14 text-center text-[#6B6B72]">Appel d'offres introuvable.</div>
     );
 
   const proposals = tender.proposals || [];
@@ -173,18 +173,18 @@ export default function TenderDetailPage() {
           <ArrowLeft size={14} /> Retour aux appels d'offres
         </Link>
 
-        <PageHeader eyebrow="Appel d'offres" title={tender.category}>
+        <PageHeader eyebrow="Appel d'offres" title={tender.category} titleClassName="font-allura font-normal">
           <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold text-[10px] uppercase tracking-[0.08em] ${meta.chip}`}>
             <meta.Icon size={14} />
             {meta.label}
           </span>
         </PageHeader>
 
-        {error && <p className="text-sm text-red-600 mb-6">{error}</p>}
+        {error && <p className="text-sm text-[#e64a5d] mb-6">{error}</p>}
 
         {/* ================= HERO IMAGE BANNER ================= */}
         <div
-          className="relative h-[160px] sm:h-[220px] rounded-[22px] overflow-hidden mx-0 lg:mx-0 bg-cover bg-center"
+          className="relative h-[160px] sm:h-[220px] rounded-[28px] overflow-hidden mx-0 lg:mx-0 bg-cover bg-center"
           style={{
             backgroundImage: "url(https://images.pexels.com/photos/11450799/pexels-photo-11450799.jpeg)",
           }}
@@ -197,7 +197,7 @@ export default function TenderDetailPage() {
           <div className="flex flex-col lg:flex-row lg:items-end gap-5 lg:gap-8 flex-wrap">
             {/* Avatar */}
             <div
-              className="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] rounded-[24px] border-[4px] border-white shrink-0 flex items-center justify-center text-[28px] sm:text-[40px] font-bold text-[#0E0E10] shadow-[0_10px_30px_rgba(0,0,0,0.12)] bg-[#fef2f4]"
+              className="w-[100px] h-[100px] sm:w-[140px] sm:h-[140px] rounded-[28px] border-[4px] border-white shrink-0 flex items-center justify-center text-[28px] sm:text-[40px] font-bold text-[#0E0E10] shadow-[0_10px_30px_rgba(0,0,0,0.12)] bg-[#fef2f4]"
             >
               {initials(tender.category).slice(0, 2)}
             </div>
@@ -205,7 +205,7 @@ export default function TenderDetailPage() {
             {/* Meta */}
             <div className="flex-1 min-w-[220px] pb-1">
               <div className="flex items-center gap-2.5 flex-wrap mb-1.5">
-                <h1 className="text-xl sm:text-2xl font-extrabold text-[#161616]">{tender.category}</h1>
+                <h1 className="text-xl sm:text-2xl font-extrabold text-[#0E0E10]">{tender.category}</h1>
               </div>
               <p className="text-[13.5px] text-[#6B6B72] leading-relaxed mb-4 max-w-xl">
                 {tender.requirements?.join(" · ") || tender.notes || `Besoin d'un prestataire pour ${tender.category.toLowerCase()}.`}
@@ -219,7 +219,7 @@ export default function TenderDetailPage() {
                 </button>
                 <button
                   onClick={() => setViewMode(viewMode === "dossier" ? "liste" : "dossier")}
-                  className="rounded-full bg-white text-[#0E0E10] border-[1.5px] border-[#ececef] px-5 py-2.5 text-[13px] font-bold hover:bg-[#f8f8fa] transition"
+                  className="rounded-full bg-white text-[#0E0E10] border-[1.5px] border-[#EDEDF0] px-5 py-2.5 text-[13px] font-bold hover:bg-[#fef2f4] transition"
                 >
                   Changer de vue
                 </button>
@@ -230,25 +230,25 @@ export default function TenderDetailPage() {
             <div className="flex gap-8 sm:gap-10 flex-wrap pb-1">
               <div>
                 <div className="text-[12.5px] text-[#6B6B72] mb-1">Propositions</div>
-                <div className="text-[22px] font-extrabold text-[#161616]">{receivedCount}</div>
+                <div className="text-[22px] font-extrabold text-[#0E0E10]">{receivedCount}</div>
               </div>
               <div>
                 <div className="text-[12.5px] text-[#6B6B72] mb-1">Compatibles</div>
-                <div className="text-[22px] font-extrabold text-[#161616]">{receivedCount}</div>
+                <div className="text-[22px] font-extrabold text-[#0E0E10]">{receivedCount}</div>
               </div>
               <div>
                 <div className="text-[12.5px] text-[#6B6B72] mb-1">Jours restants</div>
-                <div className="text-[22px] font-extrabold text-[#161616]">{daysLeft(tender.weddingDate) ?? "—"}</div>
+                <div className="text-[22px] font-extrabold text-[#0E0E10]">{daysLeft(tender.weddingDate) ?? "—"}</div>
               </div>
             </div>
 
             {/* Badges : en attente / reçues / validées */}
             <div className="flex gap-2 pb-1 lg:ml-auto">
-              <div title={`${pendingCount} proposition${pendingCount > 1 ? "s" : ""} en attente`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#ff6a3d]">
+              <div title={`${pendingCount} proposition${pendingCount > 1 ? "s" : ""} en attente`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#e64a5d]">
                 <span>{pendingCount}</span>
                 <span className="hidden sm:inline opacity-90 text-[10px]">en attente</span>
               </div>
-              <div title={`${receivedCount} proposition${receivedCount > 1 ? "s" : ""} reçue${receivedCount > 1 ? "s" : ""}`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#8a7bff]">
+              <div title={`${receivedCount} proposition${receivedCount > 1 ? "s" : ""} reçue${receivedCount > 1 ? "s" : ""}`} className="w-[34px] sm:w-auto sm:h-[34px] h-[30px] rounded-full inline-flex items-center justify-center sm:gap-1.5 sm:px-3 text-white text-[12px] font-bold border-2 border-white shadow-[0_2px_6px_rgba(0,0,0,0.08)] bg-[#5B4FC4]">
                 <span>{receivedCount}</span>
                 <span className="hidden sm:inline opacity-90 text-[10px]">reçue</span>
               </div>
@@ -261,36 +261,36 @@ export default function TenderDetailPage() {
         </div>
 
         {/* ================= TABS ================= */}
-        <div className="flex gap-6 sm:gap-8 border-b border-[#ececef] px-0 sm:px-2 flex-wrap mb-6">
+        <div className="flex gap-6 sm:gap-8 border-b border-[#EDEDF0] px-0 sm:px-2 flex-wrap mb-6">
           <button
             type="button"
             onClick={() => setViewMode("dossier")}
             className={`flex items-center gap-1.5 text-[13.5px] font-semibold pb-3.5 transition ${
-              viewMode === "dossier" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#6B6B72] hover:text-[#161616]"
+              viewMode === "dossier" ? "text-[#0E0E10] border-b-[2.5px] border-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10]"
             }`}
           >
-            Dossiers <sup className="bg-[#f1f0f5] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
+            Dossiers <sup className="bg-[#E4DBFB] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
           </button>
           <button
             type="button"
             onClick={() => setViewMode("liste")}
             className={`flex items-center gap-1.5 text-[13.5px] font-semibold pb-3.5 transition ${
-              viewMode === "liste" ? "text-[#161616] border-b-[2.5px] border-[#161616]" : "text-[#6B6B72] hover:text-[#161616]"
+              viewMode === "liste" ? "text-[#0E0E10] border-b-[2.5px] border-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10]"
             }`}
           >
-            Liste <sup className="bg-[#f1f0f5] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
+            Liste <sup className="bg-[#E4DBFB] text-[#6B6B72] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">{receivedCount}</sup>
           </button>
         </div>
 
         {/* ================= CLOSURE BANNER ================= */}
         {isClosed && selectedProposal && (
-          <div className="mx-0 sm:mx-2 mb-6 bg-[#e4f4ed] border border-[#b8ddd0] rounded-[18px] px-5 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
-            <div className="w-11 h-11 rounded-full bg-[#2e7d5e] flex items-center justify-center text-white shrink-0">
+          <div className="mx-0 sm:mx-2 mb-6 bg-[#D8ECD9] border border-[#EDEDF0] rounded-[28px] px-5 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
+            <div className="w-11 h-11 rounded-full bg-[#3C8552] flex items-center justify-center text-white shrink-0">
               <SealCheckIcon size={22} />
             </div>
             <div className="flex-1">
-              <h4 className="text-[14px] font-bold text-[#161616] mb-0.5">Dossier clôturé</h4>
-              <p className="text-[13px] text-[#2d5a4a]">
+              <h4 className="text-[14px] font-bold text-[#0E0E10] mb-0.5">Dossier clôturé</h4>
+              <p className="text-[13px] text-[#3C8552]">
                 Vous avez retenu <strong>{selectedProposal.vendor?.companyName || selectedProposal.vendor?.brandName || "ce professionnel"}</strong>. L'appel d'offres est terminé.
               </p>
             </div>
@@ -299,12 +299,12 @@ export default function TenderDetailPage() {
 
         {/* ================= CONTENT ================= */}
         {proposals.length === 0 ? (
-          <div className="mx-0 sm:mx-2 bg-white border border-[#ececef] rounded-[18px] px-6 sm:px-8 py-16 text-center">
+          <div className="mx-0 sm:mx-2 bg-white border border-[#EDEDF0] rounded-[28px] px-6 sm:px-8 py-16 text-center shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
             <div className="h-12 w-12 rounded-full border border-[#fef2f4] flex items-center justify-center mx-auto mb-5">
               <HourglassIcon size={20} className="text-[#0E0E10]" />
             </div>
             <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#0E0E10] mb-3">En attente</p>
-            <h2 className="text-xl font-bold text-[#161616] mb-2">Aucune proposition pour l'instant</h2>
+            <h2 className="text-xl font-bold text-[#0E0E10] mb-2">Aucune proposition pour l'instant</h2>
             <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed">
               Les professionnels compatibles sont en train d'être contactés. Leurs dossiers apparaîtront ici dès réception.
             </p>
@@ -319,7 +319,7 @@ export default function TenderDetailPage() {
                     return (
                       <div key={`empty-${i}`} className="group flex flex-col">
                         <div
-                          className="relative rounded-[18px] overflow-hidden aspect-[4/3] flex items-center justify-center"
+                          className="relative rounded-[28px] overflow-hidden aspect-[4/3] flex items-center justify-center"
                           style={{ background: EMPTY_GRADIENTS[i % EMPTY_GRADIENTS.length] }}
                         >
                           <div className="text-center px-4">
@@ -342,15 +342,15 @@ export default function TenderDetailPage() {
                   const isSelected = proposal.id === tender.selectedProposalId;
                   const isDeclined = proposal.status === "declined";
                   const proposalMeta = isSelected
-                    ? { label: "Validé", Icon: SealCheckIcon, bg: "#2e7d5e" }
+                    ? { label: "Validé", Icon: SealCheckIcon, bg: "#3C8552" }
                     : isDeclined
-                    ? { label: "Non retenu", Icon: DashIcon, bg: "#888888" }
-                    : { label: "Reçu", Icon: EnvelopeOpenIcon, bg: "#3b6fe0" };
+                    ? { label: "Non retenu", Icon: DashIcon, bg: "#6B6B72" }
+                    : { label: "Reçu", Icon: EnvelopeOpenIcon, bg: "#5B4FC4" };
 
                   return (
                     <div key={proposal.id} className={`group flex flex-col ${isDeclined ? "opacity-60" : ""}`}>
                       <div
-                        className="relative rounded-[18px] overflow-hidden aspect-[4/3] flex items-end"
+                        className="relative rounded-[28px] overflow-hidden aspect-[4/3] flex items-end"
                         style={{ background: vendor.logo?.url ? `url(${vendor.logo.url}) center/cover` : CARD_GRADIENTS[i % CARD_GRADIENTS.length] }}
                       >
                         <div className="absolute top-3 right-3 flex gap-1.5">
@@ -371,7 +371,7 @@ export default function TenderDetailPage() {
 
                       <div className="mt-3 flex items-start justify-between gap-3 px-1">
                         <div className="min-w-0">
-                          <div className="text-[14px] font-bold text-[#161616] truncate">
+                          <div className="text-[14px] font-bold text-[#0E0E10] truncate">
                             {vendor.companyName || vendor.brandName || "Professionnel"}
                           </div>
                           <div className="text-[11.5px] text-[#6B6B72]">
@@ -380,12 +380,12 @@ export default function TenderDetailPage() {
                         </div>
                         <div className="flex gap-1.5 shrink-0">
                           {vendor.serviceArea?.cities?.[0] && (
-                            <span className="inline-flex items-center gap-1 bg-[#f5f5f7] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#555] whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 bg-[#fef2f4] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#6B6B72] whitespace-nowrap">
                               <MapPin size={10} /> {vendor.serviceArea.cities[0]}
                             </span>
                           )}
                           {vendor.rating && (
-                            <span className="inline-flex items-center gap-1 bg-[#f5f5f7] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#555] whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 bg-[#fef2f4] rounded-full px-2 py-1 text-[10.5px] font-semibold text-[#6B6B72] whitespace-nowrap">
                               <Star size={10} /> {vendor.rating}
                             </span>
                           )}
@@ -401,7 +401,7 @@ export default function TenderDetailPage() {
                       <div className="mt-auto pt-4 flex gap-2">
                         <Link
                           href={`/espace-couple/prestataires/profil/${vendor.id}`}
-                          className="flex-1 text-center rounded-full border-[1.5px] border-[#ececef] text-[#161616] text-[12px] font-bold px-3 py-2.5 hover:bg-[#f8f8fa] transition"
+                          className="flex-1 text-center rounded-full border-[1.5px] border-[#EDEDF0] text-[#0E0E10] text-[12px] font-bold px-3 py-2.5 hover:bg-[#fef2f4] transition"
                         >
                           Voir le profil
                         </Link>
@@ -433,24 +433,24 @@ export default function TenderDetailPage() {
                 })}
               </div>
             ) : (
-              <div className="rounded-[18px] border border-[#ececef] bg-white overflow-hidden">
+              <div className="rounded-[28px] border border-[#EDEDF0] bg-white overflow-hidden shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
                 {proposals.map((proposal, i) => {
                   const vendor: Partial<EnrichedVendor> = proposal.vendor ?? {};
                   const isSelected = proposal.id === tender.selectedProposalId;
                   const isDeclined = proposal.status === "declined";
                   const num = String(i + 1).padStart(2, "0");
                   const proposalMeta = isSelected
-                    ? { label: "Validé", Icon: SealCheckIcon, bg: "#2e7d5e" }
+                    ? { label: "Validé", Icon: SealCheckIcon, bg: "#3C8552" }
                     : isDeclined
-                    ? { label: "Non retenu", Icon: DashIcon, bg: "#888888" }
-                    : { label: "Reçu", Icon: EnvelopeOpenIcon, bg: "#3b6fe0" };
+                    ? { label: "Non retenu", Icon: DashIcon, bg: "#6B6B72" }
+                    : { label: "Reçu", Icon: EnvelopeOpenIcon, bg: "#5B4FC4" };
                   const isLast = i === proposals.length - 1;
 
                   return (
                     <Link
                       key={proposal.id}
                       href={`/espace-couple/prestataires/profil/${vendor.id}`}
-                      className={`flex flex-col sm:flex-row sm:items-center gap-4 px-5 py-5 hover:bg-[#f8f8fa] transition-colors ${isLast ? "" : "border-b border-[#ececef]"} ${isDeclined ? "opacity-55" : ""}`}
+                      className={`flex flex-col sm:flex-row sm:items-center gap-4 px-5 py-5 hover:bg-[#fef2f4] transition-colors ${isLast ? "" : "border-b border-[#EDEDF0]"} ${isDeclined ? "opacity-55" : ""}`}
                     >
                       <div className="flex items-center gap-3 shrink-0 w-24">
                         <span
@@ -463,7 +463,7 @@ export default function TenderDetailPage() {
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-lg font-bold text-[#161616] truncate">
+                          <h4 className="text-lg font-bold text-[#0E0E10] truncate">
                             {vendor.companyName || vendor.brandName || "Professionnel"}
                           </h4>
                           <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold text-white" style={{ background: proposalMeta.bg }}>
@@ -476,14 +476,14 @@ export default function TenderDetailPage() {
                         </p>
                       </div>
 
-                      <span className="inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-[0.1em] text-[#6c5ce7] self-start sm:self-auto shrink-0">
+                      <span className="inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-[0.1em] text-[#5B4FC4] self-start sm:self-auto shrink-0">
                         Ouvrir <ChevronRight size={13} />
                       </span>
                     </Link>
                   );
                 })}
                 {emptySlots > 0 && (
-                  <div className="px-5 py-5 text-[13px] text-[#6B6B72] border-t border-[#ececef]">
+                  <div className="px-5 py-5 text-[13px] text-[#6B6B72] border-t border-[#EDEDF0]">
                     + {emptySlots} proposition{emptySlots > 1 ? "s" : ""} à venir
                   </div>
                 )}

@@ -11,10 +11,10 @@ export function QuestionPriority({ onAnswer }: { onAnswer: (value: MainPriority)
   return (
     <QuestionShell
       title="Quelle est votre priorité n°1 ?"
-      subtitle="Ça influencera les recommandations."
+      subtitle="Ça influencera nos recommandations et l'ordre de vos étapes."
       onNext={() => priority && onAnswer(priority)}
       nextDisabled={!priority}
-      nextLabel="Voir mon plan"
+      nextLabel="Continuer"
     >
       <div className="space-y-3">
         {PRIORITY_OPTIONS.map((opt) => (
@@ -22,14 +22,14 @@ export function QuestionPriority({ onAnswer }: { onAnswer: (value: MainPriority)
             key={opt.value}
             onClick={() => setPriority(opt.value)}
             className={
-              "w-full rounded-r-md border px-4 py-4 text-left transition " +
+              "w-full rounded-[28px] border px-4 py-4 text-left transition " +
               (priority === opt.value
-                ? "border-ink/25 bg-sage-chip ring-1 ring-ink/10"
-                : "border-line bg-white hover:border-ink/20 hover:bg-surface")
+                ? "border-[#e64a5d] bg-[#fef2f4] ring-1 ring-[#e64a5d]/20"
+                : "border-[#EDEDF0] bg-white hover:border-[#e64a5d]/30 hover:bg-[#fef2f4]/50")
             }
             type="button"
           >
-            <div className="font-semibold text-text-primary">{opt.label}</div>
+            <div className="font-semibold text-[#0E0E10]">{opt.label}</div>
           </button>
         ))}
       </div>

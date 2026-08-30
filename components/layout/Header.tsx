@@ -37,7 +37,7 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
         }`}
       >
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-[72px] flex items-center justify-between">
-          <Link href="/" className="text-[#161616] font-display text-lg sm:text-xl font-bold whitespace-nowrap">
+          <Link href="/" className="text-[#0E0E10] font-allura text-lg sm:text-xl font-bold whitespace-nowrap">
             Mariage Facile
           </Link>
 
@@ -46,7 +46,7 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-[#6b7076] hover:text-[#161616] transition"
+                className="text-sm font-medium text-[#6B6B72] hover:text-[#0E0E10] transition"
               >
                 {link.label}
               </Link>
@@ -54,12 +54,12 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Link href="/login" className="text-sm font-medium text-[#6b7076] hover:text-[#161616] transition">
+            <Link href="/login" className="text-sm font-medium text-[#6B6B72] hover:text-[#0E0E10] transition">
               Connexion
             </Link>
             <Link
               href={ctaHref}
-              className="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-[#1c1c1c] text-white text-sm font-semibold hover:bg-[#333] transition"
+              className="inline-flex items-center gap-2 h-10 px-5 rounded-full bg-[#e64a5d] text-white text-sm font-semibold hover:brightness-110 transition"
             >
               {ctaLabel}
               <ArrowRight size={15} />
@@ -69,13 +69,13 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
           <div className="flex md:hidden items-center gap-3">
             <Link
               href={ctaHref}
-              className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#1c1c1c] text-white hover:bg-[#333] transition"
+              className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#e64a5d] text-white hover:brightness-110 transition"
               aria-label={ctaLabel}
             >
               <ArrowRight size={18} />
             </Link>
             <button
-              className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#e6e4dd] bg-white text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
+              className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[#EDEDF0] bg-white text-[#0E0E10] hover:bg-[#EDEDF0] transition"
               onClick={() => setMenuOpen((o) => !o)}
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
               aria-expanded={menuOpen}
@@ -89,14 +89,14 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
       {/* Mobile menu overlay */}
       {menuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-[#1c1c1c]/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-[#0E0E10]/60 backdrop-blur-sm md:hidden"
           onClick={() => setMenuOpen(false)}
         />
       )}
 
       {/* Mobile menu panel */}
       <div
-        className={`fixed top-[72px] left-4 right-4 z-50 md:hidden rounded-[24px] bg-white shadow-[0_20px_60px_rgba(14,14,16,0.18)] p-6 transition-all duration-300 ${
+        className={`fixed top-[72px] left-4 right-4 z-50 md:hidden rounded-[28px] bg-white shadow-[0_20px_60px_rgba(14,14,16,0.18)] p-6 transition-all duration-300 ${
           menuOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-4 pointer-events-none"
         }`}
       >
@@ -106,7 +106,7 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="px-4 py-3 rounded-2xl text-base font-medium text-[#1c1c1c] hover:bg-[#f4f1f7] transition"
+              className="px-4 py-3 rounded-[28px] text-base font-medium text-[#0E0E10] hover:bg-[#EDEDF0] transition"
             >
               {link.label}
             </Link>
@@ -114,14 +114,14 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
           <Link
             href="/login"
             onClick={() => setMenuOpen(false)}
-            className="px-4 py-3 rounded-2xl text-base font-medium text-[#6b7076] hover:bg-[#f4f1f7] transition"
+            className="px-4 py-3 rounded-[28px] text-base font-medium text-[#6B6B72] hover:bg-[#EDEDF0] transition"
           >
             Connexion
           </Link>
           <Link
             href={ctaHref}
             onClick={() => setMenuOpen(false)}
-            className="mt-2 inline-flex items-center justify-center gap-2 h-12 rounded-full bg-[#1c1c1c] text-white font-semibold hover:bg-[#333] transition"
+            className="mt-2 inline-flex items-center justify-center gap-2 h-12 rounded-full bg-[#e64a5d] text-white font-semibold hover:brightness-110 transition"
           >
             {ctaLabel}
             <ArrowRight size={16} />

@@ -347,7 +347,7 @@ export default function CoupleWeddingPage() {
     .join("");
 
   // Formatage de la date
-  const formattedDate = project?.weddingDate
+  const formattedDate = project?.weddingDate && project.weddingDate !== "not-fixed"
     ? new Date(project.weddingDate).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
     : "À définir";
 
@@ -472,7 +472,7 @@ export default function CoupleWeddingPage() {
                       <div className="text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-0.5">Date du mariage</div>
                       <input
                         type="date"
-                        value={project?.weddingDate ? new Date(project.weddingDate).toISOString().split("T")[0] : ""}
+                        value={project?.weddingDate && project.weddingDate !== "not-fixed" ? new Date(project.weddingDate).toISOString().split("T")[0] : ""}
                         onChange={(e) => updateField("weddingDate", e.target.value || null)}
                         className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#0E0E10] focus:border-b focus:border-[#c43a4a]"
                       />

@@ -28,12 +28,12 @@ export function QuestionBudget({
           value={amount}
           onChange={(e) => setAmount(e.target.value ? Number(e.target.value) : "")}
           placeholder="Ex: 15000"
-          className="w-full rounded-r-md bg-surface border border-line px-4 py-4 text-text-primary placeholder:text-grey focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
+          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
         />
         <select
           value={currency}
           onChange={(e) => setCurrency(e.target.value)}
-          className="w-full rounded-r-md bg-surface border border-line px-4 py-4 text-text-primary focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink/30 focus:bg-white transition"
+          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] focus:outline-none focus:border-[#fef2f4] transition"
         >
           {CURRENCY_OPTIONS.map((c) => (
             <option key={c} value={c}>

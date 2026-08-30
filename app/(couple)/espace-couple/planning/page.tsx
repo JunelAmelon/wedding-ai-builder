@@ -251,7 +251,7 @@ export default function CouplePlanningPage() {
   }, [sorted]);
 
   // Stats
-  const weddingDate = project?.weddingDate ? new Date(project.weddingDate) : null;
+  const weddingDate = project?.weddingDate && project.weddingDate !== "not-fixed" ? new Date(project.weddingDate) : null;
   const monthsLeft = weddingDate
     ? Math.max(0, Math.round((weddingDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)))
     : null;
@@ -314,7 +314,7 @@ export default function CouplePlanningPage() {
 
   // Tasks for a calendar day
   const tasksForDay = (day: Date) => {
-    const weddingDate = project?.weddingDate ? new Date(project.weddingDate) : null;
+    const weddingDate = project?.weddingDate && project.weddingDate !== "not-fixed" ? new Date(project.weddingDate) : null;
     if (!weddingDate) return [];
     const projectStart = project?.createdAt ? new Date(project.createdAt) : null;
     const projectStartMonth = projectStart ? new Date(projectStart.getFullYear(), projectStart.getMonth(), 1) : null;

@@ -16,9 +16,9 @@ export function ProgressBar({
 
   return (
     <div className={cn("fixed left-0 top-0 z-50 w-full px-4 pt-4", className)}>
-      <div className="relative h-4 w-full overflow-hidden rounded-full bg-black/10">
+      <div className="relative h-4 w-full overflow-hidden rounded-full bg-[#EDEDF0]">
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#8B7BD8] to-[#3C8552] transition-all duration-700 ease-out"
+          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#e64a5d] to-[#e64a5d] transition-all duration-700 ease-out"
           style={{ width: `${pct}%` }}
         />
       </div>

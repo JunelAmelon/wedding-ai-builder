@@ -38,8 +38,13 @@ export function buildTimelineUserPrompt(answers: QuizAnswers): string {
 Date actuelle : ${now}
 Localisation : ${answers.location?.city}, ${answers.location?.country}
 Budget total : ${answers.budget?.amount} ${answers.budget?.currency} (${budgetPerGuest} ${answers.budget?.currency} par invité)
-Nombre d'invités : ${answers.guestCount}
+Nombre d'invités : ${answers.guestCount}${answers.childrenCount ? ` (dont ${answers.childrenCount} enfants)` : ""}
 Style : ${answers.style ?? "non précisé"} ${answers.customStyleDescription ? `- ${answers.customStyleDescription}` : ""}
+Ambiances recherchées : ${answers.ambiance?.length ? answers.ambiance.join(", ") : "non précisé"}
+Prestataires recherchés : ${answers.desiredCategories?.length ? answers.desiredCategories.join(", ") : "non précisé"}
+Besoins alimentaires spécifiques : ${answers.dietaryNeeds?.length ? answers.dietaryNeeds.join(", ") : "aucun"}
+Personnes à mobilité réduite : ${answers.mobilityNeeds ? "oui" : "non précisé"}
+Invités venant de loin : ${answers.guestsFromFar ? "oui" : "non précisé"}
 Priorité principale : ${answers.mainPriority}
 Niveau de stress déclaré (1-10) : ${answers.stressLevel}`;
 }

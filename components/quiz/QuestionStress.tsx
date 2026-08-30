@@ -9,9 +9,10 @@ export function QuestionStress({ onAnswer }: { onAnswer: (value: number) => void
   return (
     <QuestionShell
       title="Quel est votre niveau de stress actuel ?"
-      subtitle="1 = zen, 10 = très stressé(e)."
+      subtitle="1 = zen, 10 = très stressé(e). On adaptera le ton de nos conseils."
       onNext={() => onAnswer(level)}
       nextDisabled={false}
+      nextLabel="Voir mon plan"
     >
       <div className="space-y-4">
         <input
@@ -20,12 +21,12 @@ export function QuestionStress({ onAnswer }: { onAnswer: (value: number) => void
           max={10}
           value={level}
           onChange={(e) => setLevel(Number(e.target.value))}
-          className="w-full accent-primary"
+          className="w-full accent-[#e64a5d]"
         />
-        <div className="rounded-r-lg border border-line bg-surface p-4 text-center">
-          <div className="text-xs uppercase tracking-[0.22em] text-grey">Votre ressenti</div>
-          <div className="font-display text-3xl font-bold mt-2 text-text-primary">{level}/10</div>
-          <div className="text-sm text-text-secondary mt-1">
+        <div className="rounded-[28px] border border-[#EDEDF0] bg-[#fef2f4]/50 p-4 text-center">
+          <div className="text-xs uppercase tracking-[0.22em] text-[#6B6B72]">Votre ressenti</div>
+          <div className="font-allura text-3xl font-bold mt-2 text-[#0E0E10]">{level}/10</div>
+          <div className="text-sm text-[#6B6B72] mt-1">
             {level <= 3 ? "Plutôt zen" : level <= 6 ? "Un peu de pression" : "Très chargé"}
           </div>
         </div>

@@ -55,9 +55,13 @@ export function buildBudgetUserPrompt(answers: QuizAnswers): string {
   return `Budget total : ${answers.budget?.amount} ${answers.budget?.currency}
 Date du mariage : ${answers.weddingDate ?? "non précisée"}
 Localisation : ${answers.location?.city}, ${answers.location?.country} (ajuste les ratios selon le coût de vie local et le marché du mariage local)
-Nombre d'invités : ${answers.guestCount}
+Nombre d'invités : ${answers.guestCount}${answers.childrenCount ? ` (dont ${answers.childrenCount} enfants)` : ""}
 Budget par invité : ${Math.round((answers.budget?.amount ?? 0) / Math.max(answers.guestCount ?? 1, 1))} ${answers.budget?.currency}
 Style : ${styleLabel(answers)}
+Ambiances recherchées : ${answers.ambiance?.length ? answers.ambiance.join(", ") : "non précisé"}
+Prestataires recherchés : ${answers.desiredCategories?.length ? answers.desiredCategories.join(", ") : "non précisé"}
+Besoins alimentaires spécifiques : ${answers.dietaryNeeds?.length ? answers.dietaryNeeds.join(", ") : "aucun"}
+Invités venant de loin : ${answers.guestsFromFar ? "oui" : "non"}
 Priorité principale : ${answers.mainPriority}
 Niveau de stress : ${answers.stressLevel}`;
 }

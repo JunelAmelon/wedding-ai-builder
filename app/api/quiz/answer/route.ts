@@ -20,6 +20,8 @@ const FIELD_BY_STEP: Record<string, string> = {
   guests: "guestCount",
   budget: "budget",
   style: "style",
+  categories: "desiredCategories",
+  needs: "dietaryNeeds",
   stress: "stressLevel",
   priority: "mainPriority",
 };
@@ -37,11 +39,31 @@ export async function POST(req: Request) {
 
     let updatePayload: Partial<QuizAnswers> = { [field]: value } as Partial<QuizAnswers>;
     if (step === "style" && typeof value === "object" && value !== null) {
-      const styleAnswer = value as { style: unknown; customStyle?: string; customStyleDescription?: string };
+      const styleAnswer = value as { style: unknown; customStyle?: string; customStyleDescription?: string; ambiance?: string[] };
       updatePayload = {
         style: styleAnswer.style as QuizAnswers["style"],
         customStyle: styleAnswer.customStyle ?? undefined,
         customStyleDescription: styleAnswer.customStyleDescription ?? undefined,
+        ambiance: styleAnswer.ambiance as QuizAnswers["ambiance"],
+      } as Partial<QuizAnswers>;
+    } else if (step === "guests" && typeof value === "object" && value !== null) {
+      const guestsAnswer = value as { guestCount: number; childrenCount: number };
+      updatePayload = {
+        guestCount: guestsAnswer.guestCount,
+        childrenCount: guestsAnswer.childrenCount,
+      } as Partial<QuizAnswers>;
+    } else if (step === "categories" && typeof value === "object" && value !== null) {
+      const catAnswer = value as { desiredCategories: string[] };
+      updatePayload = {
+        desiredCategories: catAnswer.desiredCategories as QuizAnswers["desiredCategories"],
+      } as Partial<QuizAnswers>;
+    } else if (step === "needs" && typeof value === "object" && value !== null) {
+      const needsAnswer = value as { dietaryNeeds: string[]; dietaryDetails: string; mobilityNeeds: boolean; guestsFromFar: boolean };
+      updatePayload = {
+        dietaryNeeds: needsAnswer.dietaryNeeds as QuizAnswers["dietaryNeeds"],
+        dietaryDetails: needsAnswer.dietaryDetails,
+        mobilityNeeds: needsAnswer.mobilityNeeds,
+        guestsFromFar: needsAnswer.guestsFromFar,
       } as Partial<QuizAnswers>;
     }
 

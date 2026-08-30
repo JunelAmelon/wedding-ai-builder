@@ -6,8 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Check, Eye, EyeOff, Loader2 } from "lucide-react";
 
-const SAGE_CHIP = "#D8ECD9";
-const NAVY = "#0a0a0f";
+const SAGE_CHIP = "#fef2f4";
+const NAVY = "#0E0E10";
 
 const AVATARS = [
   "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&w=96&h=96&q=80",
@@ -183,16 +183,16 @@ function LoginPageInner() {
             <LogoShape />
           </div>
 
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight leading-[1.05] text-ink mb-2">
+          <h1 className="font-allura text-3xl sm:text-4xl font-normal tracking-tight leading-[1.05] text-[#0E0E10] mb-2">
             Bienvenue, futurs mariés 💍
           </h1>
-          <p className="text-sm text-gray-500 mb-1">
+          <p className="text-sm text-[#6B6B72] mb-1">
             Accédez à votre espace {isVendor ? "prestataire" : "couple"}.
           </p>
           <div className="mb-8">
             <Link
               href={`/login?role=${isVendor ? "couple" : "vendor"}`}
-              className="text-xs text-gray-500 underline underline-offset-4 hover:text-gray-800 transition"
+              className="text-xs text-[#6B6B72] underline underline-offset-4 hover:text-[#0E0E10] transition"
             >
               {isVendor ? "Se connecter en tant que couple" : "Se connecter en tant que prestataire"}
             </Link>
@@ -200,18 +200,18 @@ function LoginPageInner() {
 
           <div className="space-y-4 mb-2">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Votre email</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Votre email</label>
               <input
                 type="email"
                 placeholder="vous@exemple.fr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl bg-gray-50 border border-black/10 px-4 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-sm text-[#0E0E10] focus:outline-none focus:border-[#fef2f4] transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Votre mot de passe</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Votre mot de passe</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -219,12 +219,12 @@ function LoginPageInner() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-                  className="w-full rounded-xl bg-gray-50 border border-black/10 pl-4 pr-11 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                  className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] pl-4 pr-11 py-3.5 text-sm text-[#0E0E10] focus:outline-none focus:border-[#fef2f4] transition"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B6B72] hover:text-[#0E0E10] transition"
                   aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                 >
                   {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
@@ -241,8 +241,8 @@ function LoginPageInner() {
 
           {error && (
             <div
-              className={`rounded-xl p-4 mb-4 text-center text-sm ${
-                error.includes("validation") ? "bg-amber-50 text-amber-700 border border-amber-100" : "text-red-600"
+              className={`rounded-[28px] p-4 mb-4 text-center text-sm ${
+                error.includes("validation") ? "bg-amber-50 text-amber-700 border border-amber-100" : "text-[#e64a5d]"
               }`}
             >
               {error}
@@ -252,8 +252,8 @@ function LoginPageInner() {
           <button
             onClick={handleSubmit}
             disabled={loading || !email || !password}
-            className="w-full flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
-            style={{ backgroundColor: NAVY }}
+            className="w-full flex items-center justify-center gap-2 rounded-[28px] px-5 py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-50"
+            style={{ backgroundColor: "#e64a5d" }}
           >
             {loading ? (
               <>
@@ -267,8 +267,8 @@ function LoginPageInner() {
           </button>
 
           <div className="flex items-center justify-between mt-4 mb-6">
-            <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer select-none">
-              <span className="w-4 h-4 rounded border border-gray-300 flex items-center justify-center" style={{ backgroundColor: rememberMe ? NAVY : "transparent" }}>
+            <label className="flex items-center gap-2 text-xs text-[#6B6B72] cursor-pointer select-none">
+              <span className="w-4 h-4 rounded border border-[#EDEDF0] flex items-center justify-center" style={{ backgroundColor: rememberMe ? "#0E0E10" : "transparent" }}>
                 {rememberMe && <Check size={10} className="text-white" />}
               </span>
               <input
@@ -279,14 +279,14 @@ function LoginPageInner() {
               />
               Se souvenir de moi
             </label>
-            <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-gray-800 underline underline-offset-4 transition">
+            <Link href="/forgot-password" className="text-xs text-[#6B6B72] hover:text-[#0E0E10] underline underline-offset-4 transition">
               Mot de passe oublié ?
             </Link>
           </div>
 
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-[#6B6B72] text-center">
             Pas encore de compte ?{" "}
-            <Link href={isVendor ? "/devenir-professionnel" : "/quiz/date"} className="font-medium hover:underline" style={{ color: NAVY }}>
+            <Link href={isVendor ? "/devenir-professionnel" : "/quiz/date"} className="font-medium hover:underline text-[#e64a5d]">
               Créer un compte
             </Link>
           </p>

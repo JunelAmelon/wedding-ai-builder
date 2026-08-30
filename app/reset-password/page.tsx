@@ -72,17 +72,17 @@ function ResetPasswordForm() {
       <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
         <div className="max-w-md w-full">
           <div className="mb-8">
-            <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#1c1c1c] hover:text-[#8b8b86] transition">
+            <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#0E0E10] hover:text-[#6B6B72] transition">
               <ArrowLeft size={16} /> Retour à la connexion
             </Link>
           </div>
 
-          <div className="bg-white rounded-[32px] p-8 shadow-[0_40px_120px_rgba(14,14,16,0.18)] text-center">
-            <div className="w-16 h-16 rounded-full bg-[#f4f1f7] flex items-center justify-center mx-auto mb-6">
-              <CheckCircle size={32} color="#1c1c1c" />
+          <div className="bg-white rounded-[28px] p-8 shadow-[0_40px_120px_rgba(14,14,16,0.18)] text-center">
+            <div className="w-16 h-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-6">
+              <CheckCircle size={32} color="#0E0E10" />
             </div>
-            <h1 className="font-display text-2xl font-bold text-[#1c1c1c] mb-3">Mot de passe réinitialisé</h1>
-            <p className="text-[#8b8b86] mb-6">Votre mot de passe a été modifié avec succès. Vous allez être redirigé vers la page de connexion.</p>
+            <h1 className="font-allura text-2xl font-normal text-[#0E0E10] mb-3">Mot de passe réinitialisé</h1>
+            <p className="text-[#6B6B72] mb-6">Votre mot de passe a été modifié avec succès. Vous allez être redirigé vers la page de connexion.</p>
           </div>
         </div>
       </div>
@@ -93,18 +93,18 @@ function ResetPasswordForm() {
     <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white flex items-center justify-center px-5 sm:px-8 py-10 lg:py-14">
       <div className="max-w-md w-full">
         <div className="mb-8">
-          <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#1c1c1c] hover:text-[#8b8b86] transition">
+          <Link href="/login" className="inline-flex items-center gap-2 text-sm text-[#0E0E10] hover:text-[#6B6B72] transition">
             <ArrowLeft size={16} /> Retour à la connexion
           </Link>
         </div>
 
-        <div className="bg-white rounded-[32px] p-8 shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
+        <div className="bg-white rounded-[28px] p-8 shadow-[0_40px_120px_rgba(14,14,16,0.18)]">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-[#f4f1f7] flex items-center justify-center mx-auto mb-4">
-              <Lock size={32} color="#1c1c1c" />
+            <div className="w-16 h-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
+              <Lock size={32} color="#0E0E10" />
             </div>
-            <h1 className="font-display text-2xl font-bold text-[#1c1c1c] mb-2">Réinitialiser le mot de passe</h1>
-            <p className="text-[#8b8b86] text-sm">Entrez votre nouveau mot de passe pour accéder à votre espace.</p>
+            <h1 className="font-allura text-2xl font-normal text-[#0E0E10] mb-2">Réinitialiser le mot de passe</h1>
+            <p className="text-[#6B6B72] text-sm">Entrez votre nouveau mot de passe pour accéder à votre espace.</p>
           </div>
 
           {error && (
@@ -116,24 +116,24 @@ function ResetPasswordForm() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Nouveau mot de passe</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B6B72] mb-2">Nouveau mot de passe</label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
+                className="w-full px-4 py-3.5 bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[14px] text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4]"
                 placeholder="Au moins 8 caractères"
                 disabled={loading || !token}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#1c1c1c] mb-2">Confirmer le mot de passe</label>
+              <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B6B72] mb-2">Confirmer le mot de passe</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-[#e6e4dd] rounded-xl text-[14px] text-[#1c1c1c] placeholder:text-[#8b8b86] focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]"
+                className="w-full px-4 py-3.5 bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[14px] text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4]"
                 placeholder="Répétez le mot de passe"
                 disabled={loading || !token}
               />
@@ -142,7 +142,7 @@ function ResetPasswordForm() {
             <button
               type="submit"
               disabled={loading || !token}
-              className="w-full py-3 px-4 rounded-xl bg-[#1c1c1c] text-white font-semibold hover:bg-[#333] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3.5 px-4 rounded-[28px] bg-[#e64a5d] text-white font-bold hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Réinitialisation..." : "Réinitialiser le mot de passe"}
             </button>
@@ -155,7 +155,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-b from-[#fff0f3] to-white"><Loader2 size={32} className="animate-spin text-[#1c1c1c]"/></div>}>
+    <Suspense fallback={<div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-b from-[#fff0f3] to-white"><Loader2 size={32} className="animate-spin text-[#0E0E10]"/></div>}>
       <ResetPasswordForm />
     </Suspense>
   );

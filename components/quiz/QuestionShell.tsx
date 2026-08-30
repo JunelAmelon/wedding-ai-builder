@@ -32,14 +32,14 @@ export function QuestionShell({
         if (e.key === "Enter" && !nextDisabled) onNext();
       }}
     >
-      <h1 className="font-display text-3xl sm:text-4xl font-bold leading-[1.05] tracking-tight text-text-primary">{title}</h1>
+      <h1 className="font-allura text-3xl sm:text-4xl font-bold leading-[1.05] tracking-tight text-text-primary">{title}</h1>
       {subtitle && <p className="text-text-secondary mt-3 max-w-prose">{subtitle}</p>}
       {!subtitle && <div className="mt-6" />}
 
       <div className="mt-8">{children}</div>
 
       <div className="mt-10">
-        <Button onClick={onNext} disabled={nextDisabled} className="w-full bg-[#8B7BD8] border-[#8B7BD8] hover:bg-[#7a6bc7] focus-visible:ring-[#8B7BD8]/30" autoFocus>
+        <Button onClick={onNext} disabled={nextDisabled} className="w-full bg-[#e64a5d] border-[#e64a5d] hover:brightness-110 focus-visible:ring-[#e64a5d]/30" autoFocus>
           {nextLabel}
         </Button>
       </div>

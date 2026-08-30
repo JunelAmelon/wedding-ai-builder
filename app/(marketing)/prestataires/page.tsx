@@ -8,10 +8,10 @@ import { ArrowRight, Check, MessageCircle, BarChart3 } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
 
 const FAQS = [
-  { q: "Combien coûte l'inscription ?", a: "L'inscription est gratuite. Vous ne payez aucun abonnement pour recevoir des matches qualifiés." },
-  { q: "Comment fonctionne le score de match ?", a: "Notre IA croise le profil du couple (budget, style, date, localisation) avec votre activité pour ne vous envoyer que les couples avec qui vous allez matcher." },
-  { q: "Puis-je refuser un match ?", a: "Oui, vous restez maître de vos disponibilités. Swipez à gauche sur les couples qui ne vous conviennent pas." },
-  { q: "Quand suis-je facturé ?", a: "Vous n'êtes facturé qu'à la signature effective d'un contrat avec un couple, selon un pourcentage prévu au préalable." },
+  { q: "Combien ça coûte ?", a: "Trois formules d'abonnement sans engagement, à partir de 49 €/mois. Vous choisissez selon vos besoins : visibilité, priorité dans le matching, accompagnement. Vous changez ou arrêtez quand vous voulez." },
+  { q: "Comment fonctionne le matching ?", a: "Notre IA croise le profil du couple (budget, style, date, localisation) avec votre activité pour vous envoyer uniquement les couples qui correspondent à votre savoir-faire. Vous ne perdez plus de temps avec des demandes hors sujet." },
+  { q: "Je peux tester avant de m'abonner ?", a: "Oui. Créez votre profil gratuitement, explorez la plateforme et voyez les premiers matches. Vous vous abonnez quand vous êtes prêt à répondre aux demandes." },
+  { q: "Je suis engagé sur combien de temps ?", a: "Aucun engagement. L'abonnement est mensuel et sans engagement. Vous pouvez changer de formule ou arrêter à tout moment, en un clic." },
 ];
 
 const BROWSER_ROWS = [
@@ -56,17 +56,17 @@ export default function ProfessionalMarketingPage() {
               <div className="hero-text">
                 <div className="trust-badge">
                   <span className="stars">★★★★★</span>
-                  <b>{MARKETING_STATS.avgRating}</b> · avis des professionnels inscrits
+                  <b>{MARKETING_STATS.avgRating}</b> · les professionnels nous font confiance
                 </div>
-                <h1>Des couples avec qui vous allez matcher</h1>
+                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Des couples avec qui vous allez <span className="font-allura text-[#e64a5d]">matcher</span></h1>
                 <p className="lead">
-                  Mariage Facile analyse chaque projet avant de le transmettre — vous recevez moins de demandes, mais des couples avec un score de match élevé.
+                  Recevez directement les bons couples, prêts à signer. Notre IA fait le tri pour vous - vous ne voyez que les projets qui comptent.
                 </p>
               </div>
 
               <div className="hero-mockup reveal">
                 <div className="phone-frame">
-                  <Image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=420&h=800&q=85" alt="Professionnel mariage" width={420} height={800} className="w-full h-full object-cover" unoptimized />
+                  <Image src="https://images.pexels.com/photos/17935722/pexels-photo-17935722.jpeg" alt="Professionnel mariage" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                 </div>
 
                 <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
@@ -75,14 +75,13 @@ export default function ProfessionalMarketingPage() {
                   <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
                   <div className="fc-title">Pack photo</div>
                   <div className="fc-meta">Dès 890 €</div>
-                  <button className="fc-btn">Répondre</button>
                 </div>
 
                 <div className="badge-pill bp-top-right">
                   <Check size={12} /> {MARKETING_STATS.matchScore}% match
                 </div>
                 <div className="badge-pill bp-mid-right">
-                  <MessageCircle size={12} /> 2 roses
+                  <MessageCircle size={12} /> 2 messages
                 </div>
 
                 <div className="stat-card-green">
@@ -95,7 +94,6 @@ export default function ProfessionalMarketingPage() {
                   <div className="fc-info">
                     <div className="fc-title">Mariage champêtre</div>
                     <div className="fc-meta">Bordeaux · juillet 2027</div>
-                    <button className="fc-btn">Voir la fiche</button>
                   </div>
                 </div>
 
@@ -113,7 +111,7 @@ export default function ProfessionalMarketingPage() {
                     Trouver mes couples <ArrowRight size={16} />
                   </Link>
                   <Link href="#workflow" className="btn btn-outline">
-                    Découvrir le matching
+                    Voir comment ça marche
                   </Link>
                 </div>
               </div>
@@ -125,28 +123,28 @@ export default function ProfessionalMarketingPage() {
         <section id="workflow">
           <div className="wrap">
             <div className="section-head-center">
-              <span className="eyebrow-pill">Workflows IA</span>
-              <h2 style={{ marginTop: 18 }}>Comment notre algorithme de match travaille pour vous</h2>
+              <span className="eyebrow-pill">Comment ça marche</span>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18, marginBottom: 12 }}>L'IA qui vous trouve les <span className="text-[#e64a5d]">bons couples</span></h2>
               <p style={{ marginTop: 10 }}>
-                Du premier match à la signature, sans effort supplémentaire — de 0 à 100 % automatisé.
+                Du premier contact à la signature, on s'occupe de tout. Vous vous concentrez sur votre métier.
               </p>
             </div>
 
             <div className="workflow-card reveal">
               <div>
                 <span className="wf-tag">Matching intelligent</span>
-                <h3>Une sélection affinée à chaque échange</h3>
+                <h3>Les bons couples, automatiquement</h3>
                 <p>
-                  Chaque échange avec un couple affine le score de match en temps réel : budget, style, disponibilité, localisation. Vous ne recevez que les couples avec qui vous allez vraiment matcher.
+                  Budget, style, date, lieu - chaque détail est analysé pour vous envoyer uniquement les couples qui correspondent à votre savoir-faire. Fini les demandes hors sujet.
                 </p>
                 <Link href="#workflow" className="wf-link">
-                  En savoir plus <ArrowRight size={14} />
+                  Voir un exemple concret <ArrowRight size={14} />
                 </Link>
               </div>
               <div className="wf-visual reveal">
                 <div className="hero-mockup">
                   <div className="phone-frame">
-                    <Image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=420&h=800&q=85" alt="Matching IA" width={420} height={800} className="w-full h-full object-cover" unoptimized />
+                    <Image src="https://images.pexels.com/photos/17665897/pexels-photo-17665897.jpeg" alt="Matching IA" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                   </div>
 
                   <div className="rating-badge"><span>★★★★★</span> {MARKETING_STATS.avgRating}</div>
@@ -155,7 +153,6 @@ export default function ProfessionalMarketingPage() {
                     <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
                     <div className="fc-title">Budget</div>
                     <div className="fc-meta">2 300 €</div>
-                    <button className="fc-btn">Quiz</button>
                   </div>
 
                   <div className="badge-pill bp-top-right">
@@ -171,11 +168,10 @@ export default function ProfessionalMarketingPage() {
                   </div>
 
                   <div className="floating-card fc-bottom-right">
-                    <Image src="https://images.unsplash.com/photo-1556228720-19870e0b591a?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
+                    <Image src="https://images.pexels.com/photos/3171837/pexels-photo-3171837.jpeg?auto=compress&cs=tinysrgb&w=300&h=200" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
                     <div className="fc-info">
                       <div className="fc-title">Conseil personnalisé</div>
                       <div className="fc-meta">Recommandation IA</div>
-                      <button className="fc-btn">Découvrir</button>
                     </div>
                   </div>
 
@@ -211,16 +207,15 @@ export default function ProfessionalMarketingPage() {
                     <div className="p">89,99 €</div>
                   </div>
                 </div>
-                <button className="lp-shop-btn">Voir la fiche complète</button>
               </div>
               <div>
-                <span className="eyebrow-pill">Tableau de bord</span>
-                <h3>Suivez vos matches en direct</h3>
+                <span className="eyebrow-pill">Pilotez votre activité</span>
+                <h3>Chaque match, en temps réel</h3>
                 <p>
-                  Chaque couple arrive avec un score de match, un budget, un style et une estimation de probabilité de signature — vous savez immédiatement si c'est un match parfait.
+                  Pour chaque couple, vous voyez le budget, le style, la date et la probabilité de signature. Vous savez immédiatement si c'est un client sérieux.
                 </p>
                 <Link href="/devenir-professionnel" className="wf-link">
-                  Voir un exemple <ArrowRight size={14} />
+                  Explorer l'espace pro <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
@@ -231,7 +226,7 @@ export default function ProfessionalMarketingPage() {
         <section className="proof-section">
           <div className="wrap">
             <div className="proof-head">
-              <h2>Ils ne matchent pas qu'une fois — ils reviennent.</h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginBottom: 22 }}>Des pros qui <span className="text-[#e64a5d]">resteront</span> avec vous</h2>
             </div>
 
             <div className="proof-divider">
@@ -266,7 +261,7 @@ export default function ProfessionalMarketingPage() {
                   <div className="ic">
                     <BarChart3 size={16} color="#fff" />
                   </div>
-                  <span>Confiance mesurée</span>
+                  <span>Résultats concrets</span>
                 </div>
                 <div className="pdc-stats">
                   <div className="col">
@@ -279,7 +274,7 @@ export default function ProfessionalMarketingPage() {
                   </div>
                   <div className="col">
                     <div className="n">9 750 €</div>
-                    <div className="l">Économisés en moyenne par couple</div>
+                    <div className="l">Revenu moyen par signature</div>
                   </div>
                 </div>
               </div>
@@ -290,15 +285,14 @@ export default function ProfessionalMarketingPage() {
         {/* DARK SHOWCASE */}
         <section className="dark-showcase" id="discover">
           <div className="wrap">
-            <span className="eyebrow-pill">Découvrez pourquoi</span>
-            <h2>Une expérience plus intelligente, plus rapide, plus engageante</h2>
+            <span className="eyebrow-pill">Votre espace, pensé pour vous</span>
+            <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 16, marginBottom: 12 }}>Un outil <span className="text-[#e64a5d]">simple et puissant</span></h2>
             <p>
-              Votre espace professionnel se construit à la frontière du bon design et de l'IA — pensé pour combler l'écart entre une demande et une signature.
+              Un espace propre, clair, rapide. Gérez vos demandes, suivez vos signatures et développez votre activité depuis un seul endroit.
             </p>
             <Link
               href="/devenir-professionnel"
               className="btn btn-solid"
-              style={{ background: "#fff", color: "var(--ink)", borderColor: "#fff" }}
             >
               Créer mon profil
             </Link>
@@ -335,7 +329,7 @@ export default function ProfessionalMarketingPage() {
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">FAQ</span>
-              <h2 style={{ marginTop: 18 }}>Vos questions</h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18 }}>Vos <span className="text-[#e64a5d]">questions</span></h2>
             </div>
             <div className="faq-wrap reveal">
               {FAQS.map((item, i) => {
@@ -356,6 +350,20 @@ export default function ProfessionalMarketingPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* FINAL CTA */}
+        <section className="bg-white">
+          <div className="wrap">
+            <div className="final-cta reveal">
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ color: "#fff" }}>Votre prochain client est <span className="text-[#e64a5d]">ici</span></h2>
+              <p>Rejoignez les pros qui ont déjà signé avec les bons couples. Votre prochain contrat est à portée de clic.</p>
+              <div className="btn-row" style={{ justifyContent: "center" }}>
+                <Link href="/devenir-professionnel" className="btn btn-solid">Créer mon profil - Gratuit <ArrowRight size={16} /></Link>
+                <Link href="#workflow" className="btn btn-outline">Voir comment ça marche</Link>
+              </div>
             </div>
           </div>
         </section>

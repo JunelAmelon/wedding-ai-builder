@@ -78,18 +78,18 @@ export default function BlogPage() {
             <div className="blog-hero-grid">
               <div className="hero-text">
                 <div className="trust-badge">
-                  <Star className="stars" size={14} fill="#B8960C" color="#B8960C" />
+                  <Star className="stars" size={14} fill="var(--coral)" color="var(--coral)" />
                   <b>Le guide</b> · organisation de mariage
                 </div>
-                <h1>Des conseils concrets, écrits par des gens qui organisent des mariages</h1>
+                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Des conseils concrets par des <span className="font-allura text-[#e64a5d]">experts</span> du mariage</h1>
                 <p className="lead">
-                  Budget, planning, prestataires, style : nos guides pour avancer sans y laisser vos week-ends.
+                  Budget, planning, prestataires, style : tous nos guides pour organiser votre mariage sans stress ni mauvaises surprises.
                 </p>
               </div>
 
               <div className="hero-mockup reveal">
                 <div className="phone-frame">
-                  <Image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=420&h=800&q=85" alt="" width={420} height={800} className="w-full h-full object-cover" unoptimized />
+                  <Image src="https://images.pexels.com/photos/5357430/pexels-photo-5357430.jpeg" alt="" width={420} height={800} className="w-full h-full object-cover" unoptimized />
                 </div>
 
                 <div className="rating-badge"><span>★★★★★</span> 4.8</div>
@@ -98,7 +98,6 @@ export default function BlogPage() {
                   <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
                   <div className="fc-title">Budget</div>
                   <div className="fc-meta">Répartition claire</div>
-                  <button className="fc-btn">Lire</button>
                 </div>
 
                 <div className="badge-pill bp-top-right">
@@ -108,7 +107,7 @@ export default function BlogPage() {
                   <Star size={12} /> Nouveau guide
                 </div>
 
-                <div className="stat-card-green" style={{ background: "var(--bordeaux)" }}>
+                <div className="stat-card-green" style={{ background: "var(--coral)" }}>
                   <b>42</b>
                   <span>articles publiés</span>
                 </div>
@@ -118,7 +117,6 @@ export default function BlogPage() {
                   <div className="fc-info">
                     <div className="fc-title">Trouver son style</div>
                     <div className="fc-meta">10 min · guide</div>
-                    <button className="fc-btn">Lire</button>
                   </div>
                 </div>
 
@@ -144,7 +142,7 @@ export default function BlogPage() {
         <section className="dark-stats">
           <div className="wrap">
             <span className="eyebrow-pill">Ils nous lisent</span>
-            <h2>Un guide consulté chaque jour par des futurs mariés</h2>
+            <h2 className="font-allura text-3xl sm:text-4xl font-bold">Un guide lu chaque jour par des <span className="text-[#e64a5d]">futurs mariés</span></h2>
             <div className="dark-stats-grid">
               <div>
                 <div className="cap">Lectures cumulées</div>
@@ -166,7 +164,7 @@ export default function BlogPage() {
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">Articles</span>
-              <h2 style={{ marginTop: 18 }}>Nos derniers guides</h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18 }}>Nos derniers <span className="text-[#e64a5d]">guides</span></h2>
             </div>
 
             <div className="filter-row" style={{ marginBottom: 40 }}>
@@ -183,9 +181,9 @@ export default function BlogPage() {
 
             <div className="blog-grid-big">
               {loading ? (
-                <p className="col-span-3 text-center text-[#8b8b86]">Chargement des articles...</p>
+                <p className="col-span-3 text-center text-[#6B6B72]">Chargement des articles...</p>
               ) : filtered.length === 0 ? (
-                <p className="col-span-3 text-center text-[#8b8b86]">Aucun article disponible.</p>
+                <p className="col-span-3 text-center text-[#6B6B72]">Aucun article disponible.</p>
               ) : (
                 filtered.map((a, i) => (
                   <article key={i} className="blog-card reveal">
@@ -205,7 +203,7 @@ export default function BlogPage() {
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">Explorer</span>
-              <h2 style={{ marginTop: 18 }}>Parcourir par thème</h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 18 }}>Parcourir par <span className="text-[#e64a5d]">thème</span></h2>
             </div>
             <div className="cat-tags reveal">
               {TAGS.map((t) => {
@@ -231,7 +229,7 @@ export default function BlogPage() {
           <div className="wrap">
             <div className="newsletter-block reveal">
               <span className="eyebrow-pill" style={{ background: "#fff", border: "none" }}>Newsletter</span>
-              <h2 style={{ marginTop: 16 }}>Un guide par semaine, droit dans votre boîte mail</h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 16 }}>Un guide par semaine dans votre <span className="text-[#e64a5d]">boîte mail</span></h2>
               <p>Pas de spam, juste des conseils concrets pour avancer sur votre organisation.</p>
               <div className="newsletter-form">
                 <input
