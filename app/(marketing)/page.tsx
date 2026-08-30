@@ -214,7 +214,7 @@ export default function LandingPage() {
   }, [testimonials.length]);
 
   useEffect(() => {
-    if (testiIndex >= testimonials.length) {
+    if (testiIndex >= testimonials.length * 2) {
       const timer = setTimeout(() => {
         setTestiNoTransition(true);
         setTestiIndex(0);
@@ -379,7 +379,10 @@ export default function LandingPage() {
                     muted
                     loop
                     playsInline
-                    preload="metadata"
+                    preload="auto"
+                    disablePictureInPicture
+                    onCanPlayThrough={(e) => { e.currentTarget.play(); }}
+                    onPause={(e) => { e.currentTarget.play(); }}
                   />
                   <span className="badge-corner-stat">{item.badge}</span>
                 </div>
@@ -479,7 +482,7 @@ export default function LandingPage() {
                   }
                 }}
               >
-                <div className="testi-track" style={{ transform: `translateX(-${testiIndex * 50}%)`, transition: testiNoTransition ? "none" : "transform .5s ease" }}>
+                <div className="testi-track" style={{ transform: `translateX(-${testiIndex * (100 / (testimonials.length * 2))}%)`, transition: testiNoTransition ? "none" : "transform .5s ease" }}>
                   {[...testimonials, ...testimonials].map((t, i) => (
                     <div key={i} className="testi-slide">
                       <div className="testi-card">
@@ -501,6 +504,14 @@ export default function LandingPage() {
                     </div>
                   ))}
                 </div>
+
+                <div className="testi-controls">
+                  <div className="testi-dots">
+                    {testimonials.map((_, i) => (
+                      <button key={i} className={i === testiIndex % testimonials.length ? "on" : ""} onClick={() => setTestiIndex(i)} aria-label={`Témoignage ${i + 1}`} />
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="stat-stack">
@@ -510,13 +521,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="testi-controls">
-              <div className="testi-dots">
-                {testimonials.map((_, i) => (
-                  <button key={i} className={i === testiIndex % testimonials.length ? "on" : ""} onClick={() => setTestiIndex(i)} aria-label={`Témoignage ${i + 1}`} />
-                ))}
-              </div>
-            </div>
           </div>
         </section>
 

@@ -66,10 +66,10 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
             </Link>
           </div>
 
-          <div className="flex md:hidden items-center gap-3">
+          <div className="flex md:hidden items-center gap-4">
             <Link
               href={ctaHref}
-              className="inline-flex items-center justify-center h-10 w-10 rounded-full bg-[#e64a5d] text-white hover:brightness-110 transition"
+              className="inline-flex items-center justify-center h-11 w-11 rounded-full bg-[#e64a5d] text-white hover:brightness-110 transition"
               aria-label={ctaLabel}
             >
               <ArrowRight size={18} />
@@ -121,7 +121,7 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
           <Link
             href={ctaHref}
             onClick={() => setMenuOpen(false)}
-            className="mt-2 inline-flex items-center justify-center gap-2 h-12 rounded-full bg-[#e64a5d] text-white font-semibold hover:brightness-110 transition"
+            className="mt-2 mx-1 inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full bg-[#e64a5d] text-white font-semibold hover:brightness-110 transition"
           >
             {ctaLabel}
             <ArrowRight size={16} />
