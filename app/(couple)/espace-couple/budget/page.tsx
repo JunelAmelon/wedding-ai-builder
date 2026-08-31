@@ -21,6 +21,7 @@ import {
   Target,
   Sparkles,
   Check,
+  ChevronDown,
 } from "lucide-react";
 import type { WeddingProject, WeddingExpense } from "@/types/marketplace";
 import type { BudgetBreakdown } from "@/types/domain";
@@ -145,6 +146,7 @@ export default function CoupleBudgetPage() {
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -427,7 +429,7 @@ export default function CoupleBudgetPage() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main Content */}
           <div className="flex-1 space-y-6">
-            {/* Expenses by Category */}
+            {/* Dépenses par catégorie - dépliable */}
             <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-[#0E0E10]">Dépenses par catégorie</h2>
@@ -447,43 +449,79 @@ export default function CoupleBudgetPage() {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {filteredExpenses.map(([cat, data]) => {
                     const colors = CATEGORY_COLORS[cat] || CATEGORY_COLORS["Autre"];
                     const pct = totalPlanned > 0 ? Math.round((data.planned / totalPlanned) * 100) : 0;
+                    const isOpen = expandedCategory === cat;
                     return (
-                      <div
-                        key={cat}
-                        className="flex items-center gap-4 p-3 rounded-xl hover:bg-[#fef2f4] transition-colors cursor-pointer"
-                        onClick={() => {
-                          const expense = data.items[0];
-                          if (expense) openEditExpense(expense);
-                        }}
-                      >
+                      <div key={cat}>
                         <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
-                          style={{ backgroundColor: colors.bg }}
+                          className="flex items-center gap-4 p-3 rounded-xl hover:bg-[#fef2f4] transition-colors cursor-pointer"
+                          onClick={() => setExpandedCategory(isOpen ? null : cat)}
                         >
-                          {colors.icon}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-medium text-[#0E0E10] truncate">{cat}</span>
-                            <span className="text-sm font-semibold text-[#0E0E10]">{fmt(data.actual)} {currency}</span>
+                          <div
+                            className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0"
+                            style={{ backgroundColor: colors.bg }}
+                          >
+                            {colors.icon}
                           </div>
-                          <div className="flex items-center gap-3">
-                            <div className="flex-1 h-1.5 bg-[#fef2f4] rounded-full overflow-hidden">
-                              <div
-                                className="h-full rounded-full transition-all duration-500"
-                                style={{
-                                  width: `${data.planned > 0 ? Math.min(100, (data.actual / data.planned) * 100) : 0}%`,
-                                  backgroundColor: colors.text,
-                                }}
-                              />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-medium text-[#0E0E10] truncate">{cat}</span>
+                              <span className="text-sm font-semibold text-[#0E0E10]">{fmt(data.actual)} {currency}</span>
                             </div>
-                            <span className="text-xs text-[#6B6B72] shrink-0">{pct}%</span>
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 h-1.5 bg-[#fef2f4] rounded-full overflow-hidden">
+                                <div
+                                  className="h-full rounded-full transition-all duration-500"
+                                  style={{
+                                    width: `${data.planned > 0 ? Math.min(100, (data.actual / data.planned) * 100) : 0}%`,
+                                    backgroundColor: colors.text,
+                                  }}
+                                />
+                              </div>
+                              <span className="text-xs text-[#6B6B72] shrink-0">{pct}%</span>
+                            </div>
                           </div>
+                          <ChevronDown
+                            size={18}
+                            className={`text-[#6B6B72] shrink-0 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                          />
                         </div>
+
+                        {isOpen && (
+                          <div className="ml-4 pl-10 pr-2 py-2 space-y-2">
+                            {data.items.map((expense) => (
+                              <div
+                                key={expense.id}
+                                className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#fef2f4] transition-colors cursor-pointer"
+                                onClick={() => openEditExpense(expense)}
+                              >
+                                <div
+                                  className="w-9 h-9 rounded-lg flex items-center justify-center text-sm shrink-0"
+                                  style={{ backgroundColor: colors.bg }}
+                                >
+                                  {colors.icon}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-[#0E0E10] truncate">{expense.label}</p>
+                                  <p className="text-xs text-[#6B6B72]">
+                                    {expense.actualAmount != null ? `Payé ${fmt(expense.actualAmount)} ${currency}` : `Prévu ${fmt(expense.plannedAmount)} ${currency}`}
+                                  </p>
+                                </div>
+                                <div className="text-right shrink-0">
+                                  <p className="text-sm font-semibold text-[#0E0E10]">
+                                    {expense.actualAmount != null ? fmt(expense.actualAmount) : fmt(expense.plannedAmount)} {currency}
+                                  </p>
+                                  <p className="text-xs text-[#6B6B72]">
+                                    {expense.actualAmount != null ? "Payé" : "Prévu"}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -491,51 +529,6 @@ export default function CoupleBudgetPage() {
               )}
             </div>
 
-            {/* Recent Transactions */}
-            <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-[#0E0E10]">Transactions récentes</h2>
-              </div>
-
-              {recentExpenses.length === 0 ? (
-                <div className="text-center py-8">
-                  <CreditCard size={32} className="text-[#6B6B72] mx-auto mb-3" />
-                  <p className="text-sm text-[#6B6B72]">Aucune transaction</p>
-                </div>
-              ) : (
-                <div className="space-y-3 max-h-[360px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-[#fef2f4] [&::-webkit-scrollbar-thumb]:bg-[#FBE1E6] [&::-webkit-scrollbar-thumb]:rounded-full">
-                  {recentExpenses.map((expense) => {
-                    const colors = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS["Autre"];
-                    return (
-                      <div
-                        key={expense.id}
-                        className="flex items-center gap-3 p-2 rounded-xl hover:bg-[#fef2f4] transition-colors cursor-pointer"
-                        onClick={() => openEditExpense(expense)}
-                      >
-                        <div
-                          className="w-9 h-9 rounded-lg flex items-center justify-center text-sm"
-                          style={{ backgroundColor: colors.bg }}
-                        >
-                          {colors.icon}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[#0E0E10] truncate">{expense.label}</p>
-                          <p className="text-xs text-[#6B6B72]">{expense.category}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-semibold text-[#0E0E10]">
-                            {expense.actualAmount != null ? fmt(expense.actualAmount) : fmt(expense.plannedAmount)} {currency}
-                          </p>
-                          <p className="text-xs text-[#6B6B72]">
-                            {expense.actualAmount != null ? "Payé" : "Prévu"}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Sidebar - visible sur mobile aussi */}
