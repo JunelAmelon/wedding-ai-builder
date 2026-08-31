@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Header, Footer, LogoMarquee } from "@/components/layout";
-import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X, Play, Pause } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
 
 const VALUES = [
@@ -116,13 +116,70 @@ const FAQS = [
   { q: "Les pros sont-ils vérifiés ?", a: "Oui. Tous les prestataires sont vérifiés par notre équipe avant d'être disponibles sur la plateforme." },
 ];
 
+function AudioWaveButton({
+  onClick,
+  isPlaying,
+}: {
+  onClick: () => void;
+  isPlaying: boolean;
+}) {
+  const [heights, setHeights] = useState([6, 10, 16, 12, 20, 14, 24, 18, 10, 22, 14, 26, 12, 18, 8, 16, 10, 6]);
+  const baseHeights = useRef(heights);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const id = setInterval(() => {
+      setHeights((prev) =>
+        prev.map((_, i) => {
+          const base = baseHeights.current[i];
+          const next = base + (Math.random() - 0.5) * 16;
+          return Math.max(4, Math.min(28, next));
+        })
+      );
+    }, 120);
+    return () => clearInterval(id);
+  }, [isPlaying]);
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex items-center gap-3 pl-5 pr-3 py-2.5 rounded-full bg-[#fef2f4] border border-[#e64a5d]/20 text-[#e64a5d] shadow-lg hover:scale-105 transition shrink-0"
+      aria-label={isPlaying ? "Mettre en pause" : "Lire la vidéo"}
+    >
+      <span className="flex items-center gap-[3px] h-6">
+        {heights.map((h, i) => (
+          <span
+            key={i}
+            className="w-[3px] rounded-full bg-[#e64a5d] transition-all duration-100"
+            style={{ height: `${h}px` }}
+          />
+        ))}
+      </span>
+      <span className="h-8 w-8 rounded-full bg-[#e64a5d] flex items-center justify-center text-white">
+        {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" className="ml-0.5" />}
+      </span>
+    </button>
+  );
+}
+
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [openValue, setOpenValue] = useState<number | null>(0);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [testiIndex, setTestiIndex] = useState(0);
   const [testiNoTransition, setTestiNoTransition] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const touchStartX = useRef(0);
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
   const heroStageOuterRef = useRef<HTMLDivElement>(null);
   const heroStageRef = useRef<HTMLDivElement>(null);
 
@@ -335,6 +392,78 @@ export default function LandingPage() {
                   <h3>C'est un match ? Swipez à droite</h3>
                   <p>Des prestataires compatibles avec votre mariage, triés par score de match. Plus de perte de temps avec les mauvais pros.</p>
                   <Link href="/prestataires" className="btn btn-outline">Voir mes pros</Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PRÉSENTATION VIDÉO */}
+        <section id="demo" className="bg-black py-20 sm:py-28 overflow-hidden">
+          <div className="wrap">
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <span className="inline-block text-xs uppercase tracking-[0.22em] text-[#6B6B72] mb-4">En un clin d'œil</span>
+              <h2 className="text-4xl sm:text-6xl font-bold tracking-tight text-white mb-5">
+                Votre mariage, <span className="text-[#e64a5d]">simplifié</span>
+              </h2>
+              <p className="text-lg text-[#6B6B72]">
+                En moins de 2 minutes, découvrez comment Mariage Facile trouve les prestataires parfaits pour votre grand jour.
+              </p>
+              <div className="mt-8">
+                <Link href="/quiz" className="btn btn-solid">
+                  Trouver mes pros - Gratuit <ArrowRight size={16} />
+                </Link>
+              </div>
+            </div>
+
+            <div className="relative max-w-5xl mx-auto reveal">
+              <div className="relative aspect-video w-full rounded-[28px] overflow-hidden border border-white/10 bg-[#0E0E10] shadow-2xl ring-1 ring-white/10">
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover"
+                  src="https://assets.mixkit.co/videos/40599/40599-720.mp4"
+                  poster="/banni%C3%A8re%20video.jpg"
+                  playsInline
+                  preload="metadata"
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={() => setIsPlaying(false)}
+                  onClick={() => {
+                    if (videoRef.current) {
+                      if (videoRef.current.paused) videoRef.current.play();
+                      else videoRef.current.pause();
+                    }
+                  }}
+                  onTimeUpdate={() => setCurrentTime(videoRef.current?.currentTime || 0)}
+                  onLoadedMetadata={() => setDuration(videoRef.current?.duration || 0)}
+                />
+                <div className="absolute bottom-0 left-0 right-0 z-10 p-4 sm:p-5 flex items-center gap-3 sm:gap-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white">
+                  <AudioWaveButton
+                    onClick={() => {
+                      if (videoRef.current) {
+                        if (videoRef.current.paused) videoRef.current.play();
+                        else videoRef.current.pause();
+                      }
+                    }}
+                    isPlaying={isPlaying}
+                  />
+                  <span className="text-xs font-medium tabular-nums w-24 text-center shrink-0">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={duration}
+                    step="0.1"
+                    value={currentTime}
+                    onChange={(e) => {
+                      if (videoRef.current) {
+                        videoRef.current.currentTime = Number(e.target.value);
+                        setCurrentTime(Number(e.target.value));
+                      }
+                    }}
+                    className="flex-1 h-1.5 rounded-full bg-white/20 cursor-pointer accent-[#e64a5d]"
+                  />
                 </div>
               </div>
             </div>
