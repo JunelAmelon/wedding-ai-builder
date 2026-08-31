@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { userRepo } from "@/lib/db/repositories/userRepo";
+import { sendPasswordResetEmail } from "@/lib/email/smtp";
 import { randomBytes } from "crypto";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
 
     if (!user) {
       // Pour la sécurité, on ne révèle pas si l'email existe ou pas
-      return NextResponse.json({ success: true, message: "Si cet email existe, un lien de réinitialisation sera envoyé." });
+      return NextResponse.json({ success: true, message: "Si cette adresse est associée à un compte, vous recevrez un email de réinitialisation à l'adresse indiquée." });
     }
 
     // Générer un token de réinitialisation
@@ -40,13 +41,13 @@ export async function POST(req: Request) {
       resetTokenExpiry: resetTokenExpiry.toISOString(),
     } as any);
 
-    // En production, envoyer un email avec le lien (implémenter ici)
-    // En développement, logguer le token côté serveur si nécessaire
-    if (process.env.NODE_ENV === "development") {
-      console.log(`[dev] reset token for ${email}: ${resetToken}`);
-    }
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
 
-    return NextResponse.json({ success: true, message: "Si cet email existe, un lien de réinitialisation sera envoyé." });
+    // Envoyer l'email de réinitialisation
+    await sendPasswordResetEmail(email, resetLink);
+
+    return NextResponse.json({ success: true, message: "Un email de réinitialisation a été envoyé à l'adresse indiquée." });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur lors de la demande de réinitialisation";
     return NextResponse.json({ error: message }, { status: 500 });
