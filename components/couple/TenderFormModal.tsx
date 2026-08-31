@@ -212,8 +212,8 @@ export default function TenderFormModal({
             <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
               Tranche de budget
             </label>
-            <div className="flex items-center gap-3">
-              <div className="relative flex-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="relative w-full sm:flex-1">
                 <Wallet size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B72]" />
                 <input
                   type="number"
@@ -223,15 +223,15 @@ export default function TenderFormModal({
                   className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                 />
               </div>
-              <span className="text-[#6B6B72]">—</span>
+              <span className="text-[#6B6B72] hidden sm:inline">—</span>
               <input
                 type="number"
                 value={budgetMax}
                 onChange={(e) => { setBudgetMax(e.target.value); setFormTouched(true); }}
                 placeholder="Max"
-                className="flex-1 bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
+                className="w-full sm:flex-1 bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
               />
-              <span className="text-xs text-[#6B6B72]">EUR</span>
+              <span className="text-xs text-[#6B6B72] shrink-0">EUR</span>
             </div>
           </div>
 

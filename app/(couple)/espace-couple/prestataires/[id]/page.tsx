@@ -7,7 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import PageHeader from "@/components/couple/PageHeader";
-import { Loader2, ArrowLeft, ChevronRight, MapPin, Star } from "lucide-react";
+import { Loader2, ArrowLeft, ChevronRight, MapPin, Star, X } from "lucide-react";
 import type { Tender, Proposal, VendorProfile } from "@/types/marketplace";
 
 /* ---------- Icônes sur-mesure ---------- */
@@ -105,6 +105,13 @@ export default function TenderDetailPage() {
   const [validating, setValidating] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"liste" | "dossier">("dossier");
+  const [closure, setClosure] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!closure) return;
+    const timer = setTimeout(() => setClosure(null), 3500);
+    return () => clearTimeout(timer);
+  }, [closure]);
 
   useEffect(() => {
     async function load() {
@@ -138,6 +145,9 @@ export default function TenderDetailPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erreur");
       setTender(json.tender as TenderWithProposals);
+      const accepted = tender?.proposals?.find((p) => p.id === proposalId);
+      const vendorName = accepted?.vendor?.companyName || accepted?.vendor?.brandName || "ce prestataire";
+      setClosure(vendorName);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur");
     } finally {
@@ -174,7 +184,7 @@ export default function TenderDetailPage() {
         </Link>
 
         <PageHeader eyebrow="Appel d'offres" title={tender.category} titleClassName="font-allura font-normal">
-          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold text-[10px] uppercase tracking-[0.08em] ${meta.chip}`}>
+          <span className={`inline-flex self-start items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold text-[10px] uppercase tracking-[0.08em] ${meta.chip}`}>
             <meta.Icon size={14} />
             {meta.label}
           </span>
@@ -282,20 +292,6 @@ export default function TenderDetailPage() {
           </button>
         </div>
 
-        {/* ================= CLOSURE BANNER ================= */}
-        {isClosed && selectedProposal && (
-          <div className="mx-0 sm:mx-2 mb-6 bg-[#D8ECD9] border border-[#EDEDF0] rounded-[28px] px-5 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
-            <div className="w-11 h-11 rounded-full bg-[#3C8552] flex items-center justify-center text-white shrink-0">
-              <SealCheckIcon size={22} />
-            </div>
-            <div className="flex-1">
-              <h4 className="text-[14px] font-bold text-[#0E0E10] mb-0.5">Dossier clôturé</h4>
-              <p className="text-[13px] text-[#3C8552]">
-                Vous avez retenu <strong>{selectedProposal.vendor?.companyName || selectedProposal.vendor?.brandName || "ce professionnel"}</strong>. L'appel d'offres est terminé.
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* ================= CONTENT ================= */}
         {proposals.length === 0 ? (
@@ -320,19 +316,19 @@ export default function TenderDetailPage() {
                       <div key={`empty-${i}`} className="group flex flex-col">
                         <div
                           className="relative rounded-[28px] overflow-hidden aspect-[4/3] flex items-center justify-center"
-                          style={{ background: EMPTY_GRADIENTS[i % EMPTY_GRADIENTS.length] }}
+                          style={{ background: isClosed ? "#EDEDF0" : EMPTY_GRADIENTS[i % EMPTY_GRADIENTS.length] }}
                         >
                           <div className="text-center px-4">
                             <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-3 text-[#6B6B72]">
-                              <span className="text-lg">?</span>
+                              <span className="text-lg">{isClosed ? "✓" : "+"}</span>
                             </div>
-                            <p className="text-[13px] font-bold text-[#6B6B72]">À venir</p>
-                            <p className="text-[11px] text-[#6B6B72]/70 mt-1">Un prestataire répondra bientôt ici.</p>
+                            <p className="text-[13px] font-bold text-[#6B6B72]">{isClosed ? "C'est fini" : "Aucune proposition"}</p>
+                            <p className="text-[11px] text-[#6B6B72]/70 mt-1">{isClosed ? "Dossier clôturé" : "Aucun dossier reçu"}</p>
                           </div>
                         </div>
                         <div className="mt-3 px-1">
                           <div className="text-[14px] font-bold text-[#6B6B72]">—</div>
-                          <div className="text-[11.5px] text-[#6B6B72]/70">En attente de réponse</div>
+                          <div className="text-[11.5px] text-[#6B6B72]/70">{isClosed ? "Terminé" : "Aucune réponse"}</div>
                         </div>
                       </div>
                     );
@@ -340,11 +336,15 @@ export default function TenderDetailPage() {
 
                   const vendor: Partial<EnrichedVendor> = proposal.vendor ?? {};
                   const isSelected = proposal.id === tender.selectedProposalId;
-                  const isDeclined = proposal.status === "declined";
+                  const isFinished = isClosed && !isSelected;
+                  const isNotRetained = !!selectedProposal && !isSelected && !isClosed;
+                  const isDeclined = proposal.status === "declined" || isFinished || isNotRetained;
                   const proposalMeta = isSelected
                     ? { label: "Validé", Icon: SealCheckIcon, bg: "#3C8552" }
-                    : isDeclined
-                    ? { label: "Non retenu", Icon: DashIcon, bg: "#6B6B72" }
+                    : isFinished
+                    ? { label: "C'est fini", Icon: DashIcon, bg: "#0E0E10" }
+                    : isNotRetained
+                    ? { label: "Pas retenu", Icon: DashIcon, bg: "#e64a5d" }
                     : { label: "Reçu", Icon: EnvelopeOpenIcon, bg: "#5B4FC4" };
 
                   return (
@@ -427,6 +427,16 @@ export default function TenderDetailPage() {
                             <SealCheckIcon size={14} /> Validé
                           </span>
                         )}
+                        {isFinished && (
+                          <span className="flex-1 text-center rounded-full bg-[#0E0E10] text-white text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
+                            <DashIcon size={14} /> C'est fini
+                          </span>
+                        )}
+                        {isNotRetained && (
+                          <span className="flex-1 text-center rounded-full bg-[#e64a5d] text-white text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
+                            <DashIcon size={14} /> Pas retenu
+                          </span>
+                        )}
                       </div>
                     </div>
                   );
@@ -437,12 +447,16 @@ export default function TenderDetailPage() {
                 {proposals.map((proposal, i) => {
                   const vendor: Partial<EnrichedVendor> = proposal.vendor ?? {};
                   const isSelected = proposal.id === tender.selectedProposalId;
-                  const isDeclined = proposal.status === "declined";
+                  const isFinished = isClosed && !isSelected;
+                  const isNotRetained = !!selectedProposal && !isSelected && !isClosed;
+                  const isDeclined = proposal.status === "declined" || isFinished || isNotRetained;
                   const num = String(i + 1).padStart(2, "0");
                   const proposalMeta = isSelected
                     ? { label: "Validé", Icon: SealCheckIcon, bg: "#3C8552" }
-                    : isDeclined
-                    ? { label: "Non retenu", Icon: DashIcon, bg: "#6B6B72" }
+                    : isFinished
+                    ? { label: "C'est fini", Icon: DashIcon, bg: "#0E0E10" }
+                    : isNotRetained
+                    ? { label: "Pas retenu", Icon: DashIcon, bg: "#e64a5d" }
                     : { label: "Reçu", Icon: EnvelopeOpenIcon, bg: "#5B4FC4" };
                   const isLast = i === proposals.length - 1;
 
@@ -484,7 +498,7 @@ export default function TenderDetailPage() {
                 })}
                 {emptySlots > 0 && (
                   <div className="px-5 py-5 text-[13px] text-[#6B6B72] border-t border-[#EDEDF0]">
-                    + {emptySlots} proposition{emptySlots > 1 ? "s" : ""} à venir
+                    + {emptySlots} proposition{emptySlots > 1 ? "s" : ""} {isClosed ? "clôturée" : "restante"}{emptySlots > 1 ? "s" : ""}
                   </div>
                 )}
               </div>
@@ -492,6 +506,28 @@ export default function TenderDetailPage() {
           </div>
         )}
       </div>
+
+      {closure && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30">
+          <div className="relative bg-white border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-w-sm w-full text-center">
+            <button
+              onClick={() => setClosure(null)}
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-white border border-[#EDEDF0] text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] flex items-center justify-center"
+              aria-label="Fermer"
+            >
+              <X size={18} />
+            </button>
+            <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-4 text-[#0E0E10]">
+              <SealCheckIcon size={28} />
+            </div>
+            <p className="text-[#6B6B72] text-xs font-bold uppercase tracking-wider mb-2">Validation confirmée</p>
+            <h3 className="font-allura text-2xl font-normal text-[#0E0E10] mb-3">Dossier clôturé</h3>
+            <p className="text-sm text-[#6B6B72]">
+              Vous avez retenu <span className="font-semibold text-[#0E0E10]">{closure}</span>. L'appel d'offres est terminé.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

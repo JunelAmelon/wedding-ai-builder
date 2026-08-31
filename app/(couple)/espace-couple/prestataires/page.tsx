@@ -170,7 +170,7 @@ export default function CoupleVendorsPage() {
           ((tendersJson.tenders || []) as TenderWithProposals[]).forEach((t) => {
             (t.proposals || []).forEach((p) => {
               if (p.status === "accepted" && p.vendor) {
-                confirmed.push({ ...p.vendor, category: t.category });
+                confirmed.push({ ...p.vendor, id: p.vendorId, category: t.category });
               }
             });
           });
@@ -272,8 +272,10 @@ export default function CoupleVendorsPage() {
                   className="flex sm:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory sm:snap-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                 {CHIP_CATEGORIES.map((chip) => {
-                  const hasTender = hasTenderForCategory(chip.category);
-                  const matchCount = recommendations.filter((r) => r.match.category === chip.category).length;
+                  const tender = tenders.find((t) => t.category === chip.category);
+                  const hasTender = !!tender;
+                  const isClosed = tender?.status === "closed";
+                  const matchCount = isClosed ? 0 : recommendations.filter((r) => r.match.category === chip.category).length;
                   return (
                     <button
                       key={chip.category}
@@ -507,21 +509,26 @@ export default function CoupleVendorsPage() {
                   {confirmedVendors.slice(0, 4).map((vendor, i) => {
                     const logoUrl = typeof vendor.logo === "string" ? vendor.logo : vendor.logo?.url;
                     return (
-                      <li key={vendor.id || i} className="flex items-center gap-2.5">
-                        <div
-                          className="h-[34px] w-[34px] rounded-full shrink-0 bg-cover bg-center"
-                          style={{
-                            background: logoUrl ? `url(${logoUrl}) center/cover` : CONTACT_COLORS[i % CONTACT_COLORS.length],
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="text-[13px] font-semibold text-[#0E0E10] truncate">
-                            {vendor.businessName || vendor.name || vendor.companyName || "Prestataire"}
+                      <li key={vendor.id || i}>
+                        <Link
+                          href={`/espace-couple/prestataires/profil/${vendor.id}`}
+                          className="flex items-center gap-2.5 group"
+                        >
+                          <div
+                            className="h-[34px] w-[34px] rounded-full shrink-0 bg-cover bg-center"
+                            style={{
+                              background: logoUrl ? `url(${logoUrl}) center/cover` : CONTACT_COLORS[i % CONTACT_COLORS.length],
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[13px] font-semibold text-[#0E0E10] truncate group-hover:underline">
+                              {vendor.businessName || vendor.name || vendor.companyName || "Prestataire"}
+                            </div>
+                            <div className="text-[10.5px] text-[#6B6B72] truncate">
+                              {vendor.category}
+                            </div>
                           </div>
-                          <div className="text-[10.5px] text-[#6B6B72] truncate">
-                            {vendor.category}
-                          </div>
-                        </div>
+                        </Link>
                       </li>
                     );
                   })}
@@ -645,6 +652,21 @@ export default function CoupleVendorsPage() {
               const catRecs = recommendations.filter((r) => r.match.category === selectedCategory);
               const catTender = tenders.find((t) => t.category === selectedCategory);
 
+              if (catTender?.status === "closed") {
+                return (
+                  <div className="text-center py-10">
+                    <div className="h-12 w-12 rounded-full bg-[#EDEDF0] flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle2 size={22} className="text-[#0E0E10]" />
+                    </div>
+                    <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#0E0E10] mb-3">Dossier clôturé</p>
+                    <h2 className="text-xl font-bold text-[#0E0E10] mb-2">Plus aucune suggestion</h2>
+                    <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed">
+                      L'appel d'offres pour cette catégorie est clôturé.
+                    </p>
+                  </div>
+                );
+              }
+
               if (catRecs.length === 0) {
                 return (
                   <div className="text-center py-10">
@@ -726,7 +748,7 @@ export default function CoupleVendorsPage() {
                             )}
                             <div className="flex items-center gap-2 mt-3">
                               <Link
-                                href={`/espace-couple/prestataires/profil/${vendor?.id}`}
+                                href={`/espace-couple/prestataires/profil/${rec.match.vendorId}`}
                                 onClick={closeCategory}
                                 className="text-[12px] font-bold text-[#0E0E10] hover:underline flex items-center gap-1"
                               >

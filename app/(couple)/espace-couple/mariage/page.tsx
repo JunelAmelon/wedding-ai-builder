@@ -245,8 +245,8 @@ export default function CoupleWeddingPage() {
         const { url } = await res.json();
         setWitnessForm((prev) => ({ ...prev, photo: { url, name: file.name } }));
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Échec de l'envoi de la photo");
     } finally {
       setUploadingPhoto(false);
     }
@@ -382,11 +382,11 @@ export default function CoupleWeddingPage() {
             <div className="bg-white rounded-[28px] overflow-hidden shadow-[0_4px_20px_rgba(14,14,16,0.05)] mb-6">
               {/* Couverture */}
               <div
-                className="relative h-[180px] sm:h-[230px] overflow-hidden bg-[#fef2f4]"
+                className="relative h-[180px] sm:h-[230px] overflow-hidden bg-[#E4DBFB]"
               >
                 {/* Figure décorative */}
                 <div
-                  className="absolute right-[8%] -bottom-[10px] w-[180px] h-[180px] sm:w-[230px] sm:h-[230px] rounded-full opacity-90 hidden sm:flex items-center justify-center text-[72px] sm:text-[96px] bg-[#fef2f4]"
+                  className="absolute right-[8%] -bottom-[10px] w-[180px] h-[180px] sm:w-[230px] sm:h-[230px] rounded-full opacity-90 hidden sm:flex items-center justify-center text-[72px] sm:text-[96px] bg-[#E4DBFB]"
                 >
                   👩‍❤️‍👨
                 </div>
@@ -405,7 +405,7 @@ export default function CoupleWeddingPage() {
                   />
                 ) : (
                   <div
-                    className="w-[90px] h-[90px] sm:w-[104px] sm:h-[104px] rounded-full border-[5px] border-white mx-auto -mt-[45px] sm:-mt-[52px] flex items-center justify-center text-[32px] sm:text-[40px] font-bold shadow-[0_4px_14px_rgba(14,14,16,0.08)] text-[#c43a4a] bg-[#fef2f4]"
+                    className="w-[90px] h-[90px] sm:w-[104px] sm:h-[104px] rounded-full border-[5px] border-white mx-auto -mt-[45px] sm:-mt-[52px] flex items-center justify-center text-[32px] sm:text-[40px] font-bold shadow-[0_4px_14px_rgba(14,14,16,0.08)] text-[#5B4FC4] bg-[#E4DBFB]"
                   >
                     {initials || "MM"}
                   </div>
@@ -449,7 +449,7 @@ export default function CoupleWeddingPage() {
                   <div
                     key={tab.label}
                     className={`py-4 shrink-0 cursor-pointer whitespace-nowrap ${
-                      tab.active ? "border-b-[2.5px] border-[#e64a5d]" : ""
+                      tab.active ? "border-b-[2.5px] border-[#5B4FC4]" : ""
                     }`}
                   >
                     <span className="text-[13px] text-[#6B6B72]">{tab.label} </span>
@@ -474,7 +474,7 @@ export default function CoupleWeddingPage() {
                         type="date"
                         value={project?.weddingDate && project.weddingDate !== "not-fixed" ? new Date(project.weddingDate).toISOString().split("T")[0] : ""}
                         onChange={(e) => updateField("weddingDate", e.target.value || null)}
-                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#0E0E10] focus:border-b focus:border-[#c43a4a]"
+                        className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#0E0E10] focus:border-b focus:border-[#5B4FC4]"
                       />
                     </div>
                     <div>

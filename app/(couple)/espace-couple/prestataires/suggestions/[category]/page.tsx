@@ -7,7 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import PageHeader from "@/components/couple/PageHeader";
-import { ArrowLeft, ChevronRight, MapPin, Star, Plus, Check } from "lucide-react";
+import { ArrowLeft, ChevronRight, MapPin, Star, Plus, MessageCircle, Check, X } from "lucide-react";
 import type { VendorProfile, WeddingProject, Proposal } from "@/types/marketplace";
 import TenderFormModal from "@/components/couple/TenderFormModal";
 import { ExpandableText } from "@/components/couple/ExpandableText";
@@ -120,6 +120,13 @@ export default function CategorySuggestionsPage() {
   const [showTenderForm, setShowTenderForm] = useState(false);
   const [coupleProject, setCoupleProject] = useState<WeddingProject | null>(null);
   const [validating, setValidating] = useState<string | null>(null);
+  const [closure, setClosure] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!closure) return;
+    const timer = setTimeout(() => setClosure(null), 3500);
+    return () => clearTimeout(timer);
+  }, [closure]);
 
   async function validateMatch(matchId: string) {
     const item = suggestions.find((s) => s.match.id === matchId);
@@ -138,6 +145,8 @@ export default function CategorySuggestionsPage() {
           s.match.id === matchId ? { ...s, proposal: json.proposal } : s
         )
       );
+      const vendorName = item.vendor?.companyName || item.vendor?.brandName || "ce prestataire";
+      setClosure(vendorName);
     } catch {
       alert("Impossible de valider cette proposition.");
     } finally {
@@ -182,11 +191,14 @@ export default function CategorySuggestionsPage() {
       <div className="max-w-6xl mx-auto px-6 py-14 text-center text-text-secondary">{error}</div>
     );
 
-  const receivedCount = suggestions.length;
-  const bestScore = receivedCount > 0 ? Math.max(...suggestions.map((s) => s.match.score)) : 0;
+  const acceptedMatch = suggestions.find((s) => s.proposal?.status === "accepted");
+  const displaySuggestions = acceptedMatch ? [] : suggestions;
 
-  const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) => suggestions[i] || null);
-  const emptySlots = TOTAL_SLOTS - suggestions.length;
+  const receivedCount = displaySuggestions.length;
+  const bestScore = receivedCount > 0 ? Math.max(...displaySuggestions.map((s) => s.match.score)) : 0;
+
+  const slots = Array.from({ length: TOTAL_SLOTS }, (_, i) => displaySuggestions[i] || null);
+  const emptySlots = acceptedMatch ? 0 : TOTAL_SLOTS - suggestions.length;
 
   const heroImage = CATEGORY_IMAGES[rawCategory] || CATEGORY_IMAGES["Autre"];
 
@@ -303,37 +315,38 @@ export default function CategorySuggestionsPage() {
           </button>
         </div>
 
-        {/* ================= CTA — Lancer un appel d'offres ================= */}
-        <div className="mx-0 sm:mx-2 mb-6 bg-[#fef2f4]/30 border border-[#EDEDF0] rounded-[28px] px-5 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
-          <div className="w-11 h-11 rounded-full bg-[#e64a5d] flex items-center justify-center text-white shrink-0">
-            <Plus size={20} />
+        {!acceptedMatch && (
+          <div className="mx-0 sm:mx-2 mb-6 bg-[#fef2f4]/30 border border-[#EDEDF0] rounded-[28px] px-5 sm:px-6 py-4 flex items-center gap-4 flex-wrap">
+            <div className="w-11 h-11 rounded-full bg-[#e64a5d] flex items-center justify-center text-white shrink-0">
+              <Plus size={20} />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-[14px] font-bold text-[#0E0E10] mb-0.5">Ces suggestions ne vous conviennent pas ?</h4>
+              <p className="text-[13px] text-[#6B6B72]">
+                Lancez votre propre appel d'offres pour recevoir des propositions personnalisées.
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              onClick={launchTender}
+              className="rounded-full bg-[#e64a5d] text-white px-5 py-2.5 text-[13px] font-bold hover:brightness-110 transition border-0"
+              iconLeft={<Plus size={14} />}
+            >
+              Lancer un appel d'offres
+            </Button>
           </div>
-          <div className="flex-1">
-            <h4 className="text-[14px] font-bold text-[#0E0E10] mb-0.5">Ces suggestions ne vous conviennent pas ?</h4>
-            <p className="text-[13px] text-[#6B6B72]">
-              Lancez votre propre appel d'offres pour recevoir des propositions personnalisées.
-            </p>
-          </div>
-          <Button
-            variant="primary"
-            onClick={launchTender}
-            className="rounded-full bg-[#e64a5d] text-white px-5 py-2.5 text-[13px] font-bold hover:brightness-110 transition border-0"
-            iconLeft={<Plus size={14} />}
-          >
-            Lancer un appel d'offres
-          </Button>
-        </div>
+        )}
 
         {/* ================= CONTENT ================= */}
-        {suggestions.length === 0 ? (
+        {displaySuggestions.length === 0 ? (
           <div className="mx-0 sm:mx-2 bg-white border border-[#EDEDF0] rounded-[28px] px-6 sm:px-8 py-16 text-center shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
             <div className="h-12 w-12 rounded-full border border-[#fef2f4] flex items-center justify-center mx-auto mb-5">
-              <HourglassIcon size={20} className="text-[#0E0E10]" />
+              {acceptedMatch ? <Check size={20} className="text-[#0E0E10]" /> : <HourglassIcon size={20} className="text-[#0E0E10]" />}
             </div>
-            <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#0E0E10] mb-3">En attente</p>
-            <h2 className="text-xl font-bold text-[#0E0E10] mb-2">Aucune suggestion pour l'instant</h2>
+            <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#0E0E10] mb-3">{acceptedMatch ? "Dossier clôturé" : "En attente"}</p>
+            <h2 className="text-xl font-bold text-[#0E0E10] mb-2">{acceptedMatch ? "Plus aucune suggestion" : "Aucune suggestion pour l'instant"}</h2>
             <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed">
-              Notre moteur de matching recherche les meilleurs prestataires pour votre projet. Revenez bientôt ou lancez un appel d'offres.
+              {acceptedMatch ? "L'appel d'offres pour cette catégorie est clôturé." : "Notre moteur de matching recherche les meilleurs prestataires pour votre projet. Revenez bientôt ou lancez un appel d'offres."}
             </p>
           </div>
         ) : (
@@ -347,26 +360,32 @@ export default function CategorySuggestionsPage() {
                       <div key={`empty-${i}`} className="group flex flex-col">
                         <div
                           className="relative rounded-[28px] overflow-hidden aspect-[4/3] flex items-center justify-center"
-                          style={{ background: EMPTY_GRADIENTS[i % EMPTY_GRADIENTS.length] }}
+                          style={{ background: acceptedMatch ? "#EDEDF0" : EMPTY_GRADIENTS[i % EMPTY_GRADIENTS.length] }}
                         >
                           <div className="text-center px-4">
                             <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-3 text-[#6B6B72]">
-                              <span className="text-lg">?</span>
+                              <span className="text-lg">{acceptedMatch ? "✓" : "..."}</span>
                             </div>
-                            <p className="text-[13px] font-bold text-[#6B6B72]">À venir</p>
-                            <p className="text-[11px] text-[#6B6B72]/70 mt-1">Un prestataire sera bientôt suggéré ici.</p>
+                            <p className="text-[13px] font-bold text-[#6B6B72]">{acceptedMatch ? "C'est fini" : "Aucune autre suggestion"}</p>
+                            <p className="text-[11px] text-[#6B6B72]/70 mt-1">{acceptedMatch ? "Profil déjà retenu" : "Aucun profil correspondant"}</p>
                           </div>
                         </div>
                         <div className="mt-3 px-1">
                           <div className="text-[14px] font-bold text-[#6B6B72]">—</div>
-                          <div className="text-[11.5px] text-[#6B6B72]/70">En attente de matching</div>
+                          <div className="text-[11.5px] text-[#6B6B72]/70">{acceptedMatch ? "Terminé" : "Recherche complète"}</div>
                         </div>
                       </div>
                     );
                   }
 
                   const vendor: Partial<EnrichedVendor> = item.vendor ?? {};
-                  const matchMeta = { label: `${item.match.score}% match`, Icon: SparkleIcon, bg: "#5B4FC4" };
+                  const isAccepted = item.proposal?.status === "accepted";
+                  const isFinished = !!acceptedMatch && !isAccepted;
+                  const matchMeta = isAccepted
+                    ? { label: "Validé", Icon: Check, bg: "#3C8552" }
+                    : isFinished
+                    ? { label: "C'est fini", Icon: DashIcon, bg: "#0E0E10" }
+                    : { label: `${item.match.score}% match`, Icon: SparkleIcon, bg: "#5B4FC4" };
 
                   return (
                     <div key={item.match.id} className="group flex flex-col">
@@ -421,14 +440,18 @@ export default function CategorySuggestionsPage() {
 
                       <div className="mt-auto pt-4 flex gap-2">
                         <Link
-                          href={`/espace-couple/prestataires/profil/${vendor.id}`}
+                          href={`/espace-couple/prestataires/profil/${item.match.vendorId}`}
                           className="flex-1 text-center rounded-full border-[1.5px] border-[#EDEDF0] text-[#0E0E10] text-[12px] font-bold px-3 py-2.5 hover:bg-[#fef2f4] transition"
                         >
                           Voir le profil
                         </Link>
-                        {item.proposal?.status === "accepted" ? (
+                        {isAccepted ? (
                           <span className="flex-1 text-center rounded-full bg-[#D8ECD9] text-[#3C8552] text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
                             <Check size={14} /> Validé
+                          </span>
+                        ) : isFinished ? (
+                          <span className="flex-1 text-center rounded-full bg-[#0E0E10] text-white text-[12px] font-bold px-3 py-2.5 flex items-center justify-center gap-1.5">
+                            <DashIcon size={14} /> C'est fini
                           </span>
                         ) : item.proposal ? (
                           <Button
@@ -441,14 +464,12 @@ export default function CategorySuggestionsPage() {
                             {validating === item.match.id ? "Validation..." : "Valider"}
                           </Button>
                         ) : (
-                          <Button
-                            variant="primary"
-                            className="flex-1 rounded-full text-[12px] font-bold px-3 py-2.5"
-                            onClick={launchTender}
-                            iconLeft={<Plus size={14} />}
+                          <Link
+                            href={`/espace-couple/prestataires/profil/${item.match.vendorId}`}
+                            className="flex-1 text-center rounded-full bg-[#e64a5d] text-white text-[12px] font-bold px-3 py-2.5 hover:brightness-110 transition flex items-center justify-center gap-1.5"
                           >
-                            Appeler
-                          </Button>
+                            <MessageCircle size={14} /> Contacter
+                          </Link>
                         )}
                       </div>
                     </div>
@@ -457,10 +478,10 @@ export default function CategorySuggestionsPage() {
               </div>
             ) : (
               <div className="rounded-[28px] border border-[#EDEDF0] bg-white overflow-hidden shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
-                {suggestions.map((item, i) => {
+                {displaySuggestions.map((item, i) => {
                   const vendor: Partial<EnrichedVendor> = item.vendor ?? {};
                   const num = String(i + 1).padStart(2, "0");
-                  const isLast = i === suggestions.length - 1;
+                  const isLast = i === displaySuggestions.length - 1;
 
                   return (
                     <Link
@@ -500,7 +521,7 @@ export default function CategorySuggestionsPage() {
                 })}
                 {emptySlots > 0 && (
                   <div className="px-5 py-5 text-[13px] text-[#6B6B72] border-t border-[#EDEDF0]">
-                    + {emptySlots} suggestion{emptySlots > 1 ? "s" : ""} à venir
+                    + {emptySlots} suggestion{emptySlots > 1 ? "s" : ""} {acceptedMatch ? "clôturée" : "restante"}{emptySlots > 1 ? "s" : ""}
                   </div>
                 )}
               </div>
@@ -518,6 +539,28 @@ export default function CategorySuggestionsPage() {
           router.push("/espace-couple/prestataires");
         }}
       />
+
+      {closure && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30">
+          <div className="relative bg-white border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-w-sm w-full text-center">
+            <button
+              onClick={() => setClosure(null)}
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-white border border-[#EDEDF0] text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] flex items-center justify-center"
+              aria-label="Fermer"
+            >
+              <X size={18} />
+            </button>
+            <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-4 text-[#0E0E10]">
+              <Check size={28} />
+            </div>
+            <p className="text-[#6B6B72] text-xs font-bold uppercase tracking-wider mb-2">Validation confirmée</p>
+            <h3 className="font-allura text-2xl font-normal text-[#0E0E10] mb-3">Dossier clôturé</h3>
+            <p className="text-sm text-[#6B6B72]">
+              Vous avez retenu <span className="font-semibold text-[#0E0E10]">{closure}</span>. L'appel d'offres est terminé.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

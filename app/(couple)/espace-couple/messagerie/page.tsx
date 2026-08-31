@@ -15,6 +15,7 @@ import {
   PhoneOff,
   MapPin,
   ChevronLeft,
+  ChevronRight,
   Paperclip,
   CheckCheck,
   Check,
@@ -28,6 +29,7 @@ import {
   Heart,
   FileText,
   ExternalLink,
+  Image as ImageIcon,
 } from "lucide-react";
 import Image from "next/image";
 import type { Message, Proposal, WeddingProject, VendorProfile } from "@/types/marketplace";
@@ -81,8 +83,12 @@ export default function CoupleMessagingPage() {
   const [phoneUnavailable, setPhoneUnavailable] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ firstName?: string; lastName?: string; avatarUrl?: string | null }>({});
   const [attachments, setAttachments] = useState<string[]>([]);
+  const [fileMenuOpen, setFileMenuOpen] = useState(false);
+  const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
+  const [pdfPreview, setPdfPreview] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLInputElement>(null);
+  const docRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function loadProposals() {
@@ -139,19 +145,23 @@ export default function CoupleMessagingPage() {
   }, [messages]);
 
   async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    setFileMenuOpen(false);
     const files = e.target.files;
     if (!files) return;
-    const arr: string[] = [];
     for (const file of Array.from(files)) {
-      const base64 = await new Promise<string>((res) => {
-        const reader = new FileReader();
-        reader.onloadend = () => res(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-      arr.push(base64);
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Échec de l'upload");
+        setAttachments((prev) => [...prev, json.url]);
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Échec de l'envoi du fichier");
+      }
     }
-    setAttachments((prev) => [...prev, ...arr]);
-    if (fileRef.current) fileRef.current.value = "";
+    if (imageRef.current) imageRef.current.value = "";
+    if (docRef.current) docRef.current.value = "";
   }
 
   async function sendMessage() {
@@ -279,13 +289,15 @@ export default function CoupleMessagingPage() {
                   <button className="lg:hidden p-2 -ml-2 hover:bg-black/[0.03] rounded-full" onClick={() => setMobileOpen(false)}>
                     <ChevronLeft size={20} className="text-text-secondary" />
                   </button>
-                  <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-11 w-11 text-base" online={selected.status === "accepted"} />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-text-primary truncate">{selected.vendor?.companyName || "Prestataire"}</div>
-                    <div className="text-xs text-text-secondary">
-                      {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
+                  <Link href={`/espace-couple/prestataires/profil/${selected.vendorId}`} className="flex items-center gap-3 flex-1 min-w-0">
+                    <Avatar name={selected.vendor?.companyName || "P"} src={selected.vendor?.logo?.url} className="h-11 w-11 text-base" online={selected.status === "accepted"} />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-text-primary truncate">{selected.vendor?.companyName || "Prestataire"}</div>
+                      <div className="text-xs text-text-secondary">
+                        {selected.status === "accepted" ? "Proposition acceptée" : "En discussion"}
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                   <div className="flex items-center gap-1">
                     <button
                       className="p-2 hover:bg-black/[0.06] rounded-full text-text-secondary relative"
@@ -342,13 +354,30 @@ export default function CoupleMessagingPage() {
                             />
                           )}
                           <div className={`max-w-[85%] sm:max-w-[75%] rounded-[28px] px-4 py-2.5 text-sm shadow-sm ${isMe ? "bg-primary text-white rounded-br-md" : "bg-white text-text-primary border border-[#EDEDF0] rounded-bl-md"}`}>
-                            {m.content.startsWith("data:image") ? (
-                              <img src={m.content} alt="Pièce jointe" className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover" />
-                            ) : m.content.startsWith("data:") ? (
-                              <a href={m.content} target="_blank" rel="noreferrer" className="underline text-inherit">Voir le document</a>
-                            ) : (
-                              <p className="leading-relaxed">{m.content}</p>
-                            )}
+                            {(() => {
+                              const isImage = m.content.match(/\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i) || m.content.startsWith("data:image") || m.content.includes("cloudinary.com/image/upload");
+                              const isPdf = m.content.match(/\.pdf(\?|$)/i) || m.content.startsWith("data:application/pdf");
+                              const isDoc = (m.content.startsWith("http") && !isImage) || m.content.startsWith("data:");
+                              const images = messages.filter((x) => x.content.match(/\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i) || x.content.startsWith("data:image") || x.content.includes("cloudinary.com/image/upload")).map((x) => x.content);
+                              if (isImage) return (
+                                <img
+                                  src={m.content}
+                                  alt="Pièce jointe"
+                                  onClick={() => setLightbox({ images, index: images.indexOf(m.content) })}
+                                  className="max-w-[180px] max-h-[180px] rounded-xl mb-1 object-cover cursor-pointer"
+                                />
+                              );
+                              if (isPdf) return (
+                                <button
+                                  onClick={() => setPdfPreview(m.content)}
+                                    className="underline text-inherit text-left flex items-center gap-1.5"
+                                  >
+                                    <FileText size={14} /> Voir le document
+                                  </button>
+                                );
+                              if (isDoc) return <a href={m.content} target="_blank" rel="noreferrer" className="underline text-inherit">Voir le document</a>;
+                              return <p className="leading-relaxed whitespace-pre-wrap">{m.content}</p>;
+                            })()}
                             <div className={`flex items-center justify-end gap-1 mt-1 text-[10px] ${isMe ? "text-white/70" : "text-text-secondary"}`}>
                               <span>{formatTime(m.createdAt)}</span>
                               {isMe && (
@@ -368,7 +397,7 @@ export default function CoupleMessagingPage() {
                     <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                       {attachments.map((att, i) => (
                         <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#EDEDF0] shrink-0">
-                          {att.startsWith("data:image") ? (
+                          {/\.(jpg|jpeg|png|gif|webp|avif|svg)(\?|$)/i.test(att) || att.startsWith("data:image") ? (
                             <img src={att} alt="" className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full bg-white flex items-center justify-center text-[10px] text-text-secondary text-center p-1">Fichier</div>
@@ -386,16 +415,44 @@ export default function CoupleMessagingPage() {
                       type="file"
                       multiple
                       hidden
-                      ref={fileRef}
+                      ref={imageRef}
+                      accept="image/*"
                       onChange={handleFiles}
                     />
-                    <button onClick={() => fileRef.current?.click()} className="p-2 text-text-secondary hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
                     <input
+                      type="file"
+                      multiple
+                      hidden
+                      ref={docRef}
+                      accept=".pdf,.doc,.docx,.txt,.odt,.xls,.xlsx,.ppt,.pptx"
+                      onChange={handleFiles}
+                    />
+                    <div className="relative">
+                      <button onClick={() => setFileMenuOpen((v) => !v)} className="p-2 text-text-secondary hover:bg-black/[0.04] rounded-full transition"><Paperclip size={20} /></button>
+                      {fileMenuOpen && (
+                        <div className="absolute bottom-full left-0 mb-2 w-44 bg-white border border-[#EDEDF0] rounded-[28px] shadow-xl p-2 z-20">
+                          <button
+                            onClick={() => { setFileMenuOpen(false); imageRef.current?.click(); }}
+                            className="w-full flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm text-[#0E0E10] hover:bg-[#fef2f4] transition"
+                          >
+                            <ImageIcon size={16} className="text-[#5B4FC4]" /> Images
+                          </button>
+                          <button
+                            onClick={() => { setFileMenuOpen(false); docRef.current?.click(); }}
+                            className="w-full flex items-center gap-2 rounded-full px-3 py-2 text-left text-sm text-[#0E0E10] hover:bg-[#fef2f4] transition"
+                          >
+                            <FileText size={16} className="text-[#5B4FC4]" /> Documents
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
                       placeholder="Écrivez votre message..."
-                      className="flex-1 bg-transparent px-2 py-2 text-sm text-text-primary focus:outline-none"
+                      rows={1}
+                      className="flex-1 bg-transparent px-2 py-2 text-sm text-text-primary focus:outline-none resize-none"
                     />
                     <EmojiPicker onEmojiSelect={(emoji) => setMessage((prev) => prev + emoji)} />
                     <button
@@ -490,6 +547,41 @@ export default function CoupleMessagingPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {lightbox && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+          <button onClick={(e) => { e.stopPropagation(); setLightbox(null); }} className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20">
+            <X size={20} />
+          </button>
+          {lightbox.index > 0 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightbox((prev) => prev && { ...prev, index: prev.index - 1 }); }} className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20">
+              <ChevronLeft size={24} />
+            </button>
+          )}
+          {lightbox.index < lightbox.images.length - 1 && (
+            <button onClick={(e) => { e.stopPropagation(); setLightbox((prev) => prev && { ...prev, index: prev.index + 1 }); }} className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20">
+              <ChevronRight size={24} />
+            </button>
+          )}
+          <img src={lightbox.images[lightbox.index]} alt="" className="max-w-full max-h-[80vh] rounded-[28px] object-contain" onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
+
+      {pdfPreview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setPdfPreview(null)}>
+          <div className="relative bg-white border border-[#EDEDF0] rounded-[28px] shadow-2xl w-full max-w-3xl h-[80vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setPdfPreview(null)}
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-white border border-[#EDEDF0] text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] flex items-center justify-center z-10"
+            >
+              <X size={18} />
+            </button>
+            <div className="flex-1 w-full h-full">
+              <iframe src={pdfPreview} className="w-full h-full border-0" title="Prévisualisation du document" />
+            </div>
+          </div>
         </div>
       )}
     </div>
