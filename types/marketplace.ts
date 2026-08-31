@@ -145,6 +145,8 @@ export interface ProjectVendorMatch {
   score: number; // 0-100
   reasons: string[];
   summary: string | null;
+  vendorPitch: string | null;
+  regenCount: number;
   status: MatchStatus;
   createdAt: string;
   updatedAt: string;

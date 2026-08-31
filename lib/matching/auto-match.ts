@@ -140,6 +140,8 @@ export async function runAutoMatching(
           score: m.score,
           reasons: m.reasons,
           summary: m.summary,
+          vendorPitch: m.vendorPitch,
+          regenCount: m.regenCount,
           status: "suggested",
         })
       )

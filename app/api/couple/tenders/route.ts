@@ -146,6 +146,8 @@ export async function POST(req: Request) {
           score: m.score,
           reasons: m.reasons,
           summary: m.summary,
+          vendorPitch: m.vendorPitch,
+          regenCount: m.regenCount,
           status: "suggested",
         })
       )

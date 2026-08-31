@@ -221,7 +221,7 @@ export default function VendorProfileForCouplePage() {
         {/* Portfolio - gauche */}
         <div className="min-w-0">
           <div className="mb-4">
-            <div className="relative aspect-[4/3] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#fef2f4] to-white border border-black/[0.06]">
+            <div className="relative aspect-[4/3] rounded-[28px] overflow-hidden bg-gradient-to-b from-[#fef2f4] to-white border border-[#EDEDF0]">
               {selectedImage ? (
                 <Image
                   src={selectedImage}
@@ -255,7 +255,7 @@ export default function VendorProfileForCouplePage() {
                   key={img.publicId || i}
                   onClick={() => setSelectedImage(img.url)}
                   className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                    selectedImage === img.url ? "border-[#fef2f4]" : "border-transparent"
+                    selectedImage === img.url ? "border-[#E4DBFB]" : "border-transparent"
                   }`}
                 >
                   <Image
@@ -283,7 +283,7 @@ export default function VendorProfileForCouplePage() {
               </h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 {vendor.portfolio?.videos?.map((video, i) => (
-                  <div key={i} className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-b from-[#fef2f4] to-white border border-black/[0.06]">
+                  <div key={i} className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-b from-[#E4DBFB]/40 to-white border border-[#EDEDF0]">
                     <video src={video} controls className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -294,13 +294,13 @@ export default function VendorProfileForCouplePage() {
 
         {/* Fiche prestataire - droite : dossier / fiche technique */}
         <div className="lg:sticky lg:top-8">
-          <div className="relative rounded-[28px] bg-[#fef2f4] border border-[#0E0E10]/10 shadow-[0_18px_44px_rgba(11,15,26,0.08)] overflow-hidden">
+          <div className="relative rounded-[28px] bg-white border border-[#d8d0f5] shadow-[0_18px_44px_rgba(11,15,26,0.08)] overflow-hidden">
             {/* Bandeau de référence dossier */}
-            <div className="flex items-center justify-between px-6 py-2.5 bg-[#0E0E10] border-b border-[#0E0E10]/10">
-              <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-white/80">
+            <div className="flex items-center justify-between px-6 py-2.5 bg-[#E4DBFB] border-b border-[#d8d0f5]">
+              <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#0E0E10]/80">
                 Fiche prestataire
               </span>
-              <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-white/80">
+              <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#0E0E10]/80">
                 Dossier n° {fileRef}
               </span>
             </div>
@@ -318,7 +318,7 @@ export default function VendorProfileForCouplePage() {
 
             <div className="px-6 pt-6 pb-5">
               <div className="flex items-center gap-4 mb-5">
-                <div className="relative h-20 w-20 rounded-[28px] border border-[#0E0E10]/10 bg-white shadow-[0_4px_14px_rgba(11,15,26,0.08)] overflow-hidden flex items-center justify-center shrink-0">
+                <div className="relative h-20 w-20 rounded-[28px] border border-[#d8d0f5] bg-white shadow-[0_4px_14px_rgba(11,15,26,0.08)] overflow-hidden flex items-center justify-center shrink-0">
                   {vendor.logo?.url ? (
                     <Image src={vendor.logo.url} alt={displayName} fill sizes="80px" className="object-cover" />
                   ) : (
@@ -391,9 +391,9 @@ export default function VendorProfileForCouplePage() {
 
               {/* Ligne perforée — stub à détacher */}
               <div className="relative -mx-6 mt-6 mb-5">
-                <div className="border-t border-dashed border-black/20" />
-                <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#fef2f4] border border-[#0E0E10]/15" />
-                <span className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-[#fef2f4] border border-[#0E0E10]/15" />
+                <div className="border-t border-dashed border-[#d8d0f5]" />
+                <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-white border border-[#d8d0f5]" />
+                <span className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-white border border-[#d8d0f5]" />
               </div>
 
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -404,7 +404,7 @@ export default function VendorProfileForCouplePage() {
 
               <Button
                 variant="primary"
-                className="w-full mb-6"
+                className="w-full mb-6 !bg-[#e64a5d] !border-[#e64a5d] !text-white hover:!brightness-110"
                 iconLeft={<MessageCircle size={18} />}
                 onClick={() => setContactOpen(true)}
               >
@@ -469,7 +469,7 @@ export default function VendorProfileForCouplePage() {
       </div>
 
       {/* Tabs */}
-      <div className="mt-14 border-b border-black/10">
+      <div className="mt-14 border-b border-[#EDEDF0]">
         <div className="flex gap-8">
           {TABS.map((tab) => (
             <button
@@ -497,8 +497,8 @@ export default function VendorProfileForCouplePage() {
             </p>
 
             <div className="grid sm:grid-cols-2 gap-4 mb-8">
-              <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] shrink-0">
+              <div className="rounded-xl bg-white border border-[#EDEDF0] p-4 flex gap-3">
+                <div className="h-9 w-9 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#e64a5d] shrink-0">
                   <ExperienceIcon className="h-5 w-5" />
                 </div>
                 <div>
@@ -510,8 +510,8 @@ export default function VendorProfileForCouplePage() {
                   </p>
                 </div>
               </div>
-              <div className="rounded-xl bg-white border border-black/[0.06] p-4 flex gap-3">
-                <div className="h-9 w-9 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] shrink-0">
+              <div className="rounded-xl bg-white border border-[#EDEDF0] p-4 flex gap-3">
+                <div className="h-9 w-9 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#e64a5d] shrink-0">
                   <ZoneIcon className="h-5 w-5" />
                 </div>
                 <div>
@@ -532,7 +532,7 @@ export default function VendorProfileForCouplePage() {
                   {styles.map((style: string) => (
                     <span
                       key={style}
-                      className="inline-flex items-center rounded-full px-3 py-1.5 text-sm text-[#0E0E10] bg-white/70 backdrop-blur border border-white/40 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+                      className="inline-flex items-center rounded-full px-3 py-1.5 text-sm text-[#0E0E10] bg-[#E4DBFB] border border-[#d8d0f5] shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
                     >
                       {style}
                     </span>
@@ -568,7 +568,7 @@ export default function VendorProfileForCouplePage() {
                   <button
                     key={img.publicId || i}
                     onClick={() => setSelectedImage(img.url)}
-                    className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-[#fef2f4] to-white border border-black/[0.06]"
+                    className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-b from-[#E4DBFB]/40 to-white border border-[#EDEDF0]"
                   >
                     <Image
                       src={img.url}
@@ -592,7 +592,7 @@ export default function VendorProfileForCouplePage() {
             {reviews.length > 0 ? (
               <div className="grid sm:grid-cols-2 gap-4">
                 {reviews.map((review, i) => (
-                  <div key={i} className="rounded-xl bg-white border border-black/[0.06] p-5">
+                  <div key={i} className="rounded-xl bg-white border border-[#EDEDF0] p-5">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="h-8 w-8 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] font-semibold text-xs">
                         {(review.author || "A").slice(0, 1).toUpperCase()}
@@ -622,7 +622,7 @@ export default function VendorProfileForCouplePage() {
             {faq.length > 0 ? (
               <div className="space-y-4 max-w-3xl">
                 {faq.map((item, i) => (
-                  <div key={i} className="rounded-xl bg-white border border-black/[0.06] p-5">
+                  <div key={i} className="rounded-xl bg-white border border-[#EDEDF0] p-5">
                     <div className="flex items-start gap-3">
                       <div className="h-7 w-7 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] font-allura text-sm shrink-0 mt-0.5">
                         {i + 1}
@@ -678,7 +678,7 @@ export default function VendorProfileForCouplePage() {
                 <button
                   onClick={() => contactProposalId && router.push(`/espace-couple/messagerie?proposal=${contactProposalId}`)}
                   disabled={!contactProposalId}
-                  className="w-full py-3.5 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <MessageCircle size={16} />
                   Ouvrir la messagerie
@@ -702,7 +702,7 @@ export default function VendorProfileForCouplePage() {
                 <button
                   onClick={sendContact}
                   disabled={contactSending || !contactMessage.trim()}
-                  className="w-full py-3.5 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold font-sans hover:bg-[#94a3b8] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {contactSending ? (
                     <>
@@ -743,7 +743,7 @@ function LedgerRow({
       <span className="font-semibold text-[10px] uppercase tracking-[0.1em] text-[#0E0E10]/70 shrink-0">
         {label}
       </span>
-      <span className="flex-1 border-b border-dotted border-[#0E0E10]/25 translate-y-[-3px]" />
+      <span className="flex-1 border-b border-dotted border-[#d8d0f5] translate-y-[-3px]" />
       <span
         className={`shrink-0 ${
           emphasis

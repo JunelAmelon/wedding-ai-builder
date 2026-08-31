@@ -17,6 +17,8 @@ export interface MatchScore {
   reasons: string[];
   summary: string | null;
   requirementsAnalysis?: RequirementAnalysis[];
+  priorityAlignment?: "forte" | "moyenne" | "faible" | "non_applicable";
+  vendorPitch?: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -127,6 +129,14 @@ function normalizeCategory(value: string) {
 // ---------------------------------------------------------------------------
 // Deterministic checks
 // ---------------------------------------------------------------------------
+function getCategoryBudgetAmount(budget: any): number | null {
+  if (budget == null) return null;
+  if (typeof budget === "number") return budget;
+  if ("amount" in budget && typeof budget.amount === "number") return budget.amount;
+  if ("max" in budget && typeof budget.max === "number") return budget.max;
+  return null;
+}
+
 function hasBudgetOverlap(tender: Partial<Tender>, project: WeddingProject, vendor: VendorProfile): boolean {
   const ctx = getNeedContext(tender, project);
   if (!ctx.budget || !vendor.priceRange) return false;
@@ -347,6 +357,7 @@ const AiMatchScoreSchema = z.object({
   summary: z.string().nullable().optional().default(null),
   requirementsAnalysis: z.array(RequirementAnalysisSchema).optional().default([]),
   priorityAlignment: z.enum(["forte", "moyenne", "faible", "non_applicable"]).optional().default("non_applicable"),
+  vendorPitch: z.string().nullable().optional().default(null),
 });
 const AiResponseSchema = z.object({
   scores: z.record(AiMatchScoreSchema),
@@ -354,11 +365,8 @@ const AiResponseSchema = z.object({
 
 function computeRequirementsCap(requirementsAnalysis: RequirementAnalysis[] | undefined): number | null {
   if (!requirementsAnalysis || requirementsAnalysis.length === 0) return null;
-  const unmet = requirementsAnalysis.filter((r) => r.status === "non_comblee").length;
-  if (unmet === 0) return null;
-  const ratio = unmet / requirementsAnalysis.length;
-  if (ratio >= 0.5) return 55;
-  return 70;
+  if (requirementsAnalysis.some((r) => r.status === "non_comblee")) return 50;
+  return null;
 }
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -370,7 +378,7 @@ function chunk<T>(items: T[], size: number): T[][] {
 function buildSystemPrompt(): string {
   return `Tu es un expert en matching mariage en France. Tu reçois un projet de mariage (besoin du couple) et une liste de prestataires avec TOUTES leurs informations, y compris une distance déjà calculée (distanceKm) entre le couple et chaque prestataire — utilise cette valeur telle quelle, ne cherche pas à réestimer la proximité géographique toi-même.
 
-Ton rôle est d'analyser PROFONDEMENT chaque prestataire et de déterminer sa compatibilité avec le couple, comme un wedding planner humain expérimenté — pas comme un moteur de mots-clés.
+Ton rôle est de vendre les meilleures options au couple, comme un wedding planner qui connaît les bons artisans. Tu mets en avant les atouts dans summary/reasons et tu gardes les inconvénients pour le score interne.
 
 === ÉTAPE 1 — Comprendre ce que le couple demande vraiment ===
 
@@ -389,13 +397,12 @@ Deux champs du couple méritent une lecture attentive, pas un simple passage en 
 
 1. ZONE GÉOGRAPHIQUE : utilise distanceKm et le rayon d'intervention du prestataire (serviceArea.radius). En dessous du rayon, bon match. Jusqu'à 50% au-delà, envisageable mais moins fort. Au-delà, signale-le honnêtement — le score est de toute façon plafonné côté serveur.
 
-2. BUDGET : Le budget du couple (need.budget) est un montant global qu'il peut dépenser. La gamme de prix du prestataire (priceRange: { min, max }) est ce qu'il facture. IMPORTANT :
-- Si le budget du couple est SUPÉRIEUR ou ÉGAL au priceRange.max du prestataire : EXCELLENT — le couple peut se l'offrir. Ne dis JAMAIS "budget en dessous des attentes" dans ce cas.
-- Si le budget du couple est dans la fourchette [min, max] : BON — correspondance parfaite.
-- Si le budget du couple est INFÉRIEUR au priceRange.min : le prestataire est trop cher pour le couple. Signale-le comme "au-dessus du budget du couple" (et non l'inverse).
-- Un léger dépassement (10-15%) du budget côté prestataire reste acceptable si le prestataire est exceptionnel.
-- Regarde aussi pricingDetails pour des options moins chères qui pourraient rentrer dans le budget.
-NE JAMAIS inverser la comparaison : c'est le budget du couple qui est la référence, pas la gamme du prestataire.
+2. BUDGET : need.budget est le montant maximum alloué à CETTE catégorie (en euros). La gamme du prestataire est priceRange: { min, max }.
+- Si need.budget >= priceRange.max : EXCELLENT, le couple peut se l'offrir.
+- Si need.budget est dans [priceRange.min, priceRange.max] : BON, ajustable.
+- Si need.budget < priceRange.min : le prestataire dépasse l'enveloppe — baisse le score, mais ne mentionne JAMAIS le prix dans summary/reasons.
+- Si need.budget est null, ignore la comparaison budgétaire.
+- Regarde aussi pricingDetails pour des options moins chères.
 
 3. STYLE : sois nuancé — "élégant" peut matcher "chic", "sophistiqué", etc.
 
@@ -409,12 +416,22 @@ NE JAMAIS inverser la comparaison : c'est le budget du couple qui est la référ
 
 Pour CHAQUE prestataire, renvoie :
 - \`score\` (0-100), calibré ainsi : 90-100 excellent match y compris sur la priorité déclarée et les exigences, 70-89 bon match avec un point faible mineur, 50-69 correct mais avec une vraie réserve, en dessous de 50 mauvais match. Un prestataire qui ne comble aucune des exigences explicites du couple ne doit pas dépasser 60, même si le reste est parfait. Ne sois pas artificiellement généreux : un score élevé doit refléter une vraie adéquation, priorité et exigences comprises.
-- \`reasons\` (1 à 3, concises et factuelles) — mentionne en priorité l'alignement avec \`priority\` et toute exigence non comblée, avant les critères secondaires.
-- \`summary\` (2 à 4 phrases, ton enthousiaste et bienveillant mais honnête) qui s'adresse directement au professionnel et nomme concrètement la priorité du couple.
+- \`reasons\` (1 à 3, concises et factuelles) — mentionne en priorité l'alignement avec \`priority\` et les exigences comblées et les atouts secondaires. NE JAMAIS citer un point faible.
+- \`summary\` (2 à 4 phrases, ton enthousiaste et bienveillant mais vendeur) qui s'adresse au couple et nomme concrètement la priorité du couple.
+- vendorPitch (2 à 4 phrases, ton d'un collègue du métier direct et chaleureux, PAS corporate) : c'est "Notre conseil" que la plateforme donne au PRESTATAIRE. Il s'adresse DONC au prestataire en 2e personne du pluriel : "vous", "votre", "vos". Pourquoi CE projet est une bonne affaire pour LUI. Règles strictes :
+  * Utilise impérativement la 2e personne du pluriel (vous, votre, vos, proposez, postulez, envoyez). Le "vous" désigne le PRESTATAIRE.
+  * NE PARLE JAMAIS DU PRESTATAIRE à la 3e personne : pas "Top Driver est...", "son service", "leur flotte", "il est prêt". Aucun "il/elle/ils/leur/son/sa/ses".
+  * Ouvre par une accroche à la 2e personne : "Avec vos 12 ans d'expérience...", "Votre flotte...", "Vous êtes à...", "Avec votre style bohème...".
+  * Mentionne des chiffres du couple : budget alloué à la catégorie, nombre d'invités, date, lieu, distance.
+  * Relie au projet du couple : style, ambiance, priority, requirements.
+  * Termine par une action concrète : "proposez-lui un devis en 3 formules", "postulez avant le...", "envoyez-lui une offre".
+  * INTERDIT : "idéal pour", "belle vitrine", "expertise", "parfait pour", "opportunité idéale", "mise en avant", "qui pourra", "confortable", "prêt à vous accompagner". Évite les adjectifs vides.
+  * Varie la structure : parfois chiffre d'abord, parfois constat, parfois question.
+  * Si un avis client (portfolioReviews) prouve l'adéquation, cite-le en une ligne.
 - \`requirementsAnalysis\` : un objet par exigence de la liste \`requirements\` (tableau vide si la liste était vide), au format { "requirement": string, "status": "comblee"|"partielle"|"non_comblee"|"indeterminee", "evidence": string|null }.
 - \`priorityAlignment\` : "forte" | "moyenne" | "faible" | "non_applicable" (si le couple n'a pas déclaré de priorité), selon à quel point ce prestataire répond à la priorité N°1 du couple.
 
-Renvoie STRICTEMENT un JSON de la forme { "scores": { "vendorId": { "score": number, "reasons": [string], "summary": string, "requirementsAnalysis": [...], "priorityAlignment": string } } }. Aucun texte hors JSON.`;
+Renvoie STRICTEMENT un JSON de la forme { "scores": { "vendorId": { "score": number, "reasons": [string], "summary": string, "vendorPitch": string, "requirementsAnalysis": [...], "priorityAlignment": string } } }. Aucun texte hors JSON.`;
 }
 
 async function scoreBatchWithAI(
@@ -430,7 +447,7 @@ async function scoreBatchWithAI(
     {
       need: {
         category,
-        budget: ctx.budget,
+        budget: getCategoryBudgetAmount(ctx.budget),
         guestCount: ctx.guestCount,
         childrenCount: ctx.childrenCount,
         location: ctx.location,
@@ -498,13 +515,14 @@ async function scoreBatchWithAI(
       score: Math.min(100, Math.max(0, Math.round(s.score))),
       reasons: s.reasons.slice(0, 3),
       summary: s.summary ?? null,
+      vendorPitch: s.vendorPitch ?? null,
       requirementsAnalysis: s.requirementsAnalysis,
     };
   }
   return out;
 }
 
-async function scoreMatchesWithAI(
+export async function scoreMatchesWithAI(
   tender: Partial<Tender>,
   project: WeddingProject,
   vendors: VendorProfile[],
@@ -524,10 +542,11 @@ function combineScores(ruleBased: MatchScore, ai: MatchScore | undefined, scoreC
   let score: number;
   if (ai) {
     // When AI scored the vendor, trust its reasoning — it already has distanceKm,
-    // budget, and all vendor data in the prompt. Only apply requirements cap
-    // (unmet explicit requirements are a real signal the AI itself surfaced).
+    // budget, and all vendor data in the prompt. Cap when explicit requirements
+    // are unmet or the declared priority is weak.
     score = Math.round(ruleBased.score * RULE_WEIGHT + ai.score * AI_WEIGHT);
     if (requirementsCap != null) score = Math.min(score, requirementsCap);
+    if (ai.priorityAlignment === "faible") score = Math.min(score, 50);
   } else {
     // Rule-based fallback: apply all deterministic caps
     const effectiveCap = [scoreCap, requirementsCap].filter((c): c is number => c != null).reduce((a, b) => Math.min(a, b), 100);
@@ -545,7 +564,8 @@ function combineScores(ruleBased: MatchScore, ai: MatchScore | undefined, scoreC
   }
 
   const summary = ai?.summary ?? ruleBased.summary ?? null;
-  return { score, reasons, summary, requirementsAnalysis: ai?.requirementsAnalysis };
+  const vendorPitch = ai?.vendorPitch ?? null;
+  return { score, reasons, summary, vendorPitch, requirementsAnalysis: ai?.requirementsAnalysis };
 }
 
 // ---------------------------------------------------------------------------
@@ -613,17 +633,18 @@ export async function findTopMatches(
       score: combined.score,
       reasons,
       summary: combined.summary,
+      vendorPitch: combined.vendorPitch ?? null,
+      regenCount: 0,
       status: "suggested" as const,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
   });
 
-  // Return the top `limit` candidates sorted deterministically by score and tier.
-  // Filtering by MIN_MATCH_SCORE is intentionally skipped here so the couple always
-  // sees the same number of recommendations between reloads. Low-scoring candidates
-  // naturally end up at the bottom.
+  // Only keep matches above the minimum score threshold. Empty slots are better
+  // than bad recommendations.
   return scored
+    .filter((m) => m.score >= MIN_MATCH_SCORE)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       const tierOrder: Record<string, number> = { luxe: 4, premium: 3, standard: 2, economique: 1 };
@@ -675,9 +696,9 @@ export async function revalidateVendorMatches(vendor: VendorProfile, cache: Matc
       const reasons = constraint.reasons.length > 0 ? [...constraint.reasons, ...combined.reasons].slice(0, 4) : combined.reasons;
 
       if (combined.score < MIN_MATCH_SCORE) {
-        await matchRepo.update(m.id, { status: "rejected", score: combined.score, reasons, summary: combined.summary, updatedAt: new Date().toISOString() });
+        await matchRepo.update(m.id, { status: "rejected", score: combined.score, reasons, summary: combined.summary, vendorPitch: combined.vendorPitch ?? null, updatedAt: new Date().toISOString() });
       } else {
-        await matchRepo.update(m.id, { score: combined.score, reasons, summary: combined.summary, updatedAt: new Date().toISOString() });
+        await matchRepo.update(m.id, { score: combined.score, reasons, summary: combined.summary, vendorPitch: combined.vendorPitch ?? null, updatedAt: new Date().toISOString() });
       }
     })
   );

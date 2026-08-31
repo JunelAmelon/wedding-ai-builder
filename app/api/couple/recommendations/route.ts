@@ -5,6 +5,7 @@ import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { runAutoMatching } from "@/lib/matching/auto-match";
+import { MIN_MATCH_SCORE } from "@/lib/matching/engine";
 import { isVendorSubscriptionActive } from "@/lib/subscription-guard";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -22,7 +23,7 @@ export async function GET() {
 
     const recommendations = await Promise.all(
       matches.map(async (m) => {
-        if (m.status === "rejected") return null;
+        if (m.status === "rejected" || m.score < MIN_MATCH_SCORE) return null;
         const vendor = await vendorProfileRepo.get(m.vendorId);
         if (!vendor) return null;
         // Filter out vendors whose subscription is no longer active or who are unavailable on the wedding date
@@ -64,7 +65,7 @@ export async function POST(req: Request) {
     const result = await runAutoMatching(project, { perCategory: 3, notifyVendors: true });
 
     const recommendations = await Promise.all(
-      result.matches.map(async (m) => {
+      result.matches.filter((m) => m.score >= MIN_MATCH_SCORE).map(async (m) => {
         if (m.status === "rejected") return null;
         const vendor = await vendorProfileRepo.get(m.vendorId);
         if (!vendor) return null;

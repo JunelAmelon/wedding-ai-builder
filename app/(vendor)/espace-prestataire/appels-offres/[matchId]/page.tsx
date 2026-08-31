@@ -12,6 +12,7 @@ import {
   Heart,
   Send,
   Loader2,
+  RefreshCw,
   ArrowLeft,
   Check,
   CheckCircle2,
@@ -85,6 +86,7 @@ export default function VendorProjectDetailPage() {
 
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
   const submittingRef = useRef(false);
   const [showDialog, setShowDialog] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -139,6 +141,30 @@ export default function VendorProjectDetailPage() {
     } finally {
       setSubmitting(false);
       submittingRef.current = false;
+    }
+  }
+
+  async function regenerateAdvice() {
+    if (!data || regenerating || (data.match.regenCount ?? 0) >= 2) return;
+    setRegenerating(true);
+    try {
+      const res = await fetch(`/api/vendor/opportunities/${matchId}`, { method: "POST" });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (res.status === 429) {
+          alert(body.error || "Vous avez atteint la limite de 2 régénérations.");
+        } else {
+          throw new Error(body.error || "Erreur lors de la régénération");
+        }
+        return;
+      }
+      setData((prev) =>
+        prev ? { ...prev, match: { ...prev.match, vendorPitch: body.vendorPitch, regenCount: body.regenCount } } : null
+      );
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setRegenerating(false);
     }
   }
 
@@ -344,13 +370,26 @@ export default function VendorProjectDetailPage() {
               num="01"
             >
               <p className="text-[15px] text-[#0E0E10]/90 leading-relaxed">
-                {match.summary || (
+                {match.vendorPitch || (
                   <>
                     <span className="font-medium text-[#0E0E10]">Notre analyse est en cours.</span>{" "}
                     Revenez dans quelques instants pour découvrir pourquoi cette opportunité peut vous correspondre.
                   </>
                 )}
               </p>
+              <div className="mt-5 flex items-center justify-between">
+                <span className="text-xs font-bold text-[#6B6B72] uppercase tracking-wider">
+                  Essais {(match.regenCount ?? 0)}/2
+                </span>
+                <button
+                  onClick={regenerateAdvice}
+                  disabled={regenerating || (match.regenCount ?? 0) >= 2}
+                  className="inline-flex items-center gap-2 h-10 px-4 rounded-full bg-[#e64a5d] text-white text-sm font-bold hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  {regenerating ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+                  Régénérer
+                </button>
+              </div>
             </InfoCard>
 
             {/* Besoins */}

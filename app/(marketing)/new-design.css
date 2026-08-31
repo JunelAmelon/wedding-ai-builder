@@ -2532,7 +2532,6 @@ main > section { padding: 56px 0; }
 .video-grid .vc video::-webkit-media-controls-overlay-play-button { display: none !important; }
 
 .testi-carousel { padding-bottom: 16px; }
-.testi-carousel .testi-slide { width: 100%; }
 .testi-card-head { flex-wrap: nowrap; }
 .testi-card-head > div { min-width: 0; }
 .testi-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

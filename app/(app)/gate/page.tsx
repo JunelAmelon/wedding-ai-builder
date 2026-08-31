@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { useQuizStore } from "@/lib/store/quizStore";
 import { track } from "@/lib/analytics/posthog.client";
 
-const SAGE_CHIP = "#D8ECD9";
-const NAVY = "#0a0a0f";
+const SAGE_CHIP = "#E4DBFB";
+const NAVY = "#0E0E10";
 
 const AVATARS = [
   "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=facearea&w=96&h=96&q=80",
@@ -27,7 +27,7 @@ const LOADING_MESSAGES = [
 
 function LogoShape() {
   return (
-    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" className="text-[#0a0a0f]">
+    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" className="text-[#0E0E10]">
       <circle cx="10" cy="12" r="5" fill="currentColor" />
       <circle cx="21" cy="6" r="5" fill="currentColor" />
       <circle cx="32" cy="12" r="5" fill="currentColor" />
@@ -165,7 +165,7 @@ function GatePageInner() {
           className="absolute top-10 left-14 w-[190px] rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
           style={{ backgroundColor: NAVY }}
         >
-          <div className="relative h-28 w-full rounded-none overflow-hidden mb-4 shadow-inner" style={{ backgroundColor: "#1a1a24" }}>
+          <div className="relative h-28 w-full rounded-none overflow-hidden mb-4 shadow-inner" style={{ backgroundColor: NAVY }}>
             <Image
               src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&h=300&q=80"
               alt=""
@@ -239,59 +239,59 @@ function GatePageInner() {
             <LogoShape />
           </div>
 
-          <div className="flex items-center gap-2 rounded-full w-fit px-3 py-1.5 mb-4" style={{ backgroundColor: "#F4D93E", color: NAVY }}>
+          <div className="flex items-center gap-2 rounded-full w-fit px-3 py-1.5 mb-4" style={{ backgroundColor: "#e64a5d", color: "#fff" }}>
             <Sparkles size={16} />
             <span className="text-sm font-medium">{LOADING_MESSAGES[msgIndex]}</span>
           </div>
 
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight leading-[1.05] text-ink mb-2">
+          <h1 className="font-allura text-3xl sm:text-4xl font-normal tracking-tight leading-[1.05] text-[#0E0E10] mb-2">
             Votre plan est presque prêt 💍
           </h1>
-          <p className="text-sm text-gray-500 mb-6">
+          <p className="text-sm text-[#6B6B72] mb-6">
             Créez votre compte pour débloquer votre blueprint complet, budget détaillé et timeline personnalisée.
           </p>
 
           <div className="space-y-4 mb-2">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Prénom</label>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Prénom</label>
                 <input
                   type="text"
                   placeholder="Marie"
                   value={form.firstName}
                   onChange={(e) => updateField("firstName", e.target.value)}
                   required
-                  className="w-full rounded-xl bg-gray-50 border border-black/10 px-4 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                  className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Nom</label>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Nom</label>
                 <input
                   type="text"
                   placeholder="Durand"
                   value={form.lastName}
                   onChange={(e) => updateField("lastName", e.target.value)}
                   required
-                  className="w-full rounded-xl bg-gray-50 border border-black/10 px-4 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                  className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Votre email</label>
+              <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Votre email</label>
               <input
                 type="email"
                 placeholder="vous@exemple.fr"
                 value={form.email}
                 onChange={(e) => updateField("email", e.target.value)}
                 required
-                className="w-full rounded-xl bg-gray-50 border border-black/10 px-4 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Mot de passe</label>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Mot de passe</label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -299,12 +299,12 @@ function GatePageInner() {
                     value={form.password}
                     onChange={(e) => updateField("password", e.target.value)}
                     required
-                    className="w-full rounded-xl bg-gray-50 border border-black/10 pl-4 pr-11 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                    className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] pl-4 pr-11 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B6B72] hover:text-[#0E0E10] transition"
                     aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   >
                     {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
@@ -312,44 +312,44 @@ function GatePageInner() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Confirmer</label>
+                <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Confirmer</label>
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={form.confirmPassword}
                   onChange={(e) => updateField("confirmPassword", e.target.value)}
                   required
-                  className="w-full rounded-xl bg-gray-50 border border-black/10 px-4 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                  className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Adresse complète <span className="text-red-500">*</span></label>
+              <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Adresse complète <span className="text-[#e64a5d]">*</span></label>
               <input
                 type="text"
                 placeholder="12 rue de la Paix, 75002 Paris"
                 value={form.address}
                 onChange={(e) => updateField("address", e.target.value)}
                 required
-                className="w-full rounded-xl bg-gray-50 border border-black/10 px-4 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Téléphone (optionnel)</label>
+              <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Téléphone (optionnel)</label>
               <input
                 type="tel"
                 placeholder="06 12 34 56 78"
                 value={form.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
-                className="w-full rounded-xl bg-gray-50 border border-black/10 px-4 py-3.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:bg-white transition"
+                className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
               />
             </div>
           </div>
 
           {error && (
-            <div className="rounded-xl p-4 mb-4 text-sm text-red-600 text-center">
+            <div className="rounded-[28px] p-4 mb-4 text-sm text-[#e64a5d] text-center bg-[#fef2f4]">
               {error}
               <div className="mt-3">
                 <Button onClick={handleRestart} variant="primary" className="text-xs px-4 py-2">
@@ -362,8 +362,7 @@ function GatePageInner() {
           <button
             onClick={handleSubmit}
             disabled={submitting || !form.email || !form.firstName || !form.lastName || !form.password || !form.confirmPassword || !form.address.trim()}
-            className="w-full flex items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
-            style={{ backgroundColor: NAVY }}
+            className="w-full flex items-center justify-center gap-2 rounded-[28px] px-5 py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-50 bg-[#e64a5d]"
           >
             {submitting ? (
               <>
@@ -376,9 +375,9 @@ function GatePageInner() {
             )}
           </button>
 
-          <p className="text-sm text-gray-500 text-center mt-6">
+          <p className="text-sm text-[#6B6B72] text-center mt-6">
             Déjà un compte ?{" "}
-            <Link href="/login" className="font-medium hover:underline" style={{ color: NAVY }}>
+            <Link href="/login" className="font-medium hover:underline text-[#0E0E10] hover:text-[#e64a5d] transition">
               Se connecter
             </Link>
           </p>
