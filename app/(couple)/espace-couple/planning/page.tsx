@@ -18,7 +18,6 @@ import {
   Search,
   ListChecks,
   Target,
-  CalendarPlus,
   Sparkles,
 } from "lucide-react";
 import type { WeddingProject, TimelineTask } from "@/types/marketplace";
@@ -562,31 +561,6 @@ export default function CouplePlanningPage() {
                     </div>
                   );
                 })}
-              </div>
-            </div>
-
-            {/* Quick actions */}
-            <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
-              <h4 className="text-sm font-bold text-ink mb-4">Actions rapides</h4>
-              <div className="space-y-2">
-                <button
-                  onClick={openNewTask}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl transition text-left bg-coral hover:brightness-110"
-                >
-                  <div className="p-2 bg-white/90 rounded-lg">
-                    <CalendarPlus size={16} className="text-coral" />
-                  </div>
-                  <span className="text-sm text-white font-semibold">Planifier une étape</span>
-                </button>
-                <button
-                  onClick={openNewTask}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl transition text-left bg-coral hover:brightness-110"
-                >
-                  <div className="p-2 bg-white/90 rounded-lg">
-                    <Plus size={16} className="text-coral" />
-                  </div>
-                  <span className="text-sm text-white font-semibold">Créer une tâche</span>
-                </button>
               </div>
             </div>
 
