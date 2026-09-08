@@ -1392,7 +1392,15 @@ main > section { padding: 56px 0; }
   width: 100%;
   display: flex;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .hero-stage-outer {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+  }
 }
 
 .logo-marquee {

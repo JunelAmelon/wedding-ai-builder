@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import Link from "next/link";
 import { Header, Footer, LogoMarquee } from "@/components/layout";
 import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X, Play, Pause } from "lucide-react";
@@ -187,13 +187,13 @@ export default function LandingPage() {
     const outer = heroStageOuterRef.current;
     const stage = heroStageRef.current;
     if (!outer || !stage) return;
-    const available = outer.parentElement?.clientWidth || outer.clientWidth;
+    const available = outer.clientWidth;
     const scale = Math.min(1, available / 900);
     stage.style.transform = `scale(${scale})`;
     outer.style.height = `${520 * scale}px`;
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     scaleHeroStage();
     window.addEventListener("resize", scaleHeroStage);
     return () => window.removeEventListener("resize", scaleHeroStage);
@@ -297,7 +297,7 @@ export default function LandingPage() {
         {/* HERO */}
         <section className="hero">
           <div className="wrap pt-6 sm:pt-10">
-            <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Votre mariage prêt en <span className="font-allura text-[#e64a5d]">5 minutes</span> avec les <span className="font-allura text-[#e64a5d]">bons pros</span>.</h1>
+            <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Votre mariage prêt en <span className="text-[#e64a5d]">5 minutes</span> avec les <span className="text-[#e64a5d]">bons pros</span>.</h1>
             <p className="lead">
               Répondez à 5 questions simples. Notre IA analyse votre budget, votre style et votre date, puis génère un plan complet et trouve votre âme sœur professionnelle.
             </p>
@@ -375,8 +375,8 @@ export default function LandingPage() {
                 <div className="promo-visual-duo">
                   <div className="promo-mini-card">
                     <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=140&h=90&q=85" alt="" width={140} height={90} className="w-full h-full object-cover" unoptimized />
-                    <div className="mn">Bouquet frais</div>
-                    <div className="mp">89,99 €</div>
+                    <div className="mn hidden sm:block">Bouquet frais</div>
+                    <div className="mp hidden sm:block">89,99 €</div>
                   </div>
                   <div className="promo-main-visual">
                     <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=250&h=300&q=85" alt="" width={250} height={300} className="w-full h-full object-cover" unoptimized />
@@ -391,7 +391,7 @@ export default function LandingPage() {
                   <span className="eyebrow-pill">Étape 2</span>
                   <h3>C'est un match ? Swipez à droite</h3>
                   <p>Des prestataires compatibles avec votre mariage, triés par score de match. Plus de perte de temps avec les mauvais pros.</p>
-                  <Link href="/prestataires" className="btn btn-outline">Voir mes pros</Link>
+                  <Link href="/quiz/date" className="btn btn-outline">Voir mes pros</Link>
                 </div>
               </div>
             </div>
@@ -706,7 +706,7 @@ export default function LandingPage() {
         <section className="bg-white">
           <div className="wrap">
             <div className="final-cta reveal">
-              <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: "#fff" }}>Votre mariage mérite le <span className="font-allura text-[#e64a5d]">meilleur plan</span></h2>
+              <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: "#fff" }}>Votre mariage mérite le <span className="text-[#e64a5d]">meilleur plan</span></h2>
               <p>Rejoignez les couples qui organisent leur mariage sans stress, en commençant par un plan clair et gratuit.</p>
               <div className="btn-row" style={{ justifyContent: "center" }}>
                 <Link href="/quiz" className="btn btn-solid">Créer mon plan - Gratuit <ArrowRight size={16} /></Link>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Header } from "@/components/layout";
 
 const SAGE_CHIP = "#D8ECD9";
 const NAVY = "#0a0a0f";
@@ -67,10 +68,12 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] grid lg:grid-cols-2">
-      {/* ===== PANNEAU GAUCHE ===== */}
-      <div className="hidden lg:block relative overflow-hidden" style={{ backgroundColor: "white" }}>
-        {/* lignes décoratives roses courbes */}
+    <>
+      <Header />
+      <div className="min-h-[calc(100dvh-72px)] grid lg:grid-cols-2">
+        {/* ===== PANNEAU GAUCHE ===== */}
+        <div className="relative overflow-hidden min-h-[260px] lg:min-h-full" style={{ backgroundColor: "white" }}>
+          {/* lignes décoratives roses courbes */}
         <svg className="absolute inset-0 w-full h-full opacity-90" viewBox="0 0 600 900" fill="none" preserveAspectRatio="xMidYMid slice">
           <path d="M -40 0 C 120 180, -20 420, 180 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
           <path d="M 80 0 C 240 200, 60 460, 280 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
@@ -79,19 +82,19 @@ export default function AdminLoginPage() {
         </svg>
 
         {/* avatars circulaires flottants (gauche) */}
-        <div className="absolute left-8 top-[18%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
+        <div className="hidden lg:block absolute left-8 top-[18%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
           <Image src={AVATARS[0]} alt="" fill className="object-cover" unoptimized />
         </div>
-        <div className="absolute left-6 top-[38%] w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
+        <div className="hidden lg:block absolute left-6 top-[38%] w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
           <Image src={AVATARS[1]} alt="" fill className="object-cover" unoptimized />
         </div>
-        <div className="absolute left-10 top-[58%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
+        <div className="hidden lg:block absolute left-10 top-[58%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
           <Image src={AVATARS[2]} alt="" fill className="object-cover" unoptimized />
         </div>
 
         {/* badge admin en haut à gauche */}
         <div
-          className="absolute top-10 left-14 w-[210px] rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
+          className="hidden lg:block absolute top-10 left-14 w-[210px] rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
           style={{ backgroundColor: NAVY }}
         >
           <div className="flex items-center gap-3 mb-4">
@@ -123,7 +126,7 @@ export default function AdminLoginPage() {
 
         {/* carte activité en bas à droite */}
         <div
-          className="absolute bottom-10 right-10 w-1/2 rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
+          className="hidden lg:block absolute bottom-10 right-10 w-1/2 rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
           style={{ backgroundColor: NAVY }}
         >
           <div className="text-xs font-medium text-white/60 mb-4">Activité aujourd'hui</div>
@@ -244,5 +247,6 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

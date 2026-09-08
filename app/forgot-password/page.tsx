@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Mail, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
 import { AuthLeftPanel } from "@/components/auth/AuthLeftPanel";
+import { Header } from "@/components/layout";
 
 function LogoShape() {
   return (
@@ -58,11 +59,13 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] grid lg:grid-cols-2">
-      {/* ===== PANNEAU GAUCHE ===== */}
-      <AuthLeftPanel />
+    <>
+      <Header />
+      <div className="min-h-[calc(100dvh-72px)] grid lg:grid-cols-2">
+        {/* ===== PANNEAU GAUCHE ===== */}
+        <AuthLeftPanel />
 
-      {/* ===== PANNEAU DROIT ===== */}
+        {/* ===== PANNEAU DROIT ===== */}
       <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-white">
         <div className="w-full max-w-sm">
           <div className="mb-8">
@@ -136,5 +139,6 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle, Loader2, Eye, EyeOff } from "lucide-react";
 import { AuthLeftPanel } from "@/components/auth/AuthLeftPanel";
+import { Header } from "@/components/layout";
 
 const NAVY = "#0E0E10";
 
@@ -89,11 +90,13 @@ function ResetPasswordInner() {
   }
 
   return (
-    <div className="min-h-[100dvh] grid lg:grid-cols-2">
-      {/* Panneau gauche */}
-      <AuthLeftPanel />
+    <>
+      <Header />
+      <div className="min-h-[calc(100dvh-72px)] grid lg:grid-cols-2">
+        {/* Panneau gauche */}
+        <AuthLeftPanel />
 
-      {/* Panneau droit */}
+        {/* Panneau droit */}
       <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-white">
         <div className="w-full max-w-sm">
           <div className="mb-8">
@@ -227,6 +230,7 @@ function ResetPasswordInner() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

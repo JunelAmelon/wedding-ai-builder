@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Shield, Loader2, Eye, EyeOff } from "lucide-react";
 import { AuthLeftPanel } from "@/components/auth/AuthLeftPanel";
+import { Header } from "@/components/layout";
 
 function LogoShape() {
   return (
@@ -47,11 +48,13 @@ function AdminRegisterForm() {
   }
 
   return (
-    <div className="min-h-[100dvh] grid lg:grid-cols-2">
-      {/* ===== PANNEAU GAUCHE ===== */}
-      <AuthLeftPanel />
+    <>
+      <Header />
+      <div className="min-h-[calc(100dvh-72px)] grid lg:grid-cols-2">
+        {/* ===== PANNEAU GAUCHE ===== */}
+        <AuthLeftPanel />
 
-      {/* ===== PANNEAU DROIT ===== */}
+        {/* ===== PANNEAU DROIT ===== */}
       <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-white">
         <div className="w-full max-w-sm">
           <div className="mb-8">
@@ -163,6 +166,7 @@ function AdminRegisterForm() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

@@ -29,7 +29,7 @@ export function AuthLeftPanel({
   strokeColor?: string;
 }) {
   return (
-    <div className="hidden lg:block relative overflow-hidden" style={{ backgroundColor: bgColor }}>
+    <div className="relative overflow-hidden min-h-[260px] lg:min-h-full" style={{ backgroundColor: bgColor }}>
       <svg
         className="absolute inset-0 w-full h-full opacity-90"
         viewBox="0 0 600 900"
@@ -43,19 +43,19 @@ export function AuthLeftPanel({
       </svg>
 
       {/* Avatars circulaires flottants */}
-      <div className="absolute left-8 top-[18%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
+      <div className="hidden lg:block absolute left-8 top-[18%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
         <Image src={AVATARS[0]} alt="" fill className="object-cover" unoptimized />
       </div>
-      <div className="absolute left-6 top-[38%] w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
+      <div className="hidden lg:block absolute left-6 top-[38%] w-12 h-12 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
         <Image src={AVATARS[1]} alt="" fill className="object-cover" unoptimized />
       </div>
-      <div className="absolute left-10 top-[58%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
+      <div className="hidden lg:block absolute left-10 top-[58%] w-14 h-14 rounded-full border-2 border-white overflow-hidden shadow-[0_10px_24px_rgba(0,0,0,0.18)]">
         <Image src={AVATARS[2]} alt="" fill className="object-cover" unoptimized />
       </div>
 
       {/* Carte budget en haut à gauche */}
       <div
-        className="absolute top-10 left-14 w-[190px] rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
+        className="hidden lg:block absolute top-10 left-14 w-[190px] rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
         style={{ backgroundColor: NAVY }}
       >
         <div className="relative h-28 w-full rounded-none overflow-hidden mb-4 shadow-inner" style={{ backgroundColor: NAVY }}>
@@ -85,7 +85,7 @@ export function AuthLeftPanel({
 
       {/* Carte échéances en bas à droite */}
       <div
-        className="absolute bottom-10 right-10 w-1/2 rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
+        className="hidden lg:block absolute bottom-10 right-10 w-1/2 rounded-none p-4 shadow-[0_20px_50px_rgba(0,0,0,0.25)]"
         style={{ backgroundColor: NAVY }}
       >
         <div className="flex items-center justify-between mb-4">

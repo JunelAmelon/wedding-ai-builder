@@ -490,7 +490,7 @@ export default function ProfessionalRegistrationPage() {
                   <Star size={14} className="stars" style={{ color: "var(--coral)", fill: "var(--coral)" }} />
                   <b>{MARKETING_STATS.avgRating}</b> · les professionnels nous font confiance
                 </div>
-                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Recevez les couples qui vous <span className="font-allura text-[#e64a5d]">correspondent</span></h1>
+                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Recevez les couples qui vous <span className="text-[#e64a5d]">correspondent</span></h1>
                 <p className="lead">
                   Créez votre profil en 5 minutes. Notre IA vous envoie uniquement les couples dont le projet correspond à votre savoir-faire. Vous gagnez du temps, vous signez plus.
                 </p>

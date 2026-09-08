@@ -58,7 +58,7 @@ export default function ProfessionalMarketingPage() {
                   <span className="stars">★★★★★</span>
                   <b>{MARKETING_STATS.avgRating}</b> · les professionnels nous font confiance
                 </div>
-                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Des couples avec qui vous allez <span className="font-allura text-[#e64a5d]">matcher</span></h1>
+                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Des couples avec qui vous allez <span className="text-[#e64a5d]">matcher</span></h1>
                 <p className="lead">
                   Recevez directement les bons couples, prêts à signer. Notre IA fait le tri pour vous - vous ne voyez que les projets qui comptent.
                 </p>

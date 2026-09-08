@@ -81,7 +81,7 @@ export default function BlogPage() {
                   <Star className="stars" size={14} fill="var(--coral)" color="var(--coral)" />
                   <b>Le guide</b> · organisation de mariage
                 </div>
-                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Des conseils concrets par des <span className="font-allura text-[#e64a5d]">experts</span> du mariage</h1>
+                <h1 className="text-[2.4rem] sm:text-[3.2rem] lg:text-[4.2rem] font-bold leading-[1.15]">Des conseils concrets par des <span className="text-[#e64a5d]">experts</span> du mariage</h1>
                 <p className="lead">
                   Budget, planning, prestataires, style : tous nos guides pour organiser votre mariage sans stress ni mauvaises surprises.
                 </p>
