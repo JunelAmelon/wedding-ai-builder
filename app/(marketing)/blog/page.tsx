@@ -155,7 +155,7 @@ export default function BlogPage() {
         </section>
 
         {/* ARTICLES */}
-        <section id="articles">
+        <section id="articles" className="scroll-mt-20">
           <div className="wrap">
             <div className="section-head-center">
               <span className="eyebrow-pill">Articles</span>
@@ -208,7 +208,10 @@ export default function BlogPage() {
                     key={t.label}
                     type="button"
                     className={`cat-tag-item ${filter === t.label ? "on" : ""}`}
-                    onClick={() => setFilter(t.label)}
+                    onClick={() => {
+                      setFilter(t.label);
+                      document.getElementById("articles")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
                   >
                     <Icon size={22} />
                     <span>{t.label}</span>
