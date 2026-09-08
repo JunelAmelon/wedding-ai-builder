@@ -6,9 +6,8 @@ import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { coupleProfileRepo } from "@/lib/db/repositories/coupleProfileRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
-import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
-import { runAutoMatching } from "@/lib/matching/auto-match";
 import { isLocalMode } from "@/lib/db/repositories/utils";
 import { geocodeCity } from "@/lib/geocoding/nominatim";
 import { sendEmail } from "@/lib/email/send";
@@ -202,17 +201,13 @@ export async function POST(req: Request) {
       });
       console.log("[register] Wedding project created:", project.id, "for user:", user.id);
 
-      try {
-        await runAutoMatching(project, { perCategory: 3, notifyVendors: true });
-        console.log("[register] Auto-matching completed for project:", project.id);
-      } catch (matchErr) {
-        console.error("[register] Auto-matching failed:", matchErr);
-      }
-
-    const token = createSession(user);
-    const response = NextResponse.json({ user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role } }, { status: 201 });
-    setSessionCookie(response, token);
-    return response;
+      // Do NOT auto-login and do NOT run auto-matching yet.
+      // The couple must verify their email first; matching runs on first login.
+      return NextResponse.json({
+        user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
+        pendingVerification: true,
+        message: "Votre compte a été créé. Veuillez vérifier votre adresse email pour accéder à votre espace et découvrir vos prestataires.",
+      }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur lors de l'inscription";
     return NextResponse.json({ error: message }, { status: 500 });

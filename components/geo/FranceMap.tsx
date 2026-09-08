@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import L from "leaflet";
+import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 
 export interface MapPoint {
@@ -23,49 +22,62 @@ function pointColor(type: string) {
 
 /**
  * Carte interactive de France avec Leaflet.
- * Affiche des marqueurs (circleMarker) groupés par ville, colorés selon le type d'utilisateur.
- * On utilise des circleMarkers (pas besoin d'icônes externes, évite les soucis d'import d'assets).
+ * Chargement dynamique de Leaflet côté client pour éviter l'accès à `window` pendant le SSR (static export).
  */
 export function FranceMap({ points, height = 320 }: FranceMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<L.Map | null>(null);
-  const layerRef = useRef<L.LayerGroup | null>(null);
+  const mapRef = useRef<any>(null);
+  const layerRef = useRef<any>(null);
+  const [L, setL] = useState<any>(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    // Centré sur la France métropolitaine
-    const map = L.map(containerRef.current, {
-      center: [46.6, 2.4],
-      zoom: 5,
-      minZoom: 4,
-      maxZoom: 12,
-      scrollWheelZoom: true,
-      zoomControl: true,
-      attributionControl: true,
-    });
+    let mounted = true;
+    const init = async () => {
+      const leaflet = await import("leaflet");
+      if (!mounted || !containerRef.current || mapRef.current) return;
 
-    // Tuiles OpenStreetMap (gratuites)
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(map);
+      const map = leaflet.map(containerRef.current, {
+        center: [46.6, 2.4],
+        zoom: 5,
+        minZoom: 4,
+        maxZoom: 12,
+        scrollWheelZoom: true,
+        zoomControl: true,
+        attributionControl: true,
+      });
 
-    mapRef.current = map;
-    layerRef.current = L.layerGroup().addTo(map);
+      leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(map);
 
-    // Fix la taille après le rendu
-    setTimeout(() => map.invalidateSize(), 100);
+      const layer = leaflet.layerGroup().addTo(map);
+
+      mapRef.current = map;
+      layerRef.current = layer;
+
+      setL(leaflet);
+
+      setTimeout(() => map.invalidateSize(), 100);
+    };
+
+    init();
 
     return () => {
-      map.remove();
-      mapRef.current = null;
-      layerRef.current = null;
+      mounted = false;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+        layerRef.current = null;
+      }
     };
   }, []);
 
   useEffect(() => {
-    if (!mapRef.current || !layerRef.current) return;
+    if (!L || !layerRef.current || !mapRef.current) return;
+
     const layer = layerRef.current;
     layer.clearLayers();
 
@@ -73,7 +85,6 @@ export function FranceMap({ points, height = 320 }: FranceMapProps) {
       const color = pointColor(p.type);
       const radius = Math.min(6 + p.count * 1.5, 22);
 
-      // Cercle coloré proportionnel au nombre d'utilisateurs
       const marker = L.circleMarker([p.lat, p.lon], {
         radius,
         fillColor: color,
@@ -91,12 +102,11 @@ export function FranceMap({ points, height = 320 }: FranceMapProps) {
       marker.addTo(layer);
     });
 
-    // Ajuster la vue pour englober tous les points (si au moins un)
     if (points.length > 0) {
       const bounds = L.latLngBounds(points.map((p) => [p.lat, p.lon] as [number, number]));
       mapRef.current.fitBounds(bounds, { padding: [30, 30], maxZoom: 8 });
     }
-  }, [points]);
+  }, [points, L]);
 
   return (
     <div
@@ -105,4 +115,3 @@ export function FranceMap({ points, height = 320 }: FranceMapProps) {
     />
   );
 }
-

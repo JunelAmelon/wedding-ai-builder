@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
+import { projectRepo } from "@/lib/db/repositories/projectRepo";
+import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { verifyPassword, createSession, setSessionCookie } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { runAutoMatching } from "@/lib/matching/auto-match";
 
 const LoginSchema = z.object({
   email: z.string().email(),
@@ -55,6 +58,26 @@ export async function POST(req: Request) {
     }
 
     const token = createSession(user);
+
+    // For couples: trigger auto-matching once on first verified login if no matches exist yet.
+    // Do NOT await to keep login fast; matching runs in the background.
+    if (user.role === "couple") {
+      (async () => {
+        try {
+          const projects = await projectRepo.listByUser(user.id);
+          const project = projects[0];
+          if (project) {
+            const existingMatches = await matchRepo.listByProject(project.id);
+            if (existingMatches.length === 0) {
+              await runAutoMatching(project, { perCategory: 3, notifyVendors: true });
+            }
+          }
+        } catch (matchErr) {
+          console.error("[login] Auto-matching failed:", matchErr);
+        }
+      })();
+    }
+
     const response = NextResponse.json({
       user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
     });

@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, Check, Eye, EyeOff, Loader2 } from "lucide-react";
+import { ArrowUpRight, Check, Eye, EyeOff, Loader2, Mail, AlertCircle } from "lucide-react";
 import { AuthLeftPanel } from "@/components/auth/AuthLeftPanel";
 
 function LogoShape() {
@@ -20,25 +20,45 @@ function LogoShape() {
   );
 }
 
+function mapVerifyError(code: string | null): string | null {
+  switch (code) {
+    case "token_manquant":
+      return "Lien de vérification incomplet.";
+    case "token_invalide":
+      return "Le lien de vérification est invalide ou a expiré.";
+    case "erreur":
+      return "Une erreur est survenue lors de la vérification.";
+    default:
+      return null;
+  }
+}
+
 function LoginPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const role = searchParams.get("role") || "couple";
   const isVendor = role === "vendor";
+  const isVerified = searchParams.get("verified") === "1";
+  const verifyError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(verifyError ? mapVerifyError(verifyError) : null);
   const [pendingApproval, setPendingApproval] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   async function handleSubmit() {
     if (!email || !password) return;
     setLoading(true);
     setError(null);
     setPendingApproval(false);
+    setNeedsVerification(false);
+    setResendSuccess(false);
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -50,6 +70,11 @@ function LoginPageInner() {
         if (data.pending) {
           setPendingApproval(true);
           return;
+        }
+        if (data.needVerification) {
+          setNeedsVerification(true);
+          setEmail(data.email || email);
+          throw new Error(data.error || "Veuillez vérifier votre email");
         }
         throw new Error(data.error || "Identifiants incorrects");
       }
@@ -63,6 +88,25 @@ function LoginPageInner() {
       setError(err instanceof Error ? err.message : "Erreur de connexion");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleResendVerification() {
+    if (!email) return;
+    setResending(true);
+    setResendSuccess(false);
+    try {
+      const res = await fetch("/api/auth/verify-email/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("Erreur lors du renvoi");
+      setResendSuccess(true);
+    } catch {
+      setError("Impossible de renvoyer l'email. Veuillez vérifier l'adresse saisie.");
+    } finally {
+      setResending(false);
     }
   }
 
@@ -128,6 +172,13 @@ function LoginPageInner() {
             </div>
           </div>
 
+          {isVerified && (
+            <div className="rounded-[28px] border border-[#E4DBFB] bg-[#E4DBFB]/30 p-4 mb-4 text-center text-sm text-[#0E0E10]">
+              <Mail size={16} className="inline-block mr-2 -mt-0.5" />
+              Email vérifié avec succès. Vous pouvez maintenant vous connecter.
+            </div>
+          )}
+
           {pendingApproval && (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 mb-4 text-sm text-amber-800 text-center">
               Votre profil professionnel est en cours de validation. Vous recevrez un email dès qu'il sera approuvé.
@@ -140,7 +191,28 @@ function LoginPageInner() {
                 error.includes("validation") ? "bg-amber-50 text-amber-700 border border-amber-100" : "text-[#e64a5d]"
               }`}
             >
+              <AlertCircle size={16} className="inline-block mr-1.5 -mt-0.5" />
               {error}
+            </div>
+          )}
+
+          {needsVerification && (
+            <div className="rounded-[28px] border border-[#E4DBFB] bg-[#E4DBFB]/20 p-4 mb-4 text-center">
+              <p className="text-sm text-[#0E0E10] mb-3">Votre email n'est pas encore vérifié.</p>
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={resending || resendSuccess}
+                className="inline-flex items-center gap-2 rounded-full bg-[#e64a5d] px-4 py-2 text-xs font-semibold text-white hover:brightness-110 transition disabled:opacity-60"
+              >
+                {resending ? (
+                  <><Loader2 size={14} className="animate-spin" /> Envoi...</>
+                ) : resendSuccess ? (
+                  <><Check size={14} /> Email renvoyé</>
+                ) : (
+                  <><Mail size={14} /> Renvoyer le lien</>
+                )}
+              </button>
             </div>
           )}
 

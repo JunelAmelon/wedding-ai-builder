@@ -4,7 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
+import { ArrowUpRight, Check, Eye, EyeOff, Loader2, Mail, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AddressAutocomplete } from "@/components/geo/AddressAutocomplete";
 import { useQuizStore } from "@/lib/store/quizStore";
@@ -57,6 +57,9 @@ function GatePageInner() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   const [msgIndex, setMsgIndex] = useState(0);
 
   useEffect(() => {
@@ -128,11 +131,35 @@ function GatePageInner() {
       }
       track("account_created", { sessionId, source: "gate" });
       registeredRef.current = true;
+      if (data.pendingVerification) {
+        setPendingVerification(true);
+        setSubmitting(false);
+        return;
+      }
       router.push("/espace-couple");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Une erreur est survenue, réessayez.";
       setError(message);
       setSubmitting(false);
+    }
+  }
+
+  async function handleResendVerification() {
+    if (!form.email) return;
+    setResending(true);
+    setResendSuccess(false);
+    try {
+      const res = await fetch("/api/auth/verify-email/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email }),
+      });
+      if (!res.ok) throw new Error("Erreur");
+      setResendSuccess(true);
+    } catch {
+      setError("Impossible de renvoyer l'email. Vérifiez l'adresse saisie.");
+    } finally {
+      setResending(false);
     }
   }
 
@@ -240,17 +267,54 @@ function GatePageInner() {
             <LogoShape />
           </div>
 
-          <div className="flex items-center gap-2 rounded-full w-fit px-3 py-1.5 mb-4" style={{ backgroundColor: "#e64a5d", color: "#fff" }}>
-            <Sparkles size={16} />
-            <span className="text-sm font-medium">{LOADING_MESSAGES[msgIndex]}</span>
-          </div>
+          {pendingVerification ? (
+            <div className="text-center">
+              <div className="w-16 h-16 rounded-[28px] bg-[#E4DBFB] flex items-center justify-center mx-auto mb-4">
+                <Mail size={32} className="text-[#0E0E10]" />
+              </div>
+              <h1 className="font-allura text-3xl sm:text-4xl font-normal tracking-tight leading-[1.05] text-[#0E0E10] mb-3">
+                Vérifiez votre email
+              </h1>
+              <p className="text-sm text-[#6B6B72] mb-6">
+                Un lien de vérification a été envoyé à <strong className="text-[#0E0E10]">{form.email}</strong>.<br />
+                Cliquez sur le lien pour activer votre compte et accéder à votre espace.
+              </p>
 
-          <h1 className="font-allura text-3xl sm:text-4xl font-normal tracking-tight leading-[1.05] text-[#0E0E10] mb-2">
-            Votre plan est presque prêt 💍
-          </h1>
-          <p className="text-sm text-[#6B6B72] mb-6">
-            Créez votre compte pour débloquer votre blueprint complet, budget détaillé et timeline personnalisée.
-          </p>
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={resending || resendSuccess}
+                className="inline-flex items-center gap-2 rounded-full bg-[#e64a5d] px-5 py-2.5 text-sm font-semibold text-white hover:brightness-110 transition disabled:opacity-60"
+              >
+                {resending ? (
+                  <><Loader2 size={16} className="animate-spin" /> Envoi...</>
+                ) : resendSuccess ? (
+                  <><Check size={16} /> Email renvoyé</>
+                ) : (
+                  <><Mail size={16} /> Renvoyer l'email</>
+                )}
+              </button>
+
+              <p className="mt-6 text-sm text-[#6B6B72]">
+                Email vérifié ?{" "}
+                <Link href="/login?verified=1" className="font-medium hover:underline text-[#0E0E10]">
+                  Se connecter
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 rounded-full w-fit px-3 py-1.5 mb-4" style={{ backgroundColor: "#e64a5d", color: "#fff" }}>
+                <Sparkles size={16} />
+                <span className="text-sm font-medium">{LOADING_MESSAGES[msgIndex]}</span>
+              </div>
+
+              <h1 className="font-allura text-3xl sm:text-4xl font-normal tracking-tight leading-[1.05] text-[#0E0E10] mb-2">
+                Votre plan est presque prêt 💍
+              </h1>
+              <p className="text-sm text-[#6B6B72] mb-6">
+                Créez votre compte pour débloquer votre blueprint complet, budget détaillé et timeline personnalisée.
+              </p>
 
           <div className="space-y-4 mb-2">
             <div className="grid grid-cols-2 gap-3">
@@ -401,6 +465,8 @@ function GatePageInner() {
               Se connecter
             </Link>
           </p>
+            </>
+          )}
         </div>
       </div>
     </div>

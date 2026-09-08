@@ -25,8 +25,12 @@ export async function GET(req: Request) {
     });
 
     // Redirige vers le login avec un message de succès
-    const redirectBase = user.role === "vendor" ? "/login?role=vendor" : user.role === "admin" ? "/login?role=admin" : "/login";
-    return NextResponse.redirect(`${APP_URL}${redirectBase}&verified=1`);
+    const params = new URLSearchParams();
+    if (user.role === "vendor") params.set("role", "vendor");
+    if (user.role === "admin") params.set("role", "admin");
+    params.set("verified", "1");
+    const redirectUrl = `${APP_URL}/login?${params.toString()}`;
+    return NextResponse.redirect(redirectUrl);
   } catch {
     return NextResponse.redirect(`${APP_URL}/login?error=erreur`);
   }
