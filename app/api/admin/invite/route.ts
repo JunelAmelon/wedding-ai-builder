@@ -3,6 +3,10 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
+import { sendEmail } from "@/lib/email/send";
+import { adminInviteEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 const InviteSchema = z.object({
   email: z.string().email(),
@@ -25,6 +29,15 @@ export async function POST(req: Request) {
     }
 
     const invite = await adminRepo.createInvitation({ email, role, invitedBy: currentUser.id });
+
+    try {
+      const inviteUrl = `${APP_URL}/admin-register?token=${invite.token}`;
+      const { subject, html } = adminInviteEmail({ email, inviteUrl, role });
+      await sendEmail({ to: email, subject, html });
+    } catch (e) {
+      console.error("[admin/invite] email error:", e);
+    }
+
     return NextResponse.json({ invite });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";

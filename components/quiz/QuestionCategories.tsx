@@ -43,8 +43,8 @@ export function QuestionCategories({ onAnswer }: QuestionCategoriesProps) {
               className={
                 "flex items-center gap-2.5 rounded-[28px] border px-4 py-3.5 text-left transition " +
                 (isSelected
-                  ? "border-[#e64a5d] bg-[#fef2f4] ring-1 ring-[#e64a5d]/20"
-                  : "border-[#EDEDF0] bg-white hover:border-[#e64a5d]/30 hover:bg-[#fef2f4]/50")
+                  ? "border-[#0E0E10] bg-[#E4DBFB] ring-1 ring-[#0E0E10]/20"
+                  : "border-[#EDEDF0] bg-white hover:border-[#0E0E10]/30 hover:bg-[#E4DBFB]/30")
               }
             >
               <span className="text-xl flex-shrink-0">{opt.icon}</span>

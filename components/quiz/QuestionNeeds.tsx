@@ -63,8 +63,8 @@ export function QuestionNeeds({ onAnswer }: QuestionNeedsProps) {
                   className={
                     "rounded-full border px-4 py-2 text-sm font-medium transition " +
                     (isSelected
-                      ? "border-[#e64a5d] bg-[#fef2f4] text-[#0E0E10]"
-                      : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#e64a5d]/30")
+                      ? "border-[#0E0E10] bg-[#E4DBFB] text-[#0E0E10]"
+                      : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#0E0E10]/30")
                   }
                 >
                   {opt.label}
@@ -77,7 +77,7 @@ export function QuestionNeeds({ onAnswer }: QuestionNeedsProps) {
               value={dietaryDetails}
               onChange={(e) => setDietaryDetails(e.target.value)}
               placeholder="Précisez les allergies ou régimes..."
-              className="mt-3 w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
+              className="mt-3 w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
             />
           )}
         </div>
@@ -93,8 +93,8 @@ export function QuestionNeeds({ onAnswer }: QuestionNeedsProps) {
               className={
                 "flex-1 rounded-[28px] border px-4 py-3.5 text-sm font-medium transition " +
                 (mobility === true
-                  ? "border-[#e64a5d] bg-[#fef2f4] text-[#0E0E10]"
-                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#e64a5d]/30")
+                  ? "border-[#0E0E10] bg-[#E4DBFB] text-[#0E0E10]"
+                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#0E0E10]/30")
               }
             >
               Oui
@@ -105,8 +105,8 @@ export function QuestionNeeds({ onAnswer }: QuestionNeedsProps) {
               className={
                 "flex-1 rounded-[28px] border px-4 py-3.5 text-sm font-medium transition " +
                 (mobility === false
-                  ? "border-[#e64a5d] bg-[#fef2f4] text-[#0E0E10]"
-                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#e64a5d]/30")
+                  ? "border-[#0E0E10] bg-[#E4DBFB] text-[#0E0E10]"
+                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#0E0E10]/30")
               }
             >
               Non
@@ -125,8 +125,8 @@ export function QuestionNeeds({ onAnswer }: QuestionNeedsProps) {
               className={
                 "flex-1 rounded-[28px] border px-4 py-3.5 text-sm font-medium transition " +
                 (guestsFar === true
-                  ? "border-[#e64a5d] bg-[#fef2f4] text-[#0E0E10]"
-                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#e64a5d]/30")
+                  ? "border-[#0E0E10] bg-[#E4DBFB] text-[#0E0E10]"
+                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#0E0E10]/30")
               }
             >
               Oui
@@ -137,8 +137,8 @@ export function QuestionNeeds({ onAnswer }: QuestionNeedsProps) {
               className={
                 "flex-1 rounded-[28px] border px-4 py-3.5 text-sm font-medium transition " +
                 (guestsFar === false
-                  ? "border-[#e64a5d] bg-[#fef2f4] text-[#0E0E10]"
-                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#e64a5d]/30")
+                  ? "border-[#0E0E10] bg-[#E4DBFB] text-[#0E0E10]"
+                  : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#0E0E10]/30")
               }
             >
               Non

@@ -29,6 +29,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import type { Witness, UserAccount, WeddingProject } from "@/types/marketplace";
+import { CityAutocomplete } from "@/components/geo/CityAutocomplete";
 
 type MeUser = Omit<UserAccount, "passwordHash">;
 
@@ -498,10 +499,9 @@ export default function CoupleWeddingPage() {
                   <div className="flex-1 grid sm:grid-cols-2 gap-x-6 gap-y-4">
                     <div>
                       <div className="text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-0.5">Ville</div>
-                      <input
-                        type="text"
+                      <CityAutocomplete
                         value={project?.location?.city || ""}
-                        onChange={(e) => updateNested("location.city", e.target.value)}
+                        onChange={(value) => updateNested("location.city", value)}
                         placeholder="Bordeaux"
                         className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#0E0E10] placeholder:text-[#6B6B72]/40 placeholder:font-normal"
                       />

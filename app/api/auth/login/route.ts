@@ -35,6 +35,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email ou mot de passe incorrect" }, { status: 401 });
     }
 
+    // Email verification required (except for admins who are invited)
+    if (!user.emailVerified && user.role !== "admin") {
+      return NextResponse.json({
+        error: "Veuillez vérifier votre adresse email pour vous connecter. Un lien de vérification vous a été envoyé à votre inscription.",
+        needVerification: true,
+        email: user.email,
+      }, { status: 403 });
+    }
+
     if (user.role === "vendor") {
       const profile = await vendorProfileRepo.getByUserId(user.id);
       if (!profile || profile.status !== "approved") {

@@ -151,14 +151,20 @@ export default function VendorMessagingPage() {
   }, [messages]);
 
   const filteredProposals = useMemo(() => {
-    if (!search.trim()) return proposals;
-    const lower = search.toLowerCase();
-    return proposals.filter(
-      (p) =>
-        p.couple?.firstName?.toLowerCase().includes(lower) ||
-        p.couple?.lastName?.toLowerCase().includes(lower) ||
-        p.project?.name?.toLowerCase().includes(lower)
-    );
+    const lower = search.trim().toLowerCase();
+    const list = lower
+      ? proposals.filter(
+          (p) =>
+            p.couple?.firstName?.toLowerCase().includes(lower) ||
+            p.couple?.lastName?.toLowerCase().includes(lower) ||
+            p.project?.name?.toLowerCase().includes(lower)
+        )
+      : proposals;
+    return [...list].sort((a, b) => {
+      const aTime = a.lastMessage?.createdAt || a.createdAt;
+      const bTime = b.lastMessage?.createdAt || b.createdAt;
+      return new Date(bTime).getTime() - new Date(aTime).getTime();
+    });
   }, [proposals, search]);
 
   async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {

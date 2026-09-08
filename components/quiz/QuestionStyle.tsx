@@ -85,7 +85,7 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
               key={opt.value}
               onClick={() => setStyle(opt.value)}
               type="button"
-              className="rounded-none border border-ink/10 px-3 py-4 text-left transition hover:opacity-95"
+              className="rounded-2xl border border-ink/10 px-3 py-4 text-left transition hover:opacity-95"
               style={{
                 backgroundColor: opt.bg,
                 color: opt.text,
@@ -110,14 +110,14 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
       </div>
 
       {isOther && (
-        <div className="mt-6 space-y-4 rounded-[28px] border border-[#EDEDF0] bg-[#fef2f4]/50 p-4">
+        <div className="mt-6 space-y-4 rounded-2xl border border-[#EDEDF0] bg-[#E4DBFB]/30 p-4">
           <div>
             <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B6B72] mb-2">Votre thème *</label>
             <input
               value={customStyle}
               onChange={(e) => setCustomStyle(e.target.value)}
               placeholder="Ex. Gatsby, Tropical, années 20..."
-              className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
+              className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
             />
           </div>
           <div>
@@ -127,7 +127,7 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
               onChange={(e) => setCustomStyleDescription(e.target.value)}
               placeholder="Ex. Doré, art déco, champagne, jazz live..."
               rows={3}
-              className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
+              className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
             />
           </div>
         </div>
@@ -149,8 +149,8 @@ export function QuestionStyle({ onAnswer }: QuestionStyleProps) {
                   className={
                     "rounded-full border px-4 py-2 text-sm font-medium transition " +
                     (isSelected
-                      ? "border-[#e64a5d] bg-[#fef2f4] text-[#0E0E10]"
-                      : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#e64a5d]/30")
+                      ? "border-[#0E0E10] bg-[#E4DBFB] text-[#0E0E10]"
+                      : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#0E0E10]/30")
                   }
                 >
                   {opt.label}

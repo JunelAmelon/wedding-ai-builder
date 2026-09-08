@@ -21,6 +21,9 @@ import {
   Star,
 } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
+import { CityAutocomplete } from "@/components/geo/CityAutocomplete";
+import { AddressAutocomplete } from "@/components/geo/AddressAutocomplete";
+import { RegionAutocomplete } from "@/components/geo/RegionAutocomplete";
 
 const SERVICE_CATEGORIES = [
   "Photographe / Vidéaste",
@@ -71,6 +74,7 @@ const DEFAULT_FORM = {
   contactName: "",
   email: "",
   password: "",
+  confirmPassword: "",
   phone: "",
   website: "",
   address: "",
@@ -133,7 +137,7 @@ export default function ProfessionalRegistrationPage() {
   function validateStep(index: number): boolean {
     switch (index) {
       case 0:
-        return !!(form.companyName && form.siret && form.contactName && form.email && form.password.length >= 8 && form.phone && form.address && form.city && form.zipCode);
+        return !!(form.companyName && form.siret && form.contactName && form.email && form.password.length >= 8 && form.password === form.confirmPassword && form.phone && form.address && form.city && form.zipCode);
       case 1:
         return !!(form.serviceCategory && form.yearsOfExperience && form.description);
       case 2:
@@ -285,6 +289,21 @@ export default function ProfessionalRegistrationPage() {
             <input type="password" value={form.password} onChange={(e) => update("password", e.target.value)} placeholder="8 caractères minimum" />
           </div>
           <div className="field">
+            <label>Confirmer le mot de passe *</label>
+            <input
+              type="password"
+              value={form.confirmPassword}
+              onChange={(e) => update("confirmPassword", e.target.value)}
+              placeholder="Retapez votre mot de passe"
+              style={form.confirmPassword && form.confirmPassword !== form.password ? { borderColor: "#e64a5d" } : undefined}
+            />
+            {form.confirmPassword && form.confirmPassword !== form.password && (
+              <span style={{ color: "#e64a5d", fontSize: 12, marginTop: 4, display: "block" }}>
+                Les mots de passe ne correspondent pas.
+              </span>
+            )}
+          </div>
+          <div className="field">
             <label>Téléphone *</label>
             <input type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="06 00 00 00 00" />
           </div>
@@ -294,11 +313,28 @@ export default function ProfessionalRegistrationPage() {
           </div>
           <div className="field span2">
             <label>Adresse complète *</label>
-            <input value={form.address} onChange={(e) => update("address", e.target.value)} placeholder="Ex. 23 rue du Béarn, Ris-Orangis" />
+            <AddressAutocomplete
+              value={form.address}
+              onChange={(value, suggestion) => {
+                update("address", value);
+                if (suggestion?.city) update("city", suggestion.city);
+                if (suggestion?.postcode) update("zipCode", suggestion.postcode);
+              }}
+              placeholder="Ex. 23 rue du Béarn, Ris-Orangis"
+              className="w-full"
+            />
           </div>
           <div className="field">
             <label>Ville *</label>
-            <input value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="Ris-Orangis" />
+            <CityAutocomplete
+              value={form.city}
+              onChange={(value, suggestion) => {
+                update("city", value);
+                if (suggestion?.codesPostaux[0]) update("zipCode", suggestion.codesPostaux[0]);
+              }}
+              placeholder="Ris-Orangis"
+              className="w-full"
+            />
           </div>
           <div className="field">
             <label>Code postal *</label>
@@ -376,7 +412,12 @@ export default function ProfessionalRegistrationPage() {
         <div className="grid2">
           <div className="field span2">
             <label>Régions d'intervention</label>
-            <input value={form.regions} onChange={(e) => update("regions", e.target.value)} placeholder="Ex. Nouvelle-Aquitaine, Île-de-France" />
+            <RegionAutocomplete
+              value={form.regions}
+              onChange={update.bind(null, "regions")}
+              placeholder="Ex. Nouvelle-Aquitaine, Île-de-France"
+              className="w-full"
+            />
           </div>
           <div className="field">
             <label>Rayon d'intervention (km)</label>

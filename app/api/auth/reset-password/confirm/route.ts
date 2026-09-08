@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { hashPassword } from "@/lib/auth";
+import { sendEmail } from "@/lib/email/send";
+import { passwordChangedEmail } from "@/lib/email/emails";
 
 const ConfirmResetSchema = z.object({
   token: z.string().min(1),
@@ -34,6 +36,13 @@ export async function POST(req: Request) {
       resetToken: null,
       resetTokenExpiry: null,
     } as any);
+
+    try {
+      const { subject, html } = passwordChangedEmail({ firstName: user.firstName });
+      await sendEmail({ to: user.email, subject, html });
+    } catch (e) {
+      console.error("[reset-password/confirm] email error:", e);
+    }
 
     return NextResponse.json({ success: true, message: "Mot de passe réinitialisé avec succès" });
   } catch (err) {

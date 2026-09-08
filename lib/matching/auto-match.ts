@@ -2,9 +2,14 @@ import type { WeddingProject, ProjectVendorMatch } from "@/types/marketplace";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
+import { userRepo } from "@/lib/db/repositories/userRepo";
 import { findTopMatches } from "@/lib/matching/engine";
 import { filterActiveVendors } from "@/lib/subscription-guard";
 import { createMatchAiCache } from "@/lib/matching/ai-cache";
+import { sendEmail } from "@/lib/email/send";
+import { newOpportunityEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export interface AutoMatchResult {
   matches: ProjectVendorMatch[];
@@ -159,6 +164,26 @@ export async function runAutoMatching(
             link: "/espace-prestataire/appels-offres",
           })
         )
+      );
+
+      await Promise.all(
+        saved.map(async (m) => {
+          try {
+            const profile = await vendorProfileRepo.get(m.vendorId);
+            if (!profile) return;
+            const vendorUser = await userRepo.get(profile.userId);
+            if (!vendorUser) return;
+            const { subject, html } = newOpportunityEmail({
+              vendorFirstName: vendorUser.firstName,
+              category: m.category,
+              score: m.score,
+              matchUrl: `${APP_URL}/espace-prestataire/appels-offres`,
+            });
+            await sendEmail({ to: vendorUser.email, subject, html });
+          } catch (e) {
+            console.error("[auto-match] email error:", e);
+          }
+        })
       );
     }
   }

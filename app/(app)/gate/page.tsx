@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { AddressAutocomplete } from "@/components/geo/AddressAutocomplete";
 import { useQuizStore } from "@/lib/store/quizStore";
 import { track } from "@/lib/analytics/posthog.client";
 
@@ -313,24 +314,43 @@ function GatePageInner() {
               </div>
               <div>
                 <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Confirmer</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={form.confirmPassword}
-                  onChange={(e) => updateField("confirmPassword", e.target.value)}
-                  required
-                  className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={form.confirmPassword}
+                    onChange={(e) => updateField("confirmPassword", e.target.value)}
+                    required
+                    className={`w-full bg-white border-2 rounded-[28px] text-[#0E0E10] pl-4 pr-11 py-3.5 text-sm focus:outline-none transition ${
+                      form.confirmPassword && form.confirmPassword !== form.password
+                        ? "border-[#e64a5d] focus:border-[#e64a5d]"
+                        : "border-[#EDEDF0] focus:border-[#fef2f4]"
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B6B72] hover:text-[#0E0E10] transition"
+                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  >
+                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  </button>
+                </div>
+                {form.confirmPassword && form.confirmPassword !== form.password && (
+                  <p className="text-[11px] text-[#e64a5d] mt-1.5">Les mots de passe ne correspondent pas.</p>
+                )}
+                {form.confirmPassword && form.confirmPassword === form.password && form.password.length >= 8 && (
+                  <p className="text-[11px] text-[#10b981] mt-1.5">Mots de passe identiques ✓</p>
+                )}
               </div>
             </div>
 
             <div>
               <label className="block font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-1.5">Adresse complète <span className="text-[#e64a5d]">*</span></label>
-              <input
-                type="text"
-                placeholder="12 rue de la Paix, 75002 Paris"
+              <AddressAutocomplete
                 value={form.address}
-                onChange={(e) => updateField("address", e.target.value)}
+                onChange={(value) => updateField("address", value)}
+                placeholder="12 rue de la Paix, 75002 Paris"
                 required
                 className="w-full bg-white border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 text-sm focus:outline-none focus:border-[#fef2f4] transition"
               />

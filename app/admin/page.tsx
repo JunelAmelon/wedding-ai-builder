@@ -8,11 +8,11 @@ import {
   FolderKanban,
   Euro,
   Loader2,
-  RefreshCcw,
   ArrowUpRight,
   TrendingUp,
 } from "lucide-react";
 import type { AdminDashboardStats, AdminCoupleListItem, AdminVendorListItem } from "@/types/admin";
+import { FranceMap, type MapPoint } from "@/components/geo/FranceMap";
 
 const TABS = [
   { label: "Tableau de bord", href: "/admin" },
@@ -29,24 +29,7 @@ const MOCK_TOP: { name: string; count: number }[] = [
   { name: "Fleuriste", count: 63 },
 ];
 
-// French city coordinates mapped to SVG (viewBox 0 0 600 300)
-const CITY_COORDS: Record<string, [number, number]> = {
-  "Paris": [295, 65], "Lyon": [305, 90], "Marseille": [305, 105], "Toulouse": [285, 100],
-  "Bordeaux": [275, 85], "Nantes": [270, 70], "Lille": [300, 50], "Strasbourg": [320, 60],
-  "Nice": [315, 95], "Rennes": [265, 65], "Montpellier": [295, 100], "Grenoble": [310, 85],
-  "Dijon": [310, 75], "Clermont-Ferrand": [295, 80], "Le Mans": [280, 70], "Aix-en-Provence": [308, 98],
-  "Bruxelles": [310, 55], "Genève": [315, 80], "Lausanne": [315, 78], "Liège": [318, 55],
-  "Londres": [285, 48], "Montréal": [140, 70], "Toronto": [145, 65],
-};
-
-function getCityCoords(cityName: string): [number, number] | null {
-  if (!cityName) return null;
-  const key = cityName.trim();
-  if (CITY_COORDS[key]) return CITY_COORDS[key];
-  // Try case-insensitive match
-  const found = Object.keys(CITY_COORDS).find((c) => c.toLowerCase() === key.toLowerCase());
-  return found ? CITY_COORDS[found] : null;
-}
+// NOTE: Les coordonnées des villes sont désormais géocodées dynamiquement via l'API Géo (api.gouv.fr).
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<AdminDashboardStats | null>(null);
@@ -366,17 +349,15 @@ function MetricCard({
   );
 }
 
-function getCountry(item: AdminVendorListItem | AdminCoupleListItem) {
-  const profile = (item as any).profile;
-  return profile?.address?.country || profile?.location?.country || null;
-}
-
 function getCity(item: AdminVendorListItem | AdminCoupleListItem): string | null {
   const profile = (item as any).profile;
   return profile?.address?.city || profile?.location?.city || null;
 }
 
 function WorldMapCard({ vendors, couples }: { vendors: AdminVendorListItem[]; couples: AdminCoupleListItem[] }) {
+  const [mapPoints, setMapPoints] = useState<MapPoint[]>([]);
+  const [geocoding, setGeocoding] = useState(false);
+
   // Build list of city points with counts
   const cityPoints = (() => {
     const map = new Map<string, { count: number; type: "vendor" | "couple" | "mixed" }>();
@@ -402,22 +383,47 @@ function WorldMapCard({ vendors, couples }: { vendors: AdminVendorListItem[]; co
         map.set(city, { count: 1, type: "couple" });
       }
     });
-    return Array.from(map.entries())
-      .map(([city, data]) => ({ city, ...data, coords: getCityCoords(city) }))
-      .filter((p) => p.coords !== null);
+    return Array.from(map.entries()).map(([city, data]) => ({ city, ...data }));
   })();
 
-  const byCountry = (() => {
-    const map = new Map<string, number>();
-    [...vendors, ...couples].forEach((item) => {
-      const country = getCountry(item);
-      if (!country) return;
-      map.set(country, (map.get(country) || 0) + 1);
+  // Géocoder les villes via l'API Géo pour obtenir les vraies coordonnées GPS
+  useEffect(() => {
+    if (cityPoints.length === 0) {
+      setMapPoints([]);
+      return;
+    }
+    let cancelled = false;
+    setGeocoding(true);
+    (async () => {
+      const points: MapPoint[] = [];
+      // Géocoder en parallèle par lots de 5 pour ne pas surcharger l'API
+      for (let i = 0; i < cityPoints.length; i += 5) {
+        const batch = cityPoints.slice(i, i + 5);
+        const results = await Promise.all(
+          batch.map(async (p) => {
+            try {
+              const res = await fetch(`/api/geo/geocode?city=${encodeURIComponent(p.city)}`);
+              if (!res.ok) return null;
+              const data = await res.json();
+              if (typeof data.lat !== "number" || typeof data.lon !== "number") return null;
+              return { city: p.city, count: p.count, type: p.type, lat: data.lat, lon: data.lon } as MapPoint;
+            } catch {
+              return null;
+            }
+          })
+        );
+        if (cancelled) return;
+        points.push(...results.filter((r): r is MapPoint => r !== null));
+      }
+      if (!cancelled) setMapPoints(points);
+    })().finally(() => {
+      if (!cancelled) setGeocoding(false);
     });
-    return Array.from(map.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 4);
-  })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vendors, couples]);
 
   const total = vendors.length + couples.length;
   const now = new Date();
@@ -430,16 +436,17 @@ function WorldMapCard({ vendors, couples }: { vendors: AdminVendorListItem[]; co
     <div className="bg-white rounded-[20px] border border-[#f1f5f9] p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold font-display text-[#0f172a]">Carte des utilisateurs</h2>
-        <button className="inline-flex items-center gap-1.5 text-xs text-[#db2777] font-medium hover:underline">
-          <RefreshCcw size={12} />
-          Actualiser
-        </button>
+        {geocoding && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-[#64748b]">
+            <Loader2 size={12} className="animate-spin" /> Géocodage…
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="rounded-[16px] bg-[#f8fafc] p-4">
           <p className="text-xs text-[#64748b]">Villes couvertes</p>
-          <p className="text-xl font-semibold font-display text-[#0f172a]">{cityPoints.length}</p>
+          <p className="text-xl font-semibold font-display text-[#0f172a]">{mapPoints.length}</p>
         </div>
         <div className="rounded-[16px] bg-[#f8fafc] p-4">
           <p className="text-xs text-[#64748b]">Utilisateurs</p>
@@ -451,36 +458,15 @@ function WorldMapCard({ vendors, couples }: { vendors: AdminVendorListItem[]; co
         </div>
       </div>
 
-      <div className="relative h-56">
-        <svg viewBox="0 0 600 300" className="w-full h-full">
-          <rect width="600" height="300" fill="#f8fafc" rx="16" />
-          <g fill="#94a3b8" opacity={0.2}>
-            {WORLD_DOTS.map(([x, y], i) => (
-              <circle key={i} cx={x} cy={y} r="2.5" />
-            ))}
-          </g>
-          {cityPoints.map((p, i) => {
-            const [x, y] = p.coords!;
-            const r = Math.min(4 + p.count, 10);
-            return (
-              <g key={i}>
-                <circle cx={x} cy={y} r={r} fill={pointColor(p.type)} opacity={0.7} />
-                <circle cx={x} cy={y} r={r + 3} fill={pointColor(p.type)} opacity={0.15} />
-                <text x={x} y={y - r - 4} fontSize={8} fill="#0f172a" textAnchor="middle" fontWeight={600}>
-                  {p.city}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
-        <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
-          {cityPoints.slice(0, 6).map((p, i) => (
-            <CountryBadge key={p.city} label={`${p.city} (${p.count})`} color={pointColor(p.type)} />
-          ))}
-          {cityPoints.length === 0 && (
-            <span className="text-xs text-[#64748b]">Aucune localisation renseignée</span>
-          )}
-        </div>
+      <FranceMap points={mapPoints} height={320} />
+
+      <div className="flex flex-wrap gap-2 mt-4">
+        {mapPoints.slice(0, 8).map((p) => (
+          <CountryBadge key={p.city} label={`${p.city} (${p.count})`} color={pointColor(p.type)} />
+        ))}
+        {mapPoints.length === 0 && !geocoding && (
+          <span className="text-xs text-[#64748b]">Aucune localisation renseignée</span>
+        )}
       </div>
 
       {/* Legend */}
@@ -507,28 +493,6 @@ function CountryBadge({ label, color }: { label: string; color: string }) {
     </span>
   );
 }
-
-const WORLD_DOTS: [number, number][] = [
-  // North America
-  [60, 60], [70, 55], [80, 58], [90, 65], [100, 70], [110, 75], [120, 80], [130, 78],
-  [140, 72], [150, 68], [160, 65], [170, 70], [180, 75], [190, 80], [100, 85], [110, 90],
-  [120, 95], [130, 100], [140, 105], [150, 110], [170, 100], [180, 105],
-  // South America
-  [160, 140], [170, 150], [180, 160], [175, 170], [165, 180], [170, 190], [180, 185],
-  [185, 175], [175, 165], [168, 155],
-  // Europe
-  [280, 55], [290, 52], [300, 50], [310, 55], [320, 60], [330, 58], [340, 62], [350, 65],
-  [360, 70], [300, 65], [310, 70], [320, 75], [330, 72], [340, 68],
-  // Africa
-  [290, 95], [300, 105], [310, 115], [320, 125], [330, 135], [340, 140], [320, 110],
-  [330, 120], [310, 100], [300, 90], [315, 105], [325, 115],
-  // Asia
-  [380, 60], [400, 55], [420, 50], [440, 55], [460, 60], [480, 70], [500, 65], [520, 60],
-  [420, 70], [440, 75], [460, 80], [480, 85], [500, 90], [440, 90], [460, 100], [480, 110],
-  [400, 100], [420, 110], [440, 120], [460, 130], [430, 105],
-  // Australia
-  [490, 200], [510, 205], [530, 210], [500, 215], [520, 220], [540, 215], [510, 225],
-];
 
 function polygonPoints(sides: number, radius: number) {
   const points: string[] = [];

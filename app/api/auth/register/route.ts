@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { randomBytes } from "crypto";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { coupleProfileRepo } from "@/lib/db/repositories/coupleProfileRepo";
@@ -10,6 +11,10 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { runAutoMatching } from "@/lib/matching/auto-match";
 import { isLocalMode } from "@/lib/db/repositories/utils";
 import { geocodeCity } from "@/lib/geocoding/nominatim";
+import { sendEmail } from "@/lib/email/send";
+import { verifyEmail, vendorApplicationReceivedEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 async function geocodeLocation(location: { city?: string; country?: string } | null | undefined): Promise<{ city: string; country: string; geo?: { lat: number; lng: number } } | null> {
   if (!location?.city || !location?.country) return null;
@@ -50,6 +55,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Un compte existe déjà avec cet email" }, { status: 409 });
     }
 
+    // Generate email verification token
+    const verifyToken = randomBytes(32).toString("hex");
+    const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
     const user = await userRepo.create({
       email: email.toLowerCase(),
       passwordHash: hashPassword(password),
@@ -63,9 +72,20 @@ export async function POST(req: Request) {
       stripeCustomerId: null,
       stripeSubscriptionId: null,
       emailVerified: false,
+      verifyToken,
+      verifyTokenExpiry,
       resetToken: null,
       resetTokenExpiry: null,
     });
+
+    // Send verification email
+    try {
+      const verifyUrl = `${APP_URL}/api/auth/verify-email/confirm?token=${verifyToken}`;
+      const { subject, html } = verifyEmail({ firstName, verifyUrl });
+      await sendEmail({ to: user.email, subject, html });
+    } catch (emailErr) {
+      console.error("[register] Erreur envoi email vérification:", emailErr);
+    }
 
     if (role === "vendor") {
       await vendorProfileRepo.create({
@@ -100,6 +120,15 @@ export async function POST(req: Request) {
         reviewedBy: null,
         notes: null,
       });
+
+      // Send vendor application received email
+      try {
+        const { subject, html } = vendorApplicationReceivedEmail({ firstName, lastName });
+        await sendEmail({ to: user.email, subject, html });
+      } catch (emailErr) {
+        console.error("[register] Erreur envoi email candidature:", emailErr);
+      }
+
       // Vendors must be validated by an admin before they can log in.
       // Do NOT create a session — return a pending message instead.
       return NextResponse.json({

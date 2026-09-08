@@ -11,6 +11,10 @@ import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { messageRepo } from "@/lib/db/repositories/messageRepo";
+import { sendEmail } from "@/lib/email/send";
+import { newProposalEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 async function mergeDuplicateProposals(vendorId: string, vendorUserId: string) {
   const proposals = await proposalRepo.listByVendor(vendorId);
@@ -204,6 +208,20 @@ export async function POST(req: Request) {
           content: `${profile.companyName} a répondu à votre appel d'offres.`,
           link: `/espace-couple/prestataires/${match.tenderId || ""}`,
         });
+
+        try {
+          const coupleUser = await userRepo.get(project.userId);
+          const { subject, html } = newProposalEmail({
+            coupleFirstName: coupleUser?.firstName,
+            vendorName: profile.companyName || profile.brandName || "Prestataire",
+            category: match.category,
+            amount: amount ?? undefined,
+            tenderUrl: `${APP_URL}/espace-couple/prestataires`,
+          });
+          await sendEmail({ to: coupleUser?.email || "", subject, html });
+        } catch (e) {
+          console.error("[vendor/proposals] email error:", e);
+        }
       }
 
       return NextResponse.json({ proposal: existingConversation, message: msg }, { status: 200 });
@@ -252,6 +270,20 @@ export async function POST(req: Request) {
         content: `${profile.companyName} a répondu à votre appel d'offres.`,
         link: `/espace-couple/prestataires/${match.tenderId || ""}`,
       });
+
+      try {
+        const coupleUser = await userRepo.get(project.userId);
+        const { subject, html } = newProposalEmail({
+          coupleFirstName: coupleUser?.firstName,
+          vendorName: profile.companyName || profile.brandName || "Prestataire",
+          category: match.category,
+          amount: amount ?? undefined,
+          tenderUrl: `${APP_URL}/espace-couple/prestataires`,
+        });
+        await sendEmail({ to: coupleUser?.email || "", subject, html });
+      } catch (e) {
+        console.error("[vendor/proposals] email error:", e);
+      }
     }
 
     return NextResponse.json({ proposal }, { status: 201 });

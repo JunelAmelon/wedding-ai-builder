@@ -188,27 +188,27 @@ export default function CoupleSupportPage() {
 
           {/* Info cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-[28px] border border-line bg-white p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
-              <div className="h-10 w-10 rounded-[28px] bg-[#fef2f4] flex items-center justify-center shrink-0">
-                <Mail size={18} className="text-text-secondary" />
+            <div className="rounded-[28px] border border-line bg-[#fef2f4] p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
+                <Mail size={18} className="text-[#c43a4a]" />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-ink">Par email</h3>
                 <p className="text-xs text-text-secondary mt-0.5">support@mariagefacile.fr</p>
               </div>
             </div>
-            <div className="rounded-[28px] border border-line bg-white p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
-              <div className="h-10 w-10 rounded-[28px] bg-[#fef2f4] flex items-center justify-center shrink-0">
-                <Clock size={18} className="text-text-secondary" />
+            <div className="rounded-[28px] border border-line bg-[#E4DBFB] p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
+                <Clock size={18} className="text-[#5B4FC4]" />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-ink">Temps de réponse</h3>
                 <p className="text-xs text-text-secondary mt-0.5">Sous 24-48h</p>
               </div>
             </div>
-            <div className="rounded-[28px] border border-line bg-white p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
-              <div className="h-10 w-10 rounded-[28px] bg-[#fef2f4] flex items-center justify-center shrink-0">
-                <LifeBuoy size={18} className="text-text-secondary" />
+            <div className="rounded-[28px] border border-line bg-[#D8ECD9] p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+              <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
+                <LifeBuoy size={18} className="text-[#2a6b3e]" />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-ink">Aide</h3>

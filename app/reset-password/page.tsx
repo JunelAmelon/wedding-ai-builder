@@ -3,8 +3,8 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowLeft, CheckCircle, Loader2, Eye, EyeOff } from "lucide-react";
+import { AuthLeftPanel } from "@/components/auth/AuthLeftPanel";
 
 const NAVY = "#0E0E10";
 
@@ -91,24 +91,7 @@ function ResetPasswordInner() {
   return (
     <div className="min-h-[100dvh] grid lg:grid-cols-2">
       {/* Panneau gauche */}
-      <div className="hidden lg:block relative overflow-hidden" style={{ backgroundColor: "white" }}>
-        <svg className="absolute inset-0 w-full h-full opacity-90" viewBox="0 0 600 900" fill="none" preserveAspectRatio="xMidYMid slice">
-          <path d="M -40 0 C 120 180, -20 420, 180 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
-          <path d="M 80 0 C 240 200, 60 460, 280 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
-          <path d="M 200 0 C 360 220, 180 480, 380 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
-          <path d="M 320 0 C 480 240, 300 520, 480 900" stroke="#FBE1E6" strokeWidth="2.5" fill="none" />
-        </svg>
-        <div className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[96%] h-[84%] drop-shadow-2xl">
-          <Image
-            src="login-hero.png"
-            alt=""
-            fill
-            className="object-contain object-bottom"
-            unoptimized
-            priority
-          />
-        </div>
-      </div>
+      <AuthLeftPanel />
 
       {/* Panneau droit */}
       <div className="flex flex-col items-center justify-center px-6 sm:px-12 py-12 bg-white">
@@ -193,7 +176,11 @@ function ResetPasswordInner() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleSubmit(e as unknown as React.FormEvent)}
-                      className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] pl-4 pr-11 py-3.5 text-sm text-[#0E0E10] focus:outline-none focus:border-[#fef2f4] transition"
+                      className={`w-full rounded-[28px] bg-white border-2 pl-4 pr-11 py-3.5 text-sm text-[#0E0E10] focus:outline-none transition ${
+                        confirmPassword && confirmPassword !== newPassword
+                          ? "border-[#e64a5d] focus:border-[#e64a5d]"
+                          : "border-[#EDEDF0] focus:border-[#fef2f4]"
+                      }`}
                       placeholder="Répétez le mot de passe"
                       disabled={loading || !token}
                     />
@@ -206,6 +193,12 @@ function ResetPasswordInner() {
                       {showConfirm ? <EyeOff size={17} /> : <Eye size={17} />}
                     </button>
                   </div>
+                  {confirmPassword && confirmPassword !== newPassword && (
+                    <p className="text-[11px] text-[#e64a5d] mt-1.5">Les mots de passe ne correspondent pas.</p>
+                  )}
+                  {confirmPassword && confirmPassword === newPassword && newPassword.length >= 8 && (
+                    <p className="text-[11px] text-[#10b981] mt-1.5">Mots de passe identiques ✓</p>
+                  )}
                 </div>
 
                 <button

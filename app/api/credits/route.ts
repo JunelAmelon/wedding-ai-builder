@@ -4,6 +4,8 @@ import { requireAuth } from "@/lib/auth";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { creditRepo } from "@/lib/db/repositories/creditRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
+import { sendEmail } from "@/lib/email/send";
+import { creditsPurchasedEmail } from "@/lib/email/emails";
 
 const PurchaseSchema = z.object({
   amount: z.number().positive(),
@@ -56,6 +58,19 @@ export async function POST(req: Request) {
       content: `${amount} roses ont été ajoutées à votre compte.`,
       link: "/espace-prestataire/credits",
     });
+
+    // Send email confirmation
+    try {
+      const { subject, html } = creditsPurchasedEmail({
+        firstName: user.firstName,
+        amount: 0, // Amount in euros not tracked here
+        credits: amount,
+        balance: newCredits,
+      });
+      await sendEmail({ to: user.email, subject, html });
+    } catch (emailErr) {
+      console.error("[credits] Erreur envoi email:", emailErr);
+    }
 
     return NextResponse.json({ credits: newCredits });
   } catch (err) {

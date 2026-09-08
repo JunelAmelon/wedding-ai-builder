@@ -3,6 +3,8 @@ import { z } from "zod";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
 import { getSessionUser } from "@/lib/auth";
 import { userRepo } from "@/lib/db/repositories/userRepo";
+import { sendEmail } from "@/lib/email/send";
+import { supportTicketReceivedEmail } from "@/lib/email/emails";
 
 export const dynamic = "force-dynamic";
 
@@ -89,6 +91,21 @@ export async function POST(req: Request) {
     } as any);
 
     console.log("[support/POST] Ticket created:", ticket.id, "for user:", ticket.userId);
+
+    // Send confirmation email to the user
+    if (userEmail) {
+      try {
+        const { subject: emailSubject, html } = supportTicketReceivedEmail({
+          userEmail,
+          ticketId: ticket.id,
+          subject,
+        });
+        await sendEmail({ to: userEmail, subject: emailSubject, html });
+      } catch (emailErr) {
+        console.error("[support/POST] Erreur envoi email:", emailErr);
+      }
+    }
+
     return NextResponse.json({ ticket }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";

@@ -32,7 +32,7 @@ export function QuestionGuests({ onAnswer }: { onAnswer: (value: GuestsAnswer) =
             value={count}
             onChange={(e) => setCount(e.target.value ? Number(e.target.value) : "")}
             placeholder="Ex: 120"
-            className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
+            className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
           />
         </div>
         <div>
@@ -45,7 +45,7 @@ export function QuestionGuests({ onAnswer }: { onAnswer: (value: GuestsAnswer) =
             value={children}
             onChange={(e) => setChildren(e.target.value ? Number(e.target.value) : "")}
             placeholder="Ex: 15"
-            className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
+            className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
           />
         </div>
       </div>

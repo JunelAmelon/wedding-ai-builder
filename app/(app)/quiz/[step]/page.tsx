@@ -184,15 +184,15 @@ export default function QuizStepPage() {
   }
 
   if (!ready) {
-    return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fef2f4] to-white" />;
+    return <div className="min-h-[100dvh] bg-white" />;
   }
 
   if (error) {
     return (
-      <div className="min-h-[100dvh] bg-gradient-to-b from-[#fef2f4] to-white flex items-center justify-center px-6">
+      <div className="min-h-[100dvh] bg-white flex items-center justify-center px-6">
         <div className="max-w-md w-full rounded-[28px] border border-[#EDEDF0] bg-white p-8 shadow-[0_30px_80px_rgba(11,15,26,0.08)] text-center">
-          <div className="mx-auto h-16 w-16 rounded-[28px] bg-[#fef2f4] border border-[#EDEDF0] flex items-center justify-center mb-6">
-            <TriangleAlert className="text-[#e64a5d]" size={32} />
+          <div className="mx-auto h-16 w-16 rounded-[28px] bg-[#E4DBFB] border border-[#EDEDF0] flex items-center justify-center mb-6">
+            <TriangleAlert className="text-[#0E0E10]" size={32} />
           </div>
           <h1 className="font-allura text-2xl font-bold text-[#0E0E10]">Le quiz ne peut pas démarrer</h1>
           <p className="text-[#6B6B72] mt-3">{error}</p>
@@ -210,7 +210,7 @@ export default function QuizStepPage() {
   const hero = HERO_BY_STEP[step] ?? HERO_BY_STEP.date;
 
   return (
-    <div className="bg-gradient-to-b from-[#fef2f4] to-white min-h-[100dvh]">
+    <div className="bg-white min-h-[100dvh]">
       <ProgressBar current={stepIndex + 1} total={QUIZ_STEPS.length} />
 
       <div className="grid lg:grid-cols-2 min-h-[100dvh]">

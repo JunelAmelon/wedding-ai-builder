@@ -21,9 +21,9 @@ export function QuestionStress({ onAnswer }: { onAnswer: (value: number) => void
           max={10}
           value={level}
           onChange={(e) => setLevel(Number(e.target.value))}
-          className="w-full accent-[#e64a5d]"
+          className="w-full accent-[#0E0E10]"
         />
-        <div className="rounded-[28px] border border-[#EDEDF0] bg-[#fef2f4]/50 p-4 text-center">
+        <div className="rounded-2xl border border-[#EDEDF0] bg-[#E4DBFB]/30 p-4 text-center">
           <div className="text-xs uppercase tracking-[0.22em] text-[#6B6B72]">Votre ressenti</div>
           <div className="font-allura text-3xl font-bold mt-2 text-[#0E0E10]">{level}/10</div>
           <div className="text-sm text-[#6B6B72] mt-1">

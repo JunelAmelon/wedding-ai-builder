@@ -18,6 +18,8 @@ export interface UserAccount {
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
   emailVerified: boolean;
+  verifyToken: string | null;
+  verifyTokenExpiry: string | null;
   resetToken: string | null;
   resetTokenExpiry: string | null;
   createdAt: string;
@@ -134,7 +136,7 @@ export interface WeddingProject {
   updatedAt: string;
 }
 
-export type MatchStatus = "pending" | "suggested" | "shortlisted" | "rejected" | "contacted";
+export type MatchStatus = "pending" | "suggested" | "shortlisted" | "rejected" | "contacted" | "accepted";
 
 export interface ProjectVendorMatch {
   id: string;

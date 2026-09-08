@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { QuestionShell } from "@/components/quiz/QuestionShell";
+import { CityAutocomplete } from "@/components/geo/CityAutocomplete";
 
 export function QuestionLocation({
   onAnswer,
@@ -11,31 +12,6 @@ export function QuestionLocation({
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
 
-  const CITY_SUGGESTIONS = [
-    "Paris",
-    "Lyon",
-    "Marseille",
-    "Toulouse",
-    "Nice",
-    "Bordeaux",
-    "Nantes",
-    "Lille",
-    "Strasbourg",
-    "Montpellier",
-    "Genève",
-    "Lausanne",
-    "Bruxelles",
-    "Luxembourg",
-    "Montréal",
-    "Abidjan",
-    "Dakar",
-    "Cotonou",
-    "Porto-Novo",
-    "Lomé",
-    "Marrakech",
-    "Casablanca",
-  ];
-
   const COUNTRY_SUGGESTIONS = [
     "France",
     "Belgique",
@@ -43,7 +19,7 @@ export function QuestionLocation({
     "Luxembourg",
     "Canada",
     "Bénin",
-    "Côte d’Ivoire",
+    "Côte d'Ivoire",
     "Sénégal",
     "Togo",
     "Maroc",
@@ -57,25 +33,19 @@ export function QuestionLocation({
       nextDisabled={!city || !country}
     >
       <div className="space-y-3">
-        <input
-          list="city-suggestions"
+        <CityAutocomplete
           value={city}
-          onChange={(e) => setCity(e.target.value)}
+          onChange={setCity}
           placeholder="Ville"
-          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
+          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
         />
-        <datalist id="city-suggestions">
-          {CITY_SUGGESTIONS.map((v) => (
-            <option key={v} value={v} />
-          ))}
-        </datalist>
 
         <input
           list="country-suggestions"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
           placeholder="Pays"
-          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#fef2f4] transition"
+          className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
         />
         <datalist id="country-suggestions">
           {COUNTRY_SUGGESTIONS.map((v) => (

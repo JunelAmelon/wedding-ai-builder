@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Search, Loader2, Trash2, Pencil, X, Mail, Phone, MapPin, Shield, Crown, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { AddressAutocomplete } from "@/components/geo/AddressAutocomplete";
 
 interface AdminUser {
   id: string;
@@ -336,10 +337,9 @@ export default function AdminUsersPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-[#64748b] mb-1">Adresse</label>
-                <input
-                  type="text"
+                <AddressAutocomplete
                   value={editForm.address}
-                  onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
+                  onChange={(value) => setEditForm({ ...editForm, address: value })}
                   className="w-full px-3 py-2 rounded-lg border border-[#f1f5f9] bg-[#f8fafc] text-sm text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#db2777]/20"
                 />
               </div>

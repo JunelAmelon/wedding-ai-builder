@@ -7,8 +7,13 @@ import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
 import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
+import { userRepo } from "@/lib/db/repositories/userRepo";
 import { findTopMatches } from "@/lib/matching/engine";
+import { sendEmail } from "@/lib/email/send";
+import { newTenderEmail, proposalAcceptedEmail, proposalDeclinedEmail } from "@/lib/email/emails";
 import type { Tender } from "@/types/marketplace";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 const CreateSchema = z.object({
   projectId: z.string().min(1),
@@ -176,6 +181,30 @@ export async function POST(req: Request) {
       )
     );
 
+    // Send email notification to each matched vendor
+    await Promise.all(
+      savedMatches.map(async (m) => {
+        try {
+          const profile = await vendorProfileRepo.get(m.vendorId);
+          if (!profile) return;
+          const vendorUser = await userRepo.get(profile.userId);
+          if (!vendorUser) return;
+          const { subject, html } = newTenderEmail({
+            vendorFirstName: vendorUser.firstName,
+            category,
+            budgetMin: budgetRange?.min,
+            budgetMax: budgetRange?.max,
+            city: location?.city || project.location?.city || undefined,
+            weddingDate: weddingDate || project.weddingDate || undefined,
+            tenderUrl: `${APP_URL}/espace-prestataire/appels-offres`,
+          });
+          await sendEmail({ to: vendorUser.email, subject, html });
+        } catch (e) {
+          console.error("[tenders] email error:", e);
+        }
+      })
+    );
+
     const enriched = await enrichTender(updatedTender);
 
     return NextResponse.json({ tender: enriched, matches: savedMatches }, { status: 201 });
@@ -222,6 +251,15 @@ export async function PUT(req: Request) {
               content: `Votre proposition pour ${project.name || "un mariage"} n'a pas été retenue cette fois.`,
               link: "/espace-prestataire/propositions",
             });
+            try {
+              const { subject, html } = proposalDeclinedEmail({
+                vendorFirstName: vendor.brandName || vendor.companyName,
+                projectName: project.name,
+              });
+              await sendEmail({ to: vendor.email, subject, html });
+            } catch (e) {
+              console.error("[tenders PUT] decline email error:", e);
+            }
           }
         })
       )
@@ -238,6 +276,18 @@ export async function PUT(req: Request) {
         link: "/espace-prestataire/propositions",
       });
 
+      try {
+        const { subject, html } = proposalAcceptedEmail({
+          vendorFirstName: acceptedVendor.brandName || acceptedVendor.companyName,
+          projectName: project.name,
+          weddingDate: project.weddingDate || undefined,
+          messagerieUrl: `${APP_URL}/espace-prestataire/messagerie?proposal=${proposalId}`,
+        });
+        await sendEmail({ to: acceptedVendor.email, subject, html });
+      } catch (e) {
+        console.error("[tenders PUT] email error:", e);
+      }
+
       if (project.weddingDate) {
         const unavailable = new Set(acceptedVendor.availability?.unavailableDates ?? []);
         unavailable.add(project.weddingDate);
@@ -248,6 +298,11 @@ export async function PUT(req: Request) {
           },
         });
       }
+    }
+
+    // Mark the accepted proposal's match as "accepted" so the vendor sees the wedding in their calendar
+    if (accepted.matchId) {
+      await matchRepo.update(accepted.matchId, { status: "accepted" });
     }
 
     const updatedTender = await tenderRepo.update(tenderId, { status: "closed", selectedProposalId: proposalId });

@@ -78,8 +78,8 @@ export default function VendorProposalsPage() {
   }, [router]);
 
   const filteredProposals = useMemo(() => {
-    if (filter === "all") return proposals;
-    return proposals.filter((p) => p.status === filter);
+    const list = filter === "all" ? proposals : proposals.filter((p) => p.status === filter);
+    return [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [proposals, filter]);
 
   const counts = useMemo(() => {

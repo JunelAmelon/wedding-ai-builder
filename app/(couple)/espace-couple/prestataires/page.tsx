@@ -319,15 +319,26 @@ export default function CoupleVendorsPage() {
                 {tenders.slice(0, 6).map((tender) => {
                   const proposals = tender.proposals || [];
                   const Icon = CATEGORY_ICON[tender.category] || Sparkle;
+                  const validatedProposal = proposals.find(
+                    (p) => p.status === "accepted" || p.id === tender.selectedProposalId
+                  );
+                  const validatedVendor = validatedProposal?.vendor;
+                  const validatedLogo = validatedVendor
+                    ? (typeof validatedVendor.logo === "string"
+                        ? validatedVendor.logo
+                        : validatedVendor.logo?.url)
+                    : null;
                   const firstVendorLogo = proposals[0]
                     ? (typeof proposals[0].vendor?.logo === "string"
                         ? proposals[0].vendor.logo
                         : proposals[0].vendor?.logo?.url)
                     : null;
                   const bgImage =
-                    tender.status === "responded" && firstVendorLogo
-                      ? firstVendorLogo
-                      : (CATEGORY_IMAGES[tender.category] || CATEGORY_IMAGES["Autre"]);
+                    tender.status === "closed" && validatedLogo
+                      ? validatedLogo
+                      : tender.status === "responded" && firstVendorLogo
+                        ? firstVendorLogo
+                        : (CATEGORY_IMAGES[tender.category] || CATEGORY_IMAGES["Autre"]);
                   return (
                     <Link
                       key={tender.id}
@@ -342,6 +353,13 @@ export default function CoupleVendorsPage() {
                       {/* Overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 z-0" />
 
+                      {/* Badge "Validé" pour les appels d'offres clôturés avec un prestataire retenu */}
+                      {tender.status === "closed" && validatedVendor && (
+                        <div className="absolute top-3 right-3 z-20 inline-flex items-center gap-1 rounded-full bg-[#3C8552] px-2.5 py-1 text-[10px] font-bold text-white shadow-lg">
+                          <CheckCircle2 size={11} /> Validé
+                        </div>
+                      )}
+
                       {/* Content */}
                       <div className="relative z-10">
                         <div className="text-[10px] opacity-90 mb-1">
@@ -355,15 +373,25 @@ export default function CoupleVendorsPage() {
                           {tender.budgetRange ? `${tender.budgetRange.min}€ - ${tender.budgetRange.max}€` : "Budget non défini"}
                         </div>
 
+                        {/* Nom du prestataire validé pour les appels clôturés */}
+                        {tender.status === "closed" && validatedVendor && (
+                          <div className="mt-1.5 text-[11px] font-semibold text-white/95 truncate">
+                            {validatedVendor.businessName || validatedVendor.name || validatedVendor.companyName || "Prestataire retenu"}
+                          </div>
+                        )}
+
                         {/* Avatars des prestataires ayant répondu */}
                         {proposals.length > 0 && (
                           <div className="flex mt-2 -space-x-1.5">
                             {proposals.slice(0, 4).map((p, idx) => {
                               const logoUrl = typeof p.vendor?.logo === "string" ? p.vendor.logo : p.vendor?.logo?.url;
+                              const isValidated = p.id === tender.selectedProposalId || p.status === "accepted";
                               return (
                                 <span
                                   key={idx}
-                                  className="h-[17px] w-[17px] rounded-full border-[1.5px] border-white bg-gray-300 bg-cover bg-center"
+                                  className={`h-[17px] w-[17px] rounded-full border-[1.5px] bg-gray-300 bg-cover bg-center ${
+                                    isValidated ? "border-[#3C8552] ring-1 ring-[#3C8552]" : "border-white"
+                                  }`}
                                   style={{
                                     backgroundImage: logoUrl ? `url(${logoUrl})` : undefined,
                                     background: !logoUrl ? CONTACT_COLORS[idx % CONTACT_COLORS.length] : undefined,
@@ -653,16 +681,63 @@ export default function CoupleVendorsPage() {
               const catTender = tenders.find((t) => t.category === selectedCategory);
 
               if (catTender?.status === "closed") {
+                const catValidatedProposal = (catTender.proposals || []).find(
+                  (p) => p.status === "accepted" || p.id === catTender.selectedProposalId
+                );
+                const catValidatedVendor = catValidatedProposal?.vendor;
+                const catValidatedLogo = catValidatedVendor
+                  ? (typeof catValidatedVendor.logo === "string"
+                      ? catValidatedVendor.logo
+                      : catValidatedVendor.logo?.url)
+                  : null;
                 return (
-                  <div className="text-center py-10">
-                    <div className="h-12 w-12 rounded-full bg-[#EDEDF0] flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle2 size={22} className="text-[#0E0E10]" />
+                  <div className="text-center py-8">
+                    <div className="h-12 w-12 rounded-full bg-[#D8ECD9] flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle2 size={22} className="text-[#3C8552]" />
                     </div>
-                    <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#0E0E10] mb-3">Dossier clôturé</p>
-                    <h2 className="text-xl font-bold text-[#0E0E10] mb-2">Plus aucune suggestion</h2>
-                    <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed">
-                      L'appel d'offres pour cette catégorie est clôturé.
+                    <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#3C8552] mb-3">Prestataire validé</p>
+                    <h2 className="text-xl font-bold text-[#0E0E10] mb-2">
+                      {catValidatedVendor
+                        ? (catValidatedVendor.businessName || catValidatedVendor.name || catValidatedVendor.companyName || "Prestataire retenu")
+                        : "Dossier clôturé"}
+                    </h2>
+                    <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed mb-5">
+                      {catValidatedVendor
+                        ? "Vous avez retenu ce prestataire pour votre mariage. Vous pouvez consulter son profil ou relancer un nouvel appel d'offres si besoin."
+                        : "L'appel d'offres pour cette catégorie est clôturé."}
                     </p>
+                    {catValidatedVendor && catValidatedProposal && (
+                      <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
+                        <Link
+                          href={`/espace-couple/prestataires/profil/${catValidatedProposal.vendorId}`}
+                          onClick={closeCategory}
+                          className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-bold bg-[#0E0E10] text-white hover:bg-[#333] transition"
+                        >
+                          Voir le profil <ArrowRight size={14} />
+                        </Link>
+                        <Link
+                          href={`/espace-couple/prestataires/${catTender.id}`}
+                          onClick={closeCategory}
+                          className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-bold border-[1.5px] border-[#EDEDF0] text-[#0E0E10] hover:bg-[#fef2f4] transition"
+                        >
+                          Voir l'appel d'offres
+                        </Link>
+                      </div>
+                    )}
+                    {!catValidatedVendor && (
+                      <Button
+                        variant="primary"
+                        onClick={() => {
+                          closeCategory();
+                          setCategory(selectedCategory);
+                          setShowForm(true);
+                        }}
+                        className="w-full max-w-xs mx-auto py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition flex items-center justify-center gap-2"
+                        iconLeft={<Plus size={16} />}
+                      >
+                        Relancer un appel d'offres
+                      </Button>
+                    )}
                   </div>
                 );
               }

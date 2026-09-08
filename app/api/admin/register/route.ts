@@ -3,6 +3,10 @@ import { z } from "zod";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { hashPassword, createSession, setSessionCookie } from "@/lib/auth";
+import { sendEmail } from "@/lib/email/send";
+import { adminWelcomeEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 const RegisterSchema = z.object({
   token: z.string().min(1),
@@ -52,6 +56,8 @@ export async function POST(req: Request) {
       emailVerified: false,
       resetToken: null,
       resetTokenExpiry: null,
+      verifyToken: null,
+      verifyTokenExpiry: null,
     });
 
     await adminRepo.markInvitationAccepted(invite.id, user.id);
@@ -61,6 +67,18 @@ export async function POST(req: Request) {
       user: { id: user.id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role, adminRole: user.adminRole },
     });
     setSessionCookie(response, sessionToken);
+
+    try {
+      const { subject, html } = adminWelcomeEmail({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        loginUrl: `${APP_URL}/admin`,
+      });
+      await sendEmail({ to: user.email, subject, html });
+    } catch (e) {
+      console.error("[admin/register] email error:", e);
+    }
+
     return response;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";

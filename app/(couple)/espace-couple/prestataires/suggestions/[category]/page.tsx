@@ -192,7 +192,7 @@ export default function CategorySuggestionsPage() {
     );
 
   const acceptedMatch = suggestions.find((s) => s.proposal?.status === "accepted");
-  const displaySuggestions = acceptedMatch ? [] : suggestions;
+  const displaySuggestions = suggestions;
 
   const receivedCount = displaySuggestions.length;
   const bestScore = receivedCount > 0 ? Math.max(...displaySuggestions.map((s) => s.match.score)) : 0;

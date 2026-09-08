@@ -196,11 +196,18 @@ export default function CoupleMessagingPage() {
   }
 
   const filteredProposals = useMemo(() => {
-    if (!search.trim()) return proposals;
-    return proposals.filter((p) =>
-      (p.vendor?.companyName || "").toLowerCase().includes(search.toLowerCase()) ||
-      (p.vendor?.serviceCategory || "").toLowerCase().includes(search.toLowerCase())
-    );
+    const lower = search.trim().toLowerCase();
+    const list = lower
+      ? proposals.filter((p) =>
+          (p.vendor?.companyName || "").toLowerCase().includes(lower) ||
+          (p.vendor?.serviceCategory || "").toLowerCase().includes(lower)
+        )
+      : proposals;
+    return [...list].sort((a, b) => {
+      const aTime = a.lastMessage?.createdAt || a.createdAt;
+      const bTime = b.lastMessage?.createdAt || b.createdAt;
+      return new Date(bTime).getTime() - new Date(aTime).getTime();
+    });
   }, [proposals, search]);
 
   const lastMessage = (p: ProposalWithDetails) => p.lastMessage || messages.filter((m) => m.proposalId === p.id).pop() || null;

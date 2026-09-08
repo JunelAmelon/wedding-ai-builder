@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { userRepo } from "@/lib/db/repositories/userRepo";
-import { sendPasswordResetEmail } from "@/lib/email/smtp";
+import { sendEmail } from "@/lib/email/send";
+import { passwordResetEmail } from "@/lib/email/emails";
 import { randomBytes } from "crypto";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -45,7 +46,12 @@ export async function POST(req: Request) {
     const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
 
     // Envoyer l'email de réinitialisation
-    await sendPasswordResetEmail(email, resetLink);
+    try {
+      const { subject, html } = passwordResetEmail({ resetUrl: resetLink });
+      await sendEmail({ to: email, subject, html });
+    } catch (e) {
+      console.error("[reset-password/request] email error:", e);
+    }
 
     return NextResponse.json({ success: true, message: "Un email de réinitialisation a été envoyé à l'adresse indiquée." });
   } catch (err) {

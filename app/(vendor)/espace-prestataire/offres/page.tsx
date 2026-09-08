@@ -7,8 +7,13 @@ const PLANS = [
   {
     name: "Essentiel",
     price: 49,
-    color: "#ffffff",
-    accent: "#0E0E10",
+    color: "#E4DBFB",
+    accent: "#5B4FC4",
+    iconBg: "#5B4FC4",
+    iconColor: "#ffffff",
+    textColor: "#0E0E10",
+    subTextColor: "#6B6B72",
+    checkColor: "#5B4FC4",
     popular: false,
     icon: Shield,
     features: [
@@ -22,8 +27,13 @@ const PLANS = [
   {
     name: "Premium Business",
     price: 69,
-    color: "#ffffff",
-    accent: "#0E0E10",
+    color: "#FEF3C7",
+    accent: "#D4B520",
+    iconBg: "#D4B520",
+    iconColor: "#ffffff",
+    textColor: "#0E0E10",
+    subTextColor: "#6B6B72",
+    checkColor: "#D4B520",
     popular: true,
     icon: Sparkles,
     features: [
@@ -37,8 +47,13 @@ const PLANS = [
   {
     name: "Elite Performance",
     price: 149,
-    color: "#0E0E10",
-    accent: "#fef2f4",
+    color: "#D8ECD9",
+    accent: "#2a6b3e",
+    iconBg: "#2a6b3e",
+    iconColor: "#ffffff",
+    textColor: "#0E0E10",
+    subTextColor: "#6B6B72",
+    checkColor: "#2a6b3e",
     popular: false,
     icon: TrendingUp,
     features: [
@@ -157,15 +172,15 @@ export default function VendorOffresPage() {
               <div className="flex items-center gap-3 mb-6">
                 <div
                   className="h-12 w-12 rounded-[28px] flex items-center justify-center"
-                  style={{ backgroundColor: plan.color === "#0E0E10" ? "#ffffff" : "#0E0E10", color: plan.accent }}
+                  style={{ backgroundColor: plan.iconBg, color: plan.iconColor }}
                 >
                   <plan.icon size={24} strokeWidth={1.8} />
                 </div>
                 <div>
-                  <h2 className="font-allura text-xl font-normal" style={{ color: plan.name === "Elite Performance" ? "#ffffff" : "#0E0E10" }}>
+                  <h2 className="font-allura text-xl font-normal" style={{ color: plan.textColor }}>
                     {plan.name}
                   </h2>
-                  <p className="text-sm font-semibold" style={{ color: plan.name === "Elite Performance" ? "#E4DBFB" : "#6B6B72" }}>
+                  <p className="text-sm font-semibold" style={{ color: plan.subTextColor }}>
                     {plan.price} €<span className="text-xs font-normal"> /mois</span>
                   </p>
                 </div>
@@ -176,12 +191,12 @@ export default function VendorOffresPage() {
                   <li
                     key={feature}
                     className="flex items-start gap-2.5 text-sm"
-                    style={{ color: plan.name === "Elite Performance" ? "#fef2f4" : "#6B6B72" }}
+                    style={{ color: plan.subTextColor }}
                   >
                     <Check
                       size={16}
                       className="shrink-0 mt-0.5"
-                      style={{ color: plan.name === "Elite Performance" ? "#fef2f4" : "#0E0E10" }}
+                      style={{ color: plan.checkColor }}
                     />
                     {feature}
                   </li>
@@ -206,11 +221,8 @@ export default function VendorOffresPage() {
                 <button
                   onClick={() => choosePlan(plan.name)}
                   disabled={!!loading}
-                  className={`w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 ${
-                    plan.name === "Elite Performance"
-                      ? "bg-[#fef2f4] text-[#0E0E10] hover:bg-[#FEF3C7]"
-                      : "bg-[#e64a5d] text-white hover:brightness-110"
-                  }`}
+                  className="w-full py-3.5 px-5 rounded-full text-sm font-semibold transition flex items-center justify-center gap-2 text-white hover:brightness-110"
+                  style={{ backgroundColor: plan.accent }}
                 >
                   <Zap size={16} /> {loading === plan.name ? "Chargement..." : "Choisir"}
                 </button>

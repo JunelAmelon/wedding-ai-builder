@@ -24,8 +24,8 @@ export function QuestionPriority({ onAnswer }: { onAnswer: (value: MainPriority)
             className={
               "w-full rounded-[28px] border px-4 py-4 text-left transition " +
               (priority === opt.value
-                ? "border-[#e64a5d] bg-[#fef2f4] ring-1 ring-[#e64a5d]/20"
-                : "border-[#EDEDF0] bg-white hover:border-[#e64a5d]/30 hover:bg-[#fef2f4]/50")
+                ? "border-[#0E0E10] bg-[#E4DBFB] ring-1 ring-[#0E0E10]/20"
+                : "border-[#EDEDF0] bg-white hover:border-[#0E0E10]/30 hover:bg-[#E4DBFB]/30")
             }
             type="button"
           >

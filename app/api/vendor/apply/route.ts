@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { randomBytes } from "crypto";
 import { vendorRepo } from "@/lib/db/repositories/vendorRepo";
 import { eventRepo } from "@/lib/db/repositories/eventRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { hashPassword } from "@/lib/auth";
+import { sendEmail } from "@/lib/email/send";
+import { verifyEmail, vendorApplicationReceivedEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 const AddressSchema = z.object({
   street: z.string().optional().default(""),
@@ -95,6 +100,9 @@ export async function POST(req: Request) {
     const [firstName, ...lastNameParts] = applicationData.contactName.trim().split(/\s+/);
     const lastName = lastNameParts.join(" ");
 
+    const verifyToken = randomBytes(32).toString("hex");
+    const verifyTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
     const user = await userRepo.create({
       email: applicationData.email.toLowerCase(),
       passwordHash: hashPassword(password),
@@ -108,9 +116,20 @@ export async function POST(req: Request) {
       stripeCustomerId: null,
       stripeSubscriptionId: null,
       emailVerified: false,
+      verifyToken,
+      verifyTokenExpiry,
       resetToken: null,
       resetTokenExpiry: null,
     });
+
+    // Send verification email
+    try {
+      const verifyUrl = `${APP_URL}/api/auth/verify-email/confirm?token=${verifyToken}`;
+      const { subject, html } = verifyEmail({ firstName: user.firstName, verifyUrl });
+      await sendEmail({ to: user.email, subject, html });
+    } catch (emailErr) {
+      console.error("[vendor/apply] Erreur envoi email vérification:", emailErr);
+    }
 
     const profile = await vendorProfileRepo.create({
       userId: user.id,
@@ -196,6 +215,18 @@ export async function POST(req: Request) {
       profileId: profile.id,
     });
     await eventRepo.log(application.id, "vendor_application_created", { category: application.serviceCategory });
+
+    // Send application received email
+    try {
+      const { subject, html } = vendorApplicationReceivedEmail({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        companyName: applicationData.companyName,
+      });
+      await sendEmail({ to: user.email, subject, html });
+    } catch (emailErr) {
+      console.error("[vendor/apply] Erreur envoi email candidature:", emailErr);
+    }
 
     // Vendors must be validated by an admin before they can log in.
     // Do NOT create a session — return a pending message instead.

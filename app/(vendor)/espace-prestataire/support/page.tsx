@@ -192,7 +192,7 @@ export default function VendorSupportPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-[28px] border border-[#EDEDF0] bg-[#fef2f4] p-5 flex items-start gap-3">
               <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
-                <Mail size={18} className="text-[#0E0E10]" />
+                <Mail size={18} className="text-[#c43a4a]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-[#0E0E10]">Par email</h3>
@@ -201,16 +201,16 @@ export default function VendorSupportPage() {
             </div>
             <div className="rounded-[28px] border border-[#EDEDF0] bg-[#E4DBFB] p-5 flex items-start gap-3">
               <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
-                <Clock size={18} className="text-[#0E0E10]" />
+                <Clock size={18} className="text-[#5B4FC4]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-[#0E0E10]">Réponse</h3>
                 <p className="text-xs text-[#6B6B72] mt-0.5">Sous 24-48h</p>
               </div>
             </div>
-            <div className="rounded-[28px] border border-[#EDEDF0] bg-[#fef2f4] p-5 flex items-start gap-3">
+            <div className="rounded-[28px] border border-[#EDEDF0] bg-[#D8ECD9] p-5 flex items-start gap-3">
               <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
-                <LifeBuoy size={18} className="text-[#0E0E10]" />
+                <LifeBuoy size={18} className="text-[#2a6b3e]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-[#0E0E10]">Aide</h3>

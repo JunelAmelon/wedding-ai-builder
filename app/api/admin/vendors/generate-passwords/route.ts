@@ -3,6 +3,10 @@ import { randomBytes } from "crypto";
 import { requireAdmin } from "@/lib/auth";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { hashPassword } from "@/lib/auth";
+import { sendEmail } from "@/lib/email/send";
+import { passwordGeneratedEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 function generatePassword(length = 12): string {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -27,6 +31,17 @@ export async function POST() {
       const generatedPassword = generatePassword();
       await userRepo.update(user.id, { passwordHash: hashPassword(generatedPassword) });
       results.push({ email: user.email, userId: user.id, generatedPassword });
+
+      try {
+        const { subject, html } = passwordGeneratedEmail({
+          firstName: user.firstName,
+          loginUrl: `${APP_URL}/login?role=vendor`,
+          tempPassword: generatedPassword,
+        });
+        await sendEmail({ to: user.email, subject, html });
+      } catch (e) {
+        console.error("[generate-passwords] email error:", e);
+      }
     }
 
     return NextResponse.json({

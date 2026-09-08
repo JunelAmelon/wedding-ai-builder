@@ -15,7 +15,7 @@ export function QuestionDate({ onAnswer }: { onAnswer: (value: string) => void }
       nextDisabled={!date}
     >
       <div className="space-y-4">
-        <div>
+        <div className="min-w-0">
           <label className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
             {notFixed ? "Date approximative" : "Date du mariage"}
           </label>
@@ -23,7 +23,7 @@ export function QuestionDate({ onAnswer }: { onAnswer: (value: string) => void }
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] focus:outline-none focus:border-[#fef2f4] transition"
+            className="w-full min-w-0 max-w-full rounded-2xl bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] focus:outline-none focus:border-[#E4DBFB] transition"
           />
         </div>
         <button
@@ -32,14 +32,14 @@ export function QuestionDate({ onAnswer }: { onAnswer: (value: string) => void }
           className={
             "flex items-center gap-3 rounded-[28px] border px-4 py-3.5 text-left transition " +
             (notFixed
-              ? "border-[#e64a5d] bg-[#fef2f4] text-[#0E0E10]"
-              : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#e64a5d]/30")
+              ? "border-[#0E0E10] bg-[#E4DBFB] text-[#0E0E10]"
+              : "border-[#EDEDF0] bg-white text-[#6B6B72] hover:border-[#0E0E10]/30")
           }
         >
           <div
             className={
               "h-5 w-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 " +
-              (notFixed ? "border-[#e64a5d] bg-[#e64a5d]" : "border-[#EDEDF0]")
+              (notFixed ? "border-[#0E0E10] bg-[#0E0E10]" : "border-[#EDEDF0]")
             }
           >
             {notFixed && <div className="h-2 w-2 rounded-full bg-white" />}

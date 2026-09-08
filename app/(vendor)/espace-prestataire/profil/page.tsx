@@ -14,6 +14,9 @@ import {
   AlertCircle,
 } from "lucide-react";
 import type { VendorProfile } from "@/types/marketplace";
+import { CityAutocomplete } from "@/components/geo/CityAutocomplete";
+import { RegionAutocomplete } from "@/components/geo/RegionAutocomplete";
+import { CityMultiInput } from "@/components/geo/CityMultiInput";
 
 const STEPS = ["Identité", "Contact", "Services", "Disponibilité"];
 
@@ -440,12 +443,16 @@ export default function VendorProfilePage() {
                 </div>
                 <div>
                   <label className={labelClass}>Ville *</label>
-                  <input
-                    type="text"
+                  <CityAutocomplete
                     value={form.address?.city || ""}
-                    onChange={(e) => updateAddress("city", e.target.value)}
-                    className={inputClass}
+                    onChange={(value, suggestion) => {
+                      updateAddress("city", value);
+                      if (suggestion?.codesPostaux[0] && !form.address?.zipCode) {
+                        updateAddress("zipCode", suggestion.codesPostaux[0]);
+                      }
+                    }}
                     placeholder="Paris"
+                    className={inputClass}
                   />
                 </div>
               </div>
@@ -625,34 +632,27 @@ export default function VendorProfilePage() {
               </div>
 
               <div>
-                <label className={labelClass}>Régions d'intervention</label>
-                <input
-                  type="text"
+                <label className={labelClass}>Régions d&rsquo;intervention</label>
+                <RegionAutocomplete
                   value={(form.serviceArea?.regions || []).join(", ")}
-                  onChange={(e) =>
+                  onChange={(value) =>
                     updateServiceArea(
                       "regions",
-                      e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
+                      value.split(",").map((s) => s.trim()).filter(Boolean)
                     )
                   }
-                  className={inputClass}
                   placeholder="Île-de-France, Provence, ..."
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className={labelClass}>Villes d'intervention</label>
-                <input
-                  type="text"
-                  value={(form.serviceArea?.cities || []).join(", ")}
-                  onChange={(e) =>
-                    updateServiceArea(
-                      "cities",
-                      e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
-                    )
-                  }
-                  className={inputClass}
+                <label className={labelClass}>Villes d&rsquo;intervention</label>
+                <CityMultiInput
+                  values={form.serviceArea?.cities || []}
+                  onChange={(cities) => updateServiceArea("cities", cities)}
                   placeholder="Paris, Lyon, ..."
+                  className=""
                 />
               </div>
             </div>

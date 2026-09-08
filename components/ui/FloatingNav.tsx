@@ -40,16 +40,16 @@ export function FloatingNav({ homeHref = "/", loginHref = "/login", className }:
           >
             <Link
               href={homeHref}
-              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-[#EDEDF0] px-4 py-2.5 text-sm font-medium text-[#0E0E10] hover:bg-[#fef2f4] transition"
+              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-[#EDEDF0] px-4 py-2.5 text-sm font-medium text-[#0E0E10] hover:bg-[#E4DBFB]/50 transition"
             >
-              <Home size={16} className="text-[#e64a5d]" />
+              <Home size={16} className="text-[#0E0E10]" />
               Accueil
             </Link>
             <Link
               href={loginHref}
-              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-[#EDEDF0] px-4 py-2.5 text-sm font-medium text-[#0E0E10] hover:bg-[#fef2f4] transition"
+              className="flex items-center gap-3 rounded-full bg-white shadow-[0_4px_20px_rgba(11,15,26,0.08)] border border-[#EDEDF0] px-4 py-2.5 text-sm font-medium text-[#0E0E10] hover:bg-[#E4DBFB]/50 transition"
             >
-              <User size={16} className="text-[#e64a5d]" />
+              <User size={16} className="text-[#0E0E10]" />
               Connexion
             </Link>
           </motion.div>

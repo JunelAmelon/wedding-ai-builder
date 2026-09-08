@@ -6,6 +6,11 @@ import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
+import { userRepo } from "@/lib/db/repositories/userRepo";
+import { sendEmail } from "@/lib/email/send";
+import { newMessageEmail } from "@/lib/email/emails";
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 const MessageSchema = z.object({
   proposalId: z.string().min(1),
@@ -92,6 +97,28 @@ export async function POST(req: Request) {
         content: "Vous avez reçu un nouveau message concernant une proposition.",
         link: `/espace-${user.role === "couple" ? "prestataire" : "couple"}/messages?proposal=${proposalId}`,
       });
+
+      try {
+        const recipientUser = await userRepo.get(recipientId);
+        const senderUser = await userRepo.get(user.id);
+        let senderName: string;
+        if (user.role === "couple") {
+          senderName = `${senderUser?.firstName ?? ""} ${senderUser?.lastName ?? ""}`.trim() || "Un couple";
+        } else {
+          const vendorProfile = await vendorProfileRepo.getByUserId(user.id);
+          senderName = vendorProfile?.companyName || vendorProfile?.brandName || "Un prestataire";
+        }
+        const { subject, html } = newMessageEmail({
+          recipientFirstName: recipientUser?.firstName,
+          senderName,
+          senderRole: user.role as "couple" | "vendor",
+          messagePreview: content,
+          messagerieUrl: `${APP_URL}/${user.role === "couple" ? "espace-prestataire" : "espace-couple"}/messagerie?proposal=${proposalId}`,
+        });
+        await sendEmail({ to: recipientUser?.email || "", subject, html });
+      } catch (e) {
+        console.error("[messages] email error:", e);
+      }
     }
 
     return NextResponse.json({ message }, { status: 201 });

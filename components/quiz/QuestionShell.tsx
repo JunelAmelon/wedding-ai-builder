@@ -32,8 +32,8 @@ export function QuestionShell({
         if (e.key === "Enter" && !nextDisabled) onNext();
       }}
     >
-      <h1 className="font-allura text-3xl sm:text-4xl font-bold leading-[1.05] tracking-tight text-text-primary">{title}</h1>
-      {subtitle && <p className="text-text-secondary mt-3 max-w-prose">{subtitle}</p>}
+      <h1 className="font-allura text-3xl sm:text-4xl font-bold leading-[1.05] tracking-tight text-[#0E0E10]">{title}</h1>
+      {subtitle && <p className="text-[#6B6B72] mt-3 max-w-prose">{subtitle}</p>}
       {!subtitle && <div className="mt-6" />}
 
       <div className="mt-8">{children}</div>
