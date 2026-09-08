@@ -113,7 +113,7 @@ function LoginPageInner() {
 
   return (
     <>
-      <Header />
+      <Header whiteHeader />
       <div className="min-h-[calc(100dvh-72px)] grid lg:grid-cols-2">
         {/* ===== PANNEAU GAUCHE ===== */}
         <AuthLeftPanel />

@@ -13,9 +13,10 @@ const NAV_LINKS = [
 interface HeaderProps {
   ctaHref?: string;
   ctaLabel?: string;
+  whiteHeader?: boolean;
 }
 
-export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: HeaderProps) {
+export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan", whiteHeader = false }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -33,7 +34,11 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan" }: Head
     <>
       <header
         className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-white/95 backdrop-blur-sm shadow-[0_2px_20px_rgba(14,14,16,0.06)]" : "bg-transparent"
+          scrolled
+            ? "bg-white/95 backdrop-blur-sm shadow-[0_2px_20px_rgba(14,14,16,0.06)]"
+            : whiteHeader
+            ? "bg-white"
+            : "bg-transparent"
         }`}
       >
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-[72px] flex items-center justify-between">

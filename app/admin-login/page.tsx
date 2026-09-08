@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
 
   return (
     <>
-      <Header />
+      <Header whiteHeader />
       <div className="min-h-[calc(100dvh-72px)] grid lg:grid-cols-2">
         {/* ===== PANNEAU GAUCHE ===== */}
         <div className="relative overflow-hidden min-h-[260px] lg:min-h-full" style={{ backgroundColor: "white" }}>
