@@ -137,8 +137,8 @@ export default function ProfessionalMarketingPage() {
                 <p>
                   Budget, style, date, lieu - chaque détail est analysé pour vous envoyer uniquement les couples qui correspondent à votre savoir-faire. Fini les demandes hors sujet.
                 </p>
-                <Link href="#workflow" className="wf-link">
-                  Voir un exemple concret <ArrowRight size={14} />
+                <Link href="/devenir-professionnel" className="wf-link">
+                  Trouver mes couples <ArrowRight size={14} />
                 </Link>
               </div>
               <div className="wf-visual reveal">
