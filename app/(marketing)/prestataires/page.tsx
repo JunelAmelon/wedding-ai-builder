@@ -14,15 +14,6 @@ const FAQS = [
   { q: "Je suis engagé sur combien de temps ?", a: "Aucun engagement. L'abonnement est mensuel et sans engagement. Vous pouvez changer de formule ou arrêter à tout moment, en un clic." },
 ];
 
-const BROWSER_ROWS = [
-  { k: "Budget", v: "2 300 €" },
-  { k: "Style", v: "Champêtre" },
-  { k: "Lieu", v: "Bordeaux" },
-  { k: "Date", v: "18 juillet 2027" },
-  { k: "Concurrence", v: "3 pros" },
-  { k: "Probabilité", v: "81 % signature" },
-];
-
 export default function ProfessionalMarketingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const browserRef = useRef<HTMLDivElement>(null);
@@ -305,19 +296,12 @@ export default function ProfessionalMarketingPage() {
                   <span className="d" />
                   <span className="url">app.mariagefacile.fr/tableau-de-bord</span>
                 </div>
-                <div className="browser-body">
-                  <div className="mini-fiche">
-                    <div className="lbl">Score de compatibilité</div>
-                    <div className="sc">96%</div>
-                  </div>
-                  <div className="mini-rows">
-                    {BROWSER_ROWS.map((row) => (
-                      <div key={row.k} className={`r r-${row.k.toLowerCase().replace(/\s+/g, "-")}`}>
-                        <span className="k">{row.k}</span>
-                        <span className="v">{row.v}</span>
-                      </div>
-                    ))}
-                  </div>
+                <div className="browser-body !block !p-0">
+                  <img
+                    src="/dashboard-prestataire.png"
+                    alt="Tableau de bord prestataire"
+                    className="w-full h-auto block"
+                  />
                 </div>
               </div>
             </div>
