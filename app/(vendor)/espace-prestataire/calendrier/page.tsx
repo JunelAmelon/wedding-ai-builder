@@ -262,7 +262,7 @@ export default function VendorPlanningPage() {
           </div>
 
           <div className="w-full lg:w-72 space-y-6">
-            <div className="bg-white rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+            <div className="bg-[#E4DBFB] rounded-[28px] p-6 border border-[#EDEDF0] shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
               <h4 className="text-sm font-bold text-[#0E0E10] mb-4 flex items-center gap-2">
                 <Calendar size={14} className="text-[#0E0E10]" />
                 Résumé

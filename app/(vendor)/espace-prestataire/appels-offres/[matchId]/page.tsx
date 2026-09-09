@@ -230,17 +230,17 @@ export default function VendorProjectDetailPage() {
           </div>
 
           {/* Paywall CTA */}
-          <div className="max-w-lg mx-auto rounded-[28px] bg-gradient-to-r from-[#0E0E10] to-[#0E0E10] p-8 sm:p-10 text-white shadow-xl text-center">
-            <div className="w-16 h-16 rounded-[28px] bg-white/10 flex items-center justify-center mx-auto mb-5">
-              <Lock size={28} className="text-[#fef2f4]" />
+          <div className="max-w-lg mx-auto rounded-[28px] bg-[#E4DBFB] p-8 sm:p-10 text-[#0E0E10] shadow-xl text-center">
+            <div className="w-16 h-16 rounded-[28px] bg-white flex items-center justify-center mx-auto mb-5">
+              <Lock size={28} className="text-[#0E0E10]" />
             </div>
             <h2 className="font-allura text-2xl font-normal mb-3">Activez votre abonnement</h2>
-            <p className="text-sm text-white/70 mb-6 leading-relaxed">
-              Vous avez un score de <strong className="text-white">{match.score}%</strong> de compatibilité avec ce projet en <strong className="text-white">{match.category}</strong>. Activez un plan pour découvrir les détails du couple, leur histoire, leur budget et répondre à l'appel d'offres.
+            <p className="text-sm text-[#6B6B72] mb-6 leading-relaxed">
+              Vous avez un score de <strong className="text-[#0E0E10]">{match.score}%</strong> de compatibilité avec ce projet en <strong className="text-[#0E0E10]">{match.category}</strong>. Activez un plan pour découvrir les détails du couple, leur histoire, leur budget et répondre à l'appel d'offres.
             </p>
             <Link
               href="/espace-prestataire/offres"
-              className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold text-sm hover:bg-[#FEF3C7] transition"
+              className="inline-flex items-center gap-2 h-12 px-8 rounded-full bg-[#e64a5d] text-white font-bold text-sm hover:brightness-110 transition"
             >
               <Crown size={18} /> Voir les offres
             </Link>

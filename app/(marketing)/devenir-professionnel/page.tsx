@@ -164,7 +164,7 @@ export default function ProfessionalRegistrationPage() {
     if (form.companyName) filled += 0.4;
     if (form.serviceCategory) filled += 0.3;
     if (form.address) filled += 0.3;
-    return Math.min(100, Math.round((filled / 6) * 100));
+    return Math.min(100, Math.round((filled / 5) * 100));
   }, [done, form]);
 
   async function handleSubmit() {

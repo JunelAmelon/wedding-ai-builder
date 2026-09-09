@@ -230,18 +230,7 @@ export default function VendorMessagingPage() {
 
   return (
     <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
-      {proposals.length === 0 ? (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <div className="bg-white border border-black/[0.06] rounded-[28px] p-12 text-center shadow-[0_8px_24px_rgba(11,15,26,0.04)]">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-[28px] mb-5 bg-[#fef2f4]">
-              <Inbox size={28} className="text-[#0E0E10]" />
-            </div>
-            <h2 className="font-allura text-xl font-normal mb-2">Aucune conversation</h2>
-            <p className="text-[#6B6B72] max-w-md mx-auto">Vous n'avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d'offres.</p>
-          </div>
-        </div>
-      ) : (
-        <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
+      <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-black/[0.06] bg-white`}>
           {/* Sidebar */}
           <div className={`flex flex-col border-r border-black/[0.06] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
             <div className="p-4 border-b border-black/[0.06]">
@@ -499,11 +488,23 @@ export default function VendorMessagingPage() {
               </>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-[#6B6B72] p-8 text-center">
-                <div className="h-16 w-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mb-4">
-                  <MessageSquare size={32} className="text-[#0E0E10]" />
-                </div>
-                <p className="font-medium text-[#0E0E10]">Sélectionnez une conversation</p>
-                <p className="text-sm">Discutez avec vos couples en toute simplicité.</p>
+                {proposals.length === 0 ? (
+                  <>
+                    <div className="h-16 w-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mb-4">
+                      <Inbox size={32} className="text-[#0E0E10]" />
+                    </div>
+                    <h2 className="font-allura text-xl font-normal mb-2">Aucune discussion</h2>
+                    <p className="text-[#6B6B72] max-w-md mx-auto">Vous n'avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d'offres.</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="h-16 w-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mb-4">
+                      <MessageSquare size={32} className="text-[#0E0E10]" />
+                    </div>
+                    <p className="font-medium text-[#0E0E10]">Sélectionnez une conversation</p>
+                    <p className="text-sm">Discutez avec vos couples en toute simplicité.</p>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -565,7 +566,6 @@ export default function VendorMessagingPage() {
             </div>
           )}
         </div>
-      )}
 
       {lightbox && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>

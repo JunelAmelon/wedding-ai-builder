@@ -507,9 +507,9 @@ export default function CoupleResultPage() {
                 <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-grey">Blueprint</span>
               </div>
               <h2 className="font-allura text-3xl sm:text-4xl font-bold tracking-tight text-ink mb-4">Une direction claire pour <span className="font-allura text-[#c43a4a]">votre journée</span></h2>
-              <h3 className="font-allura text-2xl sm:text-3xl font-normal text-ink leading-snug mb-6">{aiOutput.blueprint.concept}</h3>
+              <h3 className="font-sans font-normal text-2xl sm:text-3xl text-ink leading-snug mb-6">{aiOutput.blueprint.concept}</h3>
               {aiOutput.blueprint.storytelling && (
-                <p className="text-text-primary leading-relaxed text-base italic font-allura text-justify mb-8">"{aiOutput.blueprint.storytelling}"</p>
+                <p className="font-sans text-grey leading-relaxed text-[14px] text-justify mb-8">"{aiOutput.blueprint.storytelling}"</p>
               )}
               {aiOutput.blueprint.ambiance.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-8">

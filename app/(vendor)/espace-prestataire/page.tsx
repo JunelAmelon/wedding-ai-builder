@@ -174,9 +174,12 @@ export default function VendorDashboardPage() {
                 {isActive ? "Abonné" : "Gratuit"}
               </div>
               {!isActive && (
-                <div className="h-7 px-3.5 rounded-full flex items-center text-xs font-semibold bg-[#e64a5d] text-white hover:brightness-110 transition">
-                  Gratuit
-                </div>
+                <Link
+                  href="/espace-prestataire/offres"
+                  className="h-7 px-3.5 rounded-full flex items-center text-xs font-semibold bg-[#e64a5d] text-white hover:brightness-110 transition"
+                >
+                  S'abonner
+                </Link>
               )}
             </div>
             {now && (

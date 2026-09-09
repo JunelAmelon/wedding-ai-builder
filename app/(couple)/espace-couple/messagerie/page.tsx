@@ -217,18 +217,7 @@ export default function CoupleMessagingPage() {
 
   return (
     <div className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-7rem)]">
-      {proposals.length === 0 ? (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
-          <div className="bg-white border border-[#EDEDF0] rounded-[28px] p-12 text-center shadow-[0_8px_24px_rgba(14,14,16,0.05)]">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-[28px] mb-5 bg-primary/10">
-              <Inbox size={28} className="text-primary" />
-            </div>
-            <h2 className="font-allura text-xl font-normal mb-2">Aucune <span className="text-[#c43a4a]">conversation</span></h2>
-            <p className="text-text-secondary max-w-md mx-auto">Acceptez une proposition ou contactez un professionnel pour démarrer la conversation.</p>
-          </div>
-        </div>
-      ) : (
-        <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-[#EDEDF0] bg-white`}>
+      <div className={`grid h-full grid-cols-1 lg:grid-cols-[300px_1fr] ${infoOpen ? "xl:grid-cols-[300px_1fr_300px]" : ""} border-y border-[#EDEDF0] bg-white`}>
           {/* Sidebar */}
           <div className={`flex flex-col border-r border-[#EDEDF0] bg-white ${mobileOpen ? "hidden lg:flex" : "flex"}`}>
             <div className="p-4 border-b border-[#EDEDF0]">
@@ -474,11 +463,23 @@ export default function CoupleMessagingPage() {
               </>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center text-text-secondary p-8 text-center">
-                <div className="h-16 w-16 rounded-[28px] bg-primary/10 flex items-center justify-center mb-4">
-                  <MessageSquare size={32} className="text-primary" />
-                </div>
-                <p className="font-medium text-text-primary">Sélectionnez une conversation</p>
-                <p className="text-sm">Discutez avec vos prestataires en toute simplicité.</p>
+                {proposals.length === 0 ? (
+                  <>
+                    <div className="h-16 w-16 rounded-[28px] bg-primary/10 flex items-center justify-center mb-4">
+                      <Inbox size={32} className="text-primary" />
+                    </div>
+                    <h2 className="font-allura text-xl font-normal mb-2">Aucune <span className="text-primary">discussion</span></h2>
+                    <p className="text-text-secondary max-w-md mx-auto">Acceptez une proposition ou contactez un professionnel pour démarrer la conversation.</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="h-16 w-16 rounded-[28px] bg-primary/10 flex items-center justify-center mb-4">
+                      <MessageSquare size={32} className="text-primary" />
+                    </div>
+                    <p className="font-medium text-text-primary">Sélectionnez une conversation</p>
+                    <p className="text-sm">Discutez avec vos prestataires en toute simplicité.</p>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -555,7 +556,6 @@ export default function CoupleMessagingPage() {
             </div>
           )}
         </div>
-      )}
 
       {lightbox && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>

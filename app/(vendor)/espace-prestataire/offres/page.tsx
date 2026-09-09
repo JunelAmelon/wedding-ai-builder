@@ -27,13 +27,13 @@ const PLANS = [
   {
     name: "Premium Business",
     price: 69,
-    color: "#FEF3C7",
-    accent: "#D4B520",
-    iconBg: "#D4B520",
+    color: "#fef2f4",
+    accent: "#e64a5d",
+    iconBg: "#e64a5d",
     iconColor: "#ffffff",
     textColor: "#0E0E10",
     subTextColor: "#6B6B72",
-    checkColor: "#D4B520",
+    checkColor: "#e64a5d",
     popular: true,
     icon: Sparkles,
     features: [

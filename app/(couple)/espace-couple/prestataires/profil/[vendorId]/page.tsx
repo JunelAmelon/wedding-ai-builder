@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
@@ -92,6 +92,13 @@ export default function VendorProfileForCouplePage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [togglingFavorite, setTogglingFavorite] = useState(false);
   const [coupleProject, setCoupleProject] = useState<WeddingProject | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("contact") === "1") {
+      setContactOpen(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     async function load() {

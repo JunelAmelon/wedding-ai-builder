@@ -166,21 +166,21 @@ export default function VendorOpportunitiesPage() {
         {/* Dashboard */}
         <main className='flex flex-col gap-6'>
           {!subscriptionActive && (
-            <div className='rounded-[28px] bg-gradient-to-r from-[#0E0E10] to-[#0E0E10] p-6 sm:p-8 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg'>
+            <div className='rounded-[28px] bg-[#E4DBFB] p-6 sm:p-8 text-[#0E0E10] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg'>
               <div className='flex items-center gap-4'>
-                <div className='w-14 h-14 rounded-[28px] bg-white/10 flex items-center justify-center shrink-0'>
-                  <Crown className='w-7 h-7 text-[#fef2f4]' />
+                <div className='w-14 h-14 rounded-[28px] bg-white flex items-center justify-center shrink-0'>
+                  <Crown className='w-7 h-7 text-[#0E0E10]' />
                 </div>
                 <div>
                   <h3 className='font-allura text-lg font-normal mb-0.5'>Activez votre abonnement</h3>
-                  <p className='text-sm text-white/70'>
+                  <p className='text-sm text-[#6B6B72]'>
                     Vous avez {sorted.length} opportunité{sorted.length > 1 ? 's' : ''} qui vous attend{sorted.length > 1 ? 'ent' : ''}. Activez un plan pour voir les détails et répondre aux couples.
                   </p>
                 </div>
               </div>
               <Link
                 href='/espace-prestataire/offres'
-                className='shrink-0 inline-flex items-center gap-2 h-12 px-6 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold text-sm hover:bg-[#FEF3C7] transition'
+                className='shrink-0 inline-flex items-center gap-2 h-12 px-6 rounded-full bg-[#e64a5d] text-white font-bold text-sm hover:brightness-110 transition'
               >
                 <Crown size={18} /> Voir les offres
               </Link>

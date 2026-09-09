@@ -30,10 +30,10 @@ const COUPLE_NAV = [
 ];
 
 const COUPLE_NAV_SECONDARY = [
-  { href: "/espace-couple/liste-souhaits", label: "Liste de mariage", icon: Gift },
-  { href: "/espace-couple/boutique", label: "Boutique", icon: ShoppingBag },
   { href: "/espace-couple/parametres", label: "Paramètres", icon: SlidersHorizontal },
   { href: "/espace-couple/support", label: "Support", icon: LifeBuoy },
+  { href: "/espace-couple/liste-souhaits", label: "Liste de mariage", icon: Gift },
+  { href: "/espace-couple/boutique", label: "Boutique", icon: ShoppingBag },
 ];
 
 const MOBILE_TABS = [
@@ -46,6 +46,7 @@ const MOBILE_MORE = [
   { href: "/espace-couple/planning", label: "Planning", icon: CalendarRange },
   { href: "/espace-couple/budget", label: "Budget", icon: Wallet },
   { href: "/espace-couple/prestataires", label: "Prestataires", icon: Users2 },
+  { href: "/espace-couple/support", label: "Support", icon: LifeBuoy },
   { href: "/espace-couple/liste-souhaits", label: "Liste de mariage", icon: Gift },
   { href: "/espace-couple/boutique", label: "Boutique", icon: ShoppingBag },
 ];
@@ -255,7 +256,7 @@ export default function CoupleLayoutClient({
                 <Link
                   key={tab.href}
                   href={tab.href}
-                  className="-mt-7 h-14 w-14 rounded-full bg-ink text-white flex items-center justify-center shadow-[0_10px_24px_rgba(14,14,16,0.25)] shrink-0"
+                  className="-mt-7 h-14 w-14 rounded-full bg-[#e64a5d] text-white flex items-center justify-center shadow-[0_10px_24px_rgba(230,74,93,0.35)] shrink-0"
                 >
                   <tab.icon size={22} strokeWidth={2} />
                 </Link>

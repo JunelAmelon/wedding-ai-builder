@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Gift, Plus, Trash2, Edit, Share2, Copy, Check, Heart, ShoppingBag, X, Star } from "lucide-react";
+import { Gift, Plus, Trash2, Edit, Share2, Copy, Check, Heart, ShoppingBag, X, Star, Clock } from "lucide-react";
 import LoadingScreen from "@/components/shared/LoadingScreen";
 import type { Wishlist, WishlistItem, WishlistPurchase } from "@/types/marketplace";
 
@@ -162,7 +162,7 @@ export default function WishlistManagementPage() {
   if (loading) return <LoadingScreen minHeight="80dvh" />;
 
   return (
-    <div className="min-h-[80dvh] bg-gradient-to-b from-[#fef2f4] to-white font-sans">
+    <div className="relative min-h-[80dvh] bg-gradient-to-b from-[#fef2f4] to-white font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {!selectedWishlist ? (
           <>
@@ -671,6 +671,18 @@ export default function WishlistManagementPage() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Filigrane "À venir" */}
+      <div className="absolute inset-0 z-20 bg-white/45 backdrop-blur-[3px] pointer-events-none" />
+      <div className="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-6 z-30 bg-white border border-[#EDEDF0] rounded-[18px] shadow-[0_20px_60px_rgba(0,0,0,.15)] px-5 py-4 flex items-center gap-4 max-w-[520px] w-[calc(100%-40px)]">
+        <div className="flex-1">
+          <div className="font-sans text-[17px] font-bold text-[#1a1a1a] mb-1">Liste de souhaits — Bientôt disponible</div>
+          <div className="text-[12.5px] text-[#6B6B72] leading-relaxed">L'ajout et le partage de listes arrivent très bientôt.</div>
+        </div>
+        <span className="inline-flex items-center gap-1.5 bg-[#0E0E10]/10 text-[#0E0E10] px-[14px] py-[8px] rounded-[10px] text-[12.5px] font-semibold whitespace-nowrap">
+          <Clock size={14} /> À venir
+        </span>
       </div>
     </div>
   );

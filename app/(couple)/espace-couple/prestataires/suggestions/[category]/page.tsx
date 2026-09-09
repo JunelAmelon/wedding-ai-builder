@@ -465,7 +465,7 @@ export default function CategorySuggestionsPage() {
                           </Button>
                         ) : (
                           <Link
-                            href={`/espace-couple/prestataires/profil/${item.match.vendorId}`}
+                            href={`/espace-couple/prestataires/profil/${item.match.vendorId}?contact=1`}
                             className="flex-1 text-center rounded-full bg-[#e64a5d] text-white text-[12px] font-bold px-3 py-2.5 hover:brightness-110 transition flex items-center justify-center gap-1.5"
                           >
                             <MessageCircle size={14} /> Contacter
