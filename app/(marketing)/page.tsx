@@ -320,7 +320,7 @@ export default function LandingPage() {
                   <button className="btn btn-solid">Copier le lien</button>
                 </div>
 
-                <div className="stage-phone">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[520px] z-[2]">
                   <Image
                     src="/mockup mariage facile.png"
                     alt="Mockup application Mariage Facile"
