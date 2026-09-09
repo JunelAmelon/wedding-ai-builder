@@ -316,8 +316,8 @@ export default function LandingPage() {
 
                 <div className="share-card reveal">
                   <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
-                  <p>Partagez votre plan et vos favoris en un lien</p>
-                  <button className="btn btn-solid">Copier le lien</button>
+                  <p>Générez votre plan</p>
+                  <Link href="/quiz" className="btn btn-solid">Démarrer</Link>
                 </div>
 
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[520px] z-[2]">
