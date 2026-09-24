@@ -1,18 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { QuestionShell } from "@/components/quiz/QuestionShell";
 
 export function QuestionDate({ onAnswer }: { onAnswer: (value: string) => void }) {
   const [date, setDate] = useState("");
   const [notFixed, setNotFixed] = useState(false);
 
+  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const isPast = Boolean(date && date < todayStr);
+  const isValid = notFixed ? (Boolean(date && !isPast) || !date) : Boolean(date && !isPast);
+
+  const handleNext = () => {
+    if (notFixed && !date) {
+      onAnswer("not-fixed");
+    } else if (date && !isPast) {
+      onAnswer(date);
+    }
+  };
+
   return (
     <QuestionShell
       title="Quelle est la date de votre mariage ?"
       subtitle={notFixed ? "Donnez une date approximative — vous pourrez la modifier plus tard." : "Même une estimation nous aide à générer une timeline réaliste."}
-      onNext={() => onAnswer(date)}
-      nextDisabled={!date}
+      onNext={handleNext}
+      nextDisabled={!isValid || (!notFixed && !date)}
     >
       <div className="space-y-4">
         <div className="min-w-0">
@@ -21,10 +33,16 @@ export function QuestionDate({ onAnswer }: { onAnswer: (value: string) => void }
           </label>
           <input
             type="date"
+            min={todayStr}
             value={date}
             onChange={(e) => setDate(e.target.value)}
             className="w-full min-w-0 max-w-full rounded-2xl bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] focus:outline-none focus:border-[#E4DBFB] transition"
           />
+          {isPast && (
+            <p className="mt-2 text-xs font-medium text-[#e64a5d]">
+              La date du mariage ne peut pas être passée. Veuillez choisir une date future ou aujourd'hui.
+            </p>
+          )}
         </div>
         <button
           type="button"
@@ -50,3 +68,4 @@ export function QuestionDate({ onAnswer }: { onAnswer: (value: string) => void }
     </QuestionShell>
   );
 }
+

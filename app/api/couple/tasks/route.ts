@@ -8,6 +8,7 @@ const TaskSchema = z.object({
   projectId: z.string().min(1),
   title: z.string().min(1),
   monthsBeforeWedding: z.number().nonnegative(),
+  dueDate: z.string().optional().nullable(),
 });
 
 const ToggleSchema = z.object({
@@ -19,6 +20,7 @@ const UpdateSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   monthsBeforeWedding: z.number().nonnegative(),
+  dueDate: z.string().optional().nullable(),
 });
 
 const DeleteSchema = z.object({
@@ -34,8 +36,30 @@ export async function GET() {
     const project = projects[0];
     if (!project) return NextResponse.json({ tasks: [] });
 
-    const tasks = await taskRepo.listByProject(project.id);
-    return NextResponse.json({ tasks });
+    const rawTasks = await taskRepo.listByProject(project.id);
+
+    // Déduplication et nettoyage immédiat des doublons
+    const seen = new Set<string>();
+    const uniqueTasks: typeof rawTasks = [];
+    const duplicateIds: string[] = [];
+
+    for (const t of rawTasks) {
+      const key = `${(t.title || "").trim().toLowerCase()}__${t.monthsBeforeWedding}`;
+      if (seen.has(key)) {
+        duplicateIds.push(t.id);
+      } else {
+        seen.add(key);
+        uniqueTasks.push(t);
+      }
+    }
+
+    if (duplicateIds.length > 0) {
+      Promise.all(duplicateIds.map((id) => taskRepo.delete(id))).catch((err) =>
+        console.error("[couple/tasks] Échec nettoyage des doublons", err)
+      );
+    }
+
+    return NextResponse.json({ tasks: uniqueTasks });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
@@ -52,11 +76,17 @@ export async function POST(req: Request) {
     const parsed = TaskSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: "Données invalides" }, { status: 400 });
 
-    const { projectId, title, monthsBeforeWedding } = parsed.data;
+    const { projectId, title, monthsBeforeWedding, dueDate } = parsed.data;
     const project = await projectRepo.get(projectId);
     if (!project || project.userId !== user.id) return NextResponse.json({ error: "Projet introuvable" }, { status: 404 });
 
-    const task = await taskRepo.create({ projectId, title, monthsBeforeWedding, completed: false });
+    const task = await taskRepo.create({
+      projectId,
+      title,
+      monthsBeforeWedding,
+      dueDate: dueDate || null,
+      completed: false,
+    });
     return NextResponse.json({ task }, { status: 201 });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
@@ -107,6 +137,7 @@ export async function PATCH(req: Request) {
     const updated = await taskRepo.update(parsed.data.id, {
       title: parsed.data.title,
       monthsBeforeWedding: parsed.data.monthsBeforeWedding,
+      dueDate: parsed.data.dueDate !== undefined ? parsed.data.dueDate : undefined,
     });
     return NextResponse.json({ task: updated });
   } catch (err) {

@@ -25,11 +25,12 @@ import {
   Crown,
   Check,
 } from 'lucide-react';
-import type { ProjectVendorMatch, WeddingProject } from '@/types/marketplace';
+import type { ProjectVendorMatch, WeddingProject, Tender } from '@/types/marketplace';
 
 type Opportunity = {
   match: ProjectVendorMatch;
   project: WeddingProject | null;
+  tender?: Tender | null;
 };
 
 export default function VendorOpportunitiesPage() {
@@ -96,6 +97,9 @@ export default function VendorOpportunitiesPage() {
       setSelected(null);
       setMessage('');
       setSuccess(true);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("badge-counts-updated"));
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Erreur');
     } finally {
@@ -244,84 +248,100 @@ export default function VendorOpportunitiesPage() {
                         </td>
                       </tr>
                     ) : (
-                      paginated.map(({ match, project }) => (
-                        <tr
-                          key={match.id}
-                          onClick={() =>
-                            router.push(
-                              `/espace-prestataire/appels-offres/${match.id}`
-                            )
-                          }
-                          className='border-t border-[#EDEDF0] hover:bg-[#fef2f4] cursor-pointer transition group'
-                        >
-                          <td className='py-4 px-5'>
-                            <div className='font-semibold text-[#0E0E10] flex items-center gap-2'>
-                              {!subscriptionActive && <Lock size={12} className='text-[#6B6B72]' />}
-                              {project?.name || 'Projet sans nom'}
-                            </div>
-                            {project?.weddingDate && (
-                              <div className='text-xs text-[#6B6B72] mt-0.5'>
-                                {new Date(
-                                  project.weddingDate
-                                ).toLocaleDateString('fr-FR')}
+                      paginated.map(({ match, project, tender }) => {
+                        const isAccepted = match.status === "accepted";
+                        const isContacted = match.status === "contacted";
+                        const isClosed = tender?.status === "closed" && !isAccepted;
+                        return (
+                          <tr
+                            key={match.id}
+                            onClick={() =>
+                              router.push(
+                                `/espace-prestataire/appels-offres/${match.id}`
+                              )
+                            }
+                            className='border-t border-[#EDEDF0] hover:bg-[#fef2f4] cursor-pointer transition group'
+                          >
+                            <td className='py-4 px-5'>
+                              <div className='font-semibold text-[#0E0E10] flex items-center gap-2'>
+                                {!subscriptionActive && <Lock size={12} className='text-[#6B6B72]' />}
+                                {project?.name || 'Projet sans nom'}
                               </div>
-                            )}
-                          </td>
-                          <td className='py-4 px-5'>
-                            <span className='inline-flex items-center rounded-full bg-[#fef2f4] text-[#0E0E10] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] border border-[#EDEDF0]'>
-                              {match.category}
-                            </span>
-                          </td>
-                          <td className='py-4 px-5 text-sm text-[#6B6B72]'>
-                            {project?.location?.city || 'Lieu non précisé'}
-                          </td>
-                          <td className='py-4 px-5'>
-                            <div className='inline-flex items-center gap-1 bg-[#fef2f4] px-2.5 py-1 rounded-full text-xs font-bold text-[#0E0E10]'>
-                              <Sparkles className='w-3.5 h-3.5' />
-                              {match.score}
-                            </div>
-                          </td>
-                          <td className='py-4 px-5 text-right'>
-                            <div className='flex items-center justify-end gap-2'>
-                              {match.status === "contacted" ? (
-                                <span className='h-9 px-4 rounded-full bg-[#e4f4ed] text-[#2e7d5e] text-xs font-bold flex items-center gap-1.5'>
-                                  <Check className='w-3.5 h-3.5' />
-                                  Répondu
-                                </span>
-                              ) : !subscriptionActive ? (
-                                <Link
-                                  href='/espace-prestataire/offres'
-                                  className='h-9 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] text-xs font-bold hover:bg-[#FEF3C7] transition flex items-center gap-1.5'
-                                >
-                                  <Crown className='w-3.5 h-3.5' />
-                                  Activer
-                                </Link>
-                              ) : (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelected({ match, project });
-                                  }}
-                                  className='h-9 px-4 rounded-full bg-[#e64a5d] text-white hover:brightness-110 text-xs font-bold transition flex items-center gap-1.5'
-                                >
-                                  <Send className='w-3.5 h-3.5' />
-                                  Répondre
-                                </button>
+                              {project?.weddingDate && (
+                                <div className='text-xs text-[#6B6B72] mt-0.5'>
+                                  {new Date(
+                                    project.weddingDate
+                                  ).toLocaleDateString('fr-FR')}
+                                </div>
                               )}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  ignore(match.id);
-                                }}
-                                className='h-9 w-9 rounded-full border border-[#EDEDF0] bg-white text-[#6B6B72] hover:bg-[#fef2f4] hover:text-[#0E0E10] transition flex items-center justify-center'
-                                aria-label='Ignorer'
-                              >
-                                <X className='w-4 h-4' />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
+                            </td>
+                            <td className='py-4 px-5'>
+                              <span className='inline-flex items-center rounded-full bg-[#fef2f4] text-[#0E0E10] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] border border-[#EDEDF0]'>
+                                {match.category}
+                              </span>
+                            </td>
+                            <td className='py-4 px-5 text-sm text-[#6B6B72]'>
+                              {project?.location?.city || 'Lieu non précisé'}
+                            </td>
+                            <td className='py-4 px-5'>
+                              <div className='inline-flex items-center gap-1 bg-[#fef2f4] px-2.5 py-1 rounded-full text-xs font-bold text-[#0E0E10]'>
+                                <Sparkles className='w-3.5 h-3.5' />
+                                {match.score}
+                              </div>
+                            </td>
+                            <td className='py-4 px-5 text-right'>
+                              <div className='flex items-center justify-end gap-2'>
+                                {isAccepted ? (
+                                  <span className='h-9 px-4 rounded-full bg-[#d8ecd9] text-[#2e7d5e] text-xs font-bold flex items-center gap-1.5 shadow-sm border border-[#2e7d5e]/20'>
+                                    <Check className='w-3.5 h-3.5' />
+                                    Retenu / Validé 🎉
+                                  </span>
+                                ) : isContacted ? (
+                                  <span className='h-9 px-4 rounded-full bg-[#e4f4ed] text-[#2e7d5e] text-xs font-bold flex items-center gap-1.5'>
+                                    <Check className='w-3.5 h-3.5' />
+                                    Répondu
+                                  </span>
+                                ) : isClosed ? (
+                                  <span className='h-9 px-3.5 rounded-full bg-[#EDEDF0] text-[#6B6B72] text-xs font-bold flex items-center gap-1.5'>
+                                    Clôturé
+                                  </span>
+                                ) : !subscriptionActive ? (
+                                  <Link
+                                    href='/espace-prestataire/offres'
+                                    className='h-9 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] text-xs font-bold hover:bg-[#FEF3C7] transition flex items-center gap-1.5'
+                                  >
+                                    <Crown className='w-3.5 h-3.5' />
+                                    Activer
+                                  </Link>
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelected({ match, project, tender });
+                                    }}
+                                    className='h-9 px-4 rounded-full bg-[#e64a5d] text-white hover:brightness-110 text-xs font-bold transition flex items-center gap-1.5'
+                                  >
+                                    <Send className='w-3.5 h-3.5' />
+                                    Répondre
+                                  </button>
+                                )}
+                                {!isAccepted && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      ignore(match.id);
+                                    }}
+                                    className='h-9 w-9 rounded-full border border-[#EDEDF0] bg-white text-[#6B6B72] hover:bg-[#fef2f4] hover:text-[#0E0E10] transition flex items-center justify-center'
+                                    aria-label='Ignorer'
+                                  >
+                                    <X className='w-4 h-4' />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
@@ -346,18 +366,19 @@ export default function VendorOpportunitiesPage() {
                   </div>
                 ) : (
                   <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
-                    {paginated.map(({ match, project }) => (
+                    {paginated.map(({ match, project, tender }) => (
                       <DossierCard
                         key={match.id}
                         match={match}
                         project={project}
+                        tender={tender}
                         subscriptionActive={subscriptionActive}
                         onView={() =>
                           router.push(
                             `/espace-prestataire/appels-offres/${match.id}`
                           )
                         }
-                        onRespond={() => setSelected({ match, project })}
+                        onRespond={() => setSelected({ match, project, tender })}
                         onIgnore={() => ignore(match.id)}
                       />
                     ))}
@@ -514,10 +535,24 @@ export default function VendorOpportunitiesPage() {
                   </span>
                 </div>
                 <div className='text-sm text-[#6B6B72]'>
-                  Budget :{' '}
-                  {selected.project?.budget?.amount?.toLocaleString('fr-FR') ||
-                    '—'}{' '}
-                  {selected.project?.budget?.currency || 'EUR'}
+                  {selected.tender?.budgetRange ? (
+                    <div>
+                      <span className="font-semibold text-[#0E0E10]">Budget pour {selected.match.category} :</span>{' '}
+                      {selected.tender.budgetRange.min?.toLocaleString('fr-FR')} - {selected.tender.budgetRange.max?.toLocaleString('fr-FR')} {selected.tender.budgetRange.currency || 'EUR'}
+                      {selected.project?.budget?.amount && (
+                        <span className="text-xs text-[#6B6B72] block mt-0.5">
+                          (Budget global tout mariage : {selected.project.budget.amount.toLocaleString('fr-FR')} {selected.project.budget.currency || 'EUR'})
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      Budget :{' '}
+                      {selected.project?.budget?.amount?.toLocaleString('fr-FR') ||
+                        '—'}{' '}
+                      {selected.project?.budget?.currency || 'EUR'}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -572,6 +607,7 @@ export default function VendorOpportunitiesPage() {
 function DossierCard({
   match,
   project,
+  tender,
   subscriptionActive,
   onView,
   onRespond,
@@ -579,11 +615,16 @@ function DossierCard({
 }: {
   match: ProjectVendorMatch;
   project: WeddingProject | null;
+  tender?: Tender | null;
   subscriptionActive: boolean;
   onView: () => void;
   onRespond: () => void;
   onIgnore: () => void;
 }) {
+  const isAccepted = match.status === "accepted";
+  const isContacted = match.status === "contacted";
+  const isClosed = (tender?.status === "closed" || Boolean(tender?.selectedProposalId)) && !isAccepted;
+
   return (
     <div className='rounded-[28px] bg-white border border-[#EDEDF0] p-6 shadow-md hover:shadow-lg transition group'>
       <div className='flex items-start justify-between mb-5'>
@@ -598,12 +639,14 @@ function DossierCard({
             </span>
           </div>
         </div>
-        <button
-          onClick={onIgnore}
-          className='h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#fef2f4] text-[#6B6B72] transition'
-        >
-          <X size={16} />
-        </button>
+        {!isAccepted && (
+          <button
+            onClick={onIgnore}
+            className='h-8 w-8 rounded-full flex items-center justify-center hover:bg-[#fef2f4] text-[#6B6B72] transition'
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
       <div className='space-y-2.5 mb-6 text-sm text-[#6B6B72]'>
@@ -623,8 +666,11 @@ function DossierCard({
         </div>
         <div className='flex items-center gap-2.5'>
           <Banknote size={16} className='text-[#E4DBFB]' />
-          Budget {project?.budget?.amount?.toLocaleString('fr-FR') || '—'}{' '}
-          {project?.budget?.currency || 'EUR'}
+          {tender?.budgetRange ? (
+            <span>Budget prestation {tender.budgetRange.min?.toLocaleString('fr-FR')} - {tender.budgetRange.max?.toLocaleString('fr-FR')} {tender.budgetRange.currency || 'EUR'}</span>
+          ) : (
+            <span>Budget {project?.budget?.amount?.toLocaleString('fr-FR') || '—'} {project?.budget?.currency || 'EUR'}</span>
+          )}
         </div>
       </div>
 
@@ -635,24 +681,32 @@ function DossierCard({
         >
           {!subscriptionActive && <Lock size={14} />} Voir
         </button>
-        {match.status === "contacted" ? (
+        {isAccepted ? (
+          <span className='flex-1 py-3 px-4 rounded-full bg-[#d8ecd9] text-sm font-bold text-[#2e7d5e] flex items-center justify-center gap-2 shadow-sm border border-[#2e7d5e]/20'>
+            <Check size={16} /> Retenu / Validé 🎉
+          </span>
+        ) : isContacted ? (
           <span className='flex-1 py-3 px-4 rounded-full bg-[#e4f4ed] text-sm font-bold text-[#2e7d5e] flex items-center justify-center gap-2'>
             <Check size={16} /> Répondu
           </span>
-        ) : subscriptionActive ? (
+        ) : isClosed ? (
+          <span className='flex-1 py-3 px-4 rounded-full bg-[#EDEDF0] text-sm font-bold text-[#6B6B72] flex items-center justify-center gap-2'>
+            Clôturé
+          </span>
+        ) : !subscriptionActive ? (
+          <Link
+            href='/espace-prestataire/offres'
+            className='flex-1 py-3 px-4 rounded-full bg-[#fef2f4] text-sm font-bold text-[#0E0E10] hover:bg-[#FEF3C7] transition flex items-center justify-center gap-2'
+          >
+            <Crown size={14} /> Activer
+          </Link>
+        ) : (
           <button
             onClick={onRespond}
             className='flex-1 py-3 px-4 rounded-full bg-[#e64a5d] text-sm font-bold text-white hover:brightness-110 transition flex items-center justify-center gap-2'
           >
-            <Send size={16} /> Répondre
+            <Send size={14} /> Répondre
           </button>
-        ) : (
-          <Link
-            href='/espace-prestataire/offres'
-            className='flex-1 py-3 px-4 rounded-full bg-[#fef2f4] text-[#0E0E10] text-sm font-bold hover:bg-[#FEF3C7] transition flex items-center justify-center gap-2'
-          >
-            <Crown size={16} /> Activer
-          </Link>
         )}
       </div>
     </div>

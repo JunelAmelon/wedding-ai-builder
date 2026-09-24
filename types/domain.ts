@@ -229,10 +229,17 @@ export interface BudgetBreakdown {
   totalSavingsPotential?: number;
 }
 
+export interface TimelineTaskItem {
+  title: string;
+  suggestedDate?: string;
+  dayContext?: "weekend" | "weekday";
+  reasoning?: string;
+}
+
 export interface TimelineMilestone {
   monthsBeforeWedding: number;
   title: string;
-  tasks: string[];
+  tasks: (string | TimelineTaskItem)[];
   priority?: "low" | "medium" | "high" | "critical";
   urgency?: "early" | "soon" | "urgent" | "late";
   idealDeadline?: string;

@@ -137,6 +137,9 @@ export default function VendorMessagingPage() {
         const res = await fetch(`/api/messages?proposalId=${selected.id}`);
         const json = await res.json();
         setMessages(json.messages || []);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("badge-counts-updated"));
+        }
       } catch {
         // ignore
       }

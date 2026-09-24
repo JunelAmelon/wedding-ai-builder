@@ -63,7 +63,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     if (updated.profileId && ["approved", "rejected"].includes(status)) {
       try {
-        const profile = await vendorProfileRepo.update(updated.profileId, { status });
+        const profile = await vendorProfileRepo.update(updated.profileId, {
+          status,
+          verified: status === "approved",
+        });
         if (status === "approved" && profile) {
           revalidateVendorMatches(profile).catch(() => {});
         }

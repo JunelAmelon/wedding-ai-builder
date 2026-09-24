@@ -78,8 +78,46 @@ export default function AdminLayoutClient({
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [activities, setActivities] = useState<{ type: string; message: string; timestamp: string }[]>([]);
+  const [badgeCounts, setBadgeCounts] = useState({
+    pendingCandidatures: 0,
+    openTickets: 0,
+  });
 
   const initials = `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
+
+  useEffect(() => {
+    let mounted = true;
+    async function fetchCounts() {
+      try {
+        const res = await fetch("/api/admin/badge-counts");
+        if (res.ok && mounted) {
+          const data = await res.json();
+          setBadgeCounts({
+            pendingCandidatures: data.pendingCandidatures || 0,
+            openTickets: data.openTickets || 0,
+          });
+        }
+      } catch {}
+    }
+
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 30000);
+    const onFocus = () => fetchCounts();
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("badge-counts-updated", onFocus);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("badge-counts-updated", onFocus);
+    };
+  }, [pathname]);
+
+  const getBadgeCount = (href: string) => {
+    if (href === "/admin/candidatures") return badgeCounts.pendingCandidatures;
+    if (href === "/admin/support") return badgeCounts.openTickets;
+    return 0;
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -190,18 +228,26 @@ export default function AdminLayoutClient({
         <nav className="flex-1 overflow-y-auto px-5 pb-4 space-y-1">
           {filteredNav.map((item) => {
             const active = isActive(item.href);
+            const count = getBadgeCount(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-[10px] text-sm font-medium transition-colors ${
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-[10px] text-sm font-medium transition-colors ${
                   active
                     ? "bg-[#e6f4ea] text-[#137333]"
                     : "text-[#64748b] hover:text-[#0f172a] hover:bg-[#f8fafc]"
                 }`}
               >
-                <item.icon size={18} strokeWidth={active ? 2 : 1.75} />
-                {item.label}
+                <div className="flex items-center gap-3">
+                  <item.icon size={18} strokeWidth={active ? 2 : 1.75} />
+                  {item.label}
+                </div>
+                {count > 0 && (
+                  <span className="min-w-[20px] h-[20px] px-1.5 rounded-full bg-[#db2777] text-white text-[11px] font-bold flex items-center justify-center shadow-sm">
+                    {count > 99 ? "99+" : count}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -312,19 +358,27 @@ export default function AdminLayoutClient({
             <nav className="space-y-1 mb-6 flex-1 overflow-y-auto">
               {navItems.map((item) => {
                 const active = isActive(item.href);
+                const count = getBadgeCount(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-[10px] text-sm font-medium transition-colors ${
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-[10px] text-sm font-medium transition-colors ${
                       active
                         ? "bg-[#e6f4ea] text-[#137333]"
                         : "text-[#64748b] hover:text-[#0f172a] hover:bg-[#f8fafc]"
                     }`}
                   >
-                    <item.icon size={18} strokeWidth={active ? 2 : 1.75} />
-                    {item.label}
+                    <div className="flex items-center gap-3">
+                      <item.icon size={18} strokeWidth={active ? 2 : 1.75} />
+                      {item.label}
+                    </div>
+                    {count > 0 && (
+                      <span className="min-w-[20px] h-[20px] px-1.5 rounded-full bg-[#db2777] text-white text-[11px] font-bold flex items-center justify-center shadow-sm">
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

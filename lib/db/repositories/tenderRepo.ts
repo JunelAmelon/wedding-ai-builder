@@ -58,4 +58,13 @@ export const tenderRepo = {
     const doc = await col.doc(id).get();
     return doc.data() as Tender;
   },
+
+  async delete(id: string): Promise<void> {
+    if (isLocalMode()) {
+      await localStore.delete(COLLECTION, id);
+      return;
+    }
+    const col = await getFirestoreCol();
+    await col.doc(id).delete();
+  },
 };

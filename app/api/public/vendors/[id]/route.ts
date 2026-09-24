@@ -12,11 +12,15 @@ function pickPublicVendor(vendor: any) {
     otherCategory: vendor.otherCategory,
     styles: vendor.styles,
     yearsOfExperience: vendor.yearsOfExperience,
-    website: vendor.website,
+    phone: vendor.phone || null,
+    email: vendor.email || null,
+    website: vendor.website || vendor.portfolio?.website || null,
     priceRange: vendor.priceRange,
     pricingDetails: vendor.pricingDetails,
     serviceArea: vendor.serviceArea,
     portfolio: vendor.portfolio,
+    verified: Boolean(vendor.verified || vendor.status === "approved"),
+    status: vendor.status,
     address: vendor.address
       ? {
           city: vendor.address.city,

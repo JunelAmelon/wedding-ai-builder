@@ -12,21 +12,35 @@ export function QuestionBudget({
   const [amount, setAmount] = useState<number | "">("");
   const [currency, setCurrency] = useState("EUR");
 
-  const disabled = useMemo(() => !amount || Number.isNaN(Number(amount)), [amount]);
+  const disabled = useMemo(() => !amount || Number.isNaN(Number(amount)) || Number(amount) <= 0, [amount]);
 
   return (
     <QuestionShell
       title="Quel est votre budget total ?"
       subtitle="On s'en sert pour le breakdown détaillé."
-      onNext={() => onAnswer({ amount: Number(amount), currency })}
+      onNext={() => onAnswer({ amount: Math.max(1, Number(amount)), currency })}
       nextDisabled={disabled}
     >
       <div className="space-y-3">
         <input
           type="number"
           min={1}
+          step="1"
           value={amount}
-          onChange={(e) => setAmount(e.target.value ? Number(e.target.value) : "")}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") e.preventDefault();
+          }}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "") {
+              setAmount("");
+            } else {
+              const num = Number(val);
+              if (!Number.isNaN(num) && num >= 0) {
+                setAmount(num);
+              }
+            }
+          }}
           placeholder="Ex: 15000"
           className="w-full rounded-[28px] bg-white border-2 border-[#EDEDF0] px-4 py-3.5 text-[#0E0E10] placeholder:text-[#6B6B72] focus:outline-none focus:border-[#E4DBFB] transition"
         />

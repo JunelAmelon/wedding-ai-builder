@@ -350,7 +350,7 @@ export default function VendorProposalsPage() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <Link
-                          href={`/espace-prestataire/appels-offres/${proposal.tenderId || ""}`}
+                          href={`/espace-prestataire/appels-offres/${proposal.matchId || proposal.tenderId || ""}`}
                           title="Voir l'appel d'offres"
                           className="p-2 rounded-full hover:bg-[#fef2f4] text-[#6B6B72]"
                         >

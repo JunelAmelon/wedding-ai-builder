@@ -610,16 +610,46 @@ export function normalizeMilestones(
   const wedding = weddingDate ? new Date(weddingDate) : null;
   if (wedding) wedding.setHours(0, 0, 0, 0);
 
-  return timeline.milestones.map((m: TimelineMilestone) => {
+  const raw = timeline.milestones || [];
+  const maxMonths = Math.max(
+    ...raw.map((m) => (typeof m.monthsBeforeWedding === "number" ? m.monthsBeforeWedding : 0)),
+    1
+  );
+
+  const totalDaysRemaining = wedding
+    ? Math.max(1, Math.round((wedding.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
+    : 365;
+
+  const mapped = raw.map((m: TimelineMilestone, idx: number) => {
     const months = typeof m.monthsBeforeWedding === "number" ? m.monthsBeforeWedding : 0;
     let date: Date | null = null;
-    if (m.idealDeadline) {
+
+    if (wedding) {
+      const d = new Date(wedding);
+      if (months <= 0) {
+        date = d;
+      } else {
+        let daysBefore: number;
+        if (maxMonths * 30.4375 > totalDaysRemaining) {
+          const ratio = months / maxMonths;
+          daysBefore = Math.round(ratio * (totalDaysRemaining - 1));
+        } else {
+          const baseDays = Math.round(months * 30.4375);
+          const stagger = ((idx % 4) - 1.5) * 2;
+          daysBefore = Math.round(baseDays + stagger);
+        }
+
+        const safeDaysBefore = Math.min(daysBefore, Math.max(0, totalDaysRemaining - 1));
+        d.setDate(d.getDate() - safeDaysBefore);
+        d.setHours(0, 0, 0, 0);
+        if (d < now) {
+          d.setTime(now.getTime() + idx * 24 * 60 * 60 * 1000);
+        }
+        date = d;
+      }
+    } else if (m.idealDeadline) {
       const d = new Date(m.idealDeadline);
       if (!isNaN(d.getTime())) date = d;
-    } else if (wedding) {
-      const d = new Date(wedding);
-      d.setMonth(d.getMonth() - months);
-      date = d;
     }
 
     let status: TimelineMilestone["status"] = m.status;
@@ -640,7 +670,7 @@ export function normalizeMilestones(
     };
     const urgency = m.urgency ? urgencyMap[m.urgency] ?? m.urgency : "soon";
 
-    const displayDate = m.displayDate ?? (date ? fmtDate(date.toISOString()) : `${months} mois avant`);
+    const displayDate = date ? fmtDate(date.toISOString()) : (m.displayDate ?? `${months} mois avant`);
 
     return {
       ...m,
@@ -649,8 +679,19 @@ export function normalizeMilestones(
       urgency,
       displayDate,
       idealDeadline: date ? date.toISOString() : m.idealDeadline,
+      _date: date,
     };
   });
+
+  // Tri STRICTEMENT chronologique croissant (du passé vers le jour J)
+  mapped.sort((a, b) => {
+    if (a._date && b._date) {
+      return a._date.getTime() - b._date.getTime();
+    }
+    return b.monthsBeforeWedding - a.monthsBeforeWedding;
+  });
+
+  return mapped.map(({ _date, ...rest }) => rest);
 }
 
 export function riskScoreColor(score: number): string {

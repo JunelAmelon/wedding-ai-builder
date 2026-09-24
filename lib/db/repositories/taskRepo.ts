@@ -83,12 +83,15 @@ export const taskRepo = {
     const now = new Date().toISOString();
     const tasks: TimelineTask[] = [];
     for (const milestone of timeline.milestones || []) {
-      for (const title of milestone.tasks || []) {
+      for (const item of milestone.tasks || []) {
+        const title = typeof item === "string" ? item : item.title;
+        const dueDate = typeof item === "string" ? null : (item.suggestedDate || null);
         const task: TimelineTask = {
           id: nanoid(12),
           projectId,
           title,
           monthsBeforeWedding: milestone.monthsBeforeWedding,
+          dueDate,
           completed: false,
           createdAt: now,
           updatedAt: now,

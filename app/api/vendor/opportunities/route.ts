@@ -7,6 +7,7 @@ import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { sessionRepo } from "@/lib/db/repositories/sessionRepo";
+import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
 import { buildVendorProjectSummary } from "@/lib/matching/summary";
 
 export async function GET() {
@@ -26,12 +27,13 @@ export async function GET() {
     const opportunities = await Promise.all(
       activeMatches.map(async (m) => {
         const project = await projectRepo.get(m.projectId);
+        const tender = m.tenderId ? await tenderRepo.get(m.tenderId).catch(() => null) : null;
         let summary = null;
         if (project) {
           const session = project.sessionId ? await sessionRepo.get(project.sessionId) : null;
           summary = await buildVendorProjectSummary(project, session?.aiOutput ?? null, m.category);
         }
-        return { match: m, project, summary, profile };
+        return { match: m, project, tender, summary, profile };
       })
     );
 

@@ -26,6 +26,29 @@ export interface UserAccount {
   updatedAt: string;
 }
 
+export interface GoogleBusinessReview {
+  author: string;
+  rating: number;
+  text: string;
+  date: string;
+  relativeTimeDescription?: string;
+  profilePhotoUrl?: string;
+}
+
+export interface GoogleBusinessData {
+  placeId: string;
+  placeName: string;
+  placeUrl?: string;
+  rating: number;
+  userRatingsTotal: number;
+  verified: boolean;
+  verificationMethod: "oauth" | "domain_otp" | "siret_address";
+  verifiedAt: string;
+  syncedAt: string;
+  accountEmail?: string;
+  reviews: GoogleBusinessReview[];
+}
+
 export interface VendorProfile {
   id: string; // same as userId
   userId: string;
@@ -78,6 +101,7 @@ export interface VendorProfile {
     videos: string[];
     faq: { question: string; answer: string }[];
     reviews: { author: string; rating: number; text: string; date: string }[];
+    googleBusiness?: GoogleBusinessData | null;
   };
   tier: "economique" | "standard" | "premium" | "luxe";
   documents: { url: string; publicId: string; filename: string }[];
@@ -258,6 +282,7 @@ export interface TimelineTask {
   projectId: string;
   title: string;
   monthsBeforeWedding: number;
+  dueDate?: string | null;
   completed: boolean;
   createdAt: string;
   updatedAt: string;

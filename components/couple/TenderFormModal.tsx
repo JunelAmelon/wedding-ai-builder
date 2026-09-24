@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import {
   Loader2,
@@ -9,8 +10,19 @@ import {
   X,
   CheckCircle2,
   Plus,
+  AlertTriangle,
+  ShieldAlert,
+  Info,
+  ExternalLink,
 } from "lucide-react";
-import type { WeddingProject } from "@/types/marketplace";
+import type { WeddingProject, Tender, Proposal } from "@/types/marketplace";
+import type { BudgetBreakdown } from "@/types/domain";
+import {
+  estimateBudgetForCategory,
+  estimateRequirementsForCategory,
+  estimatePriorityForCategory,
+  type BudgetEstimateResult,
+} from "@/lib/utils/budgetEstimator";
 
 const CATEGORIES = [
   "Photographe / Vidéaste",
@@ -29,12 +41,18 @@ const CATEGORIES = [
   "Autre",
 ];
 
+export interface TenderWithProposalsItem extends Tender {
+  proposals?: Array<Proposal & { vendor?: { name?: string; businessName?: string; companyName?: string; id?: string } }>;
+}
+
 interface TenderFormModalProps {
   open: boolean;
   onClose: () => void;
   project: WeddingProject | null;
+  budgetBreakdown?: BudgetBreakdown | null;
   preselectedCategory?: string;
   replaceMode?: "replace" | "keep";
+  existingTenders?: TenderWithProposalsItem[];
   onLaunched?: () => void;
 }
 
@@ -42,8 +60,10 @@ export default function TenderFormModal({
   open,
   onClose,
   project,
+  budgetBreakdown,
   preselectedCategory,
   replaceMode = "keep",
+  existingTenders,
   onLaunched,
 }: TenderFormModalProps) {
   const [category, setCategory] = useState<string>("");
@@ -54,7 +74,121 @@ export default function TenderFormModal({
   const [launching, setLaunching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [formTouched, setFormTouched] = useState(false);
+  const [estimateInfo, setEstimateInfo] = useState<BudgetEstimateResult | null>(null);
+  const [internalBudgetBreakdown, setInternalBudgetBreakdown] = useState<BudgetBreakdown | null>(budgetBreakdown || null);
+  const [tendersList, setTendersList] = useState<TenderWithProposalsItem[]>(existingTenders || []);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  // Charger le plan budgétaire IA s'il n'est pas déjà fourni
+  useEffect(() => {
+    if (budgetBreakdown) {
+      setInternalBudgetBreakdown(budgetBreakdown);
+    } else if (open && !internalBudgetBreakdown) {
+      fetch("/api/couple/result")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          const breakdown = data?.session?.aiOutput?.budgetBreakdown || data?.project?.aiOutput?.budgetBreakdown;
+          if (breakdown) setInternalBudgetBreakdown(breakdown);
+        })
+        .catch(() => {});
+    }
+  }, [budgetBreakdown, open, internalBudgetBreakdown]);
+
+  // Synchroniser ou charger la liste des appels d'offres existants
+  useEffect(() => {
+    if (existingTenders) {
+      setTendersList(existingTenders);
+    } else if (open) {
+      fetch("/api/couple/tenders")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.tenders) setTendersList(data.tenders);
+        })
+        .catch(() => {});
+    }
+  }, [existingTenders, open]);
+
+  // Pré-remplissage automatique dès l'ouverture avec la catégorie, le budget et les exigences du Quiz
+  useEffect(() => {
+    setShowSuccess(false);
+    setShowConfirmModal(false);
+    setError(null);
+    setLaunching(false);
+
+    if (open) {
+      const catToUse = preselectedCategory || category || "";
+      setCategory(catToUse);
+      if (catToUse) {
+        const est = estimateBudgetForCategory(catToUse, project, internalBudgetBreakdown);
+        if (est) {
+          setBudgetMin(String(est.min));
+          setBudgetMax(String(est.max));
+          setEstimateInfo(est);
+        } else {
+          setEstimateInfo(null);
+        }
+
+        // Exigences spécifiques (Étape 7 du Quiz : régimes, allergies, PMR, invités de loin, etc.)
+        const reqEst = estimateRequirementsForCategory(catToUse, project);
+        setRequirements(reqEst);
+
+        // Priorité principale (Étape 9 du Quiz : budget, lieu, prestataires...)
+        const prioEst = estimatePriorityForCategory(catToUse, project);
+        setPriority(prioEst);
+      } else {
+        setBudgetMin("");
+        setBudgetMax("");
+        setEstimateInfo(null);
+        setRequirements("");
+        setPriority("");
+      }
+    }
+  }, [open, preselectedCategory, internalBudgetBreakdown, project]);
+
+  function handleCategoryChange(newCat: string) {
+    setCategory(newCat);
+    setError(null);
+    setShowConfirmModal(false);
+    if (newCat) {
+      const est = estimateBudgetForCategory(newCat, project, internalBudgetBreakdown);
+      if (est) {
+        setBudgetMin(String(est.min));
+        setBudgetMax(String(est.max));
+        setEstimateInfo(est);
+      } else {
+        setEstimateInfo(null);
+      }
+
+      // Actualisation des exigences et priorités selon la nouvelle catégorie
+      const reqEst = estimateRequirementsForCategory(newCat, project);
+      setRequirements(reqEst);
+      const prioEst = estimatePriorityForCategory(newCat, project);
+      setPriority(prioEst);
+    } else {
+      setBudgetMin("");
+      setBudgetMax("");
+      setEstimateInfo(null);
+      setRequirements("");
+      setPriority("");
+    }
+  }
+
+  // Détection d'un appel d'offres existant pour la catégorie sélectionnée (priorité à un appel actif)
+  const conflictingTender =
+    tendersList.find((t) => t.category === category && t.status !== "closed") ||
+    tendersList.find((t) => t.category === category);
+  const conflictProposals = conflictingTender?.proposals || [];
+  const acceptedProposal = conflictProposals.find(
+    (p) => p.status === "accepted" || p.id === conflictingTender?.selectedProposalId
+  );
+  const validatedVendor = acceptedProposal?.vendor;
+  const validatedVendorName =
+    validatedVendor?.companyName ||
+    validatedVendor?.businessName ||
+    validatedVendor?.name ||
+    null;
+  const hasSignedVendor = Boolean(acceptedProposal || conflictingTender?.selectedProposalId);
+  const hasProposals = !hasSignedVendor && conflictProposals.length > 0;
 
   async function ensureProject(): Promise<WeddingProject | null> {
     if (project) return project;
@@ -71,12 +205,39 @@ export default function TenderFormModal({
     return json.project;
   }
 
-  async function launchTender() {
+  function handleStartLaunch() {
     setError(null);
     if (!category) {
       setError("Veuillez sélectionner un type de prestataire.");
       return;
     }
+    const min = budgetMin ? Number(budgetMin) : null;
+    const max = budgetMax ? Number(budgetMax) : null;
+    if (min !== null && min < 0) {
+      setError("Le budget minimum ne peut pas être négatif.");
+      return;
+    }
+    if (max !== null && max < 0) {
+      setError("Le budget maximum ne peut pas être négatif.");
+      return;
+    }
+    if (min !== null && max !== null && max < min) {
+      setError("Le budget maximum doit être supérieur ou égal au budget minimum.");
+      return;
+    }
+
+    // S'il existe déjà un appel d'offres pour cette catégorie, afficher la modale de confirmation
+    if (conflictingTender) {
+      setShowConfirmModal(true);
+      return;
+    }
+
+    launchTender(false);
+  }
+
+  async function launchTender(force: boolean = false) {
+    setShowConfirmModal(false);
+    setError(null);
     let currentProject = project;
     try {
       currentProject = await ensureProject();
@@ -88,13 +249,14 @@ export default function TenderFormModal({
       setError("Impossible de récupérer le projet.");
       return;
     }
-    const min = Number(budgetMin);
-    const max = Number(budgetMax);
-    const hasBudget = !isNaN(min) && !isNaN(max) && min > 0 && max > 0;
+    const min = budgetMin ? Number(budgetMin) : null;
+    const max = budgetMax ? Number(budgetMax) : null;
+    const hasBudget = min !== null && max !== null && !isNaN(min) && !isNaN(max) && min >= 0 && max >= 0;
     const payload: Record<string, unknown> = {
       projectId: currentProject.id,
       category,
       replaceMode,
+      forceReplace: force,
     };
     if (hasBudget) {
       payload.budgetRange = { min, max, currency: currentProject.budget?.currency || "EUR" };
@@ -113,6 +275,18 @@ export default function TenderFormModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
+      if (res.status === 409) {
+        setShowConfirmModal(true);
+        fetch("/api/couple/tenders")
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data) => {
+            if (data?.tenders) setTendersList(data.tenders);
+          })
+          .catch(() => {});
+        return;
+      }
+
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erreur lors du lancement");
       setShowSuccess(true);
@@ -132,7 +306,8 @@ export default function TenderFormModal({
     setPriority("");
     setError(null);
     setShowSuccess(false);
-    setFormTouched(false);
+    setEstimateInfo(null);
+    setShowConfirmModal(false);
     onClose();
   }
 
@@ -191,81 +366,132 @@ export default function TenderFormModal({
         <div className="space-y-5">
           <div>
             <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
-              Type de prestataire
+              Type de prestataire *
             </label>
             <select
               value={category}
-              onChange={(e) => { setCategory(e.target.value); setFormTouched(true); }}
-              className="w-full appearance-none bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition cursor-pointer"
+              onChange={(e) => handleCategoryChange(e.target.value)}
+              className="w-full appearance-none bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#e64a5d] transition cursor-pointer"
             >
               <option value="">Choisir une catégorie</option>
-              {preselectedCategory && (
-                <option value={preselectedCategory}>{preselectedCategory} (recommandé)</option>
-              )}
-              {CATEGORIES.filter(c => c !== preselectedCategory).map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
-              Tranche de budget
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72]">
+                Tranche de budget
+              </label>
+              {estimateInfo && (
+                <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-[#e64a5d] bg-[#fef2f4] border border-[#fbd0d6] px-2 py-0.5 rounded-full">
+                  <Sparkles size={10} /> Auto-rempli
+                </span>
+              )}
+            </div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="relative w-full sm:flex-1">
                 <Wallet size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B72]" />
                 <input
                   type="number"
+                  min={0}
+                  step={50}
+                  onKeyDown={(e) => {
+                    if (e.key === "-" || e.key === "e") e.preventDefault();
+                  }}
                   value={budgetMin}
-                  onChange={(e) => { setBudgetMin(e.target.value); setFormTouched(true); }}
-                  placeholder="Min"
-                  className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || Number(val) >= 0) {
+                      setBudgetMin(val);
+                      setEstimateInfo(null);
+                    }
+                  }}
+                  placeholder="Min (ex: 1500)"
+                  className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#e64a5d] transition"
                 />
               </div>
               <span className="text-[#6B6B72] hidden sm:inline">—</span>
-              <input
-                type="number"
-                value={budgetMax}
-                onChange={(e) => { setBudgetMax(e.target.value); setFormTouched(true); }}
-                placeholder="Max"
-                className="w-full sm:flex-1 bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
-              />
-              <span className="text-xs text-[#6B6B72] shrink-0">EUR</span>
+              <div className="relative w-full sm:flex-1">
+                <Wallet size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B72]" />
+                <input
+                  type="number"
+                  min={0}
+                  step={50}
+                  onKeyDown={(e) => {
+                    if (e.key === "-" || e.key === "e") e.preventDefault();
+                  }}
+                  value={budgetMax}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || Number(val) >= 0) {
+                      setBudgetMax(val);
+                      setEstimateInfo(null);
+                    }
+                  }}
+                  placeholder="Max (ex: 3000)"
+                  className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] pl-10 pr-4 py-3.5 focus:outline-none focus:border-[#e64a5d] transition"
+                />
+              </div>
+              <span className="text-xs text-[#6B6B72] font-semibold shrink-0">EUR</span>
             </div>
+            {estimateInfo && (
+              <p className="text-[11px] text-[#6B6B72] mt-2 flex items-center gap-1.5">
+                <Sparkles size={12} className="text-[#e64a5d] shrink-0" />
+                <span>{estimateInfo.sourceLabel}</span>
+              </p>
+            )}
           </div>
 
           <div>
-            <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
-              Exigences spécifiques
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72]">
+                Exigences spécifiques
+              </label>
+              {requirements && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#8B7BD8] bg-[#E4DBFB]/50 border border-[#d8d0f5] px-2 py-0.5 rounded-full">
+                  <Sparkles size={9} /> Issu de vos réponses Quiz
+                </span>
+              )}
+            </div>
             <input
               type="text"
               value={requirements}
-              onChange={(e) => { setRequirements(e.target.value); setFormTouched(true); }}
-              placeholder="Ex. : vegan, photographe discret, anglais courant..."
-              className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
+              onChange={(e) => setRequirements(e.target.value)}
+              placeholder="Ex. : vegan, sans gluten, accès PMR, anglais courant..."
+              className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#e64a5d] transition"
             />
           </div>
 
           <div>
-            <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
-              Priorité principale
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72]">
+                Priorité principale
+              </label>
+              {priority && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#8B7BD8] bg-[#E4DBFB]/50 border border-[#d8d0f5] px-2 py-0.5 rounded-full">
+                  <Sparkles size={9} /> Priorité n°1 Quiz
+                </span>
+              )}
+            </div>
             <input
               type="text"
               value={priority}
-              onChange={(e) => { setPriority(e.target.value); setFormTouched(true); }}
+              onChange={(e) => setPriority(e.target.value)}
               placeholder="Ex. : rapport qualité/prix, créativité, disponibilité..."
-              className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
+              className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#e64a5d] transition"
             />
           </div>
 
-          {error && <p className="text-sm text-[#e64a5d]">{error}</p>}
+          {error && <p className="text-sm text-[#e64a5d] font-medium">{error}</p>}
 
           <Button
-            onClick={launchTender}
-            disabled={launching || !formTouched || !category}
+            onClick={handleStartLaunch}
+            disabled={launching || !category}
             loading={launching}
             variant="primary"
             className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition disabled:opacity-50"
@@ -275,6 +501,84 @@ export default function TenderFormModal({
           </Button>
         </div>
       </div>
+
+      {/* ===== POPUP DE CONFIRMATION DE REMPLACEMENT ===== */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="relative w-full max-w-md bg-white border border-[#EDEDF0] rounded-[28px] p-6 sm:p-7 shadow-2xl text-center">
+            <button
+              onClick={() => setShowConfirmModal(false)}
+              className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
+              aria-label="Fermer"
+            >
+              <X size={15} />
+            </button>
+
+            <div
+              className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                hasSignedVendor
+                  ? "bg-[#fff1f2] text-[#e11d48]"
+                  : hasProposals
+                    ? "bg-[#fffbeb] text-[#ca8a04]"
+                    : "bg-[#eef2ff] text-[#4f46e5]"
+              }`}
+            >
+              {hasSignedVendor ? (
+                <ShieldAlert size={28} />
+              ) : hasProposals ? (
+                <AlertTriangle size={28} />
+              ) : (
+                <Info size={28} />
+              )}
+            </div>
+
+            <h3 className="font-allura text-2xl font-bold text-[#0E0E10] mb-2">
+              {hasSignedVendor
+                ? "Remplacer le prestataire sélectionné ?"
+                : hasProposals
+                  ? "Remplacer l'appel d'offres en cours ?"
+                  : "Remplacer l'appel d'offres existant ?"}
+            </h3>
+
+            <p className="text-sm text-[#6B6B72] leading-relaxed mb-6">
+              {hasSignedVendor ? (
+                <>
+                  Vous avez déjà validé <strong>{validatedVendorName || "un prestataire"}</strong> pour ce poste. Continuer annulera cette sélection, libérera sa date dans son agenda et supprimera l'ancien dossier.
+                </>
+              ) : hasProposals ? (
+                <>
+                  Vous avez déjà reçu <strong>{conflictProposals.length} proposition{conflictProposals.length > 1 ? "s" : ""}</strong> pour cette catégorie. Continuer supprimera l'ancien appel d'offres et <strong>remboursera les crédits</strong> aux prestataires.
+                </>
+              ) : (
+                <>
+                  Un appel d'offres existe déjà pour la catégorie <strong>{category}</strong>. Souhaitez-vous le supprimer et le remplacer par cette nouvelle demande ?
+                </>
+              )}
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 py-3 px-4 rounded-full border border-[#EDEDF0] text-sm font-semibold text-[#6B6B72] hover:bg-[#f3f4f6] transition"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                disabled={launching}
+                onClick={() => launchTender(true)}
+                className={`flex-1 py-3 px-4 rounded-full text-white text-sm font-bold shadow-md hover:brightness-110 transition flex items-center justify-center gap-1.5 ${
+                  hasSignedVendor ? "bg-[#e11d48]" : "bg-[#e64a5d]"
+                }`}
+              >
+                {launching ? <Loader2 size={16} className="animate-spin" /> : null}
+                Supprimer et lancer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

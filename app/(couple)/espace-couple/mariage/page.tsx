@@ -473,8 +473,17 @@ export default function CoupleWeddingPage() {
                       <div className="text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-0.5">Date du mariage</div>
                       <input
                         type="date"
+                        min={new Date().toISOString().split("T")[0]}
                         value={project?.weddingDate && project.weddingDate !== "not-fixed" ? new Date(project.weddingDate).toISOString().split("T")[0] : ""}
-                        onChange={(e) => updateField("weddingDate", e.target.value || null)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const today = new Date().toISOString().split("T")[0];
+                          if (!val) {
+                            updateField("weddingDate", null);
+                          } else if (val >= today) {
+                            updateField("weddingDate", val);
+                          }
+                        }}
                         className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#0E0E10] focus:border-b focus:border-[#5B4FC4]"
                       />
                     </div>
@@ -482,8 +491,21 @@ export default function CoupleWeddingPage() {
                       <div className="text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-0.5">Nombre d'invités</div>
                       <input
                         type="number"
+                        min={0}
+                        step={1}
+                        onKeyDown={(e) => {
+                          if (e.key === "-" || e.key === "e") e.preventDefault();
+                        }}
                         value={project?.guestCount || ""}
-                        onChange={(e) => updateField("guestCount", e.target.value ? Number(e.target.value) : null)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (!val) {
+                            updateField("guestCount", null);
+                          } else {
+                            const num = parseInt(val, 10);
+                            if (!Number.isNaN(num) && num >= 0) updateField("guestCount", num);
+                          }
+                        }}
                         placeholder="0"
                         className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#0E0E10] placeholder:text-[#6B6B72]/40 placeholder:font-normal"
                       />
@@ -529,8 +551,21 @@ export default function CoupleWeddingPage() {
                       <div className="text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-0.5">Budget total</div>
                       <input
                         type="number"
+                        min={0}
+                        step={1}
+                        onKeyDown={(e) => {
+                          if (e.key === "-" || e.key === "e") e.preventDefault();
+                        }}
                         value={project?.budget?.amount || ""}
-                        onChange={(e) => updateNested("budget.amount", e.target.value ? Number(e.target.value) : null)}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (!val) {
+                            updateNested("budget.amount", null);
+                          } else {
+                            const num = Number(val);
+                            if (!Number.isNaN(num) && num >= 0) updateNested("budget.amount", num);
+                          }
+                        }}
                         placeholder="15000"
                         className="w-full bg-transparent border-0 outline-none text-[15px] font-medium text-[#0E0E10] placeholder:text-[#6B6B72]/40 placeholder:font-normal"
                       />

@@ -62,6 +62,48 @@ export default function CoupleLayoutClient({
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [badgeCounts, setBadgeCounts] = useState({
+    unreadMessages: 0,
+    pendingProposals: 0,
+    unreadNotifications: 0,
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    async function fetchCounts() {
+      try {
+        const res = await fetch("/api/couple/badge-counts");
+        if (res.ok && mounted) {
+          const data = await res.json();
+          setBadgeCounts({
+            unreadMessages: data.unreadMessages || 0,
+            pendingProposals: data.pendingProposals || 0,
+            unreadNotifications: data.unreadNotifications || 0,
+          });
+        }
+      } catch {}
+    }
+
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 30000);
+    const onFocus = () => fetchCounts();
+    const onUpdated = () => fetchCounts();
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("badge-counts-updated", onUpdated);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("badge-counts-updated", onUpdated);
+    };
+  }, [pathname]);
+
+  const getBadgeCount = (href: string) => {
+    if (href === "/espace-couple/messagerie") return badgeCounts.unreadMessages;
+    if (href === "/espace-couple/prestataires") return badgeCounts.pendingProposals;
+    return 0;
+  };
+
   const safeUser = user ?? {};
 
   useEffect(() => {
@@ -94,6 +136,7 @@ export default function CoupleLayoutClient({
           <nav className="flex items-center gap-0.5 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.08)] px-1.5 py-1.5">
             {COUPLE_NAV.map((item) => {
               const active = isActive(item.href);
+              const count = getBadgeCount(item.href);
               return (
                 <Link
                   key={item.href}
@@ -102,8 +145,20 @@ export default function CoupleLayoutClient({
                     active ? "bg-ink text-white" : "text-text-secondary hover:text-text-primary hover:bg-black/[0.04]"
                   }`}
                 >
-                  <item.icon size={15} strokeWidth={1.9} className={active ? "text-white" : "text-text-secondary/70"} />
+                  <span className="relative">
+                    <item.icon size={15} strokeWidth={1.9} className={active ? "text-white" : "text-text-secondary/70"} />
+                    {count > 0 && (
+                      <span className="xl:hidden absolute -top-1.5 -right-1.5 min-w-[13px] h-[13px] px-0.5 rounded-full bg-[#e64a5d] text-white text-[8px] font-bold flex items-center justify-center leading-none">
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
+                  </span>
                   <span className="hidden xl:inline">{item.label}</span>
+                  {count > 0 && (
+                    <span className="hidden xl:inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#e64a5d] text-white text-[10px] font-bold leading-none shadow-sm">
+                      {count > 99 ? "99+" : count}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -206,17 +261,27 @@ export default function CoupleLayoutClient({
               </div>
             </div>
             <nav className="space-y-0.5 mb-6">
-              {MOBILE_MORE.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMoreOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-black/[0.04] transition-colors"
-                >
-                  <item.icon size={17} strokeWidth={1.75} />
-                  {item.label}
-                </Link>
-              ))}
+              {MOBILE_MORE.map((item) => {
+                const count = getBadgeCount(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMoreOpen(false)}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm text-text-secondary hover:text-text-primary hover:bg-black/[0.04] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon size={17} strokeWidth={1.75} />
+                      {item.label}
+                    </div>
+                    {count > 0 && (
+                      <span className="min-w-[18px] h-[18px] px-1.5 rounded-full bg-[#e64a5d] text-white text-[11px] font-bold flex items-center justify-center">
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
               {COUPLE_NAV_SECONDARY.filter(
                 (item) => !MOBILE_MORE.some((m) => m.href === item.href)
               ).map((item) => (
@@ -251,6 +316,7 @@ export default function CoupleLayoutClient({
         <div className="flex items-center justify-between bg-white/90 backdrop-blur-xl border border-black/[0.06] rounded-[28px] shadow-[0_12px_40px_rgba(11,15,26,0.14)] px-2 py-2">
           {MOBILE_TABS.map((tab) => {
             const active = isActive(tab.href);
+            const count = getBadgeCount(tab.href);
             if (tab.primary) {
               return (
                 <Link
@@ -270,19 +336,31 @@ export default function CoupleLayoutClient({
                   active ? "text-ink" : "text-text-secondary"
                 }`}
               >
-                <tab.icon size={19} strokeWidth={active ? 2.1 : 1.75} />
+                <div className="relative">
+                  <tab.icon size={19} strokeWidth={active ? 2.1 : 1.75} />
+                  {count > 0 && (
+                    <span className="absolute -top-1 -right-1.5 min-w-[15px] h-[15px] px-0.5 rounded-full bg-[#e64a5d] text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+                      {count > 99 ? "99+" : count}
+                    </span>
+                  )}
+                </div>
                 {tab.label}
               </Link>
             );
           })}
           <button
             onClick={() => setMoreOpen(true)}
-            className={`flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-[28px] text-[10px] font-medium transition-colors ${
+            className={`relative flex flex-col items-center gap-1 px-2.5 py-1.5 rounded-[28px] text-[10px] font-medium transition-colors ${
               moreOpen ? "text-ink" : "text-text-secondary"
             }`}
             aria-label="Plus"
           >
-            <Menu size={19} strokeWidth={moreOpen ? 2.1 : 1.75} />
+            <div className="relative">
+              <Menu size={19} strokeWidth={moreOpen ? 2.1 : 1.75} />
+              {badgeCounts.pendingProposals > 0 && (
+                <span className="absolute -top-0.5 -right-1 h-2 w-2 rounded-full bg-[#e64a5d]" />
+              )}
+            </div>
             Plus
           </button>
         </div>

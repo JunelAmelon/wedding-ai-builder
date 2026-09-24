@@ -30,7 +30,20 @@ function cleanString(value: unknown): string | null {
 
 const ProjectSchema = z.object({
   name: z.preprocess((v) => cleanString(v) ?? undefined, z.string().min(1).optional()),
-  weddingDate: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),
+  weddingDate: z.preprocess(
+    (v) => cleanString(v),
+    z.string()
+      .refine(
+        (dateStr) => {
+          if (!dateStr || dateStr === "not-fixed") return true;
+          const today = new Date().toISOString().split("T")[0];
+          return dateStr >= today;
+        },
+        { message: "La date du mariage ne peut pas être dans le passé." }
+      )
+      .nullable()
+      .optional()
+  ),
   location: z.preprocess(
     (v) => {
       if (!v || typeof v !== "object" || Array.isArray(v)) return null;
@@ -41,17 +54,18 @@ const ProjectSchema = z.object({
     },
     z.object({ city: z.string(), country: z.string() }).nullable().optional()
   ),
-  guestCount: z.preprocess((v) => cleanNumber(v), z.number().nullable().optional()),
-  childrenCount: z.preprocess((v) => cleanNumber(v), z.number().nullable().optional()),
+  guestCount: z.preprocess((v) => cleanNumber(v), z.number().min(0).nullable().optional()),
+  childrenCount: z.preprocess((v) => cleanNumber(v), z.number().min(0).nullable().optional()),
   budget: z.preprocess(
     (v) => {
       if (!v || typeof v !== "object" || Array.isArray(v)) return null;
       const obj = v as { amount?: unknown; currency?: unknown };
-      const amount = cleanNumber(obj.amount) ?? 0;
+      const rawAmount = cleanNumber(obj.amount) ?? 0;
+      const amount = Math.max(0, rawAmount);
       const currency = cleanString(obj.currency) ?? "EUR";
       return { amount, currency };
     },
-    z.object({ amount: z.number(), currency: z.string() }).nullable().optional()
+    z.object({ amount: z.number().min(0), currency: z.string() }).nullable().optional()
   ),
   style: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),
   customStyle: z.preprocess((v) => cleanString(v), z.string().nullable().optional()),

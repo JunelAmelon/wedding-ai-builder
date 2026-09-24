@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { track } from "@/lib/analytics/posthog.client";
 import type { WeddingSession, TimelineMilestone } from "@/types/domain";
+import { computeMilestoneTargetDate } from "@/lib/utils/timelineDates";
 import {
   CalendarDays,
   Download,
@@ -46,12 +47,12 @@ function monthsBetween(from: Date, to: Date) {
 }
 
 const ADMINISTRATIVE_STEPS = [
-  { title: "Publication des bans", when: "M-3 à M-1", note: "Obligatoire à la mairie du lieu de célébration. Vérifier les délais de votre commune." },
-  { title: "Choix du régime matrimonial", when: "Avant le mariage", note: "Rendez-vous chez le notaire si vous optez pour un contrat autre que la communauté réduite aux acquêts." },
-  { title: "Passeports & visas invités", when: "Dès que possible", note: "Prévenez les invités étrangers pour leur laisser le temps d'obtenir les documents." },
-  { title: "Liste des témoins", when: "M-2", note: "Choisir et inscrire les témoins auprès de la mairie." },
-  { title: "Assurance mariage", when: "Dès signature des gros contrats", note: "Couvre annulation, responsabilité civile et dommages selon les contrats." },
-  { title: "Autorisation cérémonie laïque", when: "M-3", note: "Si cérémonie en extérieur ou lieu privé, vérifier les autorisations locales." },
+  { title: "Publication des bans", when: "3 à 1 mois avant le jour J", note: "Dépôt du dossier obligatoire à la mairie du lieu de célébration. Vérifiez les délais spécifiques de votre commune." },
+  { title: "Choix du régime matrimonial", when: "3 à 6 mois avant le jour J", note: "Rendez-vous chez le notaire si vous souhaitez un contrat de mariage (séparation de biens, etc.) au lieu du régime légal." },
+  { title: "Passeports & visas des invités", when: "Dès fixation de la date", note: "Prévenez rapidement les invités résidant à l'étranger pour leur laisser le temps d'accomplir les formalités consulaires." },
+  { title: "Liste des témoins", when: "2 mois avant le jour J", note: "Transmettre l'identité, profession et justificatifs de domicile de vos témoins à la mairie." },
+  { title: "Assurance mariage", when: "Dès les premiers acomptes", note: "Protège contre l'annulation, les défaillances prestataires, les intempéries et les dommages matériels." },
+  { title: "Autorisations cérémonie laïque", when: "3 mois avant le jour J", note: "Si vous organisez une cérémonie en extérieur, plage ou domaine privé, vérifiez les arrêtés municipaux et autorisations." },
 ];
 
 function computeRiskEngine(
@@ -257,40 +258,60 @@ export default function CoupleResultPage() {
     const fa = (amount: number) => `${Math.round(amount).toLocaleString("fr-FR")} ${cur}`;
 
     const today = new Date();
-    const sorted = aiOutput.timeline.milestones.slice().sort((a, b) => b.monthsBeforeWedding - a.monthsBeforeWedding);
-    const timeline = sorted.map((m) => {
-      if (!wDate || Number.isNaN(wDate.getTime())) {
-        return { ...m, displayDate: `${m.monthsBeforeWedding} mois avant` };
-      }
+    today.setHours(0, 0, 0, 0);
 
-      function subtractMonths(date: Date, months: number) {
-        const result = new Date(date);
-        const whole = Math.floor(months);
-        const days = Math.round((months - whole) * 30.44);
-        result.setMonth(result.getMonth() - whole);
-        result.setDate(result.getDate() - days);
-        return result;
-      }
+    // Calcul fiable, réaliste et adaptatif de la date cible pour chaque jalon
+    // Empêche formellement toute date dans le passé si le mariage a lieu dans moins de 12 mois
+    const rawMilestones = aiOutput.timeline.milestones || [];
+    const maxDeclaredMonths = Math.max(
+      ...rawMilestones.map((m) => (typeof m.monthsBeforeWedding === "number" ? m.monthsBeforeWedding : 0)),
+      1
+    );
 
-      let targetDate: Date;
-      if (m.idealDeadline) {
-        const parsed = new Date(m.idealDeadline);
-        targetDate = Number.isNaN(parsed.getTime()) ? subtractMonths(wDate, m.monthsBeforeWedding) : parsed;
-      } else {
-        targetDate = subtractMonths(wDate, m.monthsBeforeWedding);
-      }
+    // Préparer les jalons avec leur date cible calculée
+    const milestonesWithDates = rawMilestones.map((m, idx, arr) => {
+      const numMonths = typeof m.monthsBeforeWedding === "number" && !Number.isNaN(m.monthsBeforeWedding)
+        ? m.monthsBeforeWedding
+        : Math.max(0, 12 - idx);
 
-      const computedStatus: TimelineMilestone["status"] =
-        m.status ??
-        (targetDate < today
-          ? "completed"
-          : targetDate.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000
-            ? "in_progress"
-            : "upcoming");
+      let targetDate: Date | null = null;
+      if (wDate && !Number.isNaN(wDate.getTime())) {
+        targetDate = computeMilestoneTargetDate(wDate, numMonths, idx, arr.length, maxDeclaredMonths, today);
+      }
 
       return {
         ...m,
-        displayDate: formatDateFr(targetDate),
+        monthsBeforeWedding: numMonths,
+        targetDate,
+      };
+    });
+
+    // Tri STRICTEMENT chronologique croissant (de la date la plus ancienne vers le Jour J)
+    const sortedChronological = milestonesWithDates.slice().sort((a, b) => {
+      if (a.targetDate && b.targetDate) {
+        return a.targetDate.getTime() - b.targetDate.getTime();
+      }
+      return b.monthsBeforeWedding - a.monthsBeforeWedding;
+    });
+
+    const timeline = sortedChronological.map((m) => {
+      const displayDate = m.targetDate
+        ? formatDateFr(m.targetDate)
+        : `${m.monthsBeforeWedding} mois avant`;
+
+      const computedStatus: TimelineMilestone["status"] =
+        m.status ??
+        (m.targetDate
+          ? m.targetDate < today
+            ? "completed"
+            : m.targetDate.getTime() - today.getTime() < 30 * 24 * 60 * 60 * 1000
+              ? "in_progress"
+              : "upcoming"
+          : "upcoming");
+
+      return {
+        ...m,
+        displayDate,
         status: computedStatus,
       };
     });
@@ -557,7 +578,9 @@ export default function CoupleResultPage() {
                 <Clock size={16} className="text-[#db2777]" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-grey">Frise chronologique</span>
               </div>
-              <h2 className="font-allura text-3xl sm:text-4xl font-bold text-ink tracking-tight">Votre parcours jusqu'au <span className="font-allura text-[#c43a4a]">Jour J</span></h2>
+              <h2 className="font-allura text-3xl sm:text-4xl font-bold text-ink tracking-tight">
+                Votre parcours jusqu'au <span className="font-allura text-[#c43a4a]">Jour J</span>
+              </h2>
             </div>
 
             <div className="relative">
@@ -583,9 +606,12 @@ export default function CoupleResultPage() {
                                 <h4 className="font-allura font-bold text-sm text-ink mt-2 leading-tight">{m.title}</h4>
                                 <p className="text-[10px] text-grey mt-1.5">{m.displayDate}</p>
                                 <div className="mt-2 space-y-1.5">
-                                  {m.tasks.slice(0, 2).map((task) => (
-                                    <p key={task} className="text-[9px] text-grey/70 leading-snug line-clamp-2">{task}</p>
-                                  ))}
+                                  {m.tasks.slice(0, 2).map((task, taskIdx) => {
+                                    const label = typeof task === "string" ? task : task?.title || "";
+                                    return (
+                                      <p key={taskIdx} className="text-[9px] text-grey/70 leading-snug line-clamp-2">{label}</p>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             </div>
@@ -606,9 +632,12 @@ export default function CoupleResultPage() {
                                 <h4 className="font-allura font-bold text-sm text-ink mt-2 leading-tight">{m.title}</h4>
                                 <p className="text-[10px] text-grey mt-1.5">{m.displayDate}</p>
                                 <div className="mt-2 space-y-1.5">
-                                  {m.tasks.slice(0, 2).map((task) => (
-                                    <p key={task} className="text-[9px] text-grey/70 leading-snug line-clamp-2">{task}</p>
-                                  ))}
+                                  {m.tasks.slice(0, 2).map((task, taskIdx) => {
+                                    const label = typeof task === "string" ? task : task?.title || "";
+                                    return (
+                                      <p key={taskIdx} className="text-[9px] text-grey/70 leading-snug line-clamp-2">{label}</p>
+                                    );
+                                  })}
                                 </div>
                               </div>
                             </div>
@@ -627,9 +656,12 @@ export default function CoupleResultPage() {
                           <h4 className="font-allura font-bold text-base text-ink mt-1 leading-tight">{m.title}</h4>
                           <p className="text-xs text-grey mt-1">{m.displayDate}</p>
                           <div className="mt-2 space-y-1">
-                            {m.tasks.slice(0, 2).map((task) => (
-                              <p key={task} className="text-xs text-grey/70 leading-snug">{task}</p>
-                            ))}
+                            {m.tasks.slice(0, 2).map((task, taskIdx) => {
+                              const label = typeof task === "string" ? task : task?.title || "";
+                              return (
+                                <p key={taskIdx} className="text-xs text-grey/70 leading-snug">{label}</p>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
@@ -839,63 +871,63 @@ export default function CoupleResultPage() {
                 <h2 className="font-allura text-3xl sm:text-4xl font-bold tracking-tight text-ink">Ce qui mérite votre attention</h2>
                 <p className="text-text-secondary mt-4 leading-relaxed max-w-2xl mx-auto lg:mx-0">{riskEngine.scoreJustification}</p>
 
-              <div className="mt-8 relative h-44 w-44 mx-auto">
-                <svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">
-                  <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(11,15,26,0.07)" strokeWidth="6" />
-                  <circle
-                    cx="80" cy="80" r="70" fill="none"
-                    stroke={riskTone} strokeWidth="6" strokeLinecap="round"
-                    strokeDasharray={dialCirc}
-                    strokeDashoffset={dialCirc - (riskPct / 100) * dialCirc}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="font-allura text-4xl font-bold text-ink">{riskEngine.riskScore}</span>
-                  <span className="text-[11px] text-text-secondary uppercase tracking-[0.15em] mt-0.5">Risk Score</span>
+                <div className="mt-8 relative h-44 w-44 mx-auto">
+                  <svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">
+                    <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(11,15,26,0.07)" strokeWidth="6" />
+                    <circle
+                      cx="80" cy="80" r="70" fill="none"
+                      stroke={riskTone} strokeWidth="6" strokeLinecap="round"
+                      strokeDasharray={dialCirc}
+                      strokeDashoffset={dialCirc - (riskPct / 100) * dialCirc}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="font-allura text-4xl font-bold text-ink">{riskEngine.riskScore}</span>
+                    <span className="text-[11px] text-text-secondary uppercase tracking-[0.15em] mt-0.5">Risk Score</span>
+                  </div>
                 </div>
+
+                {riskEngine.generalAdvice && (
+                  <p className="mt-8 text-text-primary leading-relaxed italic font-allura max-w-sm mx-auto lg:mx-0 text-justify">
+                    “{riskEngine.generalAdvice}”
+                  </p>
+                )}
               </div>
 
-              {riskEngine.generalAdvice && (
-                <p className="mt-8 text-text-primary leading-relaxed italic font-allura max-w-sm mx-auto lg:mx-0 text-justify">
-                  “{riskEngine.generalAdvice}”
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              {[
-                { label: "Erreurs critiques", items: riskEngine.criticalErrors, icon: TriangleAlert, color: "#e64a5d" },
-                { label: "Incohérences budget", items: riskEngine.budgetInconsistencies, icon: Wallet, color: "#F4D93E" },
-                { label: "Risques organisationnels", items: riskEngine.organizationalRisks, icon: Lightbulb, color: "#E4DBFB" },
-              ].map((col) => {
-                const Icon = col.icon;
-                return (
-                  <div key={col.label} className="bg-white rounded-[20px] p-5 border border-line">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="h-7 w-7 rounded-full flex items-center justify-center" style={{ backgroundColor: col.color }}>
-                        <Icon size={14} color="#0E0E10" />
-                      </span>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-grey">{col.label}</span>
+              <div className="space-y-4">
+                {[
+                  { label: "Erreurs critiques", items: riskEngine.criticalErrors, icon: TriangleAlert, color: "#e64a5d" },
+                  { label: "Incohérences budget", items: riskEngine.budgetInconsistencies, icon: Wallet, color: "#F4D93E" },
+                  { label: "Risques organisationnels", items: riskEngine.organizationalRisks, icon: Lightbulb, color: "#E4DBFB" },
+                ].map((col) => {
+                  const Icon = col.icon;
+                  return (
+                    <div key={col.label} className="bg-white rounded-[20px] p-5 border border-line">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="h-7 w-7 rounded-full flex items-center justify-center" style={{ backgroundColor: col.color }}>
+                          <Icon size={14} color="#0E0E10" />
+                        </span>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-grey">{col.label}</span>
+                      </div>
+                      {col.items.length ? (
+                        <ul className="space-y-3">
+                          {col.items.map((e, i) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-text-secondary leading-relaxed">
+                              <span className="mt-1.5 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: col.color }} />
+                              {e}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="flex items-center gap-2 text-sm text-text-secondary">
+                          <CheckCircle2 size={14} strokeWidth={1.75} className="text-success shrink-0" /> Aucune détectée
+                        </p>
+                      )}
                     </div>
-                    {col.items.length ? (
-                      <ul className="space-y-3">
-                        {col.items.map((e, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-text-secondary leading-relaxed">
-                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: col.color }} />
-                            {e}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="flex items-center gap-2 text-sm text-text-secondary">
-                        <CheckCircle2 size={14} strokeWidth={1.75} className="text-success shrink-0" /> Aucune détectée
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </section>

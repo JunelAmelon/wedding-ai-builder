@@ -9,6 +9,13 @@ import { Loader2, CheckCircle2, ArrowLeft, Wallet, Sparkles, X } from "lucide-re
 import { Button } from "@/components/ui/Button";
 import PageHeader from "@/components/couple/PageHeader";
 import type { WeddingProject } from "@/types/marketplace";
+import type { BudgetBreakdown } from "@/types/domain";
+import {
+  estimateBudgetForCategory,
+  estimateRequirementsForCategory,
+  estimatePriorityForCategory,
+  type BudgetEstimateResult,
+} from "@/lib/utils/budgetEstimator";
 
 const CATEGORIES = [
   "Photographe / Vidéaste",
@@ -44,6 +51,8 @@ export default function NewTenderPage() {
   const [requirements, setRequirements] = useState<string>("");
   const [priority, setPriority] = useState<string>("");
   const [project, setProject] = useState<WeddingProject | null>(null);
+  const [aiBudget, setAiBudget] = useState<BudgetBreakdown | null>(null);
+  const [estimateInfo, setEstimateInfo] = useState<BudgetEstimateResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [launching, setLaunching] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,13 +61,51 @@ export default function NewTenderPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/couple/project");
-        if (res.status === 401) {
+        const [projectRes, resultRes] = await Promise.allSettled([
+          fetch("/api/couple/project"),
+          fetch("/api/couple/result"),
+        ]);
+
+        if (projectRes.status === "fulfilled" && projectRes.value.status === 401) {
           router.push("/login?role=couple");
           return;
         }
-        const json = await res.json();
-        setProject(json.project);
+
+        let loadedProject: WeddingProject | null = null;
+        if (projectRes.status === "fulfilled" && projectRes.value.ok) {
+          const json = await projectRes.value.json();
+          loadedProject = json.project;
+          setProject(loadedProject);
+        }
+
+        let loadedAiBudget: BudgetBreakdown | null = null;
+        if (resultRes.status === "fulfilled" && resultRes.value.ok) {
+          const resultJson = await resultRes.value.json().catch(() => ({}));
+          loadedAiBudget =
+            resultJson.session?.aiOutput?.budgetBreakdown ||
+            resultJson.project?.aiOutput?.budgetBreakdown ||
+            null;
+          if (loadedAiBudget) setAiBudget(loadedAiBudget);
+        }
+
+        // Lecture d'un paramètre d'URL éventuel (ex: ?category=Traiteur)
+        if (typeof window !== "undefined") {
+          const params = new URLSearchParams(window.location.search);
+          const initialCat = params.get("category");
+          if (initialCat) {
+            setCategory(initialCat);
+            const est = estimateBudgetForCategory(initialCat, loadedProject, loadedAiBudget);
+            if (est) {
+              setBudgetMin(String(est.min));
+              setBudgetMax(String(est.max));
+              setEstimateInfo(est);
+            }
+            const reqEst = estimateRequirementsForCategory(initialCat, loadedProject);
+            if (reqEst) setRequirements(reqEst);
+            const prioEst = estimatePriorityForCategory(initialCat, loadedProject);
+            if (prioEst) setPriority(prioEst);
+          }
+        }
       } catch {
         // ignore
       } finally {
@@ -67,6 +114,31 @@ export default function NewTenderPage() {
     }
     load();
   }, [router]);
+
+  function handleCategorySelect(newCat: string) {
+    setCategory(newCat);
+    setError(null);
+    if (newCat) {
+      const est = estimateBudgetForCategory(newCat, project, aiBudget);
+      if (est) {
+        setBudgetMin(String(est.min));
+        setBudgetMax(String(est.max));
+        setEstimateInfo(est);
+      } else {
+        setEstimateInfo(null);
+      }
+      const reqEst = estimateRequirementsForCategory(newCat, project);
+      setRequirements(reqEst);
+      const prioEst = estimatePriorityForCategory(newCat, project);
+      setPriority(prioEst);
+    } else {
+      setBudgetMin("");
+      setBudgetMax("");
+      setEstimateInfo(null);
+      setRequirements("");
+      setPriority("");
+    }
+  }
 
   async function ensureProject() {
     if (project) return project;
@@ -101,9 +173,21 @@ export default function NewTenderPage() {
       setError("Impossible de récupérer le projet.");
       return;
     }
-    const min = Number(budgetMin);
-    const max = Number(budgetMax);
-    const hasBudget = !isNaN(min) && !isNaN(max) && min > 0 && max > 0;
+    const min = budgetMin ? Number(budgetMin) : null;
+    const max = budgetMax ? Number(budgetMax) : null;
+    if (min !== null && min < 0) {
+      setError("Le budget minimum ne peut pas être négatif.");
+      return;
+    }
+    if (max !== null && max < 0) {
+      setError("Le budget maximum ne peut pas être négatif.");
+      return;
+    }
+    if (min !== null && max !== null && max < min) {
+      setError("Le budget maximum doit être supérieur ou égal au budget minimum.");
+      return;
+    }
+    const hasBudget = min !== null && max !== null && !isNaN(min) && !isNaN(max) && min >= 0 && max >= 0;
     const payload: {
       projectId: string;
       category: string;
@@ -189,7 +273,7 @@ export default function NewTenderPage() {
                 <div className="relative">
                   <select
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(e) => handleCategorySelect(e.target.value)}
                     className="w-full appearance-none bg-transparent border border-black/10 rounded-xl text-text-primary text-lg py-3 pr-10 pl-4 focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="">Choisir une catégorie</option>
@@ -206,49 +290,100 @@ export default function NewTenderPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
-                  Tranche de budget pour ce service
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary">
+                    Tranche de budget pour ce service
+                  </label>
+                  {estimateInfo && (
+                    <span className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-[#e64a5d] bg-[#fef2f4] border border-[#fbd0d6] px-2 py-0.5 rounded-full">
+                      <Sparkles size={10} /> Auto-rempli
+                    </span>
+                  )}
+                </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="relative flex-1">
                     <Wallet size={14} className="absolute left-3 top-3.5 text-text-secondary" />
                     <input
                       type="number"
+                      min={0}
+                      step={50}
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e") e.preventDefault();
+                      }}
                       value={budgetMin}
-                      onChange={(e) => setBudgetMin(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "" || Number(val) >= 0) {
+                          setBudgetMin(val);
+                          setEstimateInfo(null);
+                        }
+                      }}
                       placeholder="Budget min"
                       className="w-full bg-transparent border border-black/10 rounded-xl text-text-primary pl-9 pr-3 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <span className="text-text-secondary hidden sm:block">—</span>
-                  <input
-                    type="number"
-                    value={budgetMax}
-                    onChange={(e) => setBudgetMax(e.target.value)}
-                    placeholder="Budget max"
-                    className="flex-1 bg-transparent border border-black/10 rounded-xl text-text-primary px-3 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
+                  <div className="relative flex-1">
+                    <input
+                      type="number"
+                      min={0}
+                      step={50}
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e") e.preventDefault();
+                      }}
+                      value={budgetMax}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "" || Number(val) >= 0) {
+                          setBudgetMax(val);
+                          setEstimateInfo(null);
+                        }
+                      }}
+                      placeholder="Budget max"
+                      className="w-full bg-transparent border border-black/10 rounded-xl text-text-primary px-3 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
                   <span className="text-xs text-text-secondary shrink-0">{project?.budget?.currency || "EUR"}</span>
                 </div>
+                {estimateInfo && (
+                  <p className="text-[11px] text-[#6B6B72] mt-2 flex items-center gap-1.5">
+                    <Sparkles size={12} className="text-[#e64a5d] shrink-0" />
+                    <span>{estimateInfo.sourceLabel}</span>
+                  </p>
+                )}
               </div>
 
               <div>
-                <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
-                  Exigences spécifiques
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary">
+                    Exigences spécifiques
+                  </label>
+                  {requirements && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#8B7BD8] bg-[#E4DBFB]/50 border border-[#d8d0f5] px-2 py-0.5 rounded-full">
+                      <Sparkles size={9} /> Issu de vos réponses Quiz
+                    </span>
+                  )}
+                </div>
                 <input
                   type="text"
                   value={requirements}
                   onChange={(e) => setRequirements(e.target.value)}
-                  placeholder="Ex. : vegan, photographe discret, anglais courant..."
+                  placeholder="Ex. : vegan, sans gluten, accès PMR, anglais courant..."
                   className="w-full bg-transparent border border-black/10 rounded-xl text-text-primary px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary mb-2">
-                  Priorité principale pour ce service
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block font-semibold text-[10px] uppercase tracking-[0.16em] text-text-secondary">
+                    Priorité principale pour ce service
+                  </label>
+                  {priority && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#8B7BD8] bg-[#E4DBFB]/50 border border-[#d8d0f5] px-2 py-0.5 rounded-full">
+                      <Sparkles size={9} /> Priorité n°1 Quiz
+                    </span>
+                  )}
+                </div>
                 <input
                   type="text"
                   value={priority}

@@ -84,6 +84,16 @@ export default function WishlistManagementPage() {
 
   async function addItem() {
     if (!selectedWishlist || !newItem.name || !newItem.price) return;
+    const priceNum = parseFloat(newItem.price);
+    const qtyNum = parseInt(newItem.quantity, 10) || 1;
+    if (isNaN(priceNum) || priceNum < 0) {
+      alert("Le prix ne peut pas être négatif.");
+      return;
+    }
+    if (qtyNum < 1) {
+      alert("La quantité doit être d'au moins 1.");
+      return;
+    }
     try {
       const res = await fetch("/api/wishlist/items", {
         method: "POST",
@@ -92,11 +102,11 @@ export default function WishlistManagementPage() {
           wishlistId: selectedWishlist.id,
           name: newItem.name,
           description: newItem.description,
-          price: parseFloat(newItem.price),
+          price: Math.max(0, priceNum),
           imageUrl: newItem.imageUrl || undefined,
           vendorId: newItem.vendorId || undefined,
           vendorName: newItem.vendorName || undefined,
-          quantity: parseInt(newItem.quantity) || 1,
+          quantity: Math.max(1, qtyNum),
         }),
       });
 
@@ -609,8 +619,16 @@ export default function WishlistManagementPage() {
                     </label>
                     <input
                       type="number"
+                      min={0}
+                      step="0.01"
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e") e.preventDefault();
+                      }}
                       value={newItem.price}
-                      onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "" || Number(val) >= 0) setNewItem({ ...newItem, price: val });
+                      }}
                       placeholder="Ex: 890"
                       className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                     />
@@ -621,8 +639,16 @@ export default function WishlistManagementPage() {
                     </label>
                     <input
                       type="number"
+                      min={1}
+                      step={1}
+                      onKeyDown={(e) => {
+                        if (e.key === "-" || e.key === "e") e.preventDefault();
+                      }}
                       value={newItem.quantity}
-                      onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "" || Number(val) >= 1) setNewItem({ ...newItem, quantity: val });
+                      }}
                       placeholder="1"
                       className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                     />

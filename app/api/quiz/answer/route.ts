@@ -37,8 +37,23 @@ export async function POST(req: Request) {
     const { sessionId, step, value } = parsed.data;
     const field = FIELD_BY_STEP[step];
 
+    if (step === "date" && typeof value === "string" && value !== "not-fixed") {
+      const today = new Date().toISOString().split("T")[0];
+      if (value < today) {
+        return NextResponse.json({ error: "La date du mariage ne peut pas être dans le passé." }, { status: 400 });
+      }
+    }
+
     let updatePayload: Partial<QuizAnswers> = { [field]: value } as Partial<QuizAnswers>;
-    if (step === "style" && typeof value === "object" && value !== null) {
+    if (step === "budget" && typeof value === "object" && value !== null) {
+      const b = value as { amount: number; currency: string };
+      if (typeof b.amount === "number" && b.amount < 0) {
+        return NextResponse.json({ error: "Le budget ne peut pas être négatif." }, { status: 400 });
+      }
+      updatePayload = {
+        budget: { amount: Math.max(0, Number(b.amount) || 0), currency: b.currency || "EUR" },
+      } as Partial<QuizAnswers>;
+    } else if (step === "style" && typeof value === "object" && value !== null) {
       const styleAnswer = value as { style: unknown; customStyle?: string; customStyleDescription?: string; ambiance?: string[] };
       updatePayload = {
         style: styleAnswer.style as QuizAnswers["style"],
@@ -48,9 +63,12 @@ export async function POST(req: Request) {
       } as Partial<QuizAnswers>;
     } else if (step === "guests" && typeof value === "object" && value !== null) {
       const guestsAnswer = value as { guestCount: number; childrenCount: number };
+      if ((guestsAnswer.guestCount !== undefined && guestsAnswer.guestCount < 0) || (guestsAnswer.childrenCount !== undefined && guestsAnswer.childrenCount < 0)) {
+        return NextResponse.json({ error: "Le nombre d'invités ne peut pas être négatif." }, { status: 400 });
+      }
       updatePayload = {
-        guestCount: guestsAnswer.guestCount,
-        childrenCount: guestsAnswer.childrenCount,
+        guestCount: Math.max(0, guestsAnswer.guestCount || 0),
+        childrenCount: Math.max(0, guestsAnswer.childrenCount || 0),
       } as Partial<QuizAnswers>;
     } else if (step === "categories" && typeof value === "object" && value !== null) {
       const catAnswer = value as { desiredCategories: string[] };

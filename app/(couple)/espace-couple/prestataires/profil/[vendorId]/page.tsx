@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import LoadingScreen from "@/components/shared/LoadingScreen";
+import VideoEmbed from "@/components/shared/VideoEmbed";
 import {
   Loader2,
   ArrowLeft,
@@ -17,8 +18,32 @@ import {
   Send,
   CheckCircle2,
   X,
+  ExternalLink,
 } from "lucide-react";
-import type { VendorProfile, WeddingProject } from "@/types/marketplace";
+import type { VendorProfile, WeddingProject, GoogleBusinessData, GoogleBusinessReview } from "@/types/marketplace";
+
+function GoogleIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.24v3.15C3.26 21.41 7.34 24 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.24C.45 8.16 0 9.94 0 12s.45 3.84 1.24 5.42l4.04-3.15z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.59 1.24 6.58l4.04 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+      />
+    </svg>
+  );
+}
 
 function ExperienceIcon({ className = "" }: { className?: string }) {
   return (
@@ -72,6 +97,7 @@ type EnrichedVendorProfile = Omit<VendorProfile, "portfolio" | "pricingDetails" 
     instagram?: string;
     reviews?: PortfolioReview[];
     faq?: PortfolioFaq[];
+    googleBusiness?: GoogleBusinessData | null;
   };
 }
 
@@ -178,6 +204,7 @@ export default function VendorProfileForCouplePage() {
   const category = vendor.serviceCategory;
   const styles = vendor.styles || [];
   const website = vendor.website || vendor.portfolio?.website;
+  const isVerified = Boolean(vendor.verified || vendor.status === "approved");
   const instagram = vendor.portfolio?.instagram;
   const description = vendor.description;
   const pricingDetails = vendor.pricingDetails;
@@ -185,9 +212,26 @@ export default function VendorProfileForCouplePage() {
   const fileRef = (vendorId || "").slice(0, 6).toUpperCase();
   const faq = vendor.portfolio?.faq || [];
   const reviews = vendor.portfolio?.reviews || [];
-  const reviewCount = reviews.length;
-  const averageRating = reviews.length
-    ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
+  const googleReviews = (vendor.portfolio?.googleBusiness?.verified && vendor.portfolio?.googleBusiness?.reviews)
+    ? vendor.portfolio.googleBusiness.reviews.map((gr) => ({
+        author: gr.author,
+        rating: gr.rating,
+        text: gr.text,
+        date: gr.date,
+        source: "google" as const,
+      }))
+    : [];
+  const platformReviews = (reviews || []).map((r) => ({
+    author: r.author,
+    rating: r.rating,
+    text: r.text,
+    date: r.date,
+    source: "platform" as const,
+  }));
+  const allReviews = [...googleReviews, ...platformReviews];
+  const reviewCount = platformReviews.length;
+  const averageRating = platformReviews.length
+    ? (platformReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / platformReviews.length).toFixed(1)
     : "0.0";
 
   async function sendContact() {
@@ -290,9 +334,7 @@ export default function VendorProfileForCouplePage() {
               </h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 {vendor.portfolio?.videos?.map((video, i) => (
-                  <div key={i} className="relative aspect-video rounded-xl overflow-hidden bg-gradient-to-b from-[#E4DBFB]/40 to-white border border-[#EDEDF0]">
-                    <video src={video} controls className="w-full h-full object-cover" />
-                  </div>
+                  <VideoEmbed key={i} url={video} title={`Vidéo ${i + 1}`} />
                 ))}
               </div>
             </div>
@@ -308,12 +350,12 @@ export default function VendorProfileForCouplePage() {
                 Fiche prestataire
               </span>
               <span className="font-semibold text-[9px] uppercase tracking-[0.14em] text-[#0E0E10]/80">
-                Dossier n° {fileRef}
+                Réf. #{fileRef}
               </span>
             </div>
 
             {/* Tampon de vérification */}
-            {vendor.verified && (
+            {isVerified && (
               <div className="absolute top-14 right-6 h-14 w-14 rounded-full border-2 border-[#2e7d5e]/70 flex items-center justify-center rotate-[-9deg] pointer-events-none">
                 <span className="font-semibold text-[6.5px] font-semibold uppercase tracking-[0.08em] text-[#2e7d5e] text-center leading-[1.15]">
                   Profil
@@ -347,18 +389,40 @@ export default function VendorProfileForCouplePage() {
                 {description?.slice(0, 120)}{description?.length > 120 ? "..." : ""}
               </p>
 
-              <div className="flex items-center gap-3 pb-5 mb-5 border-b border-dashed border-[#0E0E10]/15 text-sm text-[#0E0E10]/80">
-                <span className="flex items-center gap-1 text-[#0E0E10] font-medium">
-                  <Star size={14} className="text-amber-400 fill-amber-400" />
+              <div className="flex items-center gap-2 sm:gap-2.5 pb-5 mb-5 border-b border-dashed border-[#0E0E10]/15 text-xs sm:text-[13px] text-[#0E0E10]/80 whitespace-nowrap">
+                <span className="flex items-center gap-1 text-[#0E0E10] font-medium shrink-0">
+                  <Star size={13} className="text-amber-400 fill-amber-400" />
                   {averageRating}
                 </span>
-                <span className="w-px h-3 bg-black/15" />
-                <span>{reviewCount} avis</span>
-                <span className="w-px h-3 bg-black/15" />
-                <span className="flex items-center gap-1">
-                  <MapPin size={14} />
-                  {location}
+                <span className="w-px h-3 bg-black/15 shrink-0" />
+                <span className="shrink-0">{reviewCount} avis</span>
+                <span className="w-px h-3 bg-black/15 shrink-0" />
+                <span className="flex items-center gap-1 shrink-0" title={location}>
+                  <MapPin size={13} className="shrink-0" />
+                  <span>{location}</span>
                 </span>
+                {vendor.portfolio?.googleBusiness?.verified && (
+                  <>
+                    <span className="w-px h-3 bg-black/15 shrink-0" />
+                    {vendor.portfolio.googleBusiness.placeUrl ? (
+                      <a
+                        href={vendor.portfolio.googleBusiness.placeUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-[#0E0E10] hover:underline font-medium shrink-0 transition"
+                        title="Fiche Google Maps vérifiée"
+                      >
+                        <GoogleIcon className="w-3.5 h-3.5" />
+                        <span>Avis Maps</span>
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[#0E0E10] font-medium shrink-0">
+                        <GoogleIcon className="w-3.5 h-3.5" />
+                        <span>Avis Maps</span>
+                      </span>
+                    )}
+                  </>
+                )}
               </div>
 
               {/* Lignes de grand livre */}
@@ -385,8 +449,8 @@ export default function VendorProfileForCouplePage() {
                 <LedgerRow label="Délai de réponse" value="24h" />
                 <LedgerRow
                   label="Vérification"
-                  value={vendor.verified ? "Vérifié" : "En cours"}
-                  success={vendor.verified}
+                  value={isVerified ? "Vérifié" : "En cours"}
+                  success={isVerified}
                 />
               </div>
 
@@ -428,15 +492,25 @@ export default function VendorProfileForCouplePage() {
                     <span className="font-semibold text-[10px] text-[#0E0E10]/70 w-10 shrink-0 pt-0.5">
                       Tél
                     </span>
-                    <span className="text-[#0E0E10]">{vendor.phone || "Non renseigné"}</span>
+                    {vendor.phone ? (
+                      <a href={`tel:${vendor.phone.replace(/\s+/g, "")}`} className="text-[#0E0E10] hover:underline">
+                        {vendor.phone}
+                      </a>
+                    ) : (
+                      <span className="text-[#0E0E10]">Non renseigné</span>
+                    )}
                   </div>
                   <div className="flex gap-3">
                     <span className="font-semibold text-[10px] text-[#0E0E10]/70 w-10 shrink-0 pt-0.5">
                       Mail
                     </span>
-                    <span className="text-[#0E0E10] break-all">
-                      {vendor.email || "Non renseigné"}
-                    </span>
+                    {vendor.email ? (
+                      <a href={`mailto:${vendor.email}`} className="text-[#0E0E10] hover:underline break-all">
+                        {vendor.email}
+                      </a>
+                    ) : (
+                      <span className="text-[#0E0E10] break-all">Non renseigné</span>
+                    )}
                   </div>
                   {website && (
                     <div className="flex gap-3">
@@ -444,12 +518,12 @@ export default function VendorProfileForCouplePage() {
                         Web
                       </span>
                       <a
-                        href={website}
+                        href={website.startsWith("http://") || website.startsWith("https://") ? website : `https://${website}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-[#0E0E10] hover:underline break-all"
                       >
-                        Site web
+                        {website.replace(/^https?:\/\//, "")}
                       </a>
                     </div>
                   )}
@@ -595,20 +669,48 @@ export default function VendorProfileForCouplePage() {
 
         {activeTab === "avis" && (
           <div>
-            <h2 className="font-allura text-2xl font-normal text-[#0E0E10] mb-6">Avis</h2>
-            {reviews.length > 0 ? (
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">Avis</h2>
+              {vendor.portfolio?.googleBusiness?.placeUrl && (
+                <a
+                  href={vendor.portfolio.googleBusiness.placeUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E0E10] hover:text-[#e64a5d] transition"
+                >
+                  <GoogleIcon className="w-3.5 h-3.5" />
+                  <span>Voir sur Google Maps</span>
+                  <ExternalLink size={11} />
+                </a>
+              )}
+            </div>
+
+            {allReviews.length > 0 ? (
               <div className="grid sm:grid-cols-2 gap-4">
-                {reviews.map((review, i) => (
+                {allReviews.map((review, i) => (
                   <div key={i} className="rounded-xl bg-white border border-[#EDEDF0] p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="h-8 w-8 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] font-semibold text-xs">
-                        {(review.author || "A").slice(0, 1).toUpperCase()}
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="h-8 w-8 rounded-full bg-[#fef2f4] border border-[#EDEDF0] flex items-center justify-center shrink-0">
+                        {review.source === "google" ? (
+                          <GoogleIcon className="w-4 h-4" />
+                        ) : (
+                          <span className="text-[#0E0E10] font-semibold text-xs">
+                            {(review.author || "C").slice(0, 1).toUpperCase()}
+                          </span>
+                        )}
                       </div>
-                      <div>
-                        <div className="font-medium text-[#0E0E10] text-sm">{review.author || "Client"}</div>
-                        <div className="text-xs text-[#6B6B72]">{review.date ? new Date(review.date).toLocaleDateString("fr-FR") : ""}</div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-medium text-[#0E0E10] text-sm truncate">{review.author || "Client"}</span>
+                          {review.source === "google" && (
+                            <GoogleIcon className="w-3.5 h-3.5 shrink-0" />
+                          )}
+                        </div>
+                        <div className="text-xs text-[#6B6B72]">
+                          {review.date ? new Date(review.date).toLocaleDateString("fr-FR") : ""}
+                        </div>
                       </div>
-                      <div className="ml-auto flex items-center gap-1 text-amber-400">
+                      <div className="ml-auto flex items-center gap-1 text-amber-400 shrink-0">
                         <Star size={14} className="fill-amber-400" />
                         <span className="text-sm font-medium text-[#0E0E10]">{review.rating || 5}</span>
                       </div>

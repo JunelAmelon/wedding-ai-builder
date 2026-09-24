@@ -145,6 +145,9 @@ export default function TenderDetailPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erreur");
       setTender(json.tender as TenderWithProposals);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("badge-counts-updated"));
+      }
       const accepted = tender?.proposals?.find((p) => p.id === proposalId);
       const vendorName = accepted?.vendor?.companyName || accepted?.vendor?.brandName || "ce prestataire";
       setClosure(vendorName);

@@ -118,7 +118,8 @@ export default function VendorPlanningPage() {
   }, [events]);
 
   async function addUnavailable() {
-    if (!selectedDate) return;
+    const today = new Date().toISOString().split("T")[0];
+    if (!selectedDate || selectedDate < today) return;
     setSaving(true);
     try {
       const res = await fetch("/api/vendor/calendar", {
@@ -379,15 +380,21 @@ export default function VendorPlanningPage() {
                 </label>
                 <input
                   type="date"
+                  min={new Date().toISOString().split("T")[0]}
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
                   className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                 />
+                {selectedDate && selectedDate < new Date().toISOString().split("T")[0] && (
+                  <p className="mt-2 text-xs font-medium text-[#e64a5d]">
+                    Veuillez sélectionner une date future ou aujourd'hui.
+                  </p>
+                )}
               </div>
 
               <button
                 onClick={addUnavailable}
-                disabled={saving || !selectedDate}
+                disabled={saving || !selectedDate || selectedDate < new Date().toISOString().split("T")[0]}
                 className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (

@@ -71,11 +71,11 @@ async function mergeDuplicateProposals(vendorId: string, vendorUserId: string) {
 const ProposalSchema = z.object({
   matchId: z.string().min(1),
   message: z.string().min(1),
-  amount: z.number().optional().nullable(),
+  amount: z.number().nonnegative().optional().nullable(),
   currency: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   includedServices: z.array(z.string()).default([]),
-  responseDelayHours: z.number().optional().nullable(),
+  responseDelayHours: z.number().nonnegative().optional().nullable(),
 });
 
 export async function GET() {

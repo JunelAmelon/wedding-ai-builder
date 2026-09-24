@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Tender, Proposal, WeddingProject } from "@/types/marketplace";
+import type { BudgetBreakdown } from "@/types/domain";
 import TenderFormModal from "@/components/couple/TenderFormModal";
 import { ExpandableText } from "@/components/couple/ExpandableText";
 
@@ -135,9 +136,9 @@ export default function CoupleVendorsPage() {
   const [category, setCategory] = useState<string>("");
   const [tenders, setTenders] = useState<TenderWithProposals[]>([]);
   const [project, setProject] = useState<WeddingProject | null>(null);
+  const [aiBudget, setAiBudget] = useState<BudgetBreakdown | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [confirmedVendors, setConfirmedVendors] = useState<ConfirmedVendor[]>([]);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
@@ -150,10 +151,11 @@ export default function CoupleVendorsPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [tendersRes, projectRes, recommendationsRes] = await Promise.allSettled([
+        const [tendersRes, projectRes, recommendationsRes, resultRes] = await Promise.allSettled([
           fetch("/api/couple/tenders"),
           fetch("/api/couple/project"),
           fetch("/api/couple/recommendations"),
+          fetch("/api/couple/result"),
         ]);
 
         // Check auth via tenders response
@@ -187,6 +189,16 @@ export default function CoupleVendorsPage() {
         if (recommendationsRes.status === "fulfilled" && recommendationsRes.value.ok) {
           const recommendationsJson = await recommendationsRes.value.json();
           setRecommendations((recommendationsJson.recommendations || []) as Recommendation[]);
+        }
+
+        // Parse AI budget breakdown
+        if (resultRes.status === "fulfilled" && resultRes.value.ok) {
+          const resultJson = await resultRes.value.json().catch(() => ({}));
+          const breakdown =
+            resultJson.session?.aiOutput?.budgetBreakdown ||
+            resultJson.project?.aiOutput?.budgetBreakdown ||
+            null;
+          if (breakdown) setAiBudget(breakdown);
         }
       } catch {
         // Don't set error — let the page render with empty state
@@ -275,7 +287,8 @@ export default function CoupleVendorsPage() {
                   const tender = tenders.find((t) => t.category === chip.category);
                   const hasTender = !!tender;
                   const isClosed = tender?.status === "closed";
-                  const matchCount = isClosed ? 0 : recommendations.filter((r) => r.match.category === chip.category).length;
+                  const isValidatedOrClosed = isClosed || Boolean(tender?.selectedProposalId) || tender?.proposals?.some((p) => p.status === "accepted");
+                  const matchCount = isValidatedOrClosed ? 0 : recommendations.filter((r) => r.match.category === chip.category).length;
                   return (
                     <button
                       key={chip.category}
@@ -608,12 +621,11 @@ export default function CoupleVendorsPage() {
           setCategory("");
         }}
         project={project}
+        budgetBreakdown={aiBudget}
         preselectedCategory={category || undefined}
         replaceMode={replaceAction}
+        existingTenders={tenders}
         onLaunched={async () => {
-          setTenders((prev) => [{} as TenderWithProposals, ...prev].slice(0, 1));
-          setShowForm(false);
-          setShowSuccess(true);
           setCategory("");
           setReplaceAction("keep");
           try {
@@ -628,31 +640,6 @@ export default function CoupleVendorsPage() {
           } catch { /* ignore */ }
         }}
       />
-
-      {/* ===== MODALE — confirmation ===== */}
-      {showSuccess && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto text-center">
-            <button
-              onClick={() => setShowSuccess(false)}
-              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition"
-              aria-label="Fermer"
-            >
-              <X size={18} />
-            </button>
-            <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-5">
-              <CheckCircle2 size={26} className="text-[#0E0E10]" />
-            </div>
-            <h3 className="font-allura text-2xl font-bold text-[#0E0E10] mb-3">C'est envoyé !</h3>
-            <p className="text-[#6B6B72] text-sm mb-7 leading-relaxed">
-              Votre demande est en route. Les prestataires les plus adaptés à votre budget et votre style vous répondront sous peu.
-            </p>
-            <Button onClick={() => setShowSuccess(false)} variant="primary" className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition">
-              Parfait
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* ===== MODALE — détail catégorie (suggestions auto) ===== */}
       {selectedCategory && (
@@ -678,18 +665,15 @@ export default function CoupleVendorsPage() {
 
             {(() => {
               const catRecs = recommendations.filter((r) => r.match.category === selectedCategory);
-              const catTender = tenders.find((t) => t.category === selectedCategory);
+              const activeTender = tenders.find((t) => t.category === selectedCategory && t.status !== "closed");
+              const catTender = activeTender || tenders.find((t) => t.category === selectedCategory);
 
-              if (catTender?.status === "closed") {
-                const catValidatedProposal = (catTender.proposals || []).find(
-                  (p) => p.status === "accepted" || p.id === catTender.selectedProposalId
-                );
-                const catValidatedVendor = catValidatedProposal?.vendor;
-                const catValidatedLogo = catValidatedVendor
-                  ? (typeof catValidatedVendor.logo === "string"
-                      ? catValidatedVendor.logo
-                      : catValidatedVendor.logo?.url)
-                  : null;
+              const catValidatedProposal = (catTender?.proposals || []).find(
+                (p) => p.status === "accepted" || p.id === catTender?.selectedProposalId
+              );
+              const catValidatedVendor = catValidatedProposal?.vendor;
+
+              if (catTender?.status === "closed" && catValidatedVendor) {
                 return (
                   <div className="text-center py-8">
                     <div className="h-12 w-12 rounded-full bg-[#D8ECD9] flex items-center justify-center mx-auto mb-4">
@@ -697,16 +681,12 @@ export default function CoupleVendorsPage() {
                     </div>
                     <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#3C8552] mb-3">Prestataire validé</p>
                     <h2 className="text-xl font-bold text-[#0E0E10] mb-2">
-                      {catValidatedVendor
-                        ? (catValidatedVendor.businessName || catValidatedVendor.name || catValidatedVendor.companyName || "Prestataire retenu")
-                        : "Dossier clôturé"}
+                      {catValidatedVendor.businessName || catValidatedVendor.name || catValidatedVendor.companyName || "Prestataire retenu"}
                     </h2>
                     <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed mb-5">
-                      {catValidatedVendor
-                        ? "Vous avez retenu ce prestataire pour votre mariage. Vous pouvez consulter son profil ou relancer un nouvel appel d'offres si besoin."
-                        : "L'appel d'offres pour cette catégorie est clôturé."}
+                      Vous avez retenu ce prestataire pour votre mariage. Vous pouvez consulter son profil ou relancer un nouvel appel d'offres si besoin.
                     </p>
-                    {catValidatedVendor && catValidatedProposal && (
+                    {catValidatedProposal && (
                       <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
                         <Link
                           href={`/espace-couple/prestataires/profil/${catValidatedProposal.vendorId}`}
@@ -724,25 +704,58 @@ export default function CoupleVendorsPage() {
                         </Link>
                       </div>
                     )}
-                    {!catValidatedVendor && (
-                      <Button
-                        variant="primary"
-                        onClick={() => {
-                          closeCategory();
-                          setCategory(selectedCategory);
-                          setShowForm(true);
-                        }}
-                        className="w-full max-w-xs mx-auto py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition flex items-center justify-center gap-2"
-                        iconLeft={<Plus size={16} />}
-                      >
-                        Relancer un appel d'offres
-                      </Button>
-                    )}
                   </div>
                 );
               }
 
               if (catRecs.length === 0) {
+                if (catTender) {
+                  const isClosed = catTender.status === "closed";
+                  return (
+                    <div className="text-center py-8">
+                      <div className="h-12 w-12 rounded-full bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
+                        <Sparkles size={22} className="text-[#0E0E10]" />
+                      </div>
+                      <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#6B6B72] mb-1">
+                        {isClosed ? "Appel d'offres clôturé" : "Appel d'offres en cours"}
+                      </p>
+                      <h2 className="text-lg font-bold text-[#0E0E10] mb-2">
+                        {catTender.status === "searching"
+                          ? "Recherche de prestataires en cours"
+                          : catTender.status === "responded"
+                          ? `${(catTender.proposals || []).length} proposition${(catTender.proposals || []).length > 1 ? "s" : ""} reçue${(catTender.proposals || []).length > 1 ? "s" : ""}`
+                          : "Dossier clôturé"}
+                      </h2>
+                      <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
+                        {catTender.status === "searching"
+                          ? "Votre appel d'offres a été diffusé aux prestataires qualifiés. Dès qu'un prestataire répond, sa proposition apparaîtra dans votre espace."
+                          : catTender.status === "responded"
+                          ? "Des prestataires ont répondu à votre demande. Vous pouvez consulter leurs propositions dès maintenant."
+                          : "Cet appel d'offres est clôturé. Vous pouvez relancer une nouvelle demande pour cette catégorie si besoin."}
+                      </p>
+                      <div className="flex flex-col gap-2.5 max-w-sm mx-auto">
+                        <Link
+                          href={`/espace-couple/prestataires/${catTender.id}`}
+                          onClick={closeCategory}
+                          className="w-full py-3.5 px-4 rounded-full bg-[#0E0E10] text-white font-bold text-sm text-center hover:bg-[#333] transition flex items-center justify-center gap-2"
+                        >
+                          Voir mon appel d'offres <ArrowRight size={14} />
+                        </Link>
+                        <Button
+                          variant="secondary"
+                          onClick={() => {
+                            closeCategory();
+                            tryLaunchTender(selectedCategory);
+                          }}
+                          className="w-full py-3 px-4 rounded-full text-sm font-semibold border border-[#EDEDF0] text-[#6B6B72] hover:bg-[#fef2f4] hover:text-[#0E0E10] transition"
+                        >
+                          Remplacer ou relancer cet appel
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div className="text-center py-10">
                     <div className="h-12 w-12 rounded-full bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
@@ -844,7 +857,9 @@ export default function CoupleVendorsPage() {
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B6B72]">Appel d'offres en cours</p>
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B6B72]">
+                            {catTender.status === "closed" ? "Appel d'offres clôturé" : "Appel d'offres en cours"}
+                          </p>
                           <p className="text-sm font-bold text-[#0E0E10] mt-0.5">
                             {catTender.status === "searching" ? "En recherche" : catTender.status === "responded" ? "Réponses reçues" : "Clôturé"}
                             {" — "}
@@ -866,7 +881,7 @@ export default function CoupleVendorsPage() {
                       className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition flex items-center justify-center gap-2"
                       iconLeft={<Plus size={16} />}
                     >
-                      Lancer mon propre appel
+                      {catTender ? "Remplacer ou relancer cet appel" : "Lancer mon propre appel"}
                     </Button>
                   </div>
                 </>

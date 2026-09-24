@@ -194,21 +194,21 @@ export default function ProfessionalRegistrationPage() {
         },
         serviceCategory: form.serviceCategory,
         otherCategory: form.serviceCategory === "Autre" ? form.otherCategory : null,
-        yearsOfExperience: Number(form.yearsOfExperience) || 0,
+        yearsOfExperience: Math.max(0, Number(form.yearsOfExperience) || 0),
         trainingDate: form.trainingDate || null,
         trainingDescription: form.trainingDescription || null,
         description: form.description,
         styles: form.styles,
         priceRange: {
-          min: Number(form.priceMin) || 0,
-          max: Number(form.priceMax) || 0,
+          min: Math.max(0, Number(form.priceMin) || 0),
+          max: Math.max(0, Number(form.priceMax) || 0),
           currency: "EUR",
         },
         pricingDetails: "",
         serviceArea: {
           regions: form.regions.split(",").map((s) => s.trim()).filter(Boolean),
           cities: [form.city].filter(Boolean),
-          radius: form.radius ? Number(form.radius) : null,
+          radius: form.radius ? Math.max(0, Number(form.radius)) : null,
           travelPolicy: "",
         },
         availability: {
@@ -218,7 +218,7 @@ export default function ProfessionalRegistrationPage() {
         },
         portfolio: {
           images: [],
-          website: form.portfolioWebsite || null,
+          website: form.website || form.portfolioWebsite || null,
           instagram: form.instagram || null,
           videos: form.videoUrls ? form.videoUrls.split(",").map((s) => s.trim()).filter(Boolean) : [],
           faq: [],
@@ -364,7 +364,19 @@ export default function ProfessionalRegistrationPage() {
           )}
           <div className="field">
             <label>Années d'expérience *</label>
-            <input type="number" min={0} value={form.yearsOfExperience} onChange={(e) => update("yearsOfExperience", e.target.value)} />
+            <input
+              type="number"
+              min={0}
+              step={1}
+              onKeyDown={(e) => {
+                if (e.key === "-" || e.key === "e") e.preventDefault();
+              }}
+              value={form.yearsOfExperience}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || Number(val) >= 0) update("yearsOfExperience", val);
+              }}
+            />
           </div>
           <div className="field">
             <label>Date de certification</label>
@@ -395,11 +407,37 @@ export default function ProfessionalRegistrationPage() {
           </div>
           <div className="field">
             <label>Budget minimum (€)</label>
-            <input type="number" min={0} value={form.priceMin} onChange={(e) => update("priceMin", e.target.value)} placeholder="500" />
+            <input
+              type="number"
+              min={0}
+              step={1}
+              onKeyDown={(e) => {
+                if (e.key === "-" || e.key === "e") e.preventDefault();
+              }}
+              value={form.priceMin}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || Number(val) >= 0) update("priceMin", val);
+              }}
+              placeholder="500"
+            />
           </div>
           <div className="field">
             <label>Budget maximum (€)</label>
-            <input type="number" min={0} value={form.priceMax} onChange={(e) => update("priceMax", e.target.value)} placeholder="5000" />
+            <input
+              type="number"
+              min={0}
+              step={1}
+              onKeyDown={(e) => {
+                if (e.key === "-" || e.key === "e") e.preventDefault();
+              }}
+              value={form.priceMax}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || Number(val) >= 0) update("priceMax", val);
+              }}
+              placeholder="5000"
+            />
           </div>
         </div>
       ),
@@ -421,7 +459,20 @@ export default function ProfessionalRegistrationPage() {
           </div>
           <div className="field">
             <label>Rayon d'intervention (km)</label>
-            <input type="number" min={0} value={form.radius} onChange={(e) => update("radius", e.target.value)} placeholder="80" />
+            <input
+              type="number"
+              min={0}
+              step={1}
+              onKeyDown={(e) => {
+                if (e.key === "-" || e.key === "e") e.preventDefault();
+              }}
+              value={form.radius}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || Number(val) >= 0) update("radius", val);
+              }}
+              placeholder="80"
+            />
           </div>
           <div className="field">
             <label>Délai de réponse / préavis</label>

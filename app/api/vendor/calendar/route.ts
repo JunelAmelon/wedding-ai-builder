@@ -85,6 +85,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Date invalide (format attendu : YYYY-MM-DD)" }, { status: 400 });
     }
 
+    const todayStr = new Date().toISOString().split("T")[0];
+    if (normalizedDate < todayStr) {
+      return NextResponse.json({ error: "Impossible de bloquer une date passée" }, { status: 400 });
+    }
+
     const profile = await vendorProfileRepo.getByUserId(user.id);
     if (!profile) {
       return NextResponse.json({ error: "Profil prestataire introuvable" }, { status: 404 });

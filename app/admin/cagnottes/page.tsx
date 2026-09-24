@@ -69,6 +69,11 @@ export default function AdminCagnottesPage() {
 
   async function savePayout() {
     if (!selected) return;
+    const payoutAmount = parseFloat(amount);
+    if (isNaN(payoutAmount) || payoutAmount <= 0) {
+      setError("Le montant doit être supérieur à zéro.");
+      return;
+    }
     setSaving(true);
     setError("");
     try {
@@ -77,7 +82,7 @@ export default function AdminCagnottesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           wishlistId: selected.wishlist.id,
-          amount: parseFloat(amount),
+          amount: payoutAmount,
           method,
           status,
           note,
@@ -236,8 +241,14 @@ export default function AdminCagnottesPage() {
                   step="0.01"
                   min={0.01}
                   max={selected.remaining}
+                  onKeyDown={(e) => {
+                    if (e.key === "-" || e.key === "e") e.preventDefault();
+                  }}
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || Number(val) >= 0) setAmount(val);
+                  }}
                   className="w-full px-3 py-2 rounded-xl border border-[#1c1c1c]/10 text-sm focus:outline-none focus:ring-2 focus:ring-[#f4f1f7]/60"
                 />
               </div>

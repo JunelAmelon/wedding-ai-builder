@@ -198,6 +198,9 @@ export default function CoupleBudgetPage() {
     if (!project || !label.trim()) return;
     setSaving(true);
     try {
+      const pAmount = Math.max(0, Number(planned) || 0);
+      const aAmount = actual !== "" && actual !== null && actual !== undefined ? Math.max(0, Number(actual)) : null;
+
       if (editingExpense) {
         const r = await fetch("/api/couple/expenses", {
           method: "PATCH",
@@ -206,8 +209,8 @@ export default function CoupleBudgetPage() {
             id: editingExpense.id,
             label,
             category,
-            plannedAmount: Number(planned) || 0,
-            actualAmount: actual ? Number(actual) : null,
+            plannedAmount: pAmount,
+            actualAmount: aAmount,
           }),
         });
         const j = await r.json();
@@ -220,8 +223,8 @@ export default function CoupleBudgetPage() {
             projectId: project.id,
             label,
             category,
-            plannedAmount: Number(planned) || 0,
-            actualAmount: actual ? Number(actual) : null,
+            plannedAmount: pAmount,
+            actualAmount: aAmount,
             currency: project.budget?.currency || "EUR",
           }),
         });
@@ -687,8 +690,16 @@ export default function CoupleBudgetPage() {
                   </label>
                   <input
                     type="number"
+                    min={0}
+                    step="0.01"
+                    onKeyDown={(e) => {
+                      if (e.key === "-" || e.key === "e") e.preventDefault();
+                    }}
                     value={planned}
-                    onChange={(e) => setPlanned(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "" || Number(val) >= 0) setPlanned(val);
+                    }}
                     placeholder="0"
                     className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                   />
@@ -699,8 +710,16 @@ export default function CoupleBudgetPage() {
                   </label>
                   <input
                     type="number"
+                    min={0}
+                    step="0.01"
+                    onKeyDown={(e) => {
+                      if (e.key === "-" || e.key === "e") e.preventDefault();
+                    }}
                     value={actual}
-                    onChange={(e) => setActual(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "" || Number(val) >= 0) setActual(val);
+                    }}
                     placeholder="0"
                     className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
                   />

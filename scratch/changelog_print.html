@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journal des Modifications & Évolutions - Wedding AI Builder</title>
+  <style>
+    /* Inlined KaTeX styles with local fonts */
+    @font-face{font-display:block;font-family:KaTeX_AMS;font-style:normal;font-weight:400;src:url(fonts/KaTeX_AMS-Regular.woff2) format("woff2"),url(fonts/KaTeX_AMS-Regular.woff) format("woff"),url(fonts/KaTeX_AMS-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Caligraphic;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Caligraphic-Bold.woff2) format("woff2"),url(fonts/KaTeX_Caligraphic-Bold.woff) format("woff"),url(fonts/KaTeX_Caligraphic-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Caligraphic;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Caligraphic-Regular.woff2) format("woff2"),url(fonts/KaTeX_Caligraphic-Regular.woff) format("woff"),url(fonts/KaTeX_Caligraphic-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Fraktur;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Fraktur-Bold.woff2) format("woff2"),url(fonts/KaTeX_Fraktur-Bold.woff) format("woff"),url(fonts/KaTeX_Fraktur-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Fraktur;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Fraktur-Regular.woff2) format("woff2"),url(fonts/KaTeX_Fraktur-Regular.woff) format("woff"),url(fonts/KaTeX_Fraktur-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:normal;font-weight:700;src:url(fonts/KaTeX_Main-Bold.woff2) format("woff2"),url(fonts/KaTeX_Main-Bold.woff) format("woff"),url(fonts/KaTeX_Main-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:italic;font-weight:700;src:url(fonts/KaTeX_Main-BoldItalic.woff2) format("woff2"),url(fonts/KaTeX_Main-BoldItalic.woff) format("woff"),url(fonts/KaTeX_Main-BoldItalic.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:italic;font-weight:400;src:url(fonts/KaTeX_Main-Italic.woff2) format("woff2"),url(fonts/KaTeX_Main-Italic.woff) format("woff"),url(fonts/KaTeX_Main-Italic.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Main-Regular.woff2) format("woff2"),url(fonts/KaTeX_Main-Regular.woff) format("woff"),url(fonts/KaTeX_Main-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Math;font-style:italic;font-weight:700;src:url(fonts/KaTeX_Math-BoldItalic.woff2) format("woff2"),url(fonts/KaTeX_Math-BoldItalic.woff) format("woff"),url(fonts/KaTeX_Math-BoldItalic.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Math;font-style:italic;font-weight:400;src:url(fonts/KaTeX_Math-Italic.woff2) format("woff2"),url(fonts/KaTeX_Math-Italic.woff) format("woff"),url(fonts/KaTeX_Math-Italic.ttf) format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:normal;font-weight:700;src:url(fonts/KaTeX_SansSerif-Bold.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Bold.woff) format("woff"),url(fonts/KaTeX_SansSerif-Bold.ttf) format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:italic;font-weight:400;src:url(fonts/KaTeX_SansSerif-Italic.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Italic.woff) format("woff"),url(fonts/KaTeX_SansSerif-Italic.ttf) format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:normal;font-weight:400;src:url(fonts/KaTeX_SansSerif-Regular.woff2) format("woff2"),url(fonts/KaTeX_SansSerif-Regular.woff) format("woff"),url(fonts/KaTeX_SansSerif-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Script;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Script-Regular.woff2) format("woff2"),url(fonts/KaTeX_Script-Regular.woff) format("woff"),url(fonts/KaTeX_Script-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size1;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size1-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size1-Regular.woff) format("woff"),url(fonts/KaTeX_Size1-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size2;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size2-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size2-Regular.woff) format("woff"),url(fonts/KaTeX_Size2-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size3;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size3-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size3-Regular.woff) format("woff"),url(fonts/KaTeX_Size3-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size4;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Size4-Regular.woff2) format("woff2"),url(fonts/KaTeX_Size4-Regular.woff) format("woff"),url(fonts/KaTeX_Size4-Regular.ttf) format("truetype")}@font-face{font-display:block;font-family:KaTeX_Typewriter;font-style:normal;font-weight:400;src:url(fonts/KaTeX_Typewriter-Regular.woff2) format("woff2"),url(fonts/KaTeX_Typewriter-Regular.woff) format("woff"),url(fonts/KaTeX_Typewriter-Regular.ttf) format("truetype")}.katex{font:normal 1.21em KaTeX_Main,Times New Roman,serif;line-height:1.2;position:relative;text-indent:0;text-rendering:auto}.katex *{-ms-high-contrast-adjust:none!important;border-color:currentColor}.katex .katex-version:after{content:"0.18.7"}.katex .katex-mathml{border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);height:1px;overflow:hidden;padding:0;position:absolute;width:1px}.katex .katex-html>.katex-newline{display:block}.katex .katex-base{position:relative;white-space:nowrap;width:-webkit-min-content;width:-moz-min-content;width:min-content}.katex .katex-base,.katex .katex-strut{display:inline-block}.katex .textbf{font-weight:700}.katex .textit{font-style:italic}.katex .textrm{font-family:KaTeX_Main}.katex .textsf{font-family:KaTeX_SansSerif}.katex .texttt{font-family:KaTeX_Typewriter}.katex .mathnormal{font-family:KaTeX_Math;font-style:italic}.katex .mathit{font-family:KaTeX_Main;font-style:italic}.katex .mathrm{font-style:normal}.katex .mathbf{font-family:KaTeX_Main;font-weight:700}.katex .boldsymbol{font-family:KaTeX_Math;font-style:italic;font-weight:700}.katex .amsrm,.katex .mathbb,.katex .textbb{font-family:KaTeX_AMS}.katex .mathcal{font-family:KaTeX_Caligraphic}.katex .mathfrak,.katex .textfrak{font-family:KaTeX_Fraktur}.katex .mathboldfrak,.katex .textboldfrak{font-family:KaTeX_Fraktur;font-weight:700}.katex .mathtt{font-family:KaTeX_Typewriter}.katex .mathscr,.katex .textscr{font-family:KaTeX_Script}.katex .mathsf,.katex .textsf{font-family:KaTeX_SansSerif}.katex .mathboldsf,.katex .textboldsf{font-family:KaTeX_SansSerif;font-weight:700}.katex .mathitsf,.katex .mathsfit,.katex .textitsf{font-family:KaTeX_SansSerif;font-style:italic}.katex .mainrm{font-family:KaTeX_Main;font-style:normal}.katex .vlist-t{border-collapse:collapse;display:inline-table;table-layout:fixed}.katex .vlist-r{display:table-row}.katex .vlist{display:table-cell;position:relative;vertical-align:bottom}.katex .vlist>span{display:block;height:0;position:relative}.katex .vlist>span>span{display:inline-block}.katex .vlist>span>.pstrut{overflow:hidden;width:0}.katex .vlist-t2{margin-right:-2px}.katex .vlist-s{display:table-cell;font-size:1px;min-width:2px;vertical-align:bottom;width:2px}.katex .katex-vbox{align-items:baseline;display:inline-flex;flex-direction:column}.katex .katex-thinbox{display:inline-flex;flex-direction:row;max-width:0;width:0}.katex .msupsub{text-align:left}.katex .mfrac>span>span{text-align:center}.katex .mfrac .frac-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .katex-hdashline,.katex .katex-hline,.katex .katex-overline .overline-line,.katex .katex-rule,.katex .katex-underline .underline-line,.katex .mfrac .frac-line{min-height:1px}.katex .mspace{display:inline-block}.katex .katex-smash{display:inline;line-height:0}.katex .clap,.katex .llap,.katex .rlap{position:relative;width:0}.katex .clap>.katex-inner,.katex .llap>.katex-inner,.katex .rlap>.katex-inner{position:absolute}.katex .clap>.katex-fix,.katex .llap>.katex-fix,.katex .rlap>.katex-fix{display:inline-block}.katex .llap>.katex-inner{right:0}.katex .clap>.katex-inner,.katex .rlap>.katex-inner{left:0}.katex .clap>.katex-inner>span{margin-left:-50%;margin-right:50%}.katex .katex-rule{border:0 solid;display:inline-block;position:relative}.katex .katex-hline,.katex .katex-overline .overline-line,.katex .katex-underline .underline-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .katex-hdashline{border-bottom-style:dashed;display:inline-block;width:100%}.katex .sqrt>.katex-root{margin-left:.2777777778em;margin-right:-.5555555556em}.katex .fontsize-ensurer.reset-size1.size1,.katex .katex-sizing.reset-size1.size1{font-size:1em}.katex .fontsize-ensurer.reset-size1.size2,.katex .katex-sizing.reset-size1.size2{font-size:1.2em}.katex .fontsize-ensurer.reset-size1.size3,.katex .katex-sizing.reset-size1.size3{font-size:1.4em}.katex .fontsize-ensurer.reset-size1.size4,.katex .katex-sizing.reset-size1.size4{font-size:1.6em}.katex .fontsize-ensurer.reset-size1.size5,.katex .katex-sizing.reset-size1.size5{font-size:1.8em}.katex .fontsize-ensurer.reset-size1.size6,.katex .katex-sizing.reset-size1.size6{font-size:2em}.katex .fontsize-ensurer.reset-size1.size7,.katex .katex-sizing.reset-size1.size7{font-size:2.4em}.katex .fontsize-ensurer.reset-size1.size8,.katex .katex-sizing.reset-size1.size8{font-size:2.88em}.katex .fontsize-ensurer.reset-size1.size9,.katex .katex-sizing.reset-size1.size9{font-size:3.456em}.katex .fontsize-ensurer.reset-size1.size10,.katex .katex-sizing.reset-size1.size10{font-size:4.148em}.katex .fontsize-ensurer.reset-size1.size11,.katex .katex-sizing.reset-size1.size11{font-size:4.976em}.katex .fontsize-ensurer.reset-size2.size1,.katex .katex-sizing.reset-size2.size1{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size2.size2,.katex .katex-sizing.reset-size2.size2{font-size:1em}.katex .fontsize-ensurer.reset-size2.size3,.katex .katex-sizing.reset-size2.size3{font-size:1.1666666667em}.katex .fontsize-ensurer.reset-size2.size4,.katex .katex-sizing.reset-size2.size4{font-size:1.3333333333em}.katex .fontsize-ensurer.reset-size2.size5,.katex .katex-sizing.reset-size2.size5{font-size:1.5em}.katex .fontsize-ensurer.reset-size2.size6,.katex .katex-sizing.reset-size2.size6{font-size:1.6666666667em}.katex .fontsize-ensurer.reset-size2.size7,.katex .katex-sizing.reset-size2.size7{font-size:2em}.katex .fontsize-ensurer.reset-size2.size8,.katex .katex-sizing.reset-size2.size8{font-size:2.4em}.katex .fontsize-ensurer.reset-size2.size9,.katex .katex-sizing.reset-size2.size9{font-size:2.88em}.katex .fontsize-ensurer.reset-size2.size10,.katex .katex-sizing.reset-size2.size10{font-size:3.4566666667em}.katex .fontsize-ensurer.reset-size2.size11,.katex .katex-sizing.reset-size2.size11{font-size:4.1466666667em}.katex .fontsize-ensurer.reset-size3.size1,.katex .katex-sizing.reset-size3.size1{font-size:.7142857143em}.katex .fontsize-ensurer.reset-size3.size2,.katex .katex-sizing.reset-size3.size2{font-size:.8571428571em}.katex .fontsize-ensurer.reset-size3.size3,.katex .katex-sizing.reset-size3.size3{font-size:1em}.katex .fontsize-ensurer.reset-size3.size4,.katex .katex-sizing.reset-size3.size4{font-size:1.1428571429em}.katex .fontsize-ensurer.reset-size3.size5,.katex .katex-sizing.reset-size3.size5{font-size:1.2857142857em}.katex .fontsize-ensurer.reset-size3.size6,.katex .katex-sizing.reset-size3.size6{font-size:1.4285714286em}.katex .fontsize-ensurer.reset-size3.size7,.katex .katex-sizing.reset-size3.size7{font-size:1.7142857143em}.katex .fontsize-ensurer.reset-size3.size8,.katex .katex-sizing.reset-size3.size8{font-size:2.0571428571em}.katex .fontsize-ensurer.reset-size3.size9,.katex .katex-sizing.reset-size3.size9{font-size:2.4685714286em}.katex .fontsize-ensurer.reset-size3.size10,.katex .katex-sizing.reset-size3.size10{font-size:2.9628571429em}.katex .fontsize-ensurer.reset-size3.size11,.katex .katex-sizing.reset-size3.size11{font-size:3.5542857143em}.katex .fontsize-ensurer.reset-size4.size1,.katex .katex-sizing.reset-size4.size1{font-size:.625em}.katex .fontsize-ensurer.reset-size4.size2,.katex .katex-sizing.reset-size4.size2{font-size:.75em}.katex .fontsize-ensurer.reset-size4.size3,.katex .katex-sizing.reset-size4.size3{font-size:.875em}.katex .fontsize-ensurer.reset-size4.size4,.katex .katex-sizing.reset-size4.size4{font-size:1em}.katex .fontsize-ensurer.reset-size4.size5,.katex .katex-sizing.reset-size4.size5{font-size:1.125em}.katex .fontsize-ensurer.reset-size4.size6,.katex .katex-sizing.reset-size4.size6{font-size:1.25em}.katex .fontsize-ensurer.reset-size4.size7,.katex .katex-sizing.reset-size4.size7{font-size:1.5em}.katex .fontsize-ensurer.reset-size4.size8,.katex .katex-sizing.reset-size4.size8{font-size:1.8em}.katex .fontsize-ensurer.reset-size4.size9,.katex .katex-sizing.reset-size4.size9{font-size:2.16em}.katex .fontsize-ensurer.reset-size4.size10,.katex .katex-sizing.reset-size4.size10{font-size:2.5925em}.katex .fontsize-ensurer.reset-size4.size11,.katex .katex-sizing.reset-size4.size11{font-size:3.11em}.katex .fontsize-ensurer.reset-size5.size1,.katex .katex-sizing.reset-size5.size1{font-size:.5555555556em}.katex .fontsize-ensurer.reset-size5.size2,.katex .katex-sizing.reset-size5.size2{font-size:.6666666667em}.katex .fontsize-ensurer.reset-size5.size3,.katex .katex-sizing.reset-size5.size3{font-size:.7777777778em}.katex .fontsize-ensurer.reset-size5.size4,.katex .katex-sizing.reset-size5.size4{font-size:.8888888889em}.katex .fontsize-ensurer.reset-size5.size5,.katex .katex-sizing.reset-size5.size5{font-size:1em}.katex .fontsize-ensurer.reset-size5.size6,.katex .katex-sizing.reset-size5.size6{font-size:1.1111111111em}.katex .fontsize-ensurer.reset-size5.size7,.katex .katex-sizing.reset-size5.size7{font-size:1.3333333333em}.katex .fontsize-ensurer.reset-size5.size8,.katex .katex-sizing.reset-size5.size8{font-size:1.6em}.katex .fontsize-ensurer.reset-size5.size9,.katex .katex-sizing.reset-size5.size9{font-size:1.92em}.katex .fontsize-ensurer.reset-size5.size10,.katex .katex-sizing.reset-size5.size10{font-size:2.3044444444em}.katex .fontsize-ensurer.reset-size5.size11,.katex .katex-sizing.reset-size5.size11{font-size:2.7644444444em}.katex .fontsize-ensurer.reset-size6.size1,.katex .katex-sizing.reset-size6.size1{font-size:.5em}.katex .fontsize-ensurer.reset-size6.size2,.katex .katex-sizing.reset-size6.size2{font-size:.6em}.katex .fontsize-ensurer.reset-size6.size3,.katex .katex-sizing.reset-size6.size3{font-size:.7em}.katex .fontsize-ensurer.reset-size6.size4,.katex .katex-sizing.reset-size6.size4{font-size:.8em}.katex .fontsize-ensurer.reset-size6.size5,.katex .katex-sizing.reset-size6.size5{font-size:.9em}.katex .fontsize-ensurer.reset-size6.size6,.katex .katex-sizing.reset-size6.size6{font-size:1em}.katex .fontsize-ensurer.reset-size6.size7,.katex .katex-sizing.reset-size6.size7{font-size:1.2em}.katex .fontsize-ensurer.reset-size6.size8,.katex .katex-sizing.reset-size6.size8{font-size:1.44em}.katex .fontsize-ensurer.reset-size6.size9,.katex .katex-sizing.reset-size6.size9{font-size:1.728em}.katex .fontsize-ensurer.reset-size6.size10,.katex .katex-sizing.reset-size6.size10{font-size:2.074em}.katex .fontsize-ensurer.reset-size6.size11,.katex .katex-sizing.reset-size6.size11{font-size:2.488em}.katex .fontsize-ensurer.reset-size7.size1,.katex .katex-sizing.reset-size7.size1{font-size:.4166666667em}.katex .fontsize-ensurer.reset-size7.size2,.katex .katex-sizing.reset-size7.size2{font-size:.5em}.katex .fontsize-ensurer.reset-size7.size3,.katex .katex-sizing.reset-size7.size3{font-size:.5833333333em}.katex .fontsize-ensurer.reset-size7.size4,.katex .katex-sizing.reset-size7.size4{font-size:.6666666667em}.katex .fontsize-ensurer.reset-size7.size5,.katex .katex-sizing.reset-size7.size5{font-size:.75em}.katex .fontsize-ensurer.reset-size7.size6,.katex .katex-sizing.reset-size7.size6{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size7.size7,.katex .katex-sizing.reset-size7.size7{font-size:1em}.katex .fontsize-ensurer.reset-size7.size8,.katex .katex-sizing.reset-size7.size8{font-size:1.2em}.katex .fontsize-ensurer.reset-size7.size9,.katex .katex-sizing.reset-size7.size9{font-size:1.44em}.katex .fontsize-ensurer.reset-size7.size10,.katex .katex-sizing.reset-size7.size10{font-size:1.7283333333em}.katex .fontsize-ensurer.reset-size7.size11,.katex .katex-sizing.reset-size7.size11{font-size:2.0733333333em}.katex .fontsize-ensurer.reset-size8.size1,.katex .katex-sizing.reset-size8.size1{font-size:.3472222222em}.katex .fontsize-ensurer.reset-size8.size2,.katex .katex-sizing.reset-size8.size2{font-size:.4166666667em}.katex .fontsize-ensurer.reset-size8.size3,.katex .katex-sizing.reset-size8.size3{font-size:.4861111111em}.katex .fontsize-ensurer.reset-size8.size4,.katex .katex-sizing.reset-size8.size4{font-size:.5555555556em}.katex .fontsize-ensurer.reset-size8.size5,.katex .katex-sizing.reset-size8.size5{font-size:.625em}.katex .fontsize-ensurer.reset-size8.size6,.katex .katex-sizing.reset-size8.size6{font-size:.6944444444em}.katex .fontsize-ensurer.reset-size8.size7,.katex .katex-sizing.reset-size8.size7{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size8.size8,.katex .katex-sizing.reset-size8.size8{font-size:1em}.katex .fontsize-ensurer.reset-size8.size9,.katex .katex-sizing.reset-size8.size9{font-size:1.2em}.katex .fontsize-ensurer.reset-size8.size10,.katex .katex-sizing.reset-size8.size10{font-size:1.4402777778em}.katex .fontsize-ensurer.reset-size8.size11,.katex .katex-sizing.reset-size8.size11{font-size:1.7277777778em}.katex .fontsize-ensurer.reset-size9.size1,.katex .katex-sizing.reset-size9.size1{font-size:.2893518519em}.katex .fontsize-ensurer.reset-size9.size2,.katex .katex-sizing.reset-size9.size2{font-size:.3472222222em}.katex .fontsize-ensurer.reset-size9.size3,.katex .katex-sizing.reset-size9.size3{font-size:.4050925926em}.katex .fontsize-ensurer.reset-size9.size4,.katex .katex-sizing.reset-size9.size4{font-size:.462962963em}.katex .fontsize-ensurer.reset-size9.size5,.katex .katex-sizing.reset-size9.size5{font-size:.5208333333em}.katex .fontsize-ensurer.reset-size9.size6,.katex .katex-sizing.reset-size9.size6{font-size:.5787037037em}.katex .fontsize-ensurer.reset-size9.size7,.katex .katex-sizing.reset-size9.size7{font-size:.6944444444em}.katex .fontsize-ensurer.reset-size9.size8,.katex .katex-sizing.reset-size9.size8{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size9.size9,.katex .katex-sizing.reset-size9.size9{font-size:1em}.katex .fontsize-ensurer.reset-size9.size10,.katex .katex-sizing.reset-size9.size10{font-size:1.2002314815em}.katex .fontsize-ensurer.reset-size9.size11,.katex .katex-sizing.reset-size9.size11{font-size:1.4398148148em}.katex .fontsize-ensurer.reset-size10.size1,.katex .katex-sizing.reset-size10.size1{font-size:.2410800386em}.katex .fontsize-ensurer.reset-size10.size2,.katex .katex-sizing.reset-size10.size2{font-size:.2892960463em}.katex .fontsize-ensurer.reset-size10.size3,.katex .katex-sizing.reset-size10.size3{font-size:.337512054em}.katex .fontsize-ensurer.reset-size10.size4,.katex .katex-sizing.reset-size10.size4{font-size:.3857280617em}.katex .fontsize-ensurer.reset-size10.size5,.katex .katex-sizing.reset-size10.size5{font-size:.4339440694em}.katex .fontsize-ensurer.reset-size10.size6,.katex .katex-sizing.reset-size10.size6{font-size:.4821600771em}.katex .fontsize-ensurer.reset-size10.size7,.katex .katex-sizing.reset-size10.size7{font-size:.5785920926em}.katex .fontsize-ensurer.reset-size10.size8,.katex .katex-sizing.reset-size10.size8{font-size:.6943105111em}.katex .fontsize-ensurer.reset-size10.size9,.katex .katex-sizing.reset-size10.size9{font-size:.8331726133em}.katex .fontsize-ensurer.reset-size10.size10,.katex .katex-sizing.reset-size10.size10{font-size:1em}.katex .fontsize-ensurer.reset-size10.size11,.katex .katex-sizing.reset-size10.size11{font-size:1.1996142719em}.katex .fontsize-ensurer.reset-size11.size1,.katex .katex-sizing.reset-size11.size1{font-size:.2009646302em}.katex .fontsize-ensurer.reset-size11.size2,.katex .katex-sizing.reset-size11.size2{font-size:.2411575563em}.katex .fontsize-ensurer.reset-size11.size3,.katex .katex-sizing.reset-size11.size3{font-size:.2813504823em}.katex .fontsize-ensurer.reset-size11.size4,.katex .katex-sizing.reset-size11.size4{font-size:.3215434084em}.katex .fontsize-ensurer.reset-size11.size5,.katex .katex-sizing.reset-size11.size5{font-size:.3617363344em}.katex .fontsize-ensurer.reset-size11.size6,.katex .katex-sizing.reset-size11.size6{font-size:.4019292605em}.katex .fontsize-ensurer.reset-size11.size7,.katex .katex-sizing.reset-size11.size7{font-size:.4823151125em}.katex .fontsize-ensurer.reset-size11.size8,.katex .katex-sizing.reset-size11.size8{font-size:.578778135em}.katex .fontsize-ensurer.reset-size11.size9,.katex .katex-sizing.reset-size11.size9{font-size:.6945337621em}.katex .fontsize-ensurer.reset-size11.size10,.katex .katex-sizing.reset-size11.size10{font-size:.8336012862em}.katex .fontsize-ensurer.reset-size11.size11,.katex .katex-sizing.reset-size11.size11{font-size:1em}.katex .delimsizing.size1{font-family:KaTeX_Size1}.katex .delimsizing.size2{font-family:KaTeX_Size2}.katex .delimsizing.size3{font-family:KaTeX_Size3}.katex .delimsizing.size4{font-family:KaTeX_Size4}.katex .delimsizing.mult .delim-size1>span{font-family:KaTeX_Size1}.katex .delimsizing.mult .delim-size4>span{font-family:KaTeX_Size4}.katex .nulldelimiter{display:inline-block;width:.12em}.katex .delimcenter,.katex .op-symbol{position:relative}.katex .op-symbol.small-op{font-family:KaTeX_Size1}.katex .op-symbol.large-op{font-family:KaTeX_Size2}.katex .katex-accent>.vlist-t,.katex .op-limits>.vlist-t{text-align:center}.katex .katex-accent .accent-body{position:relative}.katex .katex-accent .accent-body:not(.accent-full){width:0}.katex .katex-overlay{display:block}.katex .mtable .vertical-separator{display:inline-block;min-width:1px}.katex .mtable .arraycolsep{display:inline-block}.katex .mtable .col-align-c>.vlist-t{text-align:center}.katex .mtable .col-align-l>.vlist-t{text-align:left}.katex .mtable .col-align-r>.vlist-t{text-align:right}.katex .svg-align{text-align:left}.katex svg{fill:currentColor;stroke:currentColor;display:block;height:inherit;position:absolute;width:100%}.katex svg path{stroke:none}.katex svg{fill-rule:nonzero;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1}.katex img{border-style:none;max-height:none;max-width:none;min-height:0;min-width:0}.katex .katex-stretchy{display:block;overflow:hidden;position:relative;width:100%}.katex .katex-stretchy:after,.katex .katex-stretchy:before{content:""}.katex .hide-tail{overflow:hidden;position:relative;width:100%}.katex .halfarrow-left{left:0;overflow:hidden;position:absolute;width:50.2%}.katex .halfarrow-right{overflow:hidden;position:absolute;right:0;width:50.2%}.katex .brace-left{left:0;overflow:hidden;position:absolute;width:25.1%}.katex .brace-center{left:25%;overflow:hidden;position:absolute;width:50%}.katex .brace-right{overflow:hidden;position:absolute;right:0;width:25.1%}.katex .x-arrow-pad{padding:0 .5em}.katex .cd-arrow-pad{padding:0 .55556em 0 .27778em}.katex .mover,.katex .munder,.katex .x-arrow{text-align:center}.katex .boxpad{padding:0 .3em}.katex .fbox,.katex .fcolorbox{border:.04em solid;box-sizing:border-box}.katex .cancel-pad{padding:0 .2em}.katex .cancel-lap{margin-left:-.2em;margin-right:-.2em}.katex .katex-sout{border-bottom-style:solid;border-bottom-width:.08em}.katex .angl{border-right:.049em solid;border-top:.049em solid;box-sizing:border-box;margin-right:.03889em}.katex .anglpad{padding:0 .03889em}.katex .reflectbox{display:inline-block;transform:scaleX(-1)}.katex .eqn-num:before{content:"(" counter(katexEqnNo) ")";counter-increment:katexEqnNo}.katex .mml-eqn-num:before{content:"(" counter(mmlEqnNo) ")";counter-increment:mmlEqnNo}.katex .mtr-glue{width:50%}.katex .cd-vert-arrow{display:inline-block;position:relative}.katex .cd-label-left{display:inline-block;position:absolute;right:calc(50% + .3em);text-align:left}.katex .cd-label-right{display:inline-block;left:calc(50% + .3em);position:absolute;text-align:right}.katex-display{display:block;margin:1em 0;text-align:center}.katex-display>.katex{display:block;text-align:center;white-space:nowrap}.katex-display>.katex>.katex-html{display:block;position:relative}.katex-display>.katex>.katex-html>.katex-tag{position:absolute;right:0}.katex-display.leqno>.katex>.katex-html>.katex-tag{left:0;right:auto}.katex-display.fleqn>.katex{padding-left:2em;text-align:left}body{counter-reset:katexEqnNo mmlEqnNo}
+
+
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 16mm 20mm 16mm;
+      @bottom-right {
+        content: "Page " counter(page) " / " counter(pages);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 8.5pt;
+        color: #64748b;
+        font-weight: 500;
+      }
+      @bottom-left {
+        content: "Wedding AI Builder — Journal des Évolutions & Spécifications";
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 8.5pt;
+        color: #94a3b8;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      background-color: #ffffff;
+      line-height: 1.65;
+      font-size: 10pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Cover / Header Banner */
+    .cover-banner {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #4338ca 100%);
+      color: #ffffff;
+      padding: 36px 32px 30px 32px;
+      border-radius: 12px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 15px rgba(30, 27, 75, 0.15);
+      break-inside: avoid;
+    }
+
+    .cover-tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .cover-tag {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 8pt;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .cover-tag.success {
+      background: rgba(34, 197, 94, 0.25);
+      border-color: rgba(34, 197, 94, 0.5);
+      color: #bbf7d0;
+    }
+
+    .cover-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 23pt;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      line-height: 1.25;
+      color: #ffffff;
+    }
+
+    .cover-subtitle {
+      font-size: 10.5pt;
+      color: #cbd5e1;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Headings */
+    h1 {
+      display: none; /* Already styled in cover-banner */
+    }
+
+    h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13.5pt;
+      font-weight: 800;
+      color: #1e1b4b;
+      background: #f8fafc;
+      border-left: 5px solid #4f46e5;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      margin-top: 32px;
+      margin-bottom: 14px;
+      break-after: avoid;
+      border-radius: 0 8px 8px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    h3 {
+      font-size: 11pt;
+      font-weight: 700;
+      color: #334155;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      break-after: avoid;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 4px;
+    }
+
+    h4 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #475569;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      break-after: avoid;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    /* Math Formulas - Premium High Readability */
+    .katex {
+      font-size: 1.1em;
+      color: #1e1b4b;
+      font-weight: 600;
+    }
+
+    .math-inline {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 2px;
+    }
+
+    .math-inline .katex {
+      font-size: 1.05em;
+    }
+
+    .math-block {
+      background: #faf5ff;
+      border: 1.5px solid #d8b4fe;
+      border-left: 5px solid #9333ea;
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin: 16px 0;
+      text-align: center;
+      break-inside: avoid;
+      box-shadow: 0 2px 5px rgba(147, 51, 234, 0.05);
+    }
+
+    .math-block .katex {
+      font-size: 1.2em;
+      color: #581c87;
+    }
+
+    /* Callout & Quotes */
+    blockquote {
+      background-color: #f8fafc;
+      border-left: 4px solid #6366f1;
+      margin: 12px 0;
+      padding: 10px 16px;
+      color: #334155;
+      font-size: 9.5pt;
+      border-radius: 0 8px 8px 0;
+    }
+
+    blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Tables */
+    .table-container {
+      margin: 16px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+      break-inside: avoid;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+      margin: 0;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      text-align: left;
+      font-weight: 700;
+      padding: 9px 12px;
+      border-bottom: 2px solid #cbd5e1;
+      border-right: 1px solid #e2e8f0;
+      text-transform: uppercase;
+      font-size: 8pt;
+      letter-spacing: 0.5px;
+    }
+
+    th:last-child {
+      border-right: none;
+    }
+
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      border-right: 1px solid #f1f5f9;
+      vertical-align: top;
+    }
+
+    td:last-child {
+      border-right: none;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Code & File Links */
+    code {
+      font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+      font-size: 8.5pt;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 5px;
+      border: 1px solid #e2e8f0;
+      font-weight: 500;
+    }
+
+    pre {
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 14px 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 14px 0;
+      font-size: 8.5pt;
+      line-height: 1.5;
+      break-inside: avoid;
+      border: 1px solid #334155;
+    }
+
+    pre code {
+      background-color: transparent;
+      color: #f8fafc;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-top: 0;
+      margin-bottom: 12px;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    li > ul {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background: #e2e8f0;
+      margin: 26px 0;
+    }
+
+    a {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Print Optimizations */
+    @media print {
+      body {
+        font-size: 9.5pt;
+      }
+      .math-inline {
+        border-color: #cbd5e1;
+      }
+      pre {
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
+      }
+      .cover-banner {
+        background: #1e1b4b !important;
+        color: #ffffff !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cover-banner">
+    <div class="cover-tags">
+      <span class="cover-tag">Wedding AI Builder</span>
+      <span class="cover-tag success">✅ Production Ready (0 erreur)</span>
+      <span class="cover-tag">📅 10 Septembre 2026</span>
+    </div>
+    <div class="cover-title">📋 Journal des Modifications & Architecture Technique</div>
+    <div class="cover-subtitle">
+      Synthèse exhaustive des résolutions de bugs, fiabilisation des prompts IA, règles de sécurité budgétaire, synchronisation du planning et automatisation des appels d'offres.
+    </div>
+  </div>
+
+  <div class="content">
+    <h1>📋 Journal des Modifications &amp; Évolutions du Projet (Changelog)</h1>
+<blockquote>
+<p><strong>Projet</strong> : Wedding AI Builder (<code>wedding-ai-builder</code>)<br><strong>Dernière mise à jour</strong> : 11 Septembre 2026<br><strong>Statut global</strong> : ✅ Code validé (<code>tsc --noEmit</code> : 0 erreur)<br><em>Ce document est mis à jour à chaque modification apportée au codebase.</em></p>
+</blockquote>
+<hr>
+<h2>Sommaire des Interventions</h2>
+<ol>
+<li><a href="#1-correction-de-la-frise-chronologique--tri-temporel">Correction de la Frise Chronologique &amp; Tri Temporel</a></li>
+<li><a href="#2-refonte-du-service-email-smtp-universel--haute-performance">Refonte du Service Email SMTP (Universel &amp; Haute Performance)</a></li>
+<li><a href="#3-documentation-compl%C3%A8te-des-variables-denvironnement-envexample">Documentation Complète des Variables d&#39;Environnement (.env.example)</a></li>
+<li><a href="#4-s%C3%A9curisation-m%C3%A9tier--validation-des-dates-futures--montants-positifs">Sécurisation Métier : Validation des Dates Futures &amp; Montants Positifs</a></li>
+<li><a href="#5-planning-adaptatif-anti-dates-pass%C3%A9es--bouton-de-r%C3%A9g%C3%A9n%C3%A9ration-ia">Planning Adaptatif (Anti-dates Passées) &amp; Bouton de Régénération IA</a></li>
+<li><a href="#6-clarification-du-pense-b%C3%AAte-administratif--audit-budg%C3%A9taire">Clarification du Pense-bête Administratif &amp; Audit Budgétaire</a></li>
+<li><a href="#7-fiabilisation--d%C3%A9terminisme-des-prompts-ia-timeline--budget">Fiabilisation &amp; Déterminisme des Prompts IA (Timeline &amp; Budget)</a></li>
+<li><a href="#8-synth%C3%A8se-des-m%C3%A9canismes-de-s%C3%A9curit%C3%A9-budg%C3%A9taire">Synthèse des Mécanismes de Sécurité Budgétaire</a></li>
+<li><a href="#9-proposition-d%C3%A9volution--refonte-de-la-gestion-budg%C3%A9taire-enveloppes-cibles-ia-vs-d%C3%A9penses-r%C3%A9elles--acomptes">Proposition d&#39;Évolution : Refonte de la Gestion Budgétaire</a></li>
+<li><a href="#10-correction-du-planning--d%C3%A9duplication-%C3%A9talement-temporel--bornage-des-d%C3%A9lais">Correction du Planning : Déduplication, Étalement Temporel &amp; Bornage des Délais</a></li>
+<li><a href="#11-synchronisation-temporelle-friseplanning--ergonomie-calendrier">Synchronisation Temporelle Frise/Planning &amp; Ergonomie Calendrier</a></li>
+<li><a href="#12-%C3%A9volution-impl%C3%A9ment%C3%A9e--choix-dune-date-pr%C3%A9cise-dans-le-formulaire-nouvelle-%C3%A9tape-mode-hybride-date-picker--%C3%A9ch%C3%A9ance-relative">Choix d&#39;une Date Précise dans le Formulaire « Nouvelle Étape » (Mode Hybride)</a></li>
+<li><a href="#13-moteur-de-planification-ia-avec-dates-pr%C3%A9cises-par-t%C3%A2che--groupement-dactivit%C3%A9s">Moteur de Planification IA avec Dates Précises par Tâche &amp; Groupement d&#39;Activités</a></li>
+<li><a href="#14-automatisation-des-appels-doffres--pr%C3%A9-s%C3%A9lection-du-type-de-prestataire--estimation-budg%C3%A9taire">Automatisation des Appels d&#39;Offres : Pré-sélection du Type de Prestataire &amp; Estimation Budgétaire</a></li>
+<li><a href="#15-enrichissement-automatique-des-exigences-sp%C3%A9cifiques--priorit%C3%A9s-depuis-le-quiz">Enrichissement Automatique des Exigences Spécifiques &amp; Priorités depuis le Quiz</a></li>
+<li><a href="#16-synchronisation--restitution-int%C3%A9grale-du-profil-prestataire-site-web-t%C3%A9l%C3%A9phone-email--validation">Synchronisation &amp; Restitution Intégrale du Profil Prestataire (Site Web, Téléphone, Email &amp; Validation)</a></li>
+<li><a href="#17-importation-s%C3%A9curis%C3%A9e-des-avis-google-business-profile-avec-verrou-anti-usurpation">Importation Sécurisée des Avis Google Business Profile avec Verrou Anti-Usurpation</a></li>
+<li><a href="#18-correction--support-universel-des-vid%C3%A9os-portfolio-youtube-shorts-vimeo-mp4">Correction &amp; Support Universel des Vidéos Portfolio (YouTube, Shorts, Vimeo, MP4)</a></li>
+<li><a href="#19-proposition-d%C3%A9volution--affichage-du-budget-d%C3%A9di%C3%A9-par-prestation-et-saisie-du-tarif-chiffr%C3%A9-dans-la-r%C3%A9ponse-%C3%A0-lappel-doffres">Proposition d&#39;Évolution : Affichage du Budget Dédié par Prestation et Saisie du Tarif Chiffré</a></li>
+<li><a href="#20-correctifs-du-workflow-des-appels-doffres--r%C3%A9solution-projet-introuvable-statuts-dynamiques-r%C3%A9pondu-retenu--valid%C3%A9--cl%C3%B4tur%C3%A9-et-c%C3%A9l%C3%A9bration">Correctifs du Workflow des Appels d&#39;Offres : Résolution « Projet introuvable », Statuts Dynamiques &amp; Célébration</a></li>
+<li><a href="#21-proposition-d%C3%A9volution--synchronisation-collaborative-du-calendrier-et-des-t%C3%A2ches-pr%C3%A9paratoires-entre-le-couple-et-le-prestataire-retenu">Proposition d&#39;Évolution : Synchronisation Collaborative du Calendrier et des Tâches Préparatoires</a></li>
+<li><a href="#22-syst%C3%A8me-dindicateurs-et-pastilles-de-notification-visuelles-sur-les-menus-de-navigation-espace-prestataire-admin-et-couple">Système d&#39;Indicateurs et Pastilles de Notification Visuelles sur les Menus de Navigation</a></li>
+</ol>
+<hr>
+<h2>1. Correction de la Frise Chronologique &amp; Tri Temporel</h2>
+<h3>🎯 Problème identifié</h3>
+<ul>
+<li><strong>Inversion temporelle (voyage dans le temps)</strong> : Les jalons de la frise s&#39;affichaient dans un ordre incohérent (ex: Étape 01 en février 2026, Étape 02 en décembre 2026, Étape 03 en novembre 2026, Étape 04 en août 2026).</li>
+<li><strong>Syndrome du jour &quot;28&quot;</strong> : 100% des jalons tombaient le 28 du mois parce que le calcul soustrayait des mois entiers sur le jour fixe de la date du mariage sans étalement naturel.</li>
+<li><strong>Hallucination des dates par l&#39;IA</strong> : Le prompt demandait à l&#39;IA de fournir un champ <code>idealDeadline</code> en date ISO. L&#39;IA confondait le numéro de mois calendaire avec <code>monthsBeforeWedding</code> et renvoyait des dates incohérentes qui écrasaient le calcul du composant.</li>
+<li><strong>Absence de tri sur la date finale</strong> : Les éléments étaient affichés sans tri sur <code>targetDate.getTime()</code>.</li>
+</ul>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/result/page.tsx"><code>app/(couple)/espace-couple/result/page.tsx</code></a></h4>
+<ul>
+<li><strong>Calcul robuste de la date (<code>computeMilestoneTargetDate</code>)</strong> : Calcule la date exacte de chaque jalon à partir de <code>weddingDate</code> et de son délai <code>monthsBeforeWedding</code> (en jours réels avec <code>30.4375</code> j/mois).</li>
+<li><strong>Étalement dynamique des dates</strong> : Application d&#39;un décalage naturel de -4 à +4 jours selon la position du jalon pour éviter la répétition artificielle du jour du mariage sur toutes les étapes.</li>
+<li><strong>Tri chronologique croissant strict garanti</strong> : Application d&#39;un <code>sort((a, b) =&gt; a.targetDate.getTime() - b.targetDate.getTime())</code>. L&#39;étape 01 est toujours la plus ancienne, l&#39;étape 02 lui succède dans le temps, jusqu&#39;au Jour J en étape finale.</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/report/reportHelpers.ts"><code>lib/report/reportHelpers.ts</code></a></h4>
+<ul>
+<li><strong>Mise à jour de <code>normalizeMilestones</code></strong> : Ne se laisse plus court-circuiter par une chaîne <code>idealDeadline</code> erratique.</li>
+<li><strong>Tri chronologique croissant</strong> appliqué sur toutes les étapes retournées pour les dashboards et vues synthétiques.</li>
+</ul>
+<h4>3. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/ai/prompts/timeline.prompt.ts"><code>lib/ai/prompts/timeline.prompt.ts</code></a></h4>
+<ul>
+<li><strong>Contraintes strictes d&#39;ordre chronologique</strong> : Ajout de la règle exigeant un <code>monthsBeforeWedding</code> strictement décroissant (12, 10, 9, 8, 6, 5, 4, 3, 2, 1, 0.25, 0).</li>
+<li><strong>Enchaînement canonique explicité</strong> : Fourniture de la séquence logique standard de l&#39;industrie du mariage (Lieu <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Traiteur <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Photo <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Tenues/DJ <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Déco <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Faire-part <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Alliances/Dégustation <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Logistique <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> Jour J).</li>
+<li><strong>Conservation de tous les attributs d&#39;analyse</strong> : Maintien et clarification des instructions pour <code>priority</code>, <code>urgency</code>, <code>timeNeeded</code>, <code>consequences</code>, <code>dependencies</code>, <code>tasks</code>, et la couverture exhaustive des préparatifs.</li>
+</ul>
+<hr>
+<h2>2. Refonte du Service Email SMTP (Universel &amp; Haute Performance)</h2>
+<h3>🎯 Objectif</h3>
+<p>Rendre le moteur d&#39;envoi d&#39;emails universel et opérationnel en production avec n&#39;importe quel fournisseur SMTP (Brevo/Sendinblue, Mailjet, Postmark, AWS SES, OVH, Gmail, etc.) ou en développement local avec Maildev/Mailtrap.</p>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/email/send.ts"><code>lib/email/send.ts</code></a></h4>
+<ul>
+<li><strong>Détection TLS/SSL automatique intelligente</strong> :<ul>
+<li>Port <code>465</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> SSL direct (<code>secure: true</code>).</li>
+<li>Port <code>587</code>, <code>25</code> ou <code>1025</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> STARTTLS moderne (<code>secure: false</code>).</li>
+<li>Possibilité de surcharge manuelle via <code>SMTP_SECURE=&quot;true&quot;</code> ou <code>&quot;false&quot;</code>.</li>
+</ul>
+</li>
+<li><strong>Suppression du blocage <code>ignoreTLS</code></strong> : Le code précédent forçait <code>ignoreTLS: true</code> en environnement de développement, ce qui provoquait le rejet immédiat de la connexion par les serveurs SMTP professionnels.</li>
+<li><strong>Pool de connexions &amp; Performance</strong> : <code>pool: true</code> avec <code>maxConnections: 5</code> et <code>maxMessages: 100</code> en production pour réutiliser les sockets réseau et accélérer l&#39;envoi d&#39;emails.</li>
+<li><strong>Timeouts réseau stricts</strong> : 10s pour la connexion, 5s pour le handshake de bienvenue, 15s pour le socket (évite le blocage indéfini des workers Next.js en cas d&#39;incident réseau).</li>
+<li><strong>Formatage d&#39;expéditeur conforme RFC 5322</strong> : <code>&quot;&lt;span class=&quot;math-inline&quot;&gt;&lt;span class=&quot;katex&quot;&gt;&lt;span class=&quot;katex-mathml&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mrow&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;mi&gt;R&lt;/mi&gt;&lt;mi&gt;O&lt;/mi&gt;&lt;msub&gt;&lt;mi&gt;M&lt;/mi&gt;&lt;mi&gt;N&lt;/mi&gt;&lt;/msub&gt;&lt;mi&gt;A&lt;/mi&gt;&lt;mi&gt;M&lt;/mi&gt;&lt;mi&gt;E&lt;/mi&gt;&lt;/mrow&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;quot;&lt;/mi&gt;&lt;mo&gt;&amp;lt;&lt;/mo&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;{FROM_NAME}&amp;quot; &amp;lt;&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;&lt;/span&gt;&lt;span class=&quot;katex-html&quot; aria-hidden=&quot;true&quot;&gt;&lt;span class=&quot;katex-base&quot;&gt;&lt;span class=&quot;katex-strut&quot; style=&quot;height:0.8444em;vertical-align:-0.15em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.1389em;&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.0077em;&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.0278em;&quot;&gt;O&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.109em;&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;msupsub&quot;&gt;&lt;span class=&quot;vlist-t vlist-t2&quot;&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.3283em;&quot;&gt;&lt;span style=&quot;top:-2.55em;margin-left:-0.109em;margin-right:0.05em;&quot;&gt;&lt;span class=&quot;pstrut&quot; style=&quot;height:2.7em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;katex-sizing reset-size6 size3 mtight&quot;&gt;&lt;span class=&quot;mord mathnormal mtight&quot; style=&quot;margin-right:0.109em;&quot;&gt;N&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-s&quot;&gt;​&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;vlist-r&quot;&gt;&lt;span class=&quot;vlist&quot; style=&quot;height:0.15em;&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.109em;&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;mord mathnormal&quot; style=&quot;margin-right:0.0576em;&quot;&gt;E&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;mord&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;mspace&quot; style=&quot;margin-right:0.2778em;&quot;&gt;&lt;/span&gt;&lt;span class=&quot;mrel&quot;&gt;&amp;lt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;{FROM_EMAIL}&gt;</code> avec nettoyage des guillemets pour une délivrabilité maximale (anti-spam).</li>
+<li><strong>Logs et diagnostics d&#39;erreur détaillés</strong> : Affichage clair du code d&#39;erreur (ex: <code>EAUTH</code>, <code>ECONNREFUSED</code>, <code>ETIMEDOUT</code>) et du retour serveur en cas d&#39;échec.</li>
+</ul>
+<hr>
+<h2>3. Documentation Complète des Variables d&#39;Environnement (.env.example)</h2>
+<h3>🎯 Objectif</h3>
+<p>Fournir un template propre, exhaustif et sécurisé pour faciliter le déploiement et la configuration locale ou de production sans divulguer de secrets.</p>
+<h3>🛠️ Fichiers créés &amp; modifiés</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/.env.example"><code>c:\Users\sidia\OneDrive\Documents\App\wedding-ai-builder\.env.example</code></a> <em>(Création)</em></h4>
+<ul>
+<li>Documentation de l&#39;intégralité des 10 blocs de configuration :<ol>
+<li>Application &amp; Sécurité (<code>NEXT_PUBLIC_APP_URL</code>, <code>JWT_SECRET</code>, <code>ADMIN_PASSWORD</code>, <code>USE_LOCAL_DB</code>)</li>
+<li>Intelligence Artificielle (<code>OPENAI_API_KEY</code>, <code>OPENAI_MODEL</code>)</li>
+<li>Firebase Client Web (<code>NEXT_PUBLIC_FIREBASE_*</code>)</li>
+<li>Firebase Admin Serveur (<code>FIREBASE_PROJECT_ID</code>, <code>FIREBASE_CLIENT_EMAIL</code>, <code>FIREBASE_PRIVATE_KEY</code>)</li>
+<li>SMTP Universel (Blocs prêts à l&#39;emploi pour Maildev, Brevo, Gmail, Mailjet, OVH)</li>
+<li>Stripe &amp; Monétisation (<code>STRIPE_SECRET_KEY</code>, <code>NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY</code>, ID des tarifs d&#39;abonnements)</li>
+<li>Médias Cloudinary (<code>NEXT_PUBLIC_CLOUDINARY_*</code>)</li>
+<li>Cache Redis (<code>REDIS_URL</code>)</li>
+<li>Analytics PostHog (<code>NEXT_PUBLIC_POSTHOG_*</code>)</li>
+<li>Supabase Auth (<code>NEXT_PUBLIC_SUPABASE_*</code>)</li>
+</ol>
+</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/.env.local"><code>.env.local</code></a></h4>
+<ul>
+<li>Clarification de la section SMTP avec des exemples commentés prêts à décommenter.</li>
+</ul>
+<hr>
+<h2>4. Sécurisation Métier : Validation des Dates Futures &amp; Montants Positifs</h2>
+<h3>🎯 Objectif</h3>
+<p>Empêcher la saisie de dates passées (mariages, disponibilités prestataires, appels d&#39;offres) et bloquer les valeurs négatives sur les montants financiers et quantités.</p>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>Côté Frontend (UI &amp; Formulaires)</h4>
+<ul>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/components/quiz/QuestionDate.tsx"><code>components/quiz/QuestionDate.tsx</code></a> : <code>min={today}</code>, validation <code>date &gt;= today</code> ou <code>&quot;not-fixed&quot;</code>, message d&#39;erreur clair et désactivation du bouton Suivant si date passée.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/components/quiz/QuestionBudget.tsx"><code>components/quiz/QuestionBudget.tsx</code></a> : <code>min={1}</code>, blocage des touches <code>-</code> et <code>e</code> à la frappe, validation stricte <code>&gt; 0</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/components/quiz/QuestionGuests.tsx"><code>components/quiz/QuestionGuests.tsx</code></a> : <code>min={1}</code> pour les adultes, <code>min={0}</code> pour les enfants, blocage des touches <code>-</code> et <code>e</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/mariage/page.tsx"><code>app/(couple)/espace-couple/mariage/page.tsx</code></a> : <code>weddingDate</code> bloqué au futur (<code>min={today}</code>), budget et invités avec <code>min={0}</code> et assainissement <code>Math.max(0)</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/components/couple/TenderFormModal.tsx"><code>components/couple/TenderFormModal.tsx</code></a> : <code>budgetMin</code> et <code>budgetMax</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\ge 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span></span> avec vérification <code>budgetMax &gt;= budgetMin</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/prestataires/nouveau/page.tsx"><code>app/(couple)/espace-couple/prestataires/nouveau/page.tsx</code></a> : Budgets d&#39;appels d&#39;offres avec <code>min={0}</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/budget/page.tsx"><code>app/(couple)/espace-couple/budget/page.tsx</code></a> : Dépenses prévues et réelles avec <code>min={0}</code>, <code>step=&quot;0.01&quot;</code> et assainissement dans <code>saveExpense</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/liste-souhaits/page.tsx"><code>app/(couple)/espace-couple/liste-souhaits/page.tsx</code></a> : Prix unitaire <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\ge 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span></span>, quantité <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\ge 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/wishlist/%5BshareToken%5D/page.tsx"><code>app/wishlist/[shareToken]/page.tsx</code></a> : Montant de contribution cagnotte invité <code>min={1}</code>, <code>step=&quot;0.01&quot;</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28vendor%29/espace-prestataire/calendrier/page.tsx"><code>app/(vendor)/espace-prestataire/calendrier/page.tsx</code></a> : Blocage de dates d&#39;indisponibilité <code>min={today}</code> (interdiction de bloquer des dates passées).</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28vendor%29/espace-prestataire/profil/page.tsx"><code>app/(vendor)/espace-prestataire/profil/page.tsx</code></a> : Tarifs min/max, rayon d&#39;action et années d&#39;expérience avec <code>min={0}</code> et <code>Math.max(0)</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28vendor%29/espace-prestataire/cadeaux/page.tsx"><code>app/(vendor)/espace-prestataire/cadeaux/page.tsx</code></a> : Prix de cadeaux avec <code>min={0}</code>, quantité <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\ge 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28marketing%29/devenir-professionnel/page.tsx"><code>app/(marketing)/devenir-professionnel/page.tsx</code></a> : Formulaire d&#39;inscription pro avec <code>min={0}</code> sur tous les champs numériques.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/admin/cagnottes/page.tsx"><code>app/admin/cagnottes/page.tsx</code></a> : Montant de reversement virement <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>0.01</mn></mrow><annotation encoding="application/x-tex">\ge 0.01</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">0.01</span></span></span></span></span>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/admin/parametres/page.tsx"><code>app/admin/parametres/page.tsx</code></a> : Prix des forfaits et mois d&#39;engagement <code>min={1}</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/admin/abonnements/page.tsx"><code>app/admin/abonnements/page.tsx</code></a> : Jours d&#39;essai et de report <code>min={1}</code>.</li>
+</ul>
+<h4>Côté Backend (Schémas Zod &amp; Routes API)</h4>
+<ul>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/vendor/calendar/route.ts"><code>app/api/vendor/calendar/route.ts</code></a> : Rejet systématique de toute date antérieure à aujourd&#39;hui (<code>&gt;= todayStr</code>).</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/couple/project/route.ts"><code>app/api/couple/project/route.ts</code></a> : Refine Zod interdisant une <code>weddingDate</code> passée, <code>guestCount.min(0)</code>, <code>budget.amount.min(0)</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/quiz/answer/route.ts"><code>app/api/quiz/answer/route.ts</code></a> : Date de mariage passée rejetée, budget et invités validés non-négatifs.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/couple/tenders/route.ts"><code>app/api/couple/tenders/route.ts</code></a> : <code>budgetRange.min &gt;= 0</code>, <code>max &gt;= min</code>, <code>weddingDate &gt;= todayStr</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/wishlist/items/route.ts"><code>app/api/wishlist/items/route.ts</code></a> : <code>price.min(0)</code>, <code>quantity.min(1)</code>.</li>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/vendor/proposals/route.ts"><code>app/api/vendor/proposals/route.ts</code></a> : Montant de devis validé <code>z.number().nonnegative()</code>.</li>
+</ul>
+<hr>
+<h2>5. Planning Adaptatif (Anti-dates Passées) &amp; Bouton de Régénération IA</h2>
+<h3>🎯 Problème identifié</h3>
+<ul>
+<li><strong>Dates passées sur la frise</strong> : Si un mariage est prévu en mars 2027 et qu&#39;on est en septembre 2026 (délai de 6 mois), l&#39;application appliquait aveuglément un rétroplanning standard de 12 mois (<code>M-12</code>), ce qui faisait apparaître des étapes en <strong>mars 2026</strong> (6 mois dans le passé !).</li>
+<li><strong>Régénération difficile</strong> : L&#39;utilisateur n&#39;avait pas de moyen simple de redéclencher un calcul IA frais sans recommencer le quiz.</li>
+<li><strong>Visualisation de la réponse brute</strong> : La réponse complète de l&#39;IA n&#39;était pas exportée dans un fichier facilement consultable.</li>
+</ul>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/result/page.tsx"><code>app/(couple)/espace-couple/result/page.tsx</code></a></h4>
+<ul>
+<li><strong>Planning adaptatif (compression proportionnelle)</strong> :<ul>
+<li>Détection du nombre de jours réels restants entre aujourd&#39;hui et la date du mariage.</li>
+<li>Si le délai restant est inférieur au délai standard (ex: 6 mois restants), l&#39;échéancier est compressé proportionnellement sur l&#39;intervalle <code>[aujourd&#39;hui, Jour J]</code>.</li>
+<li>La première étape commence <strong>maintenant (septembre 2026)</strong> et la dernière est le Jour J.</li>
+<li>Sécurité mathématique absolue : <code>target &lt; today</code> est impossible (verrouillé par <code>safeDaysBefore</code> et garde-fou).</li>
+</ul>
+</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/report/reportHelpers.ts"><code>lib/report/reportHelpers.ts</code></a></h4>
+<ul>
+<li>Application de la même logique de planning adaptatif dans <code>normalizeMilestones</code> pour éviter toute date dans le passé sur l&#39;ensemble des vues de reporting.</li>
+</ul>
+<h4>3. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/ai/prompts/timeline.prompt.ts"><code>lib/ai/prompts/timeline.prompt.ts</code></a></h4>
+<ul>
+<li>Injection du délai réel restant calculé (<code>monthsRemaining</code>) dans le prompt envoyé à l&#39;IA.</li>
+<li>Règle stricte imposant à l&#39;IA de ne jamais dépasser ce délai restant pour le premier jalon.</li>
+</ul>
+<h4>4. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/couple/result/route.ts"><code>app/api/couple/result/route.ts</code></a></h4>
+<ul>
+<li><strong>Sauvegarde et export automatique</strong> :<ul>
+<li><strong>Export automatique de 100% de la réponse IA</strong> dans le fichier <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/data/dernier_plan_ia.json"><code>data/dernier_plan_ia.json</code></a> pour inspection directe.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>6. Clarification du Pense-bête Administratif &amp; Audit Budgétaire</h2>
+<h3>🎯 Problème identifié</h3>
+<ul>
+<li><strong>Jargon technique incompréhensible pour les futurs mariés</strong> : Les badges du pense-bête affichaient des codes tels que <code>M-3 À M-1</code> ou <code>M-2</code>. Les utilisateurs ne comprenaient pas la signification (&quot;mois moins 3&quot;).</li>
+<li><strong>Question sur les prix de la bannière Matching</strong> : Les cartes affichant <code>Traiteur : 2 300 €</code> et <code>Photo : 890 €</code> laissaient planer le doute sur leur provenance (IA ou hasard).</li>
+</ul>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/result/page.tsx"><code>app/(couple)/espace-couple/result/page.tsx</code></a></h4>
+<ul>
+<li><strong>Remplacement du jargon par un français naturel</strong> dans <code>ADMINISTRATIVE_STEPS</code> :<ul>
+<li><code>M-3 à M-1</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> <strong>« 3 à 1 mois avant le jour J »</strong></li>
+<li><code>M-2</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> <strong>« 2 mois avant le jour J »</strong></li>
+<li><code>M-3</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> <strong>« 3 mois avant le jour J »</strong></li>
+<li><code>Avant le mariage</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> <strong>« 3 à 6 mois avant le jour J »</strong></li>
+<li><code>Dès que possible</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> <strong>« Dès fixation de la date »</strong></li>
+<li><code>Dès signature des gros contrats</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> <strong>« Dès les premiers acomptes »</strong></li>
+</ul>
+</li>
+<li><strong>Clarification des cartes de matching</strong> :<ul>
+<li>Ces prix sont des valeurs d&#39;illustration statiques (mockup design UI) présentes dans le template promotionnel CTA et non des calculs IA dynamiques.</li>
+</ul>
+</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/planning/page.tsx"><code>app/(couple)/espace-couple/planning/page.tsx</code></a></h4>
+<ul>
+<li><strong>Harmonisation complète du calendrier &amp; du sélecteur d&#39;échéances</strong> :<ul>
+<li>Élimination des libellés cryptiques <code>M-12</code>, <code>M-1</code> dans le menu déroulant de création d&#39;étape <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> affichage en français clair : <strong>« 12 mois avant le jour J »</strong>, <strong>« Jour J (Le grand jour) »</strong>.</li>
+<li>Remplacement du fallback des cartes jalons de la sidebar (<code>M-&lt;span class=&quot;math-inline&quot;&gt;&lt;span class=&quot;katex&quot;&gt;&lt;span class=&quot;katex-mathml&quot;&gt;&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mrow&gt;&lt;mi&gt;m&lt;/mi&gt;&lt;mi&gt;o&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;/mrow&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;‘&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mi&gt;p&lt;/mi&gt;&lt;mi&gt;a&lt;/mi&gt;&lt;mi&gt;r&lt;/mi&gt;&lt;mo&gt;∗&lt;/mo&gt;&lt;mo&gt;∗&lt;/mo&gt;&lt;mtext&gt;«&lt;/mtext&gt;&lt;/mrow&gt;&lt;annotation encoding=&quot;application/x-tex&quot;&gt;{month}</code>) par <strong>\text{«}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal">m</span><span class="mord mathnormal">o</span><span class="mord mathnormal">n</span><span class="mord mathnormal">t</span><span class="mord mathnormal">h</span></span><span class="mord">‘</span><span class="mclose">)</span><span class="mord mathnormal">p</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.0278em;">r</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.4653em;"></span><span class="mord">∗</span><span class="mord text"><span class="mord">«</span></span></span></span></span></span>{month} mois avant »</strong>.</li>
+</ul>
+</li>
+</ul>
+<h4>3. Audit &amp; Validation de la Planification Budgétaire</h4>
+<ul>
+<li><strong>Cohérence mathématique stricte</strong> :<ul>
+<li>La somme de tous les postes de dépenses est strictement verrouillée : <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∑</mo><mtext>breakdown</mtext><mo>=</mo><mtext>totalBudget</mtext></mrow><annotation encoding="application/x-tex">\sum \text{breakdown} = \text{totalBudget}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord text"><span class="mord">breakdown</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">totalBudget</span></span></span></span></span></span> (précision à l&#39;euro près, sans perte d&#39;arrondi).</li>
+<li>La somme de l&#39;ensemble des quotes-parts en pourcentage égale exactement 100%.</li>
+</ul>
+</li>
+<li><strong>Référentiel &amp; Ratios sectoriels certifiés (Marché Français)</strong> :<ul>
+<li><strong>Lieu de réception + Traiteur &amp; Boissons</strong> : 45% à 55% du budget total (les deux postes majeurs incompressibles).</li>
+<li><strong>Photographe &amp; Vidéaste</strong> : 8% à 12% du budget (prestation qualitative professionnelle).</li>
+<li><strong>Tenues des mariés, Alliances &amp; Beauté</strong> : 8% à 12% du total.</li>
+<li><strong>Décoration &amp; Fleuriste</strong> : 7% à 11% du total.</li>
+<li><strong>Musique &amp; Animation / DJ</strong> : 4% à 6% du total.</li>
+<li><strong>Imprévus &amp; Sécurité (<code>contingency</code>)</strong> : <strong>8% à 12% obligatoire</strong> (standard de gestion des risques wedding planner pour faire face aux surcoûts de dernière minute).</li>
+<li><strong>Papeterie, Transport, Logistique &amp; Cadeaux</strong> : 4% à 8%.</li>
+</ul>
+</li>
+<li><strong>Pondération contextuelle basée sur les réponses du Quiz</strong> :<ul>
+<li><strong>Enfants présents</strong> : Ajustement du ratio traiteur pour tenir compte des menus enfants (coût réduit par rapport aux adultes).</li>
+<li><strong>Invités venant de loin</strong> : Augmentation automatique du poste hébergement / logistique (+50% d&#39;allocation).</li>
+<li><strong>Prestataires non retenus</strong> : Si le couple retire un poste (ex: pas de vidéaste ou pas d&#39;officiant), la quote-part est mise à zéro et redistribuée équitablement sur les postes prioritaires sans modifier le budget global.</li>
+<li><strong>Géolocalisation</strong> : Prise en compte de la tension de marché (Paris / Île-de-France et Côte d&#39;Azur ajustés à la hausse par rapport aux zones rurales).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>7. Fiabilisation &amp; Déterminisme des Prompts IA (Timeline &amp; Budget)</h2>
+<h3>🎯 Objectif</h3>
+<p>Éliminer toute ambiguïté dans les consignes transmises au LLM pour garantir que les réponses soient mathématiquement exactes, alignées avec les schémas Zod et conformes aux réalités économiques de l&#39;industrie du mariage.</p>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/ai/prompts/budget.prompt.ts"><code>lib/ai/prompts/budget.prompt.ts</code></a></h4>
+<ul>
+<li><strong>Verrouillage mathématique explicite</strong> :<ul>
+<li>La consigne stipule formellement que la somme de <code>breakdown</code> doit égaler au centime/euro près le <code>totalBudget</code>.</li>
+<li>La somme des <code>percentages</code> doit être exactement égale à 100%.</li>
+<li>La réserve <code>contingency</code> est encadrée contractuellement entre 8% et 12% du total.</li>
+</ul>
+</li>
+<li><strong>Réalisme économique sectoriel</strong> :<ul>
+<li>Intégration des ratios réels du marché français : le couple Lieu + Traiteur représente 45% à 60% du budget global.</li>
+<li>Ajustement automatique selon la zone géographique (+20% à +35% pour Paris/Île-de-France et Côte d&#39;Azur).</li>
+</ul>
+</li>
+<li><strong>Fallbacks robustes</strong> : Si le couple omet de renseigner un budget ou une ville, des valeurs par défaut saines (20 000 €, 60 invités, Paris) évitent l&#39;envoi de variables <code>undefined</code> au modèle.</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/ai/prompts/timeline.prompt.ts"><code>lib/ai/prompts/timeline.prompt.ts</code></a></h4>
+<ul>
+<li><strong>Bornage strict du nombre de jalons</strong> : Exigence explicite de 8 à 14 milestones (recommandé 10 à 12) pour respecter le validateur Zod.</li>
+<li><strong>Typage strict de <code>nextCriticalStep</code></strong> : <code>daysLeft</code> doit impérativement être un nombre entier positif de jours.</li>
+<li><strong>Interdiction formelle des dates passées</strong> : Injection dynamique du nombre de mois réels restant jusqu&#39;au Jour J (<code>monthsRemaining</code>).</li>
+</ul>
+<hr>
+<h2>8. Synthèse des Mécanismes de Sécurité Budgétaire</h2>
+<div class="table-container"><table>
+<thead>
+<tr>
+<th align="left">Mécanisme</th>
+<th align="left">Règle appliquée</th>
+<th align="left">Garant / Validateur</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Somme des dépenses</strong></td>
+<td align="left"><code>Somme(breakdown) == totalBudget</code></td>
+<td align="left">Schéma Zod + Prompt IA + Reliquat d&#39;arrondi réinjecté</td>
+</tr>
+<tr>
+<td align="left"><strong>Somme des pourcentages</strong></td>
+<td align="left"><code>Somme(percentages) == 100%</code></td>
+<td align="left">Normalisation mathématique (<code>ratios / sum</code>)</td>
+</tr>
+<tr>
+<td align="left"><strong>Poste Imprévus</strong></td>
+<td align="left">8% à 12% du budget global</td>
+<td align="left">Obligatoire dans Zod (<code>min 8, max 12</code>) et dans le Prompt</td>
+</tr>
+<tr>
+<td align="left"><strong>Paliers de risque par catégorie</strong></td>
+<td align="left"><code>planned</code>, <code>recommended</code>, <code>realisticMin</code>, <code>realisticMax</code></td>
+<td align="left">Ratios certifiés du marché du mariage français</td>
+</tr>
+<tr>
+<td align="left"><strong>Dépassements &amp; Économies</strong></td>
+<td align="left"><code>overrunEstimate</code> et <code>savingsPotential</code> calculés par poste</td>
+<td align="left">Moteur d&#39;audit budgétaire</td>
+</tr>
+</tbody></table>
+</div><hr>
+<h2>9. Proposition d&#39;Évolution : Refonte de la Gestion Budgétaire (Enveloppes Cibles IA vs Dépenses Réelles &amp; Acomptes)</h2>
+<h3>📌 Contexte &amp; Diagnostic du problème identifié</h3>
+<p>Actuellement, lorsqu&#39;un utilisateur clique sur <strong>« Utiliser ce plan »</strong> dans l&#39;espace budget, le système génère des lignes de dépenses génériques brutes (<code>WeddingExpense</code>) pour chaque poste (ex : Libellé : <code>&quot;Traiteur&quot;</code>, <code>plannedAmount : 5 000 €</code>, <code>actualAmount : null</code>).</p>
+<p><strong>Le cas d&#39;usage réel qui pose problème :</strong></p>
+<ol>
+<li>Le plan IA prévoyait par exemple <strong>5 000 €</strong> pour le traiteur.</li>
+<li>Le couple signe un contrat traiteur à <strong>5 000 €</strong> et verse un <strong>acompte de 1 500 €</strong> (avec 3 500 € à régler plus tard).</li>
+<li>L&#39;utilisateur clique sur <em>« Nouvelle dépense »</em> et enregistre : Libellé <code>&quot;Acompte traiteur&quot;</code>, Prévu <code>5 000 €</code>, Réel <code>1 500 €</code>.</li>
+<li><strong>Effet indésirable constaté</strong> : Le montant planifié de la catégorie devient <strong>10 000 €</strong> (<span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mtext> </mtext><mn>000</mn><mtext>  € (IA)</mtext><mo>+</mo><mn>5</mn><mtext> </mtext><mn>000</mn><mrow><mtext>  € (nouvelle d</mtext><mover accent="true"><mtext>e</mtext><mo>ˊ</mo></mover><mtext>pense)</mtext></mrow></mrow><annotation encoding="application/x-tex">5,000\text{ \text{ \text{€}} (IA)} + 5,000\text{ \text{ \text{€}} (nouvelle dépense)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">5</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mord text"><span class="mord"> </span><span class="mord text"><span class="mord"> </span><span class="mord text"><span class="mord">€</span></span></span><span class="mord"> (IA)</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">5</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span><span class="mord text"><span class="mord"> </span><span class="mord text"><span class="mord"> </span><span class="mord text"><span class="mord">€</span></span></span><span class="mord"> (nouvelle d</span><span class="mord katex-accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord">e</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;"><span class="mord">ˊ</span></span></span></span></span></span></span><span class="mord">pense)</span></span></span></span></span></span>), doublant artificiellement le prévisionnel. De plus, la notion d&#39;acompte et de solde restant à payer n&#39;est pas formalisée.</li>
+</ol>
+<hr>
+<h3>💡 Spécification de la Solution Proposée</h3>
+<h4>1. Découplage clair : « Enveloppe Budgétaire Cible » vs « Dépenses Réelles »</h4>
+<ul>
+<li><strong>L&#39;Enveloppe Budgétaire</strong> (issue du plan IA ou ajustée manuellement) représente l&#39;<strong>objectif / le plafond cible</strong> alloué à la catégorie (ex : 5 000 € pour le traiteur). Elle ne doit pas être enregistrée comme une simple dépense dans la liste.</li>
+<li><strong>Les Dépenses Réelles</strong> représentent les contrats, acomptes et factures effectivement engagés auprès des prestataires.</li>
+</ul>
+<h4>2. Enrichissement du formulaire de dépense</h4>
+<p>Pour chaque dépense ou contrat saisi par le couple :</p>
+<ul>
+<li><strong>Montant total du devis / contrat</strong> (ex : 4 800 €).</li>
+<li><strong>Acompte / Montant déjà payé</strong> (ex : 1 500 €).</li>
+<li><strong>Reste à payer (Solde)</strong> calculé automatiquement (<span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn><mtext> </mtext><mn>800</mn><mo>−</mo><mn>1</mn><mtext> </mtext><mn>500</mn><mo>=</mo><mn>3</mn><mtext> </mtext><mn>300</mn><mtext>  €</mtext></mrow><annotation encoding="application/x-tex">4,800 - 1,500 = 3,300\text{ \text{ \text{€}}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">4</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">800</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">500</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.6444em;"></span><span class="mord">3</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">300</span><span class="mord text"><span class="mord"> </span><span class="mord text"><span class="mord"> </span><span class="mord text"><span class="mord">€</span></span></span></span></span></span></span></span>).</li>
+<li><strong>Statut de paiement</strong> : <em>Acompte versé</em>, <em>Payé en totalité</em>, ou <em>En attente de règlement</em>.</li>
+</ul>
+<h4>3. Algorithme de calcul intelligent par catégorie</h4>
+<p>Pour chaque catégorie (ex : Traiteur) :</p>
+<ul>
+<li><strong>Budget Cible (Plan IA)</strong> : <code>5 000 €</code></li>
+<li><strong>Montant Engagé (Devis signés)</strong> : <code>4 800 €</code> <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> <em>Marge / Économie prévisionnelle : +200 €</em></li>
+<li><strong>Déjà Payé (Acomptes versés)</strong> : <code>1 500 €</code></li>
+<li><strong>Reste à payer (Trésorerie future)</strong> : <code>3 300 €</code></li>
+</ul>
+<p><strong>Règle d&#39;absorption anti-doublon :</strong></p>
+<ul>
+<li>Tant qu&#39;aucune dépense réelle n&#39;est saisie pour une catégorie, le montant planifié affiché est celui de l&#39;<strong>Enveloppe Cible IA</strong>.</li>
+<li>Dès qu&#39;au moins une dépense réelle est créée dans cette catégorie, ce sont les <strong>contrats réels</strong> qui alimentent le prévisionnel, supprimant tout risque de double comptage avec l&#39;estimation IA initiale.</li>
+</ul>
+<hr>
+<h2>10. Correction du Planning : Déduplication, Étalement Temporel &amp; Bornage des Délais</h2>
+<h3>🎯 Problèmes identifiés</h3>
+<ol>
+<li><strong>Doublons massifs des tâches (72 au lieu de 36)</strong> : Une boucle d&#39;auto-import intempestive côté client déclenchait 36 requêtes <code>POST</code> à chaque chargement de <code>/espace-couple/planning</code>, dupliquant chaque tâche dans la base.</li>
+<li><strong>Entassement artificiel sur le 1er du mois</strong> : Toutes les tâches d&#39;un mois étaient brutalement affectées au 1er jour (<code>target.setDate(1)</code>), saturant le 1er du mois (6+ tâches) et laissant le reste du mois complètement vide.</li>
+<li><strong>Absence de contexte thématique</strong> : Les tâches s&#39;affichaient sans mention de leur Jalon d&#39;origine (<em>Planifier la papeterie</em>, <em>DJ &amp; Animation</em>), donnant une impression d&#39;actions aléatoires.</li>
+<li><strong>Sélecteur de mois non borné dans la modal</strong> : Le formulaire d&#39;ajout d&#39;étape affichait les mois jusqu&#39;à 24 mois avant le mariage, même si le mariage a lieu dans 6 mois (permettant la sélection de dates passées).</li>
+</ol>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/couple/tasks/route.ts"><code>app/api/couple/tasks/route.ts</code></a></h4>
+<ul>
+<li><strong>Déduplication &amp; assainissement automatique</strong> :<ul>
+<li>Filtrage strict dans <code>GET</code> par clé unique <code>title + monthsBeforeWedding</code>.</li>
+<li>Nettoyage et suppression automatique des doublons résiduels en base de données pour ramener immédiatement le projet aux 36 tâches uniques réelles.</li>
+</ul>
+</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/planning/page.tsx"><code>app/(couple)/espace-couple/planning/page.tsx</code></a></h4>
+<ul>
+<li><strong>Suppression de l&#39;auto-import en boucle</strong> : L&#39;importation initiale n&#39;a lieu que si la collection de tâches est rigoureusement vide (<code>existingTasks.length === 0</code>).</li>
+<li><strong>Étalement réaliste au fil du mois</strong> :<ul>
+<li>Remplacement de <code>setDate(1)</code> par une répartition intelligente des tâches par semaine (ex : jour 7 pour la 1ère tâche, jour 15 pour la 2ème, jour 23 pour la 3ème).</li>
+<li>Pour les tâches du Jour J (<code>monthsBeforeWedding &lt;= 0</code>), la date cible est fixée exactement le jour du mariage.</li>
+</ul>
+</li>
+<li><strong>Bornage strict du sélecteur de mois dans la modal</strong> :<ul>
+<li>Le champ <em>« Mois avant le mariage »</em> calcule dynamiquement <code>maxSelectableMonths</code> à partir de la date réelle du mariage.</li>
+<li>Si le mariage est dans 6 mois, les options s&#39;arrêtent strictement à <strong>« 6 mois avant le jour J »</strong> (impossible de choisir 12 ou 24 mois dans le passé).</li>
+</ul>
+</li>
+<li><strong>Association des Jalons thématiques</strong> :<ul>
+<li>Ajout d&#39;un badge contextuel (ex : 🏷️ <em>Planifier la papeterie</em>, 🏷️ <em>Réserver le DJ &amp; l&#39;animation</em>) dans la popup des détails du jour pour chaque tâche.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>11. Synchronisation Temporelle Frise/Planning &amp; Ergonomie Calendrier</h2>
+<h3>🎯 Problèmes identifiés</h3>
+<ol>
+<li><strong>Écart de dates entre la Frise (<code>/result</code>) et le Planning (<code>/planning</code>)</strong> :<ul>
+<li>Sur la frise, les dates étaient calculées par un algorithme adaptatif compressé évitant les dates passées.</li>
+<li>Sur le calendrier, les dates étaient calculées indépendamment avec un décalage mensuel brut (<code>weddingDate - monthsBeforeWedding</code>), créant un décalage flagrant où une étape n&#39;apparaissait pas au même mois entre la frise et le calendrier.</li>
+</ul>
+</li>
+<li><strong>Ergonomie dégradée du calendrier</strong> : Pour voir les tâches d&#39;une journée, l&#39;utilisateur devait obligatoirement cliquer avec précision sur le minuscule lien <code>+3 autres</code>.</li>
+</ol>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/utils/timelineDates.ts"><code>lib/utils/timelineDates.ts</code></a> [NOUVEAU]</h4>
+<ul>
+<li><strong>Moteur de calcul de date unique et partagé</strong> :<ul>
+<li>Centralisation de <code>computeMilestoneTargetDate</code> pour garantir une concordance temporelle mathématiquement absolue entre toutes les vues de l&#39;application.</li>
+</ul>
+</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/result/page.tsx"><code>app/(couple)/espace-couple/result/page.tsx</code></a></h4>
+<ul>
+<li>Utilisation de la fonction unifiée <code>computeMilestoneTargetDate</code>.</li>
+</ul>
+<h4>3. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/planning/page.tsx"><code>app/(couple)/espace-couple/planning/page.tsx</code></a></h4>
+<ul>
+<li><strong>Synchronisation totale avec les jalons de la frise</strong> :<ul>
+<li>Chaque tâche hérite directement de la date calculée pour son jalon parent sur la frise.</li>
+<li><strong>Correction du décalage négatif anti-date passée</strong> : Remplacement de l&#39;étalement négatif qui avait fait glisser une tâche au 8 septembre par un étalement strictement positif vers l&#39;avant (<span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mn>0</mn><mo separator="true">,</mo><mo>+</mo><mn>2</mn><mo separator="true">,</mo><mo>+</mo><mn>4</mn><mtext> jours</mtext></mrow><annotation encoding="application/x-tex">+0, +2, +4\text{ jours}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.8623em;vertical-align:-0.1944em;"></span><span class="mord">+</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">+</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">+</span><span class="mord">4</span><span class="mord text"><span class="mord"> jours</span></span></span></span></span></span>), avec verrou absolu <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mtext>aujourd’hui</mtext></mrow><annotation encoding="application/x-tex">\ge \text{aujourd&#x27;hui}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord">aujourd’hui</span></span></span></span></span></span>.</li>
+</ul>
+</li>
+<li><strong>Ergonomie à double niveau</strong> :<ul>
+<li><strong>Clic direct sur une tâche</strong> : Ouvre immédiatement la modale de modification de cette tâche précise.</li>
+<li><strong>Clic sur la case du jour</strong> : Ouvre la vue complète des étapes de la journée.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>12. Évolution Implémentée : Choix d&#39;une Date Précise dans le Formulaire « Nouvelle Étape » (Mode Hybride Date Picker / Échéance Relative)</h2>
+<h3>📌 Contexte &amp; Diagnostic</h3>
+<p>Auparavant, lors de la création d&#39;une nouvelle étape, l&#39;utilisateur ne pouvait renseigner qu&#39;un mois relatif (<em>« X mois avant le jour J »</em>), le jour précis étant calculé automatiquement par l&#39;application.</p>
+<p>Dans l&#39;organisation réelle d&#39;un mariage, les couples ont souvent des rendez-vous et échéances très précises (ex : <em>« Dégustation traiteur le samedi 24 octobre »</em>, <em>« Rendez-vous essayage robe le 18 novembre »</em>).</p>
+<hr>
+<h3>🛠️ Solution Implémentée &amp; Fonctionnalités Livrées</h3>
+<ol>
+<li><strong>Mode Hybride Élégant dans la Modale Planning (<code>app/(couple)/espace-couple/planning/page.tsx</code>)</strong> :<ul>
+<li><strong>Sélecteur de mode à onglets pilules discrets</strong> : Intégration parfaite dans la charte graphique (<code>rounded-full</code>, fond <code>#fef2f4</code>, bordure <code>#EDEDF0</code>, typographie harmonieuse).</li>
+<li><strong>Mode « 📅 Date précise » (Recommandé / Par défaut)</strong> :<ul>
+<li>Champ sélecteur de date natif stylisé (<code>rounded-[28px]</code>, bordure <code>border-2 border-[#EDEDF0]</code>, texte <code>#0E0E10</code>).</li>
+<li>Bornage de sécurité : date minimale fixée à aujourd&#39;hui (<code>min</code>), date maximale bornée au jour J du mariage (<code>max</code>).</li>
+<li>Rétro-calcul automatique : calcul instantané et silencieux du nombre de mois relatifs correspondants pour conserver une synchronisation parfaite avec les filtres et les jalons.</li>
+</ul>
+</li>
+<li><strong>Mode « ⏳ Mois avant le jour J »</strong> :<ul>
+<li>Conservation intégrale du menu déroulant existant pour les couples qui n&#39;ont pas encore arrêté de date fixe.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Support Backend &amp; Base de Données (<code>types/marketplace.ts</code> &amp; <code>app/api/couple/tasks/route.ts</code>)</strong> :<ul>
+<li>Ajout du champ <code>dueDate?: string | null</code> sur l&#39;interface <code>TimelineTask</code>.</li>
+<li>Prise en compte dans <code>TaskSchema</code> (création) et <code>UpdateSchema</code> (mise à jour) de l&#39;API <code>/api/couple/tasks</code>.</li>
+<li>Persistance sécurisée via <code>taskRepo.create</code> et <code>taskRepo.update</code>.</li>
+</ul>
+</li>
+<li><strong>Affichage Direct sur le Calendrier</strong> :<ul>
+<li>La fonction <code>getTaskTargetDate()</code> applique en priorité absolue <code>task.dueDate</code>, positionnant automatiquement l&#39;étape sur le jour exact choisi par les mariés.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>13. Moteur de Planification IA avec Dates Précises par Tâche &amp; Groupement d&#39;Activités</h2>
+<h3>📌 Contexte &amp; Diagnostic du problème identifié</h3>
+<ol>
+<li><strong>Pollution visuelle des badges unitaires (Résolu immédiatement)</strong> :<ul>
+<li>Le calendrier affichait un badge rose « 1 étape » sur chaque case contenant une tâche, alourdissant considérablement la lecture.</li>
+<li><em>Action immédiate appliquée</em> : Le badge ne s&#39;affiche désormais que lorsqu&#39;une journée regroupe <strong>plusieurs étapes</strong> (<code>dayTasks.length &gt; 1</code>), indiquant clairement un regroupement d&#39;actions.</li>
+</ul>
+</li>
+<li><strong>Limite de l&#39;étalement algorithmique frontend (+0, +2, +4 jours)</strong> :<ul>
+<li>Auparavant, l&#39;IA ne générait qu&#39;un délai mensuel relatif (<code>monthsBeforeWedding</code>) au niveau du jalon et une liste de libellés de tâches en texte brut (<code>tasks: string[]</code>).</li>
+<li>Le code frontend devait alors deviner le jour du mois. Pour éviter que toutes les tâches ne tombent le même jour, un décalage artificiel de +2 jours était appliqué.</li>
+<li><strong>Conséquence néfaste</strong> : Dans la vraie vie, un couple peut et doit souvent <strong>réaliser plusieurs tâches le même jour</strong> (ex : samedi de visites de lieux, dégustation traiteur + choix du gâteau l&#39;après-midi, démarches en mairie un matin de semaine). L&#39;étalement artificiel empêchait ce regroupement naturel.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>🛠️ Solution Implémentée &amp; Livrables Techniques</h3>
+<p>L&#39;Intelligence Artificielle génère désormais directement la date recommandée (<code>suggestedDate</code> / <code>dueDate</code>) pour chaque tâche selon des règles métier rigoureuses, avec regroupement intelligent d&#39;activités sur la même journée lorsque cela est opportun.</p>
+<h4>1. Critères Métier appliqués par l&#39;IA lors de la planification</h4>
+<ul>
+<li><strong>Différenciation Week-end vs Semaine ouvrée</strong> :<ul>
+<li><strong>Samedis / Dimanches</strong> (<code>dayContext: &quot;weekend&quot;</code>) : Réservés aux activités nécessitant des déplacements ou la présence de proches (visite de domaines, dégustation de menu, essayage de tenues, salon du mariage, EVJF/EVG).</li>
+<li><strong>Lundi au Vendredi</strong> (<code>dayContext: &quot;weekday&quot;</code>) : Dédiés aux formalités administratives et contractuelles (dépôt du dossier en mairie, rendez-vous notaire, signatures de devis, virements bancaires d&#39;acomptes).</li>
+</ul>
+</li>
+<li><strong>Groupement Intelligent d&#39;activités (Batching)</strong> :<ul>
+<li>L&#39;IA assigne la même date exacte à 2 ou 3 tâches complémentaires pour optimiser les journées d&#39;organisation des futurs mariés.</li>
+</ul>
+</li>
+<li><strong>Respect strict de la chronologie et des contraintes légales</strong> :<ul>
+<li>Publication des bans : obligatoirement au moins 10 jours avant la date du mariage.</li>
+<li>Clôture des RSVP : 6 à 8 semaines avant le mariage.</li>
+<li>Essayages finaux : 3 à 4 semaines avant le jour J.</li>
+</ul>
+</li>
+<li><strong>Bornage temporel dynamique &amp; Zéro date passée</strong> :<ul>
+<li>L&#39;IA reçoit la date du jour (<code>now</code>) et la date du mariage (<code>weddingDate</code>) pour garantir des dates réalistes et chronologiques.</li>
+</ul>
+</li>
+</ul>
+<h4>2. Évolution du Schéma IA &amp; Rétrocompatibilité Totale</h4>
+<ul>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/types/domain.ts"><code>types/domain.ts</code></a> &amp; <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/types/marketplace.ts"><code>types/marketplace.ts</code></a></strong> :<ul>
+<li>Définition de l&#39;interface <code>TimelineTaskItem</code> (<code>title</code>, <code>suggestedDate?</code>, <code>dayContext?</code>, <code>reasoning?</code>).</li>
+<li>Typage tolérant <code>tasks: (string | TimelineTaskItem)[]</code> sur <code>TimelineMilestone</code> et présence de <code>dueDate?: string | null</code> sur <code>TimelineTask</code>.</li>
+</ul>
+</li>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/ai/schema.ts"><code>lib/ai/schema.ts</code></a></strong> :<ul>
+<li>Déclaration de <code>TimelineTaskItemSchema</code> et union <code>TaskItemOrStringSchema = z.union([z.string().min(1), TimelineTaskItemSchema])</code> assurant une compatibilité sans faille avec les réponses IA existantes ou structurées.</li>
+</ul>
+</li>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/ai/prompts/timeline.prompt.ts"><code>lib/ai/prompts/timeline.prompt.ts</code></a></strong> :<ul>
+<li>Configuration du prompt système avec les directives de week-end vs jours ouvrés, regroupement (batching) et format <code>YYYY-MM-DD</code>.</li>
+<li>Injection des dates précises du jour et du mariage dans le prompt utilisateur.</li>
+</ul>
+</li>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/db/repositories/taskRepo.ts"><code>lib/db/repositories/taskRepo.ts</code></a></strong> :<ul>
+<li>Mise à jour de <code>createFromTimeline</code> pour extraire automatiquement le libellé et la date d&#39;échéance <code>dueDate</code> de chaque tâche structurée générée par l&#39;IA.</li>
+</ul>
+</li>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/planning/page.tsx"><code>app/(couple)/espace-couple/planning/page.tsx</code></a></strong> :<ul>
+<li>Import initial intégrant le <code>dueDate</code> suggéré par l&#39;IA.</li>
+<li>Fonction <code>getTaskTargetDate()</code> appliquant immédiatement <code>task.dueDate</code> sans recalcul heuristique.</li>
+</ul>
+</li>
+<li><strong>Vues de restitution du plan</strong> :<ul>
+<li><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/result/page.tsx"><code>app/(couple)/espace-couple/result/page.tsx</code></a> et <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28app%29/result/%5BsessionId%5D/components/TimelineSection.tsx"><code>TimelineSection.tsx</code></a> adaptés pour afficher proprement les libellés quelle que soit la structure (string ou objet).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>14. Automatisation des Appels d&#39;Offres : Pré-sélection du Type de Prestataire &amp; Estimation Budgétaire</h2>
+<h3>🎯 Problèmes identifiés</h3>
+<ol>
+<li><strong>Perte du contexte de la catégorie sélectionnée</strong> :<ul>
+<li>Lorsqu&#39;un utilisateur cliquait sur un type de prestataire (ex : <em>Traiteur</em>, <em>Photographe / Vidéaste</em>) puis cliquait sur <em>« Lancer mon appel d&#39;offres »</em>, la modale s&#39;ouvrait avec le menu déroulant sur <em>« Choisir une catégorie »</em> (vide). L&#39;utilisateur devait chercher et re-sélectionner manuellement la catégorie.</li>
+</ul>
+</li>
+<li><strong>Saisie manuelle fastidieuse du budget</strong> :<ul>
+<li>Les champs <em>« Min »</em> et <em>« Max »</em> du budget étaient systématiquement vides, alors que l&#39;application dispose déjà d&#39;un budget global pour le mariage et d&#39;une ventilation financière issue du plan IA.</li>
+</ul>
+</li>
+<li><strong>Condition de désactivation bloquante (<code>!formTouched</code>)</strong> :<ul>
+<li>Le bouton d&#39;envoi exigeait formellement que le formulaire ait été touché manuellement, ce qui empêchait la validation directe d&#39;une demande dont les informations étaient déjà complètes.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>🛠️ Fichiers créés &amp; modifiés</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/utils/budgetEstimator.ts"><code>lib/utils/budgetEstimator.ts</code></a> [CRÉATION]</h4>
+<ul>
+<li><strong>Moteur d&#39;estimation budgétaire contextuel (<code>estimateBudgetForCategory</code>)</strong> :<ul>
+<li><strong>Priorité 1 (Plan IA)</strong> : Récupère les fourchettes précises (<code>realisticMin</code> et <code>realisticMax</code> ou <code>planned</code>) générées pour le poste concerné dans l&#39;audit IA.</li>
+<li><strong>Priorité 2 (Budget global du couple)</strong> : Si aucun plan IA n&#39;est encore généré mais que le couple a défini un budget global et sélectionné ce métier dans ses catégories souhaitées, applique les ratios certifiés du marché français sur le montant total.</li>
+<li><strong>Règle stricte d&#39;absence de budget (Zéro valeur par défaut arbitraire)</strong> : S&#39;il n&#39;y a aucun budget disponible ou alloué à cette catégorie (ou si aucun budget n&#39;a été défini), le système ne pré-remplit rien. Les champs Min et Max restent rigoureusement vides (<code>&quot;&quot;</code>) pour laisser l&#39;utilisateur libre de sa saisie.</li>
+<li>Arrondi propre des montants à la tranche de 50 € la plus proche.</li>
+</ul>
+</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/components/couple/TenderFormModal.tsx"><code>components/couple/TenderFormModal.tsx</code></a></h4>
+<ul>
+<li><strong>Synchronisation dynamique à l&#39;ouverture</strong> :<ul>
+<li>Dès l&#39;ouverture de la modale avec une catégorie pré-sélectionnée, le menu déroulant est automatiquement calé sur cette catégorie (<code>value={category}</code>).</li>
+<li>La tranche de budget (<code>budgetMin</code> et <code>budgetMax</code>) est instantanément renseignée avec les valeurs estimées.</li>
+</ul>
+</li>
+<li><strong>Réactivité au changement de sélection</strong> :<ul>
+<li>Si l&#39;utilisateur change de catégorie dans le menu déroulant, les tranches budgétaires s&#39;ajustent immédiatement au nouveau métier choisi.</li>
+</ul>
+</li>
+<li><strong>Indicateur visuel rassurant</strong> :<ul>
+<li>Ajout d&#39;un badge <em>« ✨ Auto-rempli »</em> et d&#39;un message contextuel informant le couple de la source de l&#39;estimation (<em>« Estimation issue de votre plan IA personnalisé »</em> ou <em>« Estimation calculée sur votre budget global »</em>).</li>
+<li>Si l&#39;utilisateur ajuste manuellement les montants, le badge disparaît naturellement pour respecter sa saisie.</li>
+</ul>
+</li>
+<li><strong>Déblocage immédiat de l&#39;action</strong> :<ul>
+<li>Remplacement de la condition restrictive par <code>disabled={launching || !category}</code>, permettant de lancer la demande en 1 clic.</li>
+</ul>
+</li>
+</ul>
+<h4>3. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/prestataires/page.tsx"><code>app/(couple)/espace-couple/prestataires/page.tsx</code></a></h4>
+<ul>
+<li>Chargement du plan IA (<code>/api/couple/result</code>) en parallèle des appels d&#39;offres et transmission directe à <code>TenderFormModal</code>.</li>
+<li>Préservation de la catégorie active lors du passage par la boîte de dialogue de confirmation de remplacement des suggestions.</li>
+</ul>
+<h4>4. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/prestataires/nouveau/page.tsx"><code>app/(couple)/espace-couple/prestataires/nouveau/page.tsx</code></a></h4>
+<ul>
+<li>Intégration du moteur d&#39;estimation budgétaire automatique sur la page dédiée <code>/espace-couple/prestataires/nouveau</code>.</li>
+<li>Support de la pré-sélection par URL (<code>?category=...</code>).</li>
+</ul>
+<hr>
+<h2>15. Enrichissement Automatique des Exigences Spécifiques &amp; Priorités depuis le Quiz</h2>
+<h3>🎯 Problème identifié</h3>
+<p>Lors de la création d&#39;un appel d&#39;offres (dans <code>TenderFormModal</code> ou sur <code>/prestataires/nouveau</code>), les champs <strong>« Exigences spécifiques »</strong> et <strong>« Priorité principale »</strong> restaient systématiquement vides. L&#39;utilisateur devait retaper à la main des informations qu&#39;il avait déjà renseignées lors de son parcours initial (notamment à l&#39;<strong>Étape 7 : Besoins spécifiques des invités</strong> et à l&#39;<strong>Étape 9 : Priorité n°1</strong>).</p>
+<hr>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/utils/budgetEstimator.ts"><code>lib/utils/budgetEstimator.ts</code></a></h4>
+<ul>
+<li><strong>Fonction <code>estimateRequirementsForCategory(category, project)</code></strong> :<ul>
+<li><strong>Règle stricte d&#39;authenticité (Zéro extrapolation)</strong> : Seules les exigences expressément et personnellement renseignées par le couple à l&#39;<strong>Étape 7 du Quiz (Besoins spécifiques)</strong> sont pré-remplies.</li>
+<li><strong>Traiteur</strong> : Traduction exacte des régimes alimentaires cochés (<em>Végétarien</em>, <em>Vegan</em>, <em>Halal</em>, <em>Casher</em>, <em>Sans gluten</em>) et retranscription textuelle intégrale du champ libre des allergies réelles saisies au clavier par le couple (<em>Allergies : ...</em>).</li>
+<li><strong>Lieu de réception</strong> : Restitution de l&#39;accès PMR (<em>Accès PMR - personnes à mobilité réduite</em>) uniquement si le couple a explicitement coché <em>« Oui »</em> à la question sur la mobilité réduite.</li>
+<li><strong>Toutes les autres catégories (Transport, Photographe, DJ, Fleuriste, Déco, etc.)</strong> : Aucun besoin spécifique n&#39;ayant été demandé ou configuré pour ces métiers lors du Quiz, <strong>le champ reste rigoureusement vide</strong>. Aucune extrapolation artificielle (pas de navettes gare/aéroport inventées, pas de duplication des styles/ambiances).</li>
+</ul>
+</li>
+<li><strong>Fonction <code>estimatePriorityForCategory(category, project)</code></strong> :<ul>
+<li>Restitution claire de la priorité n°1 déclarée par le couple au Quiz (<em>Maîtriser le budget</em>, <em>Lieu coup de cœur</em>, <em>Qualité de prestation</em>, <em>Confort des invités</em>, <em>Zéro stress</em>). Reste vide si non renseignée.</li>
+</ul>
+</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/components/couple/TenderFormModal.tsx"><code>components/couple/TenderFormModal.tsx</code></a></h4>
+<ul>
+<li>Pré-remplissage automatique des champs dès l&#39;ouverture de la modale.</li>
+<li>Ré-évaluation dynamique en temps réel si l&#39;utilisateur change de corps de métier dans la liste déroulante.</li>
+<li>Ajout d&#39;un badge distinctif mauve <em>« ✨ Issu de vos réponses Quiz »</em> et <em>« ✨ Priorité n°1 Quiz »</em> au-dessus des champs pour valoriser l&#39;intelligence de la plateforme.</li>
+<li>Préservation de la liberté totale de modification ou d&#39;ajout par l&#39;utilisateur.</li>
+</ul>
+<h4>3. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/prestataires/nouveau/page.tsx"><code>app/(couple)/espace-couple/prestataires/nouveau/page.tsx</code></a></h4>
+<ul>
+<li>Application de la même logique d&#39;auto-remplissage et d&#39;indicateurs visuels sur la page autonome <code>/espace-couple/prestataires/nouveau</code>.</li>
+</ul>
+<hr>
+<h2>16. Synchronisation &amp; Restitution Intégrale du Profil Prestataire (Site Web, Téléphone, Email &amp; Validation)</h2>
+<h3>🎯 Problèmes identifiés</h3>
+<ol>
+<li><strong>Site web absent du portfolio après inscription</strong> : Lors de l&#39;inscription sur <code>/devenir-professionnel</code>, l&#39;URL saisie dans le champ <code>form.website</code> était transmise à la racine du payload mais <code>portfolio.website</code> recevait une variable interne vide <code>form.portfolioWebsite</code>. Sur <code>/espace-prestataire/portfolio</code>, le composant ne lisant que <code>portfolio.website</code>, le champ apparaissait vierge et le bouton Globe restait désactivé (<code>pointer-events-none</code>).</li>
+<li><strong>Statut « Vérification en cours » persistant malgré validation admin</strong> : Lorsque l&#39;administrateur approuvait un profil via <code>/admin/candidatures</code>, l&#39;API (<code>/api/admin/vendor/[id]</code>) mettait à jour le champ <code>status: &quot;approved&quot;</code>, mais laissait le booléen <code>verified</code> à sa valeur par défaut <code>false</code>. De plus, l&#39;API publique <code>/api/public/vendors/[id]</code> omettait la propriété <code>verified</code>, masquant le sceau de certification sur la fiche.</li>
+<li><strong>Coordonnées masquées (Téléphone &amp; Email)</strong> : L&#39;API <code>/api/public/vendors/[id]</code> filtrait et omettait délibérément <code>phone</code> et <code>email</code> dans <code>pickPublicVendor</code>. Par conséquent, sur la prévisualisation du portfolio (<code>/prestataires/preview/[vendorId]</code>), les coordonnées affichaient systématiquement « Non renseigné » malgré leur enregistrement en base de données.</li>
+</ol>
+<hr>
+<h3>🛠️ Fichiers modifiés &amp; Détails des changements</h3>
+<h4>1. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28marketing%29/devenir-professionnel/page.tsx"><code>app/(marketing)/devenir-professionnel/page.tsx</code></a></h4>
+<ul>
+<li>Synchronisation lors de l&#39;envoi de la candidature : <code>portfolio.website</code> est désormais alimenté par <code>form.website || form.portfolioWebsite || null</code>.</li>
+</ul>
+<h4>2. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/vendor/apply/route.ts"><code>app/api/vendor/apply/route.ts</code></a></h4>
+<ul>
+<li>Harmonisation bidirectionnelle : Le profil créé stocke l&#39;URL du site web à la fois à la racine (<code>website</code>) et dans l&#39;objet imbriqué (<code>portfolio.website</code>).</li>
+</ul>
+<h4>3. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28vendor%29/espace-prestataire/portfolio/page.tsx"><code>app/(vendor)/espace-prestataire/portfolio/page.tsx</code></a></h4>
+<ul>
+<li>Lecture résiliente : <code>setWebsite(json.profile?.portfolio?.website || json.profile?.website || &quot;&quot;)</code>.</li>
+<li>Enregistrement synchronisé : Lors de la sauvegarde du portfolio, le site web est mis à jour à la fois à la racine et dans l&#39;objet <code>portfolio</code>.</li>
+<li>Bouton Globe sécurisé : Préfixage automatique en <code>https://</code> pour éviter toute redirection relative si le prestataire a omis le protocole.</li>
+</ul>
+<h4>4. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28vendor%29/espace-prestataire/profil/page.tsx"><code>app/(vendor)/espace-prestataire/profil/page.tsx</code></a></h4>
+<ul>
+<li>Lors de la modification des coordonnées dans l&#39;espace profil, la mise à jour du champ <code>website</code> est automatiquement propagée à <code>portfolio.website</code>.</li>
+</ul>
+<h4>5. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/admin/vendor/%5Bid%5D/route.ts"><code>app/api/admin/vendor/[id]/route.ts</code></a></h4>
+<ul>
+<li>Activation automatique du label vérifié : Lorsque l&#39;admin passe un statut à <code>&quot;approved&quot;</code>, le profil prestataire reçoit désormais automatiquement <code>verified: true</code> (et <code>verified: false</code> si rejeté). Déclenche les +5 points d&#39;expérience et de réputation dans le moteur de matching IA.</li>
+</ul>
+<h4>6. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/public/vendors/%5Bid%5D/route.ts"><code>app/api/public/vendors/[id]/route.ts</code></a></h4>
+<ul>
+<li>Restitution complète des données publiques autorisées : Ajout de <code>phone</code>, <code>email</code>, <code>verified</code> et <code>status</code> dans l&#39;objet retourné aux visiteurs et futurs mariés.</li>
+</ul>
+<h4>7. <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28marketing%29/prestataires/preview/%5BvendorId%5D/page.tsx"><code>app/(marketing)/prestataires/preview/[vendorId]/page.tsx</code></a> &amp; <a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/prestataires/profil/%5BvendorId%5D/page.tsx"><code>app/(couple)/espace-couple/prestataires/profil/[vendorId]/page.tsx</code></a></h4>
+<ul>
+<li>Restitution des coordonnées cliquables : Le téléphone génère un lien d&#39;appel direct <code>tel:...</code> et l&#39;email un lien <code>mailto:...</code>.</li>
+<li>Tampon et statut de vérification : Affichage effectif du sceau « Profil vérifié » et de la mention « Vérification : Vérifié » en vert dès que le profil est approuvé.</li>
+</ul>
+<hr>
+<h2>17. Importation Sécurisée des Avis Google Business Profile avec Verrou Anti-Usurpation</h2>
+<h3>🎯 Contexte &amp; Objectif</h3>
+<p>Permettre aux professionnels inscrits sur la plateforme d&#39;importer leurs avis clients réels depuis leur fiche Google (Google Business Profile / Google Maps) pour renforcer la crédibilité de leur portfolio et accélérer la signature avec les futurs mariés.</p>
+<p><strong>Exigence absolue de sécurité</strong> : Garantir de façon infaillible que seul le véritable propriétaire de l&#39;établissement puisse importer les avis de sa fiche, éliminant tout risque d&#39;usurpation où un prestataire malveillant s&#39;approprierait la réputation d&#39;un confrère concurrent.</p>
+<hr>
+<h3>🛡️ Architecture &amp; Verrous Techniques Implémentés</h3>
+<h4>1. Verrou Anti-Usurpation &amp; Service Dédié (<a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/services/googleBusinessService.ts"><code>lib/services/googleBusinessService.ts</code></a>)</h4>
+<ul>
+<li><strong>Normalisation &amp; Concordance stricte de domaine (<code>normalizeDomain</code>, <code>checkDomainMatch</code>)</strong> :<ul>
+<li>Extraction automatique du nom de domaine officiel renseigné sur la fiche Google Maps (ex. <code>chateau-saint-martin.com</code>).</li>
+<li>Comparaison avec le site web déclaré ou l&#39;adresse email professionnelle du prestataire.</li>
+</ul>
+</li>
+<li><strong>Défi de sécurité OTP (6 chiffres, TTL 15 minutes)</strong> :<ul>
+<li>Transmission d&#39;un code de vérification unique à l&#39;adresse email du domaine (<code>contact@chateau-saint-martin.com</code>) ou à l&#39;adresse de compte.</li>
+<li>Masquage de sécurité de l&#39;adresse de destination (ex. <code>co***@chateau-saint-martin.com</code>).</li>
+</ul>
+</li>
+<li><strong>Support Google Places API &amp; Sandbox haute fidélité</strong> :<ul>
+<li>Intégration directe avec l&#39;API Google Places (<code>GOOGLE_PLACES_API_KEY</code>) pour la recherche d&#39;établissement, les avis réels et le Place ID.</li>
+<li>Mode sandbox certifié haute fidélité pour le développement local et les démonstrations.</li>
+</ul>
+</li>
+</ul>
+<h4>2. Routes API Dédiées (<a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/vendor/google-business"><code>app/api/vendor/google-business/...</code></a>)</h4>
+<ul>
+<li><code>POST /lookup</code> : Recherche instantanée de l&#39;établissement par nom ou URL Maps avec contexte prestataire.</li>
+<li><code>POST /request-verification</code> : Analyse de concordance anti-usurpation et émission du défi OTP.</li>
+<li><code>POST /verify</code> : Validation du code OTP, certification de la fiche et importation automatique des avis dans <code>vendor.portfolio.googleBusiness</code>.</li>
+<li><code>POST /sync</code> : Synchronisation en 1 clic des derniers avis et de la note Google.</li>
+<li><code>POST /disconnect</code> : Dissociation sécurisée de la fiche à la demande du professionnel.</li>
+</ul>
+<h4>3. Espace Prestataire (<a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28vendor%29/espace-prestataire/portfolio/page.tsx"><code>app/(vendor)/espace-prestataire/portfolio/page.tsx</code></a>)</h4>
+<ul>
+<li><strong>Intégration directe &amp; intuitive dans la card « Avis clients »</strong> : Bouton officiel Google placé à côté du bouton d&#39;ajout d&#39;avis manuel (<code>+</code>) pour éviter la redondance d&#39;une carte séparée.</li>
+<li><strong>Modale épurée en 3 étapes</strong> : Présentation claire et sans verbiage anxiogène (Recherche de l&#39;établissement &gt; Confirmation de la fiche &gt; Code de validation).</li>
+<li><strong>Affichage combiné des avis</strong> : Encart certifié Google avec lien vers Google Maps, bouton de resynchronisation et affichage distinctif des avis officiels importés et des avis manuels.</li>
+</ul>
+<h4>4. Restitution Côté Mariés &amp; Portfolio Public</h4>
+<ul>
+<li><strong>Portfolio Public (<a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28marketing%29/prestataires/preview/%5BvendorId%5D/page.tsx"><code>app/(marketing)/prestataires/preview/[vendorId]/page.tsx</code></a>)</strong> :<ul>
+<li>Badge distinctif officiel Google dans la fiche technique latérale : <em>« Avis Google certifiés ★★★★★ (4.9/5 - 42 avis) »</em> avec lien de vérification direct vers Google Maps.</li>
+<li>Onglet <em>« Avis &amp; Réputation »</em> : Mise en valeur prioritaire des avis certifiés Google avec logo officiel Google, note et date.</li>
+</ul>
+</li>
+<li><strong>Espace Couple (<a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/%28couple%29/espace-couple/prestataires/profil/%5BvendorId%5D/page.tsx"><code>app/(couple)/espace-couple/prestataires/profil/[vendorId]/page.tsx</code></a>)</strong> :<ul>
+<li>Intégration miroir du badge certifié Google et des avis certifiés pour les futurs mariés consultant le profil du prestataire.</li>
+</ul>
+</li>
+</ul>
+<h4>5. Moteur de Matching IA (<a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/lib/matching/engine.ts"><code>lib/matching/engine.ts</code></a>)</h4>
+<ul>
+<li><strong>Bonus de réputation (+5 points)</strong> dans le calcul algorithmique de compatibilité (<code>computeRuleBasedMatchScore</code>) pour tout prestataire dont la fiche Google est certifiée avec une note <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>4.0</mn><mi mathvariant="normal">/</mi><mn>5</mn></mrow><annotation encoding="application/x-tex">\ge 4.0/5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="katex-base"><span class="katex-strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">4.0/5</span></span></span></span></span>.</li>
+<li>Transmission des données certifiées Google au modèle d&#39;analyse IA (<code>googleCertified</code> dans le prompt).</li>
+</ul>
+<hr>
+<hr>
+<h2>18. Correction &amp; Support Universel des Vidéos Portfolio (YouTube, Shorts, Vimeo, MP4)</h2>
+<h3>🚨 Problème Identifié</h3>
+<ul>
+<li>Les prestataires enregistraient des liens vers des vidéos de présentation au format <strong>YouTube</strong> ou <strong>YouTube Shorts</strong> (ex. <code>https://youtube.com/shorts/U3E3TT3SluQ...</code>).</li>
+<li>Côté front-end, l&#39;application utilisait une balise native <code>&lt;video src={url} controls /&gt;</code> :<ul>
+<li><strong>Incompatibilité technique</strong> : Un élément HTML5 <code>&lt;video&gt;</code> est exclusivement conçu pour des fichiers conteneurs bruts (<code>.mp4</code>, <code>.webm</code>, <code>.ogg</code>). Il est incapable de lire une page Web YouTube ou Vimeo, générant un écran noir ou une erreur de décodage média.</li>
+<li>De plus, les vidéos n&#39;étaient pas intégrées sur la page de prévisualisation publique (<code>/prestataires/preview/[id]</code>), et la gestion dans l&#39;espace prestataire n&#39;affichait aucun retour visuel.</li>
+<li>La mention <code>Dossier n° [HASH]</code> affichait un code aléatoire de base de données donnant une impression de texte technique non nettoyé.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3>🛠️ Correctifs &amp; Améliorations Apportés</h3>
+<ol>
+<li><p><strong>Création du composant unifié <code>VideoEmbed</code> (<code>components/shared/VideoEmbed.tsx</code>)</strong> :</p>
+<ul>
+<li>Détection automatique et conversion à la volée des URLs :<ul>
+<li><strong>YouTube Shorts</strong> (<code>youtube.com/shorts/...</code>) <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> lecteur iframe embarqué <code>youtube-nocookie.com/embed/...</code>.</li>
+<li><strong>YouTube classique</strong> (<code>watch?v=...</code>, <code>youtu.be/...</code>, <code>embed/...</code>).</li>
+<li><strong>Vimeo</strong> (<code>vimeo.com/...</code>) <span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="katex-base"><span class="katex-strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span></span> lecteur <code>player.vimeo.com/video/...</code>.</li>
+<li><strong>Dailymotion</strong> (<code>dailymotion.com/video/...</code>, <code>dai.ly/...</code>).</li>
+<li><strong>Fichiers vidéo directs</strong> (<code>.mp4</code>, <code>.webm</code>, Cloudinary, S3).</li>
+</ul>
+</li>
+<li>Rendu fluide, responsive (<code>aspect-video</code>), avec paramètres de confidentialité et contrôle d&#39;accès sécurisé.</li>
+</ul>
+</li>
+<li><p><strong>Intégration sur la fiche profil couple (<code>/espace-couple/prestataires/profil/[vendorId]</code>)</strong> :</p>
+<ul>
+<li>Remplacement de la balise <code>&lt;video&gt;</code> obsolète par le composant <code>VideoEmbed</code>.</li>
+<li>Affichage immédiat et fluide des vidéos et Shorts des prestataires.</li>
+<li>Remplacement de la mention <code>Dossier n°</code> par un format élégant <code>Réf. #...</code>.</li>
+</ul>
+</li>
+<li><p><strong>Intégration sur la prévisualisation publique (<code>/prestataires/preview/[vendorId]</code>)</strong> :</p>
+<ul>
+<li>Ajout de la section dédiée <em>« Vidéos de présentation »</em> qui était manquante.</li>
+<li>Mise à niveau de l&#39;en-tête de référence en <code>Réf. #...</code>.</li>
+</ul>
+</li>
+<li><p><strong>Amélioration de l&#39;espace prestataire (<code>/espace-prestataire/portfolio</code>)</strong> :</p>
+<ul>
+<li>Prévisualisation interactive des vidéos ajoutées directement dans le tableau de bord avec lecteur embarqué.</li>
+<li>Précision d&#39;aide contextuelle informant le professionnel des formats pris en charge (YouTube, Shorts, Vimeo, MP4).</li>
+<li>Suppression fluide en un clic.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<hr>
+<h2>19. Proposition d&#39;Évolution : Affichage du Budget Dédié par Prestation et Saisie du Tarif Chiffré dans la Réponse à l&#39;Appel d&#39;Offres</h2>
+<h3>🎯 Contexte &amp; Constat</h3>
+<ul>
+<li><strong>Problème d&#39;ambiguïté budgétaire</strong> : Dans la modale de réponse à un appel d&#39;offres (<code>/espace-prestataire/appels-offres</code>), la ligne budgétaire affiche actuellement le budget global de tout le projet de mariage (ex. <em>« Budget : 20 000 EUR »</em>).</li>
+<li><strong>Impact côté prestataire</strong> : Pour un corps de métier spécifique (ex. <em>Lieu de réception</em> ou <em>Photographe</em>), voir 20 000 € est trompeur car le professionnel peut supposer que cette somme lui est intégralement destinée, alors que le couple a fixé une enveloppe ciblée pour ce besoin (ex. <em>1 000 € - 9 000 €</em>), le reste finançant le traiteur, les tenues, la décoration, etc.</li>
+<li><strong>Absence de champ chiffré dans la réponse</strong> : Actuellement, le formulaire de réponse ne propose qu&#39;une zone de texte libre (<em>« Votre message »</em>). Le prestataire doit écrire son prix au milieu de son message, ce qui complique la comparaison rapide des devis par les futurs mariés.</li>
+</ul>
+<hr>
+<h3>💡 Évolutions &amp; Améliorations Proposées</h3>
+<h4>1. Affichage Transparent &amp; Double Niveau du Budget</h4>
+<ul>
+<li><strong>Niveau 1 (Prioritaire)</strong> : Afficher l&#39;enveloppe budgétaire allouée spécifiquement à la prestation :<blockquote>
+<p><strong>Budget pour cette prestation ([Catégorie]) : [Min] € – [Max] €</strong> <em>(ex. 1 000 € - 9 000 €)</em></p>
+</blockquote>
+</li>
+<li><strong>Niveau 2 (Informatif)</strong> : Préciser le budget global pour permettre au prestataire d&#39;évaluer le standing de l&#39;événement :<blockquote>
+<p><em>(Budget global du mariage : 20 000 €)</em></p>
+</blockquote>
+</li>
+<li><strong>Fallback</strong> : Si le couple n&#39;a pas défini de fourchette précise, indiquer <em>« Selon devis / proposition »</em> avec l&#39;estimation suggérée par le planificateur IA.</li>
+</ul>
+<h4>2. Intégration d&#39;un Champ « Tarif Proposé (€) » dans la Modale</h4>
+<ul>
+<li>Ajouter un champ numérique dédié : <strong>« Votre tarif estimatif (€) »</strong> <em>(optionnel ou recommandé)</em>.</li>
+<li>Exploiter le champ <code>amount</code> déjà prévu et validé dans le schéma backend <code>ProposalSchema</code> (<code>app/api/vendor/proposals/route.ts</code>).</li>
+<li><strong>Affichage sur l&#39;espace couple</strong> : La carte de candidature reçue affichera en gras le montant proposé (ex. <em>« Proposition : 2 500 € »</em>), permettant une comparaison instantanée et transparente entre les différents prestataires candidats.</li>
+</ul>
+<hr>
+<hr>
+<h2>20. Correctifs du Workflow des Appels d&#39;Offres : Résolution « Projet introuvable », Statuts Dynamiques (« Répondu », « Retenu / Validé 🎉 », « Clôturé ») et Célébration</h2>
+<h3>🎯 Problèmes Identifiés &amp; Analysés</h3>
+<ol>
+<li><strong>Erreur « Projet introuvable » lors du clic prestataire</strong> :<ul>
+<li><em>Cause racine</em> : Sur la page <code>/espace-prestataire/propositions</code>, le bouton redirigeait vers <code>/espace-prestataire/appels-offres/${proposal.tenderId}</code> (l&#39;identifiant de l&#39;appel d&#39;offres <code>tenderId</code>), tandis que l&#39;API attendait impérativement un <code>matchId</code>. L&#39;API renvoyait une erreur 404.</li>
+</ul>
+</li>
+<li><strong>Bouton « Répondre » persistant même après acceptation par les mariés</strong> :<ul>
+<li><em>Cause racine</em> : Le code vérifiait uniquement <code>match.status === &quot;contacted&quot;</code>. Dès que le couple validait/sélectionnait le prestataire, <code>match.status</code> passait à <code>&quot;accepted&quot;</code>, faisant échouer la condition et affichant de nouveau par erreur le bouton rouge <em>« Répondre »</em> !</li>
+</ul>
+</li>
+<li><strong>Manque de feedback visuel clair sur la sélection</strong> :<ul>
+<li>Le prestataire retenu par les mariés n&#39;avait aucun moyen immédiat de savoir qu&#39;il avait remporté l&#39;appel d&#39;offres, et la possibilité d&#39;ignorer ou de re-répondre créait de la confusion.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>🛠️ Correctifs Apportés &amp; Fonctionnalités Implémentées</h3>
+<ol>
+<li><p><strong>API Résiliente avec Fallback Universel (<code>app/api/vendor/opportunities/[id]/route.ts</code>)</strong> :</p>
+<ul>
+<li>Supporte désormais aussi bien un <code>matchId</code>, un <code>tenderId</code> ou un <code>projectId</code>.</li>
+<li>Si la recherche directe par clé échoue, une recherche par correspondance (<code>m.tenderId === id || m.projectId === id</code>) retrouve instantanément le bon match et les détails complets du projet.</li>
+<li>L&#39;objet <code>tender</code> avec ses fourchettes budgétaires ciblées est désormais retourné systématiquement.</li>
+</ul>
+</li>
+<li><p><strong>Affichage Dynamique et Cohérent des Statuts sur <code>/espace-prestataire/appels-offres</code></strong> :</p>
+<ul>
+<li><strong>Avant réponse</strong> : Bouton rouge distinctif <strong>« Répondre »</strong> (ou « Activer » si offre gratuite).</li>
+<li><strong>Après réponse</strong> : Badge vert doux <strong>« ✓ Répondu »</strong> (<code>bg-[#e4f4ed] text-[#2e7d5e]</code>), bloquant toute double soumission accidentelle.</li>
+<li><strong>Prestataire sélectionné/validé par le couple</strong> : Badge d&#39;honneur mis en valeur <strong>« Retenu / Validé 🎉 »</strong> (<code>bg-[#d8ecd9] text-[#2e7d5e] font-bold border border-[#2e7d5e]/20</code>).</li>
+<li><strong>Appel d&#39;offres attribué à un autre prestataire ou clôturé</strong> : Badge neutre <strong>« Clôturé »</strong> (<code>bg-[#EDEDF0] text-[#6B6B72]</code>).</li>
+<li><strong>DossierCard &amp; Table Desktop</strong> : Le bouton de suppression/ignorance (X) est automatiquement masqué dès qu&#39;un prestataire a été validé pour son mariage.</li>
+</ul>
+</li>
+<li><p><strong>Page Détail du Projet (<code>/espace-prestataire/appels-offres/[matchId]</code>)</strong> :</p>
+<ul>
+<li><strong>Bannière de félicitations 🎉</strong> : Affichage d&#39;un encart de célébration haut de gamme informant le prestataire qu&#39;il a été choisi par les mariés avec un bouton d&#39;accès direct à la messagerie (<code>/espace-prestataire/messagerie</code>).</li>
+<li><strong>Fiche technique &amp; version mobile</strong> : Statut <em>« Retenu pour ce mariage 🎉 »</em> ou <em>« Proposition envoyée »</em> sur desktop et mobile.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>21. Proposition d&#39;Évolution : Synchronisation Collaborative du Calendrier et des Tâches Préparatoires entre le Couple et le Prestataire Retenu</h2>
+<h3>🎯 Contexte &amp; Constat</h3>
+<ul>
+<li><strong>Synchronisation actuelle partielle</strong> : Dès qu&#39;un couple retient et valide un prestataire (<code>match.status === &quot;accepted&quot;</code>), seule la date du jour J (<code>project.weddingDate</code>) est injectée dans le calendrier du professionnel (<code>/espace-prestataire/calendrier</code>).</li>
+<li><strong>Besoin opérationnel fort</strong> : Dans l&#39;organisation réelle d&#39;un mariage, la prestation ne se limite pas au jour du mariage. Elle implique des étapes préparatoires cruciales et des jalons intermédiaires datés :<ul>
+<li><em>Lieu de réception</em> : Visite technique du domaine, dépôt du chèque de caution, état des lieux d&#39;entrée et remise des clés.</li>
+<li><em>Traiteur</em> : Dégustation test des menus, validation des régimes/allergies, décompte final des convives à M-1.</li>
+<li><em>Photographe / Vidéaste</em> : Séance engagement / shooting préliminaire, brief des photos de groupe et repérage lumière.</li>
+<li><em>DJ / Orchestre</em> : Sélection de la playlist / blacklist, calage des animations avec les témoins, répétition technique.</li>
+</ul>
+</li>
+<li><strong>Cloisonnement actuel</strong> : Ces jalons et checklists restent cantonnés sur l&#39;espace planning du couple (<code>/espace-couple/planning</code>), obligeant le couple et le prestataire à s&#39;échanger des e-mails, SMS ou appels externes pour synchroniser ces dates clés.</li>
+</ul>
+<hr>
+<h3>💡 Évolutions &amp; Améliorations Proposées</h3>
+<h4>1. Filtrage et Rapprochement Automatique par Catégorie Métier</h4>
+<ul>
+<li>L&#39;API du calendrier prestataire (<code>app/api/vendor/calendar/route.ts</code>) interroge les jalons IA et les tâches personnalisées du projet mariage (<code>timeline.milestones</code> &amp; <code>timeline_tasks</code>).</li>
+<li>Filtrer les tâches et sous-étapes dont les mots-clés ou l&#39;étiquette correspondent au corps de métier du prestataire (<code>match.category</code>).</li>
+<li>Calcul automatique de la date cible selon la formule <code>weddingDate - monthsBeforeWedding</code> (ou date butoir fixée par le couple <code>dueDate</code>).</li>
+</ul>
+<h4>2. Affichage Visuel Hiérarchisé sur le Calendrier Prestataire</h4>
+<ul>
+<li><strong>Jour J (Le Mariage)</strong> : Badge plein rouge corail (<code>#e64a5d</code>) mis en avant comme l&#39;événement principal.</li>
+<li><strong>Jalons Préparatoires &amp; RDV</strong> : Badges élégants aux tons doux (lavande ou ambre) indiquant clairement la nature du jalon (ex. <em>« Dégustation menu »</em>, <em>« Visite technique »</em>).</li>
+<li><strong>Fiche détail au clic</strong> : En cliquant sur un jalon, le prestataire peut consulter les consignes du couple, l&#39;échéance et les notes associées.</li>
+</ul>
+<h4>3. Tâches Collaboratives et Statut Partagé</h4>
+<ul>
+<li>Possibilité pour le prestataire ou le couple de cocher un jalon préparatoire comme « Réalisé » (ex. <em>« Acompte versé »</em>, <em>« Choix du menu validé »</em>).</li>
+<li>Notification automatique à l&#39;autre partie dès qu&#39;un jalon d&#39;étape est franchi.</li>
+</ul>
+<hr>
+<h2>22. Système d&#39;Indicateurs et Pastilles de Notification Visuelles sur les Menus de Navigation (Espace Prestataire, Admin et Couple)</h2>
+<h3>🎯 Contexte &amp; Objectif</h3>
+<p>Afin que les utilisateurs soient informés instantanément des actions requises sans devoir parcourir manuellement chaque onglet :</p>
+<ul>
+<li><strong>Espace Prestataire</strong> : Alertes visuelles pour les nouveaux messages non lus et les nouvelles opportunités d&#39;appels d&#39;offres ciblées.</li>
+<li><strong>Espace Administrateur</strong> : Alertes visuelles pour les dossiers de candidatures de prestataires en attente de vérification et les tickets de support ouverts.</li>
+<li><strong>Espace Couple</strong> : Alertes visuelles pour les messages des prestataires et les devis / candidatures reçus.</li>
+</ul>
+<blockquote>
+<p>[!IMPORTANT]
+<strong>Respect Intégral du Design Existant</strong> : Aucune mise en page n&#39;a été déformée. Les badges adoptent un format micro-pill élégant ou pastille discrète parfaitement harmonisée avec la charte graphique de chaque espace (rouge corail <code>#E05A47</code> / <code>#e64a5d</code> pour le couple et le prestataire, rose vif <code>#db2777</code> pour l&#39;espace admin).</p>
+</blockquote>
+<hr>
+<h3>🛠️ Architecture Technique &amp; Implémentation</h3>
+<h4>1. Endpoints API Dédiés et Légers</h4>
+<p>Trois endpoints d&#39;interrogation rapide et sécurisés ont été créés :</p>
+<ul>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/vendor/badge-counts/route.ts"><code>app/api/vendor/badge-counts/route.ts</code></a></strong> :<ul>
+<li><code>unreadMessages</code> : Décompte des messages où <code>unread === true</code> et <code>senderRole !== &quot;vendor&quot;</code>.</li>
+<li><code>newOpportunities</code> : Décompte des appels d&#39;offres matchés ayant le statut <code>&quot;suggested&quot;</code>.</li>
+<li><code>unreadNotifications</code> : Décompte des notifications non lues.</li>
+</ul>
+</li>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/admin/badge-counts/route.ts"><code>app/api/admin/badge-counts/route.ts</code></a></strong> :<ul>
+<li><code>pendingCandidatures</code> : Nombre de prestataires inscrits ayant le statut <code>&quot;pending&quot;</code>.</li>
+<li><code>openTickets</code> : Nombre de tickets de support actifs (<code>status === &quot;open&quot;</code>).</li>
+</ul>
+</li>
+<li><strong><a href="file:///c:/Users/sidia/OneDrive/Documents/App/wedding-ai-builder/app/api/couple/badge-counts/route.ts"><code>app/api/couple/badge-counts/route.ts</code></a></strong> :<ul>
+<li><code>unreadMessages</code> : Décompte des messages où <code>unread === true</code> et <code>senderRole !== &quot;couple&quot;</code>.</li>
+<li><code>pendingProposals</code> : Décompte des propositions soumises par des prestataires en statut <code>&quot;pending&quot;</code>.</li>
+</ul>
+</li>
+</ul>
+<h4>2. Affichage Réactif et Non-Intrusif sur les Menus</h4>
+<ul>
+<li><strong>Espace Prestataire (<code>app/(vendor)/espace-prestataire/VendorLayoutClient.tsx</code>)</strong> :<ul>
+<li>Navigation Desktop principale : Pastille sur <strong>« Messagerie »</strong> et <strong>« Appels d&#39;offres »</strong>.</li>
+<li>Menu secondaire déroulant : Pastilles préservées sur les liens correspondants.</li>
+<li>Header mobile : Pastille de notification sur le bouton hamburger dès qu&#39;une action est requise.</li>
+<li>Drawer mobile : Pastilles chiffrées sur chaque ligne de menu.</li>
+<li>Bottom Tab Bar mobile : Pastille rouge de notification positionnée avec précision sur les icônes de la barre d&#39;onglets inférieure.</li>
+</ul>
+</li>
+<li><strong>Espace Administrateur (<code>app/admin/AdminLayoutClient.tsx</code>)</strong> :<ul>
+<li>Sidebar Desktop &amp; Mobile Drawer : Badge chiffré rose (<code>#db2777</code>) sur l&#39;onglet <strong>« Candidatures »</strong> (ex: nombre de dossiers à valider) et sur l&#39;onglet <strong>« Support »</strong>.</li>
+</ul>
+</li>
+<li><strong>Espace Couple (<code>app/(couple)/espace-couple/CoupleLayoutClient.tsx</code>)</strong> :<ul>
+<li>Navigation Desktop &amp; Mobile : Pastille sur <strong>« Prestataires »</strong> et <strong>« Messagerie »</strong>.</li>
+<li>Bouton mobile « Plus » et Bottom Tabs dotés d&#39;indicateurs visuels.</li>
+</ul>
+</li>
+</ul>
+<h4>3. Rafraîchissement Automatique &amp; Temps Réel</h4>
+<ul>
+<li><strong>Revalidation périodique</strong> : Polling toutes les 30 secondes en arrière-plan sans impact sur les performances.</li>
+<li><strong>Revalidation au focus</strong> : L&#39;état s&#39;actualise dès que l&#39;utilisateur revient sur l&#39;onglet du navigateur (<code>window.addEventListener(&quot;focus&quot;)</code>).</li>
+<li><strong>Synchronisation immédiate</strong> : Dès qu&#39;une conversation est consultée sur la messagerie prestataire ou couple, un événement personnalisé <code>badge-counts-updated</code> réinitialise instantanément le badge sans délai.</li>
+</ul>
+<h4>4. Règle Stricte d&#39;Extinction des Badges (Candidatures Validées ou Appels d&#39;Offres Clôturés / Attribués)</h4>
+<p>Conformément à la consigne, aucun badge ou pastille ne doit subsister lorsqu&#39;une candidature ou un appel d&#39;offre n&#39;est plus en attente d&#39;action :</p>
+<ul>
+<li><strong>Côté Prestataire (<code>/api/vendor/badge-counts</code>)</strong> :<ul>
+<li>Si le prestataire a déjà répondu à l&#39;appel d&#39;offres : exclusion immédiate (<code>newOpportunities</code> décrémenté).</li>
+<li>Si le match a été validé ou accepté (<code>status === &quot;accepted&quot;</code>) : exclusion immédiate.</li>
+<li>Si l&#39;appel d&#39;offres a été clôturé (<code>tender.status === &quot;closed&quot;</code>) ou validé/attribué à un prestataire (<code>tender.selectedProposalId</code>) : exclusion systématique même si le match brut était resté au statut de suggestion.</li>
+</ul>
+</li>
+<li><strong>Côté Couple (<code>/api/couple/badge-counts</code>)</strong> :<ul>
+<li>Si une candidature a été validée (<code>proposal.status === &quot;accepted&quot;</code>) : exclusion immédiate.</li>
+<li>Si l&#39;appel d&#39;offres de la catégorie a été clôturé ou validé (<code>tender.status === &quot;closed&quot;</code> ou <code>selectedProposalId</code> défini) : toutes les autres propositions associées ne déclenchent plus aucun badge.</li>
+<li>Dans la grille des prestataires (<code>espace-couple/prestataires</code>), le badge chiffré des recommandations est automatiquement ramené à zéro dès lors que le poste est validé ou clôturé.</li>
+</ul>
+</li>
+<li><strong>Côté Administrateur (<code>/api/admin/badge-counts</code>)</strong> :<ul>
+<li>Dès qu&#39;un dossier de candidature est validé (<em>Approuvé</em>) ou refusé, l&#39;événement <code>badge-counts-updated</code> éteint immédiatement le badge sur le menu « Candidatures ».</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+</body>
+</html>

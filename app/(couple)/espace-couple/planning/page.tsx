@@ -21,11 +21,19 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { WeddingProject, TimelineTask } from "@/types/marketplace";
+import { computeMilestoneTargetDate } from "@/lib/utils/timelineDates";
+
+interface MilestoneTaskItem {
+  title: string;
+  suggestedDate?: string;
+  dayContext?: "weekend" | "weekday";
+  reasoning?: string;
+}
 
 interface Milestone {
   monthsBeforeWedding: number;
   title: string;
-  tasks: string[];
+  tasks: (string | MilestoneTaskItem)[];
   priority?: "low" | "medium" | "high" | "critical";
   urgency?: "early" | "soon" | "urgent" | "late";
   idealDeadline?: string;
@@ -75,6 +83,7 @@ export default function CouplePlanningPage() {
   // Modal states
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<PlanningTask | null>(null);
+  const [dateMode, setDateMode] = useState<"precise" | "relative">("precise");
   const [taskForm, setTaskForm] = useState({ title: "", monthsBeforeWedding: 12, dueDate: "" });
   const [saving, setSaving] = useState(false);
 
@@ -109,24 +118,31 @@ export default function CouplePlanningPage() {
             null;
           setTimeline(aiTimeline);
 
-          // Import AI timeline tasks if there are none yet, or if the AI plan has
-          // more milestones than what's currently stored (plan was enriched).
-          const aiMilestoneCount = aiTimeline?.milestones?.length ?? 0;
-          const currentMilestoneMonths = new Set(existingTasks.map((t: PlanningTask) => t.monthsBeforeWedding));
-          const hasNewMilestones = aiTimeline?.milestones?.some(
-            (m: Milestone) => !currentMilestoneMonths.has(m.monthsBeforeWedding)
-          ) ?? false;
-
-          if (aiTimeline?.milestones?.length && (existingTasks.length === 0 || hasNewMilestones)) {
-            // Build a set of existing task titles to avoid duplicates
-            const existingTitles = new Set(existingTasks.map((t: PlanningTask) => t.title));
+          // Import initial des tâches IA uniquement si aucune tâche n'existe encore
+          if (existingTasks.length === 0 && aiTimeline?.milestones?.length) {
+            const seenTitles = new Set<string>();
             const toImport = aiTimeline.milestones.flatMap((m: Milestone) =>
-              m.tasks
-                .filter((title: string) => !existingTitles.has(title))
-                .map((title: string) => ({
+              (m.tasks || [])
+                .map((taskItem) => {
+                  if (typeof taskItem === "string") {
+                    return { title: taskItem, suggestedDate: undefined };
+                  }
+                  return {
+                    title: taskItem?.title || "",
+                    suggestedDate: taskItem?.suggestedDate,
+                  };
+                })
+                .filter((item) => {
+                  const key = item.title.trim().toLowerCase();
+                  if (!key || seenTitles.has(key)) return false;
+                  seenTitles.add(key);
+                  return true;
+                })
+                .map((item) => ({
                   projectId: projectData.id,
-                  title,
+                  title: item.title,
                   monthsBeforeWedding: m.monthsBeforeWedding,
+                  dueDate: item.suggestedDate || null,
                 }))
             );
             const imported: PlanningTask[] = [];
@@ -140,7 +156,7 @@ export default function CouplePlanningPage() {
               if (res.ok) imported.push(json.task as PlanningTask);
             }
             if (imported.length > 0) {
-              setTasks((prev) => [...prev, ...imported]);
+              setTasks(imported);
             }
           }
         }
@@ -169,13 +185,20 @@ export default function CouplePlanningPage() {
 
   async function saveTask() {
     if (!taskForm.title.trim() || !project) return;
+    if (dateMode === "precise" && !taskForm.dueDate) return;
     setSaving(true);
     try {
+      const payloadDueDate = dateMode === "precise" && taskForm.dueDate ? taskForm.dueDate : null;
       if (selectedTask) {
         const res = await fetch("/api/couple/tasks", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: selectedTask.id, title: taskForm.title, monthsBeforeWedding: taskForm.monthsBeforeWedding }),
+          body: JSON.stringify({
+            id: selectedTask.id,
+            title: taskForm.title,
+            monthsBeforeWedding: taskForm.monthsBeforeWedding,
+            dueDate: payloadDueDate,
+          }),
         });
         const json = await res.json();
         if (res.ok) {
@@ -189,6 +212,7 @@ export default function CouplePlanningPage() {
             projectId: project.id,
             title: taskForm.title,
             monthsBeforeWedding: taskForm.monthsBeforeWedding,
+            dueDate: payloadDueDate,
           }),
         });
         const json = await res.json();
@@ -212,22 +236,40 @@ export default function CouplePlanningPage() {
     }
   }
 
+  // Stats
+  const weddingDate = project?.weddingDate && project.weddingDate !== "not-fixed" ? new Date(project.weddingDate) : null;
+  const monthsLeft = weddingDate
+    ? Math.max(0, Math.round((weddingDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30.4375)))
+    : null;
+
+  // Limitation stricte des mois sélectionnables au nombre de mois réels restant jusqu'au mariage
+  const maxSelectableMonths = monthsLeft != null ? Math.max(0, monthsLeft) : 24;
+
   function openNewTask() {
     setSelectedTask(null);
-    setTaskForm({ title: "", monthsBeforeWedding: 12, dueDate: "" });
+    const defaultMonths = Math.min(12, maxSelectableMonths);
+    setDateMode(weddingDate ? "precise" : "relative");
+    setTaskForm({ title: "", monthsBeforeWedding: defaultMonths, dueDate: "" });
     setShowTaskModal(true);
   }
 
   function openEditTask(task: PlanningTask) {
     setSelectedTask(task);
-    setTaskForm({ title: task.title, monthsBeforeWedding: task.monthsBeforeWedding, dueDate: task.dueDate || "" });
+    setDateMode(task.dueDate ? "precise" : "relative");
+    setTaskForm({
+      title: task.title,
+      monthsBeforeWedding: Math.min(task.monthsBeforeWedding, maxSelectableMonths),
+      dueDate: task.dueDate || "",
+    });
     setShowTaskModal(true);
   }
 
   function closeModal() {
     setShowTaskModal(false);
     setSelectedTask(null);
-    setTaskForm({ title: "", monthsBeforeWedding: 12, dueDate: "" });
+    setDateMode("precise");
+    const defaultMonths = Math.min(12, maxSelectableMonths);
+    setTaskForm({ title: "", monthsBeforeWedding: defaultMonths, dueDate: "" });
   }
 
   // Derived data
@@ -249,11 +291,57 @@ export default function CouplePlanningPage() {
     return Array.from(map.entries()).sort((a, b) => b[0] - a[0]);
   }, [sorted]);
 
-  // Stats
-  const weddingDate = project?.weddingDate && project.weddingDate !== "not-fixed" ? new Date(project.weddingDate) : null;
-  const monthsLeft = weddingDate
-    ? Math.max(0, Math.round((weddingDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)))
-    : null;
+  // Association de chaque tâche à son Jalon thématique d'origine
+  const taskToMilestoneMap = useMemo(() => {
+    const map = new Map<string, string>();
+    if (!timeline?.milestones) return map;
+    for (const m of timeline.milestones) {
+      for (const taskItem of m.tasks || []) {
+        const title = typeof taskItem === "string" ? taskItem : taskItem?.title;
+        if (title) map.set(title.trim().toLowerCase(), m.title);
+      }
+    }
+    return map;
+  }, [timeline]);
+
+  // Synchronisation stricte des dates des jalons avec la même formule adaptative que la frise (/result)
+  const milestoneTargetDatesMap = useMemo(() => {
+    const map = new Map<number, Date>();
+    if (!timeline?.milestones || !weddingDate) return map;
+    const rawMilestones = timeline.milestones;
+    const maxMonths = Math.max(
+      ...rawMilestones.map((m) => (typeof m.monthsBeforeWedding === "number" ? m.monthsBeforeWedding : 0)),
+      1
+    );
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    rawMilestones.forEach((m, idx) => {
+      const numMonths = typeof m.monthsBeforeWedding === "number" ? m.monthsBeforeWedding : Math.max(0, 12 - idx);
+      const target = computeMilestoneTargetDate(
+        weddingDate,
+        numMonths,
+        idx,
+        rawMilestones.length,
+        maxMonths,
+        today
+      );
+      map.set(numMonths, target);
+    });
+    return map;
+  }, [timeline, weddingDate]);
+
+  // Répartition harmonieuse des tâches sur les semaines du mois (au lieu du 1er du mois)
+  const taskMonthPositionMap = useMemo(() => {
+    const posMap = new Map<string, { index: number; total: number }>();
+    for (const [, monthTasks] of byMonth) {
+      const count = monthTasks.length;
+      monthTasks.forEach((task, index) => {
+        posMap.set(task.id, { index, total: count });
+      });
+    }
+    return posMap;
+  }, [byMonth]);
 
   // Month name
   const monthName = currentDate.toLocaleDateString("fr-FR", { month: "long" });
@@ -274,21 +362,21 @@ export default function CouplePlanningPage() {
 
   // Calendar month days
   const monthDays = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
+    const y = currentDate.getFullYear();
+    const m = currentDate.getMonth();
+    const firstDay = new Date(y, m, 1);
+    const lastDay = new Date(y, m + 1, 0);
     const startDayOfWeek = firstDay.getDay() || 7; // 1 = Monday
     const daysInMonth = lastDay.getDate();
 
     const days: Date[] = [];
     // Previous month padding
     for (let i = startDayOfWeek - 1; i > 0; i--) {
-      days.push(new Date(year, month, 1 - i));
+      days.push(new Date(y, m, 1 - i));
     }
     // Current month
     for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
+      days.push(new Date(y, m, i));
     }
     // Next month padding to fill 42 cells (6 weeks)
     while (days.length < 42) {
@@ -304,9 +392,39 @@ export default function CouplePlanningPage() {
       d.setHours(0, 0, 0, 0);
       return d;
     }
+    if (task.monthsBeforeWedding <= 0) {
+      // Jour J : date exacte du mariage
+      const jDate = new Date(weddingDate);
+      jDate.setHours(0, 0, 0, 0);
+      return jDate;
+    }
+
+    // Récupération de la date cible exacte du jalon calculée par la frise temporelle
+    const milestoneDate = milestoneTargetDatesMap.get(task.monthsBeforeWedding);
+    if (milestoneDate) {
+      const target = new Date(milestoneDate);
+      const pos = taskMonthPositionMap.get(task.id) || { index: 0, total: 1 };
+      // Séquençage progressif en avant (+2 jours par tâche) pour ne jamais reculer dans le temps
+      const staggerDays = pos.index * 2;
+      target.setDate(target.getDate() + staggerDays);
+      target.setHours(0, 0, 0, 0);
+
+      // Verrou strict anti-date passée : la tâche ne peut JAMAIS être avant aujourd'hui
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (target < today) {
+        const adjusted = new Date(today);
+        adjusted.setDate(adjusted.getDate() + pos.index);
+        return adjusted;
+      }
+
+      return target;
+    }
+
+    // Fallback standard
     const target = new Date(weddingDate);
     target.setMonth(target.getMonth() - task.monthsBeforeWedding);
-    target.setDate(1);
+    target.setDate(15);
     target.setHours(0, 0, 0, 0);
     return target;
   }
@@ -376,8 +494,8 @@ export default function CouplePlanningPage() {
 
           {/* Navigation mois */}
           <div className="flex items-center gap-2">
-            <button 
-              onClick={() => navigate(-1)} 
+            <button
+              onClick={() => navigate(-1)}
               className="w-8 h-8 rounded-lg border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition"
             >
               <ChevronLeft size={16} />
@@ -385,8 +503,8 @@ export default function CouplePlanningPage() {
             <div className="px-4 py-2 bg-white border border-[#EDEDF0] rounded-lg text-[13px] font-semibold text-[#0E0E10] min-w-[160px] text-center capitalize">
               {monthName} {year}
             </div>
-            <button 
-              onClick={() => navigate(1)} 
+            <button
+              onClick={() => navigate(1)}
               className="w-8 h-8 rounded-lg border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition"
             >
               <ChevronRight size={16} />
@@ -418,9 +536,8 @@ export default function CouplePlanningPage() {
                             e.stopPropagation();
                             toggleTask(task.id, !task.completed);
                           }}
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
-                            task.completed ? "bg-white border-[#e64a5d]" : "border-[#6B6B72]"
-                          }`}
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${task.completed ? "bg-white border-[#e64a5d]" : "border-[#6B6B72]"
+                            }`}
                         >
                           {task.completed && <Check size={12} className="text-[#0E0E10]" />}
                         </button>
@@ -450,16 +567,29 @@ export default function CouplePlanningPage() {
                     const isCurrentMonth = day.getMonth() === currentDate.getMonth();
                     const isToday = day.toDateString() === new Date().toDateString();
                     const dayTasks = tasksForDay(day);
+                    const hasTasks = dayTasks.length > 0;
 
                     return (
                       <div
                         key={idx}
-                        className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#EDEDF0] relative ${
-                          isCurrentMonth ? "bg-white" : "bg-[#fef2f4]/50"
-                        } ${isToday ? "ring-2 ring-inset ring-[#e64a5d]" : ""}`}
+                        onClick={() => {
+                          if (hasTasks) {
+                            setDayPopupTasks({ date: day, tasks: dayTasks });
+                          }
+                        }}
+                        className={`min-h-[120px] sm:min-h-[140px] p-2 border-b border-r border-[#EDEDF0] relative transition ${hasTasks ? "cursor-pointer hover:bg-[#fef2f4]/70" : ""
+                          } ${isCurrentMonth ? "bg-white" : "bg-[#fef2f4]/40"
+                          } ${isToday ? "ring-2 ring-inset ring-[#e64a5d]" : ""}`}
                       >
-                        <div className={`text-xs font-medium mb-1 ${isToday ? "text-[#0E0E10]" : "text-[#6B6B72]"}`}>
-                          {day.getDate()}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`text-xs font-medium ${isToday ? "text-[#e64a5d] font-bold" : "text-[#6B6B72]"}`}>
+                            {day.getDate()}
+                          </span>
+                          {dayTasks.length > 1 && (
+                            <span className="text-[9px] font-bold text-[#e64a5d] bg-[#fef2f4] border border-[#fbd0d6] px-1.5 py-0.5 rounded-full">
+                              {dayTasks.length} étapes
+                            </span>
+                          )}
                         </div>
                         <div className="space-y-1">
                           {dayTasks.slice(0, 3).map((task) => {
@@ -469,26 +599,26 @@ export default function CouplePlanningPage() {
                             return (
                               <button
                                 key={task.id}
-                                onClick={() => openEditTask(task)}
-                                className="w-full text-left px-2 py-1 rounded-lg text-[10px] font-medium leading-tight transition hover:opacity-80 truncate"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openEditTask(task);
+                                }}
+                                className="w-full text-left px-2 py-1 rounded-lg text-[10px] font-medium leading-tight truncate transition hover:brightness-95 hover:shadow-xs cursor-pointer z-10 block"
                                 style={{
                                   backgroundColor: color.bg,
                                   color: color.text,
                                   textDecoration: task.completed ? "line-through" : "none",
                                 }}
                               >
-                                {task.title.slice(0, 20)}
-                                {task.title.length > 20 ? "..." : ""}
+                                {task.title.slice(0, 22)}
+                                {task.title.length > 22 ? "..." : ""}
                               </button>
                             );
                           })}
                           {dayTasks.length > 3 && (
-                            <button
-                              onClick={() => setDayPopupTasks({ date: day, tasks: dayTasks })}
-                              className="text-[9px] text-[#6B6B72] pl-2 hover:text-[#0E0E10] hover:underline transition"
-                            >
-                              +{dayTasks.length - 3} autres
-                            </button>
+                            <div className="text-[10px] text-[#e64a5d] font-semibold pl-1">
+                              +{dayTasks.length - 3} autre{dayTasks.length - 3 > 1 ? "s" : ""} (cliquer pour voir)
+                            </div>
                           )}
                         </div>
                       </div>
@@ -553,7 +683,7 @@ export default function CouplePlanningPage() {
                       onClick={() => openEditTask(monthTasks[0])}
                     >
                       <div className="text-[13px] font-bold text-ink mb-1">
-                        {milestoneTitle || `M-${month}`}
+                        {milestoneTitle || (month === 0 ? "Jour J" : `${month} mois avant`)}
                       </div>
                       <div className="text-[11px] text-ink/70">
                         {completedCount}/{monthTasks.length} tâches
@@ -625,28 +755,92 @@ export default function CouplePlanningPage() {
 
               <div>
                 <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
-                  Mois avant le mariage
+                  Mode de planification
                 </label>
-                <select
-                  value={taskForm.monthsBeforeWedding}
-                  onChange={(e) => setTaskForm({ ...taskForm, monthsBeforeWedding: Number(e.target.value) })}
-                  className="w-full appearance-none bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition cursor-pointer"
-                >
-                  {[...Array(25)].map((_, i) => (
-                    <option key={i} value={i}>
-                      {i === 0 ? "Jour J" : `M-${i}`}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex p-1 bg-[#fef2f4] rounded-full border border-[#EDEDF0] gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setDateMode("precise")}
+                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition ${dateMode === "precise"
+                        ? "bg-white text-[#0E0E10] shadow-sm"
+                        : "text-[#6B6B72] hover:text-[#0E0E10]"
+                      }`}
+                  >
+                    📅 Date précise
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDateMode("relative");
+                      setTaskForm((prev) => ({ ...prev, dueDate: "" }));
+                    }}
+                    className={`flex-1 py-2 px-3 rounded-full text-xs font-bold transition ${dateMode === "relative"
+                        ? "bg-white text-[#0E0E10] shadow-sm"
+                        : "text-[#6B6B72] hover:text-[#0E0E10]"
+                      }`}
+                  >
+                    ⏳ Mois avant le jour J
+                  </button>
+                </div>
               </div>
+
+              {dateMode === "precise" ? (
+                <div>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
+                    Date de l'étape *
+                  </label>
+                  <input
+                    type="date"
+                    value={taskForm.dueDate}
+                    min={new Date().toISOString().split("T")[0]}
+                    max={weddingDate ? new Date(weddingDate).toISOString().split("T")[0] : undefined}
+                    onChange={(e) => {
+                      const picked = e.target.value;
+                      let calculatedMonths = taskForm.monthsBeforeWedding;
+                      if (picked && weddingDate) {
+                        const diffTime = weddingDate.getTime() - new Date(picked).getTime();
+                        calculatedMonths = Math.max(0, Math.round(diffTime / (1000 * 60 * 60 * 24 * 30.4375)));
+                      }
+                      setTaskForm({
+                        ...taskForm,
+                        dueDate: picked,
+                        monthsBeforeWedding: Math.min(calculatedMonths, maxSelectableMonths),
+                      });
+                    }}
+                    className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition"
+                  />
+                  <p className="text-xs text-[#6B6B72] mt-1.5 px-1">
+                    Cette étape apparaîtra directement sur le jour sélectionné dans votre calendrier.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
+                    Mois avant le mariage
+                  </label>
+                  <select
+                    value={taskForm.monthsBeforeWedding}
+                    onChange={(e) => setTaskForm({ ...taskForm, monthsBeforeWedding: Number(e.target.value) })}
+                    className="w-full appearance-none bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[28px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition cursor-pointer"
+                  >
+                    {[...Array(maxSelectableMonths + 1)].map((_, i) => (
+                      <option key={i} value={i}>
+                        {i === 0 ? "Jour J (Le grand jour)" : `${i} mois avant le jour J`}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-[#6B6B72] mt-1.5 px-1">
+                    Le calendrier calculera automatiquement le jour le plus adapté.
+                  </p>
+                </div>
+              )}
 
               {selectedTask && (
                 <div className="flex items-center gap-3 p-3 bg-white border border-[#EDEDF0] rounded-xl">
                   <button
                     onClick={() => toggleTask(selectedTask.id, !selectedTask.completed)}
-                    className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${
-                      selectedTask.completed ? "bg-white border-[#e64a5d]" : "border-[#6B6B72]"
-                    }`}
+                    className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ${selectedTask.completed ? "bg-white border-[#e64a5d]" : "border-[#6B6B72]"
+                      }`}
                   >
                     {selectedTask.completed && <Check size={10} className="text-[#0E0E10]" />}
                   </button>
@@ -668,7 +862,7 @@ export default function CouplePlanningPage() {
 
               <button
                 onClick={saveTask}
-                disabled={saving || !taskForm.title.trim()}
+                disabled={saving || !taskForm.title.trim() || (dateMode === "precise" && !taskForm.dueDate)}
                 className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {saving ? (
@@ -714,6 +908,7 @@ export default function CouplePlanningPage() {
                 const color = task.completed
                   ? { bg: "#fef2f4", text: "#6B6B72" }
                   : getTaskColor(task.id || task.title);
+                const milestoneTitle = taskToMilestoneMap.get((task.title || "").trim().toLowerCase());
                 return (
                   <button
                     key={task.id}
@@ -729,12 +924,19 @@ export default function CouplePlanningPage() {
                     >
                       {task.completed && <Check size={10} className="text-[#0E0E10]" />}
                     </div>
-                    <span
-                      className="flex-1 text-sm leading-tight"
-                      style={{ color: color.text, textDecoration: task.completed ? "line-through" : "none" }}
-                    >
-                      {task.title}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      {milestoneTitle && (
+                        <span className="inline-block text-[10px] font-semibold text-[#c43a4a] bg-[#fef2f4] px-2 py-0.5 rounded-full mb-1">
+                          {milestoneTitle}
+                        </span>
+                      )}
+                      <span
+                        className="block text-sm leading-tight"
+                        style={{ color: color.text, textDecoration: task.completed ? "line-through" : "none" }}
+                      >
+                        {task.title}
+                      </span>
+                    </div>
                   </button>
                 );
               })}

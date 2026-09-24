@@ -185,10 +185,22 @@ export default function VendorProfilePage() {
     setSaved(false);
     setError(null);
     try {
+      const payload = {
+        ...form,
+        portfolio: {
+          ...form.portfolio,
+          images: form.portfolio?.images || [],
+          videos: form.portfolio?.videos || [],
+          faq: form.portfolio?.faq || [],
+          reviews: form.portfolio?.reviews || [],
+          website: form.website || form.portfolio?.website || null,
+          instagram: form.portfolio?.instagram || null,
+        },
+      };
       const res = await fetch("/api/vendor/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Échec de l'enregistrement");
       const json = await res.json();
@@ -348,10 +360,15 @@ export default function VendorProfilePage() {
                   <input
                     type="number"
                     min={0}
+                    step={1}
+                    onKeyDown={(e) => {
+                      if (e.key === "-" || e.key === "e") e.preventDefault();
+                    }}
                     value={form.yearsOfExperience ?? ""}
-                    onChange={(e) =>
-                      updateForm("yearsOfExperience", Number(e.target.value) || 0)
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      updateForm("yearsOfExperience", val ? Math.max(0, parseInt(val, 10) || 0) : 0);
+                    }}
                     className={inputClass}
                     placeholder="5"
                   />
@@ -546,13 +563,15 @@ export default function VendorProfilePage() {
                   <input
                     type="number"
                     min={0}
+                    step={1}
+                    onKeyDown={(e) => {
+                      if (e.key === "-" || e.key === "e") e.preventDefault();
+                    }}
                     value={form.priceRange?.min ?? ""}
-                    onChange={(e) =>
-                      updatePriceRange(
-                        "min",
-                        Number(e.target.value) || 0
-                      )
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      updatePriceRange("min", val ? Math.max(0, Number(val)) : 0);
+                    }}
                     className={inputClass}
                     placeholder="1000"
                   />
@@ -562,13 +581,15 @@ export default function VendorProfilePage() {
                   <input
                     type="number"
                     min={0}
+                    step={1}
+                    onKeyDown={(e) => {
+                      if (e.key === "-" || e.key === "e") e.preventDefault();
+                    }}
                     value={form.priceRange?.max ?? ""}
-                    onChange={(e) =>
-                      updatePriceRange(
-                        "max",
-                        Number(e.target.value) || 0
-                      )
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      updatePriceRange("max", val ? Math.max(0, Number(val)) : 0);
+                    }}
                     className={inputClass}
                     placeholder="5000"
                   />
@@ -606,13 +627,18 @@ export default function VendorProfilePage() {
                 <input
                   type="number"
                   min={0}
+                  step={1}
+                  onKeyDown={(e) => {
+                    if (e.key === "-" || e.key === "e") e.preventDefault();
+                  }}
                   value={form.serviceArea?.radius ?? ""}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    const val = e.target.value;
                     updateServiceArea(
                       "radius",
-                      e.target.value ? Number(e.target.value) : null
-                    )
-                  }
+                      val ? Math.max(0, Number(val)) : null
+                    );
+                  }}
                   className={inputClass}
                   placeholder="50"
                 />

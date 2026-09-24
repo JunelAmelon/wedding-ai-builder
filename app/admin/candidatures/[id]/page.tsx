@@ -46,6 +46,9 @@ export default function AdminCandidatureDetailPage() {
       if (res.ok) {
         const data = await res.json();
         setApp(data.application || { ...app, status });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("badge-counts-updated"));
+        }
       }
     } finally {
       setActionLoading(false);

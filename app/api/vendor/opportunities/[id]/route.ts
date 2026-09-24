@@ -22,16 +22,23 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     const profile = await vendorProfileRepo.getByUserId(user.id);
     if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 404 });
 
-    const match = await matchRepo.get(id);
+    let match = await matchRepo.get(id);
+    if (!match || match.vendorId !== profile.id) {
+      const vendorMatches = await matchRepo.listByVendor(profile.id);
+      match = vendorMatches.find((m) => m.tenderId === id || m.projectId === id || m.id === id) || null;
+    }
     if (!match || match.vendorId !== profile.id) {
       return NextResponse.json({ error: "Opportunité introuvable" }, { status: 404 });
     }
+
+    const tender = match.tenderId ? await tenderRepo.get(match.tenderId).catch(() => null) : null;
 
     // Free vendors: return limited project info (name only), no sensitive details
     if (!subscriptionActive) {
       const limitedProject = await projectRepo.get(match.projectId);
       return NextResponse.json({
         match,
+        tender,
         project: limitedProject ? { id: limitedProject.id, name: limitedProject.name } : null,
         summary: null,
         profile,
@@ -44,7 +51,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
     if (subscriptionActive && !match.vendorPitch) {
       try {
-        const tender = match.tenderId ? await tenderRepo.get(match.tenderId) : null;
         const aiScores = await scoreMatchesWithAI(tender ?? { category: match.category }, project, [profile], match.category);
         const ai = aiScores[profile.id];
         if (ai?.vendorPitch) {
@@ -59,7 +65,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     const session = project.sessionId ? await sessionRepo.get(project.sessionId) : null;
     const summary = await buildVendorProjectSummary(project, session?.aiOutput ?? null, match.category, true);
 
-    return NextResponse.json({ match, project, summary, profile, subscriptionActive: true });
+    return NextResponse.json({ match, project, tender, summary, profile, subscriptionActive: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
@@ -78,7 +84,11 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     const profile = await vendorProfileRepo.getByUserId(user.id);
     if (!profile) return NextResponse.json({ error: "Profil introuvable" }, { status: 404 });
 
-    const match = await matchRepo.get(id);
+    let match = await matchRepo.get(id);
+    if (!match || match.vendorId !== profile.id) {
+      const vendorMatches = await matchRepo.listByVendor(profile.id);
+      match = vendorMatches.find((m) => m.tenderId === id || m.projectId === id || m.id === id) || null;
+    }
     if (!match || match.vendorId !== profile.id) {
       return NextResponse.json({ error: "Opportunité introuvable" }, { status: 404 });
     }

@@ -1,6 +1,6 @@
 import type { QuizAnswers } from "@/types/domain";
 
-export const BUDGET_SYSTEM_PROMPT = `Tu es un planificateur financier de mariages. Réponds UNIQUEMENT en JSON valide, sans texte avant/après, sans markdown.
+export const BUDGET_SYSTEM_PROMPT = `Tu es un planificateur financier de mariages senior. Réponds UNIQUEMENT en JSON valide, sans texte avant/après, sans markdown.
 Schéma strict :
 {
   "totalBudget": number,
@@ -25,24 +25,25 @@ Schéma strict :
   "totalOverrunEstimate": number,
   "totalSavingsPotential": number
 }
-Contraintes STRICTES :
-- Le breakdown doit inclure au minimum les postes suivants : venue, catering, photography, videography, music, decoration, flowers, attire, rings, beauty, stationery, transport, accommodation, cake, weddingPlanner, officiant, giftsFavours, contingency.
-- Tu peux ajouter d'autres postes pertinents si le profil le justifie (ex: fireworks, childCare, honeymoon, etc.).
-- "contingency" doit représenter exactement entre 8% et 12% du total.
-- La somme des valeurs de "breakdown" doit être ÉGALE à "totalBudget" (tolérance d'arrondi 1% maximum).
-- Les valeurs de "percentages" doivent sommer à 100 (±0.5 toléré).
-- "totalBudget" doit être exactement égal au budget fourni en entrée.
-- Pour "categoryStatuses", fournis obligatoirement une entrée par poste du breakdown. Les montants doivent refléter le marché local (ville/pays) et le budget par invité.
-- "recommended" est le montant idéal pour ce marché. "realisticMin/Max" sont les fourchettes réalistes. "margin" = planned - recommended (négatif = sous-budgeté). "savingsPotential" est l'économie maximale réalisable sans dégrader l'expérience. "overrunEstimate" est le dépassement probable si rien n'est arbitré.
-- "globalRiskLevel" synthétise le risque global : excellent (marge confortable), good (équilibré), tight (risqué), critical (déséquilibre majeur).
-- "totalOverrunEstimate" et "totalSavingsPotential" sont des montants totaux estimés.
-Règles de répartition :
-- Ajuste les ratios selon le coût de la vie à la localisation (Paris, Côte d'Azur et grandes villes ont des tarifs plus élevés).
-- Le lieu et le traiteur restent les deux plus gros postes dans un mariage en France/Europe.
-- Le nombre d'invités impacte principalement le traiteur, les boissons, la papeterie et l'hébergement.
-- Si le couple a un budget serré, réduis les postes décoratifs et les extras avant le lieu ou le traiteur.
-- Si le style est "luxe", alloue plus à la décoration, fleurs et expérience invités.
-- Si la priorité est le budget, privilégie la réduction des postes décoratifs et de la papeterie.`;
+Contraintes STRICTES ET NON NÉGOCIABLES :
+- Le breakdown doit inclure au minimum les postes clés : venue, catering, photography, videography, music, decoration, flowers, attire, rings, beauty, stationery, transport, accommodation, cake, weddingPlanner, officiant, giftsFavours, contingency.
+- "contingency" (imprévus) doit représenter OBLIGATOIREMENT entre 8% et 12% du total (idéalement 10%).
+- La somme exacte de tous les montants de "breakdown" DOIT ÊTRE ÉGALE à "totalBudget" (tolérance maximale de 1%).
+- Les valeurs de "percentages" DOIVENT Sommer exactement à 100 (tolérance ±0.5%).
+- "totalBudget" doit être strictement identique au budget fourni en entrée.
+- Tous les montants dans "breakdown" doivent être des nombres positifs ou nuls (arrondis à l'unité).
+- Pour "categoryStatuses", fournis obligatoirement une entrée par poste du breakdown :
+  - "planned" = montant alloué dans breakdown.
+  - "recommended" = montant de référence sur ce marché local.
+  - "realisticMin" et "realisticMax" = fourchette basse et haute réaliste.
+  - "margin" = planned - recommended.
+  - "savingsPotential" = économies possibles sans sacrifier l'expérience.
+  - "overrunEstimate" = dépassement probable si poste sous-évalué.
+- "globalRiskLevel" : "excellent" si budget confortable, "good" si équilibré, "tight" si tendu, "critical" si déficit majeur.
+Règles de réalisme métier :
+- Le lieu (venue) et le traiteur (catering) représentent ensemble 45% à 60% du budget total d'un mariage en France.
+- Ajuste les coûts selon la ville (Paris/IDF et Côte d'Azur sont 20% à 35% plus chers que la moyenne).
+- Si un poste est optionnel ou non souhaité, il peut valoir 0, et l'économie est réinjectée dans les autres postes prioritaires.`;
 
 function styleLabel(answers: QuizAnswers): string {
   if (answers.style === "autre" && answers.customStyle) {
@@ -52,16 +53,24 @@ function styleLabel(answers: QuizAnswers): string {
 }
 
 export function buildBudgetUserPrompt(answers: QuizAnswers): string {
-  return `Budget total : ${answers.budget?.amount} ${answers.budget?.currency}
-Date du mariage : ${answers.weddingDate ?? "non précisée"}
-Localisation : ${answers.location?.city}, ${answers.location?.country} (ajuste les ratios selon le coût de vie local et le marché du mariage local)
-Nombre d'invités : ${answers.guestCount}${answers.childrenCount ? ` (dont ${answers.childrenCount} enfants)` : ""}
-Budget par invité : ${Math.round((answers.budget?.amount ?? 0) / Math.max(answers.guestCount ?? 1, 1))} ${answers.budget?.currency}
+  const amount = answers.budget?.amount && answers.budget.amount > 0 ? answers.budget.amount : 20000;
+  const currency = answers.budget?.currency || "EUR";
+  const guestCount = Math.max(answers.guestCount ?? 1, 1);
+  const budgetPerGuest = Math.round(amount / guestCount);
+  const city = answers.location?.city || "Paris";
+  const country = answers.location?.country || "France";
+
+  return `Budget total : ${amount} ${currency} (Contrainte stricte : la somme exacte de toutes les catégories de breakdown DOIT faire ${amount})
+Devise : ${currency}
+Date du mariage : ${answers.weddingDate && answers.weddingDate !== "not-fixed" ? answers.weddingDate : "non précisée"}
+Localisation : ${city}, ${country} (ajuste les coûts selon le marché de cette zone)
+Nombre d'invités : ${answers.guestCount ?? 60}${answers.childrenCount ? ` (dont ${answers.childrenCount} enfants)` : ""}
+Budget par invité : ${budgetPerGuest} ${currency}
 Style : ${styleLabel(answers)}
 Ambiances recherchées : ${answers.ambiance?.length ? answers.ambiance.join(", ") : "non précisé"}
 Prestataires recherchés : ${answers.desiredCategories?.length ? answers.desiredCategories.join(", ") : "non précisé"}
 Besoins alimentaires spécifiques : ${answers.dietaryNeeds?.length ? answers.dietaryNeeds.join(", ") : "aucun"}
 Invités venant de loin : ${answers.guestsFromFar ? "oui" : "non"}
-Priorité principale : ${answers.mainPriority}
-Niveau de stress : ${answers.stressLevel}`;
+Priorité principale : ${answers.mainPriority ?? "Équilibre global"}
+Niveau de stress déclaré (1-10) : ${answers.stressLevel ?? 5}`;
 }

@@ -224,7 +224,7 @@ export default function TimelineSection({ timeline, weddingDate }: TimelineSecti
                         className="text-[10.5px] leading-snug line-clamp-2"
                         style={{ color: isCurrent ? "rgba(10,10,11,0.7)" : "rgba(255,255,255,0.4)" }}
                       >
-                        {m.tasks?.[0] || "—"}
+                        {typeof m.tasks?.[0] === "string" ? m.tasks[0] : (m.tasks?.[0] as any)?.title || "—"}
                       </div>
                       <div className="flex items-center gap-1 mt-2">
                         {urgencyIcon(m.urgency)}

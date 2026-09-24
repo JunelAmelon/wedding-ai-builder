@@ -18,15 +18,36 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const CreateSchema = z.object({
   projectId: z.string().min(1),
   category: z.string().min(1),
-  budgetRange: z.object({ min: z.number(), max: z.number(), currency: z.string() }).optional(),
-  guestCount: z.number().optional().nullable(),
+  budgetRange: z
+    .object({
+      min: z.number().nonnegative(),
+      max: z.number().nonnegative(),
+      currency: z.string(),
+    })
+    .refine((b) => b.max >= b.min, {
+      message: "Le budget maximum doit être supérieur ou égal au budget minimum",
+    })
+    .optional(),
+  guestCount: z.number().nonnegative().optional().nullable(),
   location: z.object({ city: z.string(), country: z.string() }).optional().nullable(),
-  weddingDate: z.string().optional().nullable(),
+  weddingDate: z
+    .string()
+    .refine(
+      (d) => {
+        if (!d || d === "not-fixed") return true;
+        const today = new Date().toISOString().split("T")[0];
+        return d >= today;
+      },
+      { message: "La date du mariage ne peut pas être dans le passé." }
+    )
+    .optional()
+    .nullable(),
   style: z.string().optional().nullable(),
   customStyle: z.string().optional().nullable(),
   requirements: z.array(z.string()).optional(),
   priority: z.string().optional().nullable(),
   replaceMode: z.enum(["replace", "keep"]).optional(),
+  forceReplace: z.boolean().optional(),
 });
 
 const AcceptSchema = z.object({
@@ -56,8 +77,52 @@ export async function GET() {
     const project = projects[0];
     if (!project) return NextResponse.json({ tenders: [] });
 
-    const tenders = await tenderRepo.listByProject(project.id);
-    const enriched = await Promise.all(tenders.map(enrichTender));
+    const rawTenders = await tenderRepo.listByProject(project.id);
+
+    // Dédoublonnage automatique par catégorie pour éviter les doublons historiques (ex: un clôturé et un en recherche)
+    const tendersByCategory = new Map<string, typeof rawTenders>();
+    for (const t of rawTenders) {
+      const list = tendersByCategory.get(t.category) || [];
+      list.push(t);
+      tendersByCategory.set(t.category, list);
+    }
+
+    const cleanTenders: typeof rawTenders = [];
+    for (const [, list] of tendersByCategory.entries()) {
+      if (list.length === 1) {
+        cleanTenders.push(list[0]);
+        continue;
+      }
+
+      // Priorité :
+      // 1. Appel d'offres actif (searching / responded)
+      // 2. Appel d'offres avec prestataire validé (selectedProposalId)
+      // 3. Le plus récent
+      list.sort((a, b) => {
+        const aActive = a.status !== "closed" ? 1 : 0;
+        const bActive = b.status !== "closed" ? 1 : 0;
+        if (aActive !== bActive) return bActive - aActive;
+
+        const aSelected = a.selectedProposalId ? 1 : 0;
+        const bSelected = b.selectedProposalId ? 1 : 0;
+        if (aSelected !== bSelected) return bSelected - aSelected;
+
+        const aDate = new Date(a.updatedAt || a.createdAt || 0).getTime();
+        const bDate = new Date(b.updatedAt || b.createdAt || 0).getTime();
+        return bDate - aDate;
+      });
+
+      const canonical = list[0];
+      cleanTenders.push(canonical);
+
+      // Purger en tâche de fond les anciens doublons zombies obsolètes
+      const obsolete = list.slice(1);
+      for (const obs of obsolete) {
+        tenderRepo.delete(obs.id).catch(() => {});
+      }
+    }
+
+    const enriched = await Promise.all(cleanTenders.map(enrichTender));
 
     return NextResponse.json({ tenders: enriched });
   } catch (err) {
@@ -88,26 +153,111 @@ export async function POST(req: Request) {
       requirements,
       priority,
       replaceMode,
+      forceReplace,
     } = parsed.data;
     const project = await projectRepo.get(projectId);
     if (!project || project.userId !== user.id) return NextResponse.json({ error: "Projet introuvable" }, { status: 404 });
 
     const existing = await tenderRepo.listByProject(projectId);
-    const activeTenders = existing.filter((t) => t.category === category && t.status !== "closed");
-    // Close any existing active tender for this category so the new one can be created
-    if (activeTenders.length > 0) {
-      await Promise.all(
-        activeTenders.map((t) => tenderRepo.update(t.id, { status: "closed" }))
+    // Trouver TOUT appel d'offres existant pour cette catégorie (qu'il soit actif ou clôturé)
+    const conflictingTenders = existing.filter((t) => t.category === category);
+
+    // If an existing tender exists and forceReplace was not explicitly requested, return 409 Conflict with details
+    if (conflictingTenders.length > 0 && !forceReplace) {
+      const conflictTender = conflictingTenders[0];
+      const conflictProposals = await proposalRepo.listByTender(conflictTender.id);
+      const acceptedProposal = conflictProposals.find(
+        (p) => p.status === "accepted" || p.id === conflictTender.selectedProposalId
+      );
+      let validatedVendor = null;
+      if (acceptedProposal) {
+        const v = await vendorProfileRepo.get(acceptedProposal.vendorId);
+        if (v) {
+          validatedVendor = {
+            id: v.id,
+            name: v.brandName || v.companyName || v.contactName || "Prestataire validé",
+          };
+        }
+      }
+
+      return NextResponse.json(
+        {
+          conflict: true,
+          existingTender: {
+            id: conflictTender.id,
+            category: conflictTender.category,
+            status: conflictTender.status,
+            proposalCount: conflictProposals.length,
+            validatedVendor,
+          },
+          message: "Un appel d'offres existe déjà pour cette catégorie.",
+        },
+        { status: 409 }
       );
     }
 
-    // Handle replace mode: if "replace", delete only suggested matches for this category
-    if (replaceMode === "replace") {
-      const allMatches = await matchRepo.listByProject(projectId);
-      const suggestedForCategory = allMatches.filter(
-        (m) => m.category === category && m.status === "suggested"
-      );
-      await Promise.all(suggestedForCategory.map((m) => matchRepo.update(m.id, { status: "rejected" })));
+    // Handle clean replacement: DELETE old tender(s), refund vendor credits, release calendar dates
+    if (conflictingTenders.length > 0 && forceReplace) {
+      for (const t of conflictingTenders) {
+        const proposals = await proposalRepo.listByTender(t.id);
+        const acceptedProposal = proposals.find(
+          (p) => p.status === "accepted" || p.id === t.selectedProposalId
+        );
+
+        // 1. If a vendor was accepted, release the date from their unavailable calendar and notify them
+        if (acceptedProposal) {
+          const acceptedVendor = await vendorProfileRepo.get(acceptedProposal.vendorId);
+          if (acceptedVendor) {
+            if (project.weddingDate && acceptedVendor.availability?.unavailableDates) {
+              const updatedDates = acceptedVendor.availability.unavailableDates.filter(
+                (d) => d !== project.weddingDate
+              );
+              await vendorProfileRepo.update(acceptedVendor.id, {
+                availability: {
+                  ...acceptedVendor.availability,
+                  unavailableDates: updatedDates,
+                },
+              });
+            }
+
+            await notificationRepo.create({
+              userId: acceptedVendor.userId,
+              type: "proposal_declined",
+              title: "Recherche réinitialisée",
+              content: `Le couple pour ${project.name || "un mariage"} a réinitialisé sa recherche pour la catégorie ${category}. Votre sélection pour cet événement a été annulée.`,
+              link: "/espace-prestataire/propositions",
+            });
+          }
+        }
+
+        // 2. Refund credits to vendors if credits were used and clean up proposals
+        for (const p of proposals) {
+          if (p.creditsUsed && p.creditsUsed > 0) {
+            const v = await vendorProfileRepo.get(p.vendorId);
+            if (v) {
+              const currentCredits = v.credits || 0;
+              await vendorProfileRepo.updateCredits(v.id, currentCredits + p.creditsUsed);
+              await notificationRepo.create({
+                userId: v.userId,
+                type: "proposal_declined",
+                title: "Crédits restitués",
+                content: `L'appel d'offres ${category} pour ${project.name || "un mariage"} a été relancé avec de nouveaux critères. Vos ${p.creditsUsed} crédit(s) vous ont été remboursés.`,
+                link: "/espace-prestataire/appels-offres",
+              });
+            }
+          }
+          await proposalRepo.delete(p.id);
+        }
+
+        // 3. Delete the previous tender completely from the database
+        await tenderRepo.delete(t.id);
+      }
+
+      // 4. Delete old matches for this category in this project
+      await matchRepo.deleteByProjectAndCategory(projectId, category);
+    } else if (replaceMode === "replace") {
+      // Legacy replaceMode fallback
+      await matchRepo.deleteByProjectAndCategory(projectId, category);
     }
 
     const tenderData = {

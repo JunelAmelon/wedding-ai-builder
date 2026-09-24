@@ -10,21 +10,28 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { wishlistId, name, description, price, imageUrl, vendorId, vendorName, quantity = 1 } = body;
 
-    if (!wishlistId || !name || !price) {
-      return NextResponse.json({ error: "wishlistId, name et price requis" }, { status: 400 });
+    const numPrice = Number(price);
+    const numQuantity = Number(quantity ?? 1);
+
+    if (!wishlistId || !name || price === undefined || price === null || Number.isNaN(numPrice) || numPrice < 0) {
+      return NextResponse.json({ error: "wishlistId, name et un prix valide (non-négatif) sont requis" }, { status: 400 });
+    }
+
+    if (Number.isNaN(numQuantity) || numQuantity < 1) {
+      return NextResponse.json({ error: "La quantité doit être d'au moins 1" }, { status: 400 });
     }
 
     const item = await wishlistItemRepo.create({
       wishlistId,
       name,
       description,
-      price,
+      price: numPrice,
       imageUrl,
       vendorId,
       vendorName,
       purchased: false,
-      quantity,
-      remaining: quantity,
+      quantity: numQuantity,
+      remaining: numQuantity,
     });
 
     return NextResponse.json({ item });

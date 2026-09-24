@@ -63,6 +63,50 @@ export default function VendorLayoutClient({
   const pathname = usePathname();
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [badgeCounts, setBadgeCounts] = useState({
+    unreadMessages: 0,
+    newOpportunities: 0,
+    unreadNotifications: 0,
+  });
+
+  useEffect(() => {
+    let mounted = true;
+    async function fetchCounts() {
+      try {
+        const res = await fetch("/api/vendor/badge-counts");
+        if (res.ok && mounted) {
+          const data = await res.json();
+          setBadgeCounts({
+            unreadMessages: data.unreadMessages || 0,
+            newOpportunities: data.newOpportunities || 0,
+            unreadNotifications: data.unreadNotifications || 0,
+          });
+        }
+      } catch {}
+    }
+
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 30000);
+    const onFocus = () => fetchCounts();
+    const onUpdated = () => fetchCounts();
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("badge-counts-updated", onUpdated);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("badge-counts-updated", onUpdated);
+    };
+  }, [pathname]);
+
+  const getBadgeCount = (href: string) => {
+    if (href === "/espace-prestataire/messagerie") return badgeCounts.unreadMessages;
+    if (href === "/espace-prestataire/appels-offres") return badgeCounts.newOpportunities;
+    if (href === "/espace-prestataire/notifications") return badgeCounts.unreadNotifications;
+    return 0;
+  };
+
+  const totalBadges = badgeCounts.unreadMessages + badgeCounts.newOpportunities + badgeCounts.unreadNotifications;
   const safeUser = user ?? {};
   const displayName = safeUser.companyName || `${safeUser.firstName || ""} ${safeUser.lastName || ""}`.trim() || "Prestataire";
   const initials = (safeUser.companyName?.[0] ?? safeUser.brandName?.[0] ?? safeUser.firstName?.[0] ?? "").toUpperCase();
@@ -99,6 +143,7 @@ export default function VendorLayoutClient({
           <nav className="flex items-center gap-0.5 rounded-full bg-white/80 backdrop-blur-xl border border-[#EDEDF0] shadow-[0_8px_30px_rgba(14,14,16,0.08)] px-1.5 py-1.5">
             {VENDOR_NAV.map((item) => {
               const active = isActive(item.href);
+              const count = getBadgeCount(item.href);
               return (
                 <Link
                   key={item.href}
@@ -107,8 +152,20 @@ export default function VendorLayoutClient({
                     active ? "bg-ink text-white" : "text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4]"
                   }`}
                 >
-                  <item.icon size={15} strokeWidth={1.9} className={active ? "text-white" : "text-[#6B6B72]/70"} />
+                  <span className="relative">
+                    <item.icon size={15} strokeWidth={1.9} className={active ? "text-white" : "text-[#6B6B72]/70"} />
+                    {count > 0 && (
+                      <span className="xl:hidden absolute -top-1.5 -right-1.5 min-w-[13px] h-[13px] px-0.5 rounded-full bg-[#e64a5d] text-white text-[8px] font-bold flex items-center justify-center leading-none">
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
+                  </span>
                   <span className="hidden xl:inline">{item.label}</span>
+                  {count > 0 && (
+                    <span className="hidden xl:inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#e64a5d] text-white text-[10px] font-bold leading-none shadow-sm">
+                      {count > 99 ? "99+" : count}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -116,27 +173,40 @@ export default function VendorLayoutClient({
             <div className="relative">
               <button
                 onClick={() => setMoreOpen((v) => !v)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-colors ${
                   moreOpen ? "bg-[#fef2f4] text-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4]"
                 }`}
               >
                 <SlidersHorizontal size={15} strokeWidth={1.9} />
                 <span className="hidden xl:inline">Plus</span>
+                {badgeCounts.unreadNotifications > 0 && (
+                  <span className="h-2 w-2 rounded-full bg-[#e64a5d]" />
+                )}
               </button>
 
               {moreOpen && (
                 <div className="absolute top-full right-0 mt-3 w-56 rounded-[28px] bg-white border border-[#EDEDF0] shadow-[0_20px_60px_rgba(14,14,16,0.12)] p-2">
-                  {VENDOR_NAV_SECONDARY.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMoreOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4] transition-colors"
-                    >
-                      <item.icon size={16} strokeWidth={1.75} />
-                      {item.label}
-                    </Link>
-                  ))}
+                  {VENDOR_NAV_SECONDARY.map((item) => {
+                    const count = getBadgeCount(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMoreOpen(false)}
+                        className="flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4] transition-colors"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <item.icon size={16} strokeWidth={1.75} />
+                          {item.label}
+                        </div>
+                        {count > 0 && (
+                          <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-[#e64a5d] text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                            {count}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
                   <button
                     onClick={() => {
                       setMoreOpen(false);
@@ -170,10 +240,13 @@ export default function VendorLayoutClient({
         </Link>
         <button
           onClick={() => setMoreOpen(true)}
-          className="h-9 w-9 rounded-full bg-white border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72]"
+          className="relative h-9 w-9 rounded-full bg-white border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72]"
           aria-label="Menu"
         >
           <Menu size={18} strokeWidth={1.9} />
+          {totalBadges > 0 && (
+            <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-[#e64a5d] ring-2 ring-white" />
+          )}
         </button>
       </header>
 
@@ -195,30 +268,50 @@ export default function VendorLayoutClient({
               </div>
             </div>
             <div className="flex-1 overflow-y-auto space-y-1">
-              {VENDOR_NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMoreOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    isActive(item.href) ? "bg-ink text-white" : "text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4]"
-                  }`}
-                >
-                  <item.icon size={18} strokeWidth={1.8} />
-                  {item.label}
-                </Link>
-              ))}
-              {VENDOR_NAV_SECONDARY.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMoreOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4] transition-colors"
-                >
-                  <item.icon size={18} strokeWidth={1.8} />
-                  {item.label}
-                </Link>
-              ))}
+              {VENDOR_NAV.map((item) => {
+                const count = getBadgeCount(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMoreOpen(false)}
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                      isActive(item.href) ? "bg-ink text-white" : "text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon size={18} strokeWidth={1.8} />
+                      {item.label}
+                    </div>
+                    {count > 0 && (
+                      <span className="min-w-[18px] h-[18px] px-1.5 rounded-full bg-[#e64a5d] text-white text-[11px] font-bold flex items-center justify-center">
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+              {VENDOR_NAV_SECONDARY.map((item) => {
+                const count = getBadgeCount(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMoreOpen(false)}
+                    className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon size={18} strokeWidth={1.8} />
+                      {item.label}
+                    </div>
+                    {count > 0 && (
+                      <span className="min-w-[18px] h-[18px] px-1.5 rounded-full bg-[#e64a5d] text-white text-[11px] font-bold flex items-center justify-center">
+                        {count}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
               <button
                 onClick={() => {
                   setMoreOpen(false);
@@ -238,6 +331,7 @@ export default function VendorLayoutClient({
         <div className="flex items-center justify-around">
           {MOBILE_TABS.map((item) => {
             const active = isActive(item.href);
+            const count = getBadgeCount(item.href);
             return (
               <Link
                 key={item.href}
@@ -248,6 +342,11 @@ export default function VendorLayoutClient({
               >
                 <div className={`relative ${item.primary ? "bg-[#fef2f4] text-ink" : ""} rounded-full p-1.5`}>
                   <item.icon size={18} strokeWidth={1.8} />
+                  {count > 0 && (
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-[#e64a5d] text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                      {count > 99 ? "99+" : count}
+                    </span>
+                  )}
                 </div>
                 <span className="text-[10px] font-medium">{item.label}</span>
               </Link>

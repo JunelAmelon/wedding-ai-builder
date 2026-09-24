@@ -110,11 +110,16 @@ export default function AdminSubscriptionsPage() {
                         type="number"
                         min={1}
                         max={30}
+                        step={1}
+                        onKeyDown={(e) => { if (e.key === "-" || e.key === "e") e.preventDefault(); }}
                         value={trialDays[sub.id] ?? 7}
-                        onChange={(e) => setTrialDays((prev) => ({ ...prev, [sub.id]: e.target.value }))}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "" || Number(val) >= 1) setTrialDays((prev) => ({ ...prev, [sub.id]: val }));
+                        }}
                         className="w-14 px-2 py-1.5 rounded-[10px] border border-[#e2e8f0] text-xs"
                       />
-                      <button onClick={() => handleAction(sub.id, "start_trial", { days: Number(trialDays[sub.id] ?? 7) })} disabled={actionId === sub.id} className="inline-flex items-center gap-1.5 text-[#db2777] hover:bg-rose-50 px-3 py-1.5 rounded-[10px] text-xs font-medium">
+                      <button onClick={() => handleAction(sub.id, "start_trial", { days: Math.max(1, Number(trialDays[sub.id] ?? 7)) })} disabled={actionId === sub.id} className="inline-flex items-center gap-1.5 text-[#db2777] hover:bg-rose-50 px-3 py-1.5 rounded-[10px] text-xs font-medium">
                         <Gift size={14} /> Essai
                       </button>
                     </div>
@@ -123,11 +128,16 @@ export default function AdminSubscriptionsPage() {
                         type="number"
                         min={1}
                         max={60}
+                        step={1}
+                        onKeyDown={(e) => { if (e.key === "-" || e.key === "e") e.preventDefault(); }}
                         value={postponeDays[sub.id] ?? 7}
-                        onChange={(e) => setPostponeDays((prev) => ({ ...prev, [sub.id]: e.target.value }))}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "" || Number(val) >= 1) setPostponeDays((prev) => ({ ...prev, [sub.id]: val }));
+                        }}
                         className="w-14 px-2 py-1.5 rounded-[10px] border border-[#e2e8f0] text-xs"
                       />
-                      <button onClick={() => handleAction(sub.id, "postpone", { days: Number(postponeDays[sub.id] ?? 7) })} disabled={actionId === sub.id} className="inline-flex items-center gap-1.5 text-[#0f172a] hover:bg-[#f1f5f9] px-3 py-1.5 rounded-[10px] text-xs font-medium">
+                      <button onClick={() => handleAction(sub.id, "postpone", { days: Math.max(1, Number(postponeDays[sub.id] ?? 7)) })} disabled={actionId === sub.id} className="inline-flex items-center gap-1.5 text-[#0f172a] hover:bg-[#f1f5f9] px-3 py-1.5 rounded-[10px] text-xs font-medium">
                         <Clock size={14} /> Décaler
                       </button>
                     </div>

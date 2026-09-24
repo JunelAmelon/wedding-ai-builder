@@ -516,8 +516,15 @@ export default function WishlistPublicPage() {
                 <input
                   type="number"
                   min="1"
+                  step="0.01"
+                  onKeyDown={(e) => {
+                    if (e.key === "-" || e.key === "e") e.preventDefault();
+                  }}
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || Number(val) >= 0) setAmount(val);
+                  }}
                   placeholder={selectedItem ? selectedItem!.price.toString() : "Ex: 50"}
                   className="w-full bg-white border border-[#e4e2db] rounded-xl text-[#1c1c1c] px-3 py-3 focus:outline-none focus:ring-2 focus:ring-[#D77779]"
                 />

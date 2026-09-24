@@ -135,6 +135,9 @@ export default function VendorProjectDetailPage() {
       setShowDialog(false);
       setMessage("");
       setSuccess(true);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("badge-counts-updated"));
+      }
       router.refresh();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erreur");
@@ -191,7 +194,8 @@ export default function VendorProjectDetailPage() {
   }
 
   const { match, project, summary } = data;
-  const isContacted = match.status === "contacted";
+  const isAccepted = match.status === "accepted";
+  const isContacted = match.status === "contacted" || isAccepted;
   const isFree = data.subscriptionActive === false;
 
   // Free vendors: show paywall instead of couple details
@@ -419,8 +423,30 @@ export default function VendorProjectDetailPage() {
               </InfoCard>
             )}
 
-            {/* Already responded banner */}
-            {isContacted && (
+            {/* Accepted celebration banner */}
+            {isAccepted ? (
+              <div className="rounded-[28px] bg-gradient-to-r from-[#eef9f2] to-[#d8ecd9] border border-[#a8ddb8] px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-[#2e7d5e] flex items-center justify-center text-white text-xl shrink-0 shadow-md">
+                    🎉
+                  </div>
+                  <div>
+                    <h4 className="text-[15px] font-bold text-[#0E0E10] mb-0.5">
+                      Félicitations, vous avez été retenu !
+                    </h4>
+                    <p className="text-[13px] text-[#2d5a4a]">
+                      Le couple a validé votre proposition pour ce mariage. Vous pouvez échanger directement avec eux.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href="/espace-prestataire/messagerie"
+                  className="shrink-0 h-10 px-5 rounded-full bg-[#2e7d5e] text-white hover:bg-[#25664d] text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                >
+                  Ouvrir la messagerie
+                </Link>
+              </div>
+            ) : isContacted ? (
               <div className="rounded-[28px] bg-[#e4f4ed] border border-[#b8ddd0] px-6 py-4 flex items-center gap-4">
                 <div className="w-11 h-11 rounded-full bg-[#2e7d5e] flex items-center justify-center text-white shrink-0">
                   <Check size={22} />
@@ -432,7 +458,19 @@ export default function VendorProjectDetailPage() {
                   </p>
                 </div>
               </div>
-            )}
+            ) : null}
+
+            {/* Mobile Fiche Technique */}
+            <div className="lg:hidden mt-6">
+              <FicheTechnique
+                match={match}
+                project={project}
+                summary={summary}
+                isAccepted={isAccepted}
+                isContacted={isContacted}
+                onRespond={() => setShowDialog(true)}
+              />
+            </div>
           </div>
 
           {/* ================= SIDEBAR (desktop only) ================= */}
@@ -450,6 +488,7 @@ export default function VendorProjectDetailPage() {
               match={match}
               project={project}
               summary={summary}
+              isAccepted={isAccepted}
               isContacted={isContacted}
               onRespond={() => setShowDialog(true)}
             />
@@ -541,12 +580,14 @@ function FicheTechnique({
   match,
   project,
   summary,
+  isAccepted,
   isContacted,
   onRespond,
 }: {
   match: ProjectVendorMatch;
   project: WeddingProject;
   summary: MatchSummary | null;
+  isAccepted?: boolean;
   isContacted: boolean;
   onRespond: () => void;
 }) {
@@ -567,7 +608,11 @@ function FicheTechnique({
         {summary?.style && <SpecRow label="Style" value={summary.style} />}
       </div>
       <div className="border-t border-[#EDEDF0] px-5 py-4">
-        {!isContacted ? (
+        {isAccepted ? (
+          <div className="flex items-center justify-center gap-2 rounded-full bg-[#d8ecd9] text-[#2e7d5e] text-xs font-bold px-4 py-3 border border-[#2e7d5e]/20 shadow-sm">
+            <Check size={16} /> Retenu pour ce mariage 🎉
+          </div>
+        ) : !isContacted ? (
           <button
             onClick={onRespond}
             className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-full bg-[#fef2f4] text-[#0E0E10] font-bold text-[13px] hover:bg-[#FEF3C7] transition"
@@ -575,9 +620,8 @@ function FicheTechnique({
             <Send size={16} /> Répondre à l'appel
           </button>
         ) : (
-          <div className="flex items-center gap-2 rounded-[28px] bg-[#fef2f4] text-[#0E0E10] text-[12px] px-4 py-2.5">
-            <Check size={14} />
-            Proposition envoyée
+          <div className="flex items-center justify-center gap-2 rounded-full bg-[#e4f4ed] text-[#2e7d5e] text-xs font-bold px-4 py-3">
+            <Check size={16} /> Proposition envoyée
           </div>
         )}
       </div>

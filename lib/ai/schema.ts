@@ -101,13 +101,25 @@ export const BudgetBreakdownSchema = z
     }
   });
 
+const TimelineTaskItemSchema = z.object({
+  title: z.string().min(1),
+  suggestedDate: z.string().optional(),
+  dayContext: z.enum(["weekend", "weekday"]).optional(),
+  reasoning: z.string().optional(),
+});
+
+const TaskItemOrStringSchema = z.union([
+  z.string().min(1),
+  TimelineTaskItemSchema,
+]);
+
 export const TimelineSchema = z.object({
   milestones: z
     .array(
       z.object({
         monthsBeforeWedding: z.number().finite().nonnegative(),
         title: z.string().min(1),
-        tasks: z.array(z.string().min(1)).min(2).max(5),
+        tasks: z.array(TaskItemOrStringSchema).min(2).max(5),
         priority: z.enum(["low", "medium", "high", "critical"]).optional(),
         urgency: z.enum(["early", "soon", "urgent", "late"]).optional(),
         idealDeadline: z.string().min(1).optional(),

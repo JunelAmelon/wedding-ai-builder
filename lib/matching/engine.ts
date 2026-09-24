@@ -332,6 +332,12 @@ export function calculateMatchScore(
     reasons.push("profil vérifié");
   }
 
+  // Bonus réputation avis Google certifiés (+5 points)
+  if (vendor.portfolio?.googleBusiness?.verified && (vendor.portfolio.googleBusiness.rating || 0) >= 4.0) {
+    score += 5;
+    reasons.push("avis Google certifiés et excellente réputation");
+  }
+
   const tierBonus: Record<string, number> = { economique: 0, standard: 3, premium: 6, luxe: 8 };
   score += tierBonus[vendor.tier] ?? 0;
   if (vendor.tier === "premium" || vendor.tier === "luxe") {
@@ -480,6 +486,13 @@ async function scoreBatchWithAI(
         tier: v.tier,
         portfolioReviews: v.portfolio?.reviews ?? [],
         portfolioFaq: v.portfolio?.faq ?? [],
+        googleCertified: v.portfolio?.googleBusiness?.verified
+          ? {
+              rating: v.portfolio.googleBusiness.rating,
+              reviewsCount: v.portfolio.googleBusiness.userRatingsTotal,
+              reviews: v.portfolio.googleBusiness.reviews.slice(0, 5),
+            }
+          : null,
       })),
     },
     null,
