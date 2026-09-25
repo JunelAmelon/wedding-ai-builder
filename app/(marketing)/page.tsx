@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Header, Footer, LogoMarquee } from "@/components/layout";
-import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X, Play, Pause } from "lucide-react";
+import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X, Play, Pause, Gem, UtensilsCrossed, Briefcase, Handshake, Gift, QrCode, Star } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
 
 const VALUES = [
@@ -180,25 +180,6 @@ export default function LandingPage() {
     const sec = Math.floor(s % 60);
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
-  const heroStageOuterRef = useRef<HTMLDivElement>(null);
-  const heroStageRef = useRef<HTMLDivElement>(null);
-
-  const scaleHeroStage = useCallback(() => {
-    const outer = heroStageOuterRef.current;
-    const stage = heroStageRef.current;
-    if (!outer || !stage) return;
-    const available = outer.clientWidth;
-    const scale = Math.min(1, available / 900);
-    stage.style.transform = `scale(${scale})`;
-    outer.style.height = `${520 * scale}px`;
-  }, []);
-
-  useLayoutEffect(() => {
-    scaleHeroStage();
-    window.addEventListener("resize", scaleHeroStage);
-    return () => window.removeEventListener("resize", scaleHeroStage);
-  }, [scaleHeroStage]);
-
   useEffect(() => {
     if (!galleryOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -306,41 +287,98 @@ export default function LandingPage() {
               <Link href="#how" className="btn btn-outline">Voir comment ça marche</Link>
             </div>
 
-            <div className="hero-stage-outer" ref={heroStageOuterRef}>
-              <div className="hero-stage" ref={heroStageRef}>
-                <div className="stat-card stat-yellow reveal">
-                  <Clock className="ic" size={24} />
-                  <div className="num">5 min</div>
-                  <div className="lbl">Temps moyen pour générer un plan</div>
+            <div className="hero-stage-outer">
+              <div className="hero-stage">
+                {/* Colonne gauche */}
+                <div className="hero-col">
+                  <div className="stat-card stat-yellow reveal">
+                    <div className="stat-icon"><Clock size={20} /></div>
+                    <div className="num">5 min</div>
+                    <div className="lbl">Temps moyen pour générer un plan</div>
+                  </div>
+
+                  <div className="vendors-card reveal">
+                    <div className="icon-stack">
+                      <span className="icon-chip"><Gem size={16} /></span>
+                      <span className="icon-chip"><UtensilsCrossed size={16} /></span>
+                      <span className="icon-chip"><Briefcase size={16} /></span>
+                    </div>
+                    <p className="vendors-title">Découvrez vos prestataires idéaux</p>
+                    <div className="match-pill"><Handshake size={14} /> Match précis à {MARKETING_STATS.matchScore}%</div>
+                  </div>
+
+                  <div className="budget-card reveal">
+                    <div className="donut">
+                      <div className="donut-label"><strong>€€€</strong>Total<br />Estimé</div>
+                    </div>
+                    <div className="budget-info">
+                      <div className="title">Votre budget</div>
+                      <div className="legend">
+                        <span><i className="dot dot-coral" />Traiteur</span>
+                        <span><i className="dot dot-sage" />Lieu</span>
+                        <span><i className="dot dot-yellow" />Fleurs</span>
+                        <span><i className="dot dot-gold" />Tenues</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="share-card reveal">
-                  <Image src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
-                  <p>Générez votre plan</p>
-                  <Link href="/quiz" className="btn btn-solid">Démarrer</Link>
+                {/* Colonne centrale : phone */}
+                <div className="phone-col">
+                  <div className="phone-glow" />
+                  <div className="phone-mockup">
+                    <Image
+                      src="/mockup mariage facile.png"
+                      alt="Mockup application Mariage Facile"
+                      width={420}
+                      height={840}
+                      className="w-full h-auto"
+                      sizes="(max-width: 768px) 90vw, 400px"
+                      priority
+                    />
+                  </div>
                 </div>
 
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[520px] z-[2]">
-                  <Image
-                    src="/mockup mariage facile.png"
-                    alt="Mockup application Mariage Facile"
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 90vw, 420px"
-                    priority
-                  />
-                </div>
+                {/* Colonne droite */}
+                <div className="hero-col hero-col-right">
+                  <div className="product-card reveal">
+                    <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=300&h=200&q=85" alt="" width={300} height={200} className="w-full h-full object-cover" unoptimized />
+                    <div className="product-info">
+                      <div className="n">Match {MARKETING_STATS.matchScore}% - Traiteur</div>
+                      <div className="p">Dans votre budget</div>
+                    </div>
+                  </div>
 
-                <div className="product-card reveal">
-                  <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=200&h=160&q=85" alt="" width={200} height={160} className="w-full h-full object-cover" unoptimized />
-                  <div className="n">Match 94% - Traiteur</div>
-                  <div className="p">Dans votre budget</div>
-                </div>
+                  <div className="registry-card reveal">
+                    <div className="registry-icon"><Gift size={22} /></div>
+                    <div>
+                      <span className="ai-tag">Cadeaux & cagnotte</span>
+                      <div className="registry-title">Liste de mariage</div>
+                      <div className="registry-sub">Créez votre liste et recevez vos cadeaux.</div>
+                    </div>
+                  </div>
 
-                <div className="stat-card stat-coral reveal">
-                  <Users className="ic" size={24} color="#fff" />
-                  <div className="num">{MARKETING_STATS.couplesHelped.toLocaleString("fr-FR")}+</div>
-                  <div className="lbl">Couples accompagnés en France</div>
+                  <div className="couples-card reveal">
+                    <Image
+                      src="https://images.unsplash.com/photo-1529634597503-139d3726fed5?auto=format&fit=crop&w=400&h=200&q=80"
+                      alt="Couples heureux"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 90vw, 260px"
+                      unoptimized
+                    />
+                    <div className="couples-overlay" />
+                    <div className="couples-content">
+                      <div className="couples-num">{MARKETING_STATS.couplesHelped.toLocaleString("fr-FR")}+ <span>couples</span></div>
+                      <div className="couples-footer">
+                        <div className="app-cta">
+                          <QrCode size={28} />
+                          <span>Obtenez l'app<br />Mariage Facile</span>
+                        </div>
+                        <div className="france-badge"><Star size={10} fill="currentColor" /> france</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
