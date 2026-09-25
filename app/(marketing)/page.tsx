@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Header, Footer, LogoMarquee } from "@/components/layout";
-import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X, Play, Pause, Gem, UtensilsCrossed, Briefcase, Handshake, Gift, QrCode, Star } from "lucide-react";
+import { ArrowRight, Clock, Users, ChevronDown, ChevronLeft, ChevronRight, X, Play, Pause, Gem, UtensilsCrossed, Briefcase, Handshake, Heart, QrCode, Star } from "lucide-react";
 import { MARKETING_STATS } from "@/lib/marketing/stats";
 
 const VALUES = [
@@ -333,7 +333,7 @@ export default function LandingPage() {
                       width={420}
                       height={840}
                       className="w-full h-auto"
-                      sizes="(max-width: 768px) 90vw, 400px"
+                      sizes="(max-width: 768px) 90vw, 460px"
                       priority
                     />
                   </div>
@@ -350,11 +350,11 @@ export default function LandingPage() {
                   </div>
 
                   <div className="registry-card reveal">
-                    <div className="registry-icon"><Gift size={22} /></div>
+                    <div className="registry-icon"><Heart size={22} /></div>
                     <div>
-                      <span className="ai-tag">Cadeaux & cagnotte</span>
-                      <div className="registry-title">Liste de mariage</div>
-                      <div className="registry-sub">Créez votre liste et recevez vos cadeaux.</div>
+                      <span className="ai-tag">Coaching offert</span>
+                      <div className="registry-title">Planifiez votre mariage de rêve</div>
+                      <div className="registry-sub">avec notre coach expert</div>
                     </div>
                   </div>
 
@@ -364,22 +364,23 @@ export default function LandingPage() {
                       alt="Couples heureux"
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 90vw, 260px"
+                      sizes="(max-width: 768px) 90vw, 280px"
                       unoptimized
                     />
                     <div className="couples-overlay" />
                     <div className="couples-content">
-                      <div className="couples-num">{MARKETING_STATS.couplesHelped.toLocaleString("fr-FR")}+ <span>couples</span></div>
+                      <div className="couples-num">{MARKETING_STATS.couplesHelped.toLocaleString("fr-FR")}+ <span>couples inscrits</span></div>
                       <div className="couples-footer">
                         <div className="app-cta">
                           <QrCode size={28} />
-                          <span>Obtenez l'app<br />Mariage Facile</span>
+                          <span>Obtenir l'app</span>
                         </div>
                         <div className="france-badge"><Star size={10} fill="currentColor" /> france</div>
                       </div>
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
 
