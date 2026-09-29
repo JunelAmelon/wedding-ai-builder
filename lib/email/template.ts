@@ -140,7 +140,7 @@ export function renderEmail(opts: RenderEmailOptions): string {
           <tr>
             <td style="padding:28px 40px 20px;text-align:center;background:${LIGHT_PINK};">
               <a href="${APP_URL}" style="text-decoration:none;">
-                <span style="font-family:'Allura',cursive,Georgia,serif;font-size:28px;color:${INK};font-weight:400;letter-spacing:-0.02em;">${BRAND}</span>
+                <span style="font-family:'Marck Script','Allura',cursive,Georgia,serif;font-size:28px;color:${INK};font-weight:400;letter-spacing:-0.02em;">${BRAND}</span>
               </a>
             </td>
           </tr>
@@ -153,7 +153,7 @@ export function renderEmail(opts: RenderEmailOptions): string {
           <!-- Body -->
           <tr>
             <td style="padding:36px 40px 32px;">
-              <h1 style="margin:0 0 24px;font-family:'Allura',cursive,Georgia,serif;font-size:26px;font-weight:400;color:${INK};line-height:1.2;text-align:center;">${escapeHtml(title)}</h1>
+              <h1 style="margin:0 0 24px;font-family:'Marck Script','Allura',cursive,Georgia,serif;font-size:26px;font-weight:400;color:${INK};line-height:1.2;text-align:center;">${escapeHtml(title)}</h1>
               ${greetingHtml}
               ${paragraphHtml}
               ${sectionHtml}

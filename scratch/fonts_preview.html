@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Comparatif Typographies Style Allura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Allura&family=Great+Vibes&family=Parisienne&family=Pinyon+Script&family=Sacramento&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #faf8f7;
+      color: #0E0E10;
+      padding: 40px 24px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1.page-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0E0E10;
+    }
+    p.subtitle {
+      font-size: 14px;
+      color: #6B6B72;
+      margin-bottom: 36px;
+    }
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #EDEDF0;
+      padding: 24px 28px;
+      box-shadow: 0 4px 16px rgba(14, 14, 16, 0.04);
+      position: relative;
+    }
+    .card.current {
+      border: 1.5px dashed #d1d1d6;
+      background: #fdfdfd;
+    }
+    .card.recommended {
+      border: 2px solid #e64a5d;
+      box-shadow: 0 8px 24px rgba(230, 74, 93, 0.08);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .badge-current { background: #EDEDF0; color: #6B6B72; }
+    .badge-rec { background: #fef2f4; color: #e64a5d; border: 1px solid rgba(230, 74, 93, 0.2); }
+    .badge-opt { background: #F7F7F9; color: #0E0E10; }
+    
+    .font-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .font-desc {
+      font-size: 13px;
+      color: #6B6B72;
+      margin-bottom: 20px;
+    }
+    .preview-box {
+      background: #fcfbfa;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #f0eeec;
+    }
+    .sample-title {
+      font-size: 40px;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    .sample-title span {
+      color: #e64a5d;
+    }
+    .sample-sub {
+      font-size: 26px;
+      line-height: 1.3;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="page-title">Comparatif des typographies cursives / calligraphiques</h1>
+    <p class="subtitle">Même esprit romantique mariage qu'Allura, mais avec une géométrie plus ouverte et lisible sur écran.</p>
+
+    <div class="grid">
+      <!-- ALLURA ACTUELLE -->
+      <div class="card current">
+        <span class="badge badge-current">Actuelle (pour comparaison)</span>
+        <div class="font-name">Allura</div>
+        <div class="font-desc">Boucles très fermées, lettres très fines et serrées, lisibilité difficile sur écran.</div>
+        <div class="preview-box">
+          <div class="sample-title" style="font-family: 'Allura', cursive;">
+            L'IA qui trouve vos <span>pros idéaux</span>
+          </div>
+          <div class="sample-sub" style="font-family: 'Allura', cursive;">
+            Votre plan de mariage, <span>gratuitement</span> — Des mariages <span>réussis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSITION 1 : ALEX BRUSH -->
+      <div class="card recommended">
+        <span class="badge badge-rec">Proposition 1 — Recommandée ⭐</span>
+        <div class="font-name">Alex Brush</div>
+        <div class="font-desc"><strong>Le meilleur équilibre :</strong> traits calligraphiques nets, ascendantes fluides, jambages courts pour ne pas se superposer, lettres bien détachées et parfaitement lisibles.</div>
+        <div class="preview-box">
+          <div class="sample-title" style="font-family: 'Alex Brush', cursive; font-size: 42px;">
+            L'IA qui trouve vos <span>pros idéaux</span>
+          </div>
+          <div class="sample-sub" style="font-family: 'Alex Brush', cursive; font-size: 28px;">
+            Votre plan de mariage, <span>gratuitement</span> — Des mariages <span>réussis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSITION 2 : PARISIENNE -->
+      <div class="card">
+        <span class="badge badge-opt">Proposition 2</span>
+        <div class="font-name">Parisienne</div>
+        <div class="font-desc"><strong>Élégance française vintage :</strong> lettres un peu plus rondes et ouvertes, rythme naturel très doux, excellente lisibilité des mots en minuscules.</div>
+        <div class="preview-box">
+          <div class="sample-title" style="font-family: 'Parisienne', cursive; font-size: 38px;">
+            L'IA qui trouve vos <span>pros idéaux</span>
+          </div>
+          <div class="sample-sub" style="font-family: 'Parisienne', cursive; font-size: 25px;">
+            Votre plan de mariage, <span>gratuitement</span> — Des mariages <span>réussis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSITION 3 : GREAT VIBES -->
+      <div class="card">
+        <span class="badge badge-opt">Proposition 3</span>
+        <div class="font-name">Great Vibes</div>
+        <div class="font-desc"><strong>Faire-part haute couture :</strong> majuscules majestueuses, liaisons très fluides entre les lettres avec un contraste plein/délié bien marqué.</div>
+        <div class="preview-box">
+          <div class="sample-title" style="font-family: 'Great Vibes', cursive; font-size: 40px;">
+            L'IA qui trouve vos <span>pros idéaux</span>
+          </div>
+          <div class="sample-sub" style="font-family: 'Great Vibes', cursive; font-size: 26px;">
+            Votre plan de mariage, <span>gratuitement</span> — Des mariages <span>réussis</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROPOSITION 4 : SACRAMENTO -->
+      <div class="card">
+        <span class="badge badge-opt">Proposition 4</span>
+        <div class="font-name">Sacramento</div>
+        <div class="font-desc"><strong>Cursive moderne monoline :</strong> épaisseur de trait constante (monoline), moderne, épurée, ultra-propre sur écran, très tendance dans l'univers wedding tech.</div>
+        <div class="preview-box">
+          <div class="sample-title" style="font-family: 'Sacramento', cursive; font-size: 42px;">
+            L'IA qui trouve vos <span>pros idéaux</span>
+          </div>
+          <div class="sample-sub" style="font-family: 'Sacramento', cursive; font-size: 28px;">
+            Votre plan de mariage, <span>gratuitement</span> — Des mariages <span>réussis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

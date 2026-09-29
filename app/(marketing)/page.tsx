@@ -30,55 +30,55 @@ const SHOWCASE_MEDIA: {
   badge: string;
   span: string;
 }[] = [
-  {
-    id: "photographe",
-    src: "https://assets.mixkit.co/videos/36171/36171-720.mp4",
-    poster: "https://assets.mixkit.co/videos/36171/36171-thumb-720-0.jpg",
-    alt: "Photographe capturant un mariage",
-    badge: "Photographe",
-    span: "vc1",
-  },
-  {
-    id: "videaste",
-    src: "https://assets.mixkit.co/videos/40599/40599-720.mp4",
-    poster: "https://assets.mixkit.co/videos/40599/40599-thumb-720-0.jpg",
-    alt: "Vidéaste filmant un couple",
-    badge: "Vidéaste",
-    span: "vc2",
-  },
-  {
-    id: "traiteur",
-    src: "https://assets.mixkit.co/videos/5224/5224-720.mp4",
-    poster: "https://assets.mixkit.co/videos/5224/5224-thumb-720-0.jpg",
-    alt: "Dressage de table par un traiteur",
-    badge: "Traiteur",
-    span: "vc3",
-  },
-  {
-    id: "dj-animation",
-    src: "https://assets.mixkit.co/videos/11941/11941-720.mp4",
-    poster: "https://assets.mixkit.co/videos/11941/11941-thumb-720-0.jpg",
-    alt: "DJ animant un mariage",
-    badge: "DJ & Animation",
-    span: "vc4",
-  },
-  {
-    id: "fleuriste",
-    src: "https://assets.mixkit.co/videos/5208/5208-720.mp4",
-    poster: "https://assets.mixkit.co/videos/5208/5208-thumb-720-0.jpg",
-    alt: "Bouquet de fleurs de mariage",
-    badge: "Fleuriste",
-    span: "vc5",
-  },
-  {
-    id: "lieu",
-    src: "https://assets.mixkit.co/videos/5217/5217-720.mp4",
-    poster: "https://assets.mixkit.co/videos/5217/5217-thumb-720-0.jpg",
-    alt: "Lieu de réception",
-    badge: "Lieu",
-    span: "vc6",
-  },
-];
+    {
+      id: "photographe",
+      src: "https://assets.mixkit.co/videos/36171/36171-720.mp4",
+      poster: "https://assets.mixkit.co/videos/36171/36171-thumb-720-0.jpg",
+      alt: "Photographe capturant un mariage",
+      badge: "Photographe",
+      span: "vc1",
+    },
+    {
+      id: "videaste",
+      src: "https://assets.mixkit.co/videos/40599/40599-720.mp4",
+      poster: "https://assets.mixkit.co/videos/40599/40599-thumb-720-0.jpg",
+      alt: "Vidéaste filmant un couple",
+      badge: "Vidéaste",
+      span: "vc2",
+    },
+    {
+      id: "traiteur",
+      src: "https://assets.mixkit.co/videos/5224/5224-720.mp4",
+      poster: "https://assets.mixkit.co/videos/5224/5224-thumb-720-0.jpg",
+      alt: "Dressage de table par un traiteur",
+      badge: "Traiteur",
+      span: "vc3",
+    },
+    {
+      id: "dj-animation",
+      src: "https://assets.mixkit.co/videos/11941/11941-720.mp4",
+      poster: "https://assets.mixkit.co/videos/11941/11941-thumb-720-0.jpg",
+      alt: "DJ animant un mariage",
+      badge: "DJ & Animation",
+      span: "vc4",
+    },
+    {
+      id: "fleuriste",
+      src: "https://assets.mixkit.co/videos/5208/5208-720.mp4",
+      poster: "https://assets.mixkit.co/videos/5208/5208-thumb-720-0.jpg",
+      alt: "Bouquet de fleurs de mariage",
+      badge: "Fleuriste",
+      span: "vc5",
+    },
+    {
+      id: "lieu",
+      src: "https://assets.mixkit.co/videos/5217/5217-720.mp4",
+      poster: "https://assets.mixkit.co/videos/5217/5217-thumb-720-0.jpg",
+      alt: "Lieu de réception",
+      badge: "Lieu",
+      span: "vc6",
+    },
+  ];
 
 const WEDDING_GALLERY = [
   "photo-1519741497674-611481863552",
@@ -193,6 +193,33 @@ export default function LandingPage() {
     };
   }, [galleryOpen]);
 
+  const heroStageOuterRef = useRef<HTMLDivElement>(null);
+  const heroStageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateHeroScale = () => {
+      if (!heroStageOuterRef.current || !heroStageRef.current) return;
+      const outer = heroStageOuterRef.current;
+      const stage = heroStageRef.current;
+      const availableWidth = outer.clientWidth;
+      const baseWidth = 1020;
+      const baseHeight = 720;
+
+      if (window.innerWidth <= 1200) {
+        const scale = Math.min(1, availableWidth / baseWidth);
+        stage.style.setProperty("--hero-scale", String(scale));
+        outer.style.height = `${baseHeight * scale}px`;
+      } else {
+        stage.style.removeProperty("--hero-scale");
+        outer.style.height = "";
+      }
+    };
+
+    updateHeroScale();
+    window.addEventListener("resize", updateHeroScale);
+    return () => window.removeEventListener("resize", updateHeroScale);
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -287,8 +314,8 @@ export default function LandingPage() {
               <Link href="#how" className="btn btn-outline">Voir comment ça marche</Link>
             </div>
 
-            <div className="hero-stage-outer">
-              <div className="hero-stage">
+            <div className="hero-stage-outer" ref={heroStageOuterRef}>
+              <div className="hero-stage" ref={heroStageRef}>
                 {/* Colonne gauche */}
                 <div className="hero-col">
                   <div className="stat-card stat-yellow reveal">
@@ -523,7 +550,7 @@ export default function LandingPage() {
                 <span className="eyebrow-pill">Gratuit, sans engagement</span>
                 <h2 className="font-allura text-3xl sm:text-4xl font-bold" style={{ marginTop: 16, marginBottom: 16 }}>Votre plan de mariage, <span className="text-[#e64a5d]">gratuitement</span></h2>
                 <p style={{ marginBottom: 20 }}>
-                 Répondez au quiz et obtenez instantanément un plan personnalisé avec des prestataires compatibles. Aucune carte bancaire requise.
+                  Répondez au quiz et obtenez instantanément un plan personnalisé avec des prestataires compatibles. Aucune carte bancaire requise.
                 </p>
                 <Link href="/quiz" className="btn btn-solid">Créer mon plan</Link>
               </div>
