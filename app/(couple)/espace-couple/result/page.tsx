@@ -888,7 +888,7 @@ export default function CoupleResultPage() {
                 </div>
 
                 {riskEngine.generalAdvice && (
-                  <p className="mt-8 text-text-primary leading-relaxed italic font-allura max-w-sm mx-auto lg:mx-0 text-justify">
+                  <p className="mt-8 text-text-secondary leading-relaxed max-w-md mx-auto lg:mx-0">
                     “{riskEngine.generalAdvice}”
                   </p>
                 )}
