@@ -240,7 +240,6 @@ export async function POST(req: Request) {
       responseDelayHours: responseDelayHours ?? null,
       attachments: [],
       status: "pending",
-      creditsUsed: 0,
     });
 
     await messageRepo.create({

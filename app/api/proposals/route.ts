@@ -114,7 +114,6 @@ export async function POST(req: Request) {
       responseDelayHours: null,
       attachments: [],
       status: "pending",
-      creditsUsed: 0,
     });
 
     const msg = await messageRepo.create({

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Loader2, Mail, Phone, MapPin, Briefcase, CheckCircle2, XCircle, Clock, Image as ImageIcon, Star, DollarSign, Calendar, FileText, Globe, Instagram, Trash2 } from "lucide-react";
+import { ArrowLeft, Loader2, Mail, Phone, MapPin, Briefcase, CheckCircle2, XCircle, Clock, Image as ImageIcon, Star, DollarSign, Calendar, FileText, Globe, Instagram, Trash2, Award } from "lucide-react";
 import Link from "next/link";
 import type { UserAccount, VendorProfile } from "@/types/marketplace";
 
@@ -190,7 +190,7 @@ export default function AdminProDetailPage() {
                   <StatBox icon={DollarSign} label="Tarif min" value={p.priceRange ? `${p.priceRange.min}€` : "-"} />
                   <StatBox icon={DollarSign} label="Tarif max" value={p.priceRange ? `${p.priceRange.max}€` : "-"} />
                   <StatBox icon={Calendar} label="Expérience" value={p.yearsOfExperience ? `${p.yearsOfExperience} ans` : "-"} />
-                  <StatBox icon={Star} label="Crédits" value={String(p.credits ?? 0)} />
+                  <StatBox icon={Award} label="Niveau" value={p.tier ? (p.tier.charAt(0).toUpperCase() + p.tier.slice(1)) : "Standard"} />
                 </div>
 
                 {p.styles && p.styles.length > 0 && (
@@ -301,7 +301,7 @@ export default function AdminProDetailPage() {
 
       {activeTab === "Stats" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon={Star} label="Crédits restants" value={String(p?.credits ?? 0)} accent="bg-[#fef3c7] text-[#b45309]" />
+          <StatCard icon={Award} label="Niveau (Tier)" value={p?.tier ? (p.tier.charAt(0).toUpperCase() + p.tier.slice(1)) : "Standard"} accent="bg-[#fef3c7] text-[#b45309]" />
           <StatCard icon={CheckCircle2} label="Profil complété" value={`${p?.profileCompletion ?? 0}%`} accent="bg-[#e6f4ea] text-[#137333]" />
           <StatCard icon={Briefcase} label="Catégorie" value={p?.serviceCategory || "-"} accent="bg-[#dbeafe] text-[#2563eb]" />
           <StatCard icon={Calendar} label="Inscrit le" value={p?.createdAt ? new Date(p.createdAt).toLocaleDateString("fr-FR") : "-"} accent="bg-[#fce7f3] text-[#db2777]" />

@@ -5,7 +5,7 @@ import { userRepo } from "@/lib/db/repositories/userRepo";
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const shareToken = searchParams.get("token");
+    const shareToken = searchParams.get("token") || searchParams.get("shareToken");
 
     if (!shareToken) {
       return NextResponse.json({ error: "Token requis" }, { status: 400 });
@@ -26,7 +26,19 @@ export async function GET(req: NextRequest) {
       ? { firstName: couple.firstName, lastName: couple.lastName, avatarUrl: couple.avatarUrl }
       : null;
 
-    return NextResponse.json({ wishlist, items, purchases, couple: couplePublic });
+    // Protection des données personnelles des invités : masquer l'adresse email
+    const publicPurchases = purchases.map((p) => ({
+      id: p.id,
+      wishlistId: p.wishlistId,
+      itemId: p.itemId,
+      itemName: p.itemName,
+      guestName: p.guestName,
+      amount: p.amount,
+      message: p.message,
+      createdAt: p.createdAt,
+    }));
+
+    return NextResponse.json({ wishlist, items, purchases: publicPurchases, couple: couplePublic });
   } catch (error) {
     console.error("Error fetching public wishlist:", error);
     return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });

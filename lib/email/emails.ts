@@ -505,42 +505,7 @@ export function supportTicketUpdatedEmail(opts: {
 }
 
 /* ============================================================ */
-/*  18. CRÉDITS ACHETÉS (roses)                                   */
-/* ============================================================ */
-
-export function creditsPurchasedEmail(opts: {
-  firstName?: string;
-  amount: number;
-  credits: number;
-  balance: number;
-}) {
-  return {
-    subject: "Crédits ajoutés à votre compte",
-    html: renderEmail({
-      preheader: "Votre achat de crédits MariageFacile",
-      title: "Crédits ajoutés !",
-      greeting: opts.firstName ? `Bonjour ${opts.firstName},` : "Bonjour,",
-      paragraphs: [
-        `Votre achat de ${opts.credits} crédit${opts.credits > 1 ? "s" : ""} a bien été enregistré.`,
-        "Vous pouvez les utiliser pour contacter de nouveaux couples ou répondre à des appels d'offres premium.",
-      ],
-      sections: [
-        {
-          heading: "Récapitulatif",
-          rows: [
-            { label: "Crédits achetés", value: String(opts.credits) },
-            { label: "Montant", value: `${opts.amount}€` },
-            { label: "Solde actuel", value: String(opts.balance) },
-          ],
-        },
-      ],
-      cta: { label: "Mon espace", href: `${APP_URL}/espace-prestataire` },
-    }),
-  };
-}
-
-/* ============================================================ */
-/*  19. VÉRIFICATION EMAIL                                        */
+/*  18. VÉRIFICATION EMAIL                                        */
 /* ============================================================ */
 
 export function verifyEmail(opts: { firstName?: string; verifyUrl: string }) {

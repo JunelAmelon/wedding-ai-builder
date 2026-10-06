@@ -196,7 +196,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Handle clean replacement: DELETE old tender(s), refund vendor credits, release calendar dates
+    // Handle clean replacement: DELETE old tender(s), release calendar dates
     if (conflictingTenders.length > 0 && forceReplace) {
       for (const t of conflictingTenders) {
         const proposals = await proposalRepo.listByTender(t.id);
@@ -230,22 +230,8 @@ export async function POST(req: Request) {
           }
         }
 
-        // 2. Refund credits to vendors if credits were used and clean up proposals
+        // 2. Clean up old proposals
         for (const p of proposals) {
-          if (p.creditsUsed && p.creditsUsed > 0) {
-            const v = await vendorProfileRepo.get(p.vendorId);
-            if (v) {
-              const currentCredits = v.credits || 0;
-              await vendorProfileRepo.updateCredits(v.id, currentCredits + p.creditsUsed);
-              await notificationRepo.create({
-                userId: v.userId,
-                type: "proposal_declined",
-                title: "Crédits restitués",
-                content: `L'appel d'offres ${category} pour ${project.name || "un mariage"} a été relancé avec de nouveaux critères. Vos ${p.creditsUsed} crédit(s) vous ont été remboursés.`,
-                link: "/espace-prestataire/appels-offres",
-              });
-            }
-          }
           await proposalRepo.delete(p.id);
         }
 

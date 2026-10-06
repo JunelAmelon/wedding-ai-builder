@@ -11,7 +11,6 @@ export default function VendorDashboardPage() {
   const router = useRouter();
 
   interface DashboardStats {
-    credits: number;
     newOpportunities: number;
     sentProposals: number;
     activeProposals: number;

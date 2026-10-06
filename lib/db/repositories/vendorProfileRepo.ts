@@ -11,13 +11,12 @@ async function getFirestoreCol() {
 }
 
 export const vendorProfileRepo = {
-  async create(data: Omit<VendorProfile, "id" | "createdAt" | "updatedAt" | "credits" | "profileCompletion" | "verified">): Promise<VendorProfile> {
+  async create(data: Omit<VendorProfile, "id" | "createdAt" | "updatedAt" | "profileCompletion" | "verified">): Promise<VendorProfile> {
     const id = nanoid(12);
     const now = new Date().toISOString();
     const profile: VendorProfile = {
       ...data,
       id,
-      credits: 0,
       profileCompletion: 0,
       verified: false,
       createdAt: now,
@@ -75,9 +74,5 @@ export const vendorProfileRepo = {
     await col.doc(id).update({ ...data, updatedAt: now });
     const doc = await col.doc(id).get();
     return doc.data() as VendorProfile;
-  },
-
-  async updateCredits(id: string, credits: number): Promise<VendorProfile> {
-    return this.update(id, { credits });
   },
 };

@@ -106,7 +106,7 @@ export interface VendorProfile {
   tier: "economique" | "standard" | "premium" | "luxe";
   documents: { url: string; publicId: string; filename: string }[];
   acceptedTerms: boolean;
-  credits: number;
+  credits?: number;
   profileCompletion: number; // 0-100
   preferences?: { emailNotifications: boolean; opportunityAlerts: boolean };
   verified: boolean;
@@ -215,7 +215,7 @@ export interface Proposal {
   responseDelayHours: number | null;
   attachments: { url: string; filename: string }[];
   status: ProposalStatus;
-  creditsUsed: number;
+  creditsUsed?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -237,9 +237,7 @@ export type NotificationType =
   | "proposal_accepted"
   | "proposal_declined"
   | "message_received"
-  | "profile_verified"
-  | "credits_purchased"
-  | "credits_low";
+  | "profile_verified";
 
 export interface Notification {
   id: string;
@@ -289,7 +287,7 @@ export interface TimelineTask {
 }
 
 export interface DashboardStats {
-  credits: number;
+  credits?: number;
   newOpportunities: number;
   sentProposals: number;
   activeProposals: number;

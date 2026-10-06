@@ -5,7 +5,6 @@ import { vendorProfileRepo } from "@/lib/db/repositories/vendorProfileRepo";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { proposalRepo } from "@/lib/db/repositories/proposalRepo";
 import { notificationRepo } from "@/lib/db/repositories/notificationRepo";
-import { creditRepo } from "@/lib/db/repositories/creditRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
 import { userRepo } from "@/lib/db/repositories/userRepo";
 import { adminRepo } from "@/lib/db/repositories/adminRepo";
@@ -56,7 +55,6 @@ export async function GET() {
       : 0;
 
     const unreadNotifications = await notificationRepo.listUnreadByUser(user.id).catch(() => []);
-    const creditTransactions = await creditRepo.listByVendor(profile.id).catch(() => []);
 
     const enrichedMatches = await Promise.all(
       matches.map(async (m) => {
@@ -121,7 +119,6 @@ export async function GET() {
 
     return NextResponse.json({
       stats: {
-        credits: profile.credits ?? 0,
         newOpportunities,
         sentProposals,
         activeProposals,
@@ -137,7 +134,6 @@ export async function GET() {
       matches: enrichedMatches.slice(0, 10),
       proposals: enrichedProposals.slice(0, 10),
       notifications: unreadNotifications,
-      creditTransactions: creditTransactions.slice(0, 10),
       subscription: subscription
         ? {
             ...subscription,

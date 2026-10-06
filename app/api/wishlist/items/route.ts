@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";
-import { wishlistItemRepo } from "@/lib/db/repositories/wishlistRepo";
-import type { WishlistItem } from "@/types/marketplace";
+import { wishlistItemRepo, wishlistRepo } from "@/lib/db/repositories/wishlistRepo";
 
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuth();
+    if (user.role !== "couple" && user.role !== "admin") {
+      return NextResponse.json({ error: "Accès réservé" }, { status: 403 });
+    }
 
     const body = await req.json();
     const { wishlistId, name, description, price, imageUrl, vendorId, vendorName, quantity = 1 } = body;
@@ -14,11 +16,27 @@ export async function POST(req: NextRequest) {
     const numQuantity = Number(quantity ?? 1);
 
     if (!wishlistId || !name || price === undefined || price === null || Number.isNaN(numPrice) || numPrice < 0) {
-      return NextResponse.json({ error: "wishlistId, name et un prix valide (non-négatif) sont requis" }, { status: 400 });
+      return NextResponse.json(
+        { error: "wishlistId, name et un prix valide (non-négatif) sont requis" },
+        { status: 400 }
+      );
     }
 
     if (Number.isNaN(numQuantity) || numQuantity < 1) {
       return NextResponse.json({ error: "La quantité doit être d'au moins 1" }, { status: 400 });
+    }
+
+    // Protection contre l'IDOR : vérifier que la liste appartient bien à l'utilisateur connecté
+    const wishlist = await wishlistRepo.get(wishlistId);
+    if (!wishlist) {
+      return NextResponse.json({ error: "Liste de mariage introuvable" }, { status: 404 });
+    }
+
+    if (wishlist.coupleId !== user.id && user.role !== "admin") {
+      return NextResponse.json(
+        { error: "Vous n'êtes pas autorisé à modifier cette liste" },
+        { status: 403 }
+      );
     }
 
     const item = await wishlistItemRepo.create({
@@ -47,12 +65,22 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAuth();
+    const user = await requireAuth();
     const { searchParams } = new URL(req.url);
     const wishlistId = searchParams.get("wishlistId");
 
     if (!wishlistId) {
       return NextResponse.json({ error: "wishlistId requis" }, { status: 400 });
+    }
+
+    const wishlist = await wishlistRepo.get(wishlistId);
+    if (!wishlist) {
+      return NextResponse.json({ error: "Liste introuvable" }, { status: 404 });
+    }
+
+    // Si la liste est privée, seul le propriétaire ou un admin peut y accéder
+    if (!wishlist.isPublic && wishlist.coupleId !== user.id && user.role !== "admin") {
+      return NextResponse.json({ error: "Accès privé" }, { status: 403 });
     }
 
     const items = await wishlistItemRepo.getByWishlist(wishlistId);

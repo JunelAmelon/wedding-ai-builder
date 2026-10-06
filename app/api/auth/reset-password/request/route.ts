@@ -25,7 +25,18 @@ export async function POST(req: Request) {
     }
 
     const { email } = parsed.data;
-    const user = await userRepo.getByEmail(email.toLowerCase());
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Rate limiting par compte/email (3 demandes max par heure pour un même email)
+    const emailLimit = await checkRateLimit(`reset-request:email:${normalizedEmail}`, 3, 3600);
+    if (!emailLimit.allowed) {
+      return NextResponse.json(
+        { error: "Trop de demandes pour ce compte. Veuillez vérifier votre boîte de réception ou réessayer plus tard." },
+        { status: 429 }
+      );
+    }
+
+    const user = await userRepo.getByEmail(normalizedEmail);
 
     if (!user) {
       // Pour la sécurité, on ne révèle pas si l'email existe ou pas

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { createHmac, randomBytes, pbkdf2Sync } from "crypto";
+import { createHmac, randomBytes, pbkdf2Sync, timingSafeEqual } from "crypto";
 import type { UserAccount } from "@/types/marketplace";
 import type { AdminRole } from "@/types/admin";
 import { userRepo } from "@/lib/db/repositories/userRepo";
@@ -8,6 +8,7 @@ import { env } from "@/lib/env";
 
 const COOKIE_NAME = "wab_session";
 const JWT_SECRET = env.JWT_SECRET;
+const SESSION_DURATION_SECONDS = 7 * 24 * 60 * 60; // 7 jours
 
 export interface SessionUser {
   id: string;
@@ -18,6 +19,11 @@ export interface SessionUser {
   adminRole?: AdminRole;
 }
 
+export interface SessionPayload extends SessionUser {
+  iat: number;
+  exp: number;
+}
+
 export function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("hex");
   const hash = pbkdf2Sync(password, salt, 100000, 32, "sha512").toString("hex");
@@ -25,12 +31,31 @@ export function hashPassword(password: string): string {
 }
 
 export function verifyPassword(password: string, hashed: string): boolean {
-  const [salt, hash] = hashed.split(":");
-  const derived = pbkdf2Sync(password, salt, 100000, 32, "sha512").toString("hex");
-  return derived === hash;
+  try {
+    const [salt, hash] = hashed.split(":");
+    if (!salt || !hash) return false;
+    const derived = pbkdf2Sync(password, salt, 100000, 32, "sha512").toString("hex");
+    const derivedBuf = Buffer.from(derived);
+    const hashBuf = Buffer.from(hash);
+    if (derivedBuf.length !== hashBuf.length) return false;
+    return timingSafeEqual(derivedBuf, hashBuf);
+  } catch {
+    return false;
+  }
 }
 
-function signSession(payload: SessionUser): string {
+export function safeCompare(a: string, b: string): boolean {
+  try {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return timingSafeEqual(bufA, bufB);
+  } catch {
+    return false;
+  }
+}
+
+function signSession(payload: SessionPayload): string {
   const payloadStr = Buffer.from(JSON.stringify(payload)).toString("base64");
   const signature = createHmac("sha256", JWT_SECRET).update(payloadStr).digest("hex");
   return `${payloadStr}.${signature}`;
@@ -40,23 +65,56 @@ export function verifySession(token: string): SessionUser | null {
   try {
     const [payloadStr, signature] = token.split(".");
     if (!payloadStr || !signature) return null;
+
     const expected = createHmac("sha256", JWT_SECRET).update(payloadStr).digest("hex");
-    if (signature !== expected) return null;
+
+    // VULN-08: Protection contre les attaques temporelles (timing attacks)
+    if (!safeCompare(signature, expected)) {
+      return null;
+    }
+
     const payload = JSON.parse(Buffer.from(payloadStr, "base64").toString("utf-8"));
-    return payload as SessionUser;
+    if (!payload || typeof payload !== "object") return null;
+
+    // VULN-07: Vérification stricte du timestamp d'expiration
+    if (typeof payload.exp !== "number" || !Number.isFinite(payload.exp)) {
+      return null;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    if (now > payload.exp) {
+      return null;
+    }
+
+    // Validation d'intégrité des champs minimaux
+    if (!payload.id || !payload.email || !payload.role) {
+      return null;
+    }
+
+    return {
+      id: payload.id,
+      email: payload.email,
+      firstName: payload.firstName || "",
+      lastName: payload.lastName || "",
+      role: payload.role,
+      ...(payload.adminRole ? { adminRole: payload.adminRole } : {}),
+    };
   } catch {
     return null;
   }
 }
 
-export function createSession(user: UserAccount): string {
+export function createSession(user: UserAccount | SessionUser): string {
+  const now = Math.floor(Date.now() / 1000);
   return signSession({
     id: user.id,
     email: user.email,
     firstName: user.firstName,
     lastName: user.lastName,
     role: user.role,
-    adminRole: user.adminRole,
+    ...(user.adminRole ? { adminRole: user.adminRole } : {}),
+    iat: now,
+    exp: now + SESSION_DURATION_SECONDS,
   });
 }
 
@@ -72,7 +130,7 @@ export function setSessionCookie(response: NextResponse, token: string) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: SESSION_DURATION_SECONDS,
     path: "/",
   });
 }
