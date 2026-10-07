@@ -1357,7 +1357,7 @@ main > section { padding: 56px 0; }
   justify-content: center;
   align-items: center;
   flex: 0 0 auto;
-  margin: 0 -80px;
+  margin: 0 -20px;
 }
 
 .phone-glow {
@@ -1365,8 +1365,8 @@ main > section { padding: 56px 0; }
   top: 15%;
   left: 50%;
   transform: translateX(-50%);
-  width: 580px;
-  height: 580px;
+  width: 480px;
+  height: 480px;
   background: radial-gradient(closest-side, rgba(228, 219, 251, 0.95), transparent 70%);
   filter: blur(50px);
   z-index: 0;
@@ -1376,7 +1376,7 @@ main > section { padding: 56px 0; }
 .phone-mockup {
   position: relative;
   z-index: 2;
-  width: 540px;
+  width: 405px;
   max-width: 100%;
   filter: drop-shadow(0 30px 60px rgba(14, 14, 16, 0.22));
 }
@@ -2474,12 +2474,12 @@ main > section { padding: 56px 0; }
   justify-content: center;
 }
 .sh-phone {
-  width: 230px;
+  width: 245px;
   max-width: 70vw;
- 
   position: relative;
+  filter: drop-shadow(0 20px 40px rgba(14, 14, 16, 0.16));
 }
-.sh-phone img { width: 100%; display: block; border-radius: 30px; }
+.sh-phone img { width: 100%; height: auto; display: block; }
 .sh-guarantee {
   position: absolute;
   top: 16px;
