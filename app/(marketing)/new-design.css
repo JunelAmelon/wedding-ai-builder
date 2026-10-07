@@ -2128,7 +2128,7 @@ main > section { padding: 56px 0; }
 
 .promo-visual-duo {
   position: relative;
-  width: 150px;
+  width: 104px;
   height: 126px;
   flex-shrink: 0;
 }
@@ -2156,7 +2156,7 @@ main > section { padding: 56px 0; }
 .promo-main-visual {
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 0;
   width: 100px;
   height: 120px;
   border-radius: 14px;
@@ -2223,7 +2223,7 @@ main > section { padding: 56px 0; }
 @media (max-width: 560px) {
   .promo-card { padding: 16px; gap: 14px; min-height: auto; }
   .promo-visual { width: 64px; height: 92px; }
-  .promo-visual-duo { width: 106px; height: 92px; }
+  .promo-visual-duo { width: 76px; height: 92px; }
   .promo-mini-card { width: 50px; height: 58px; padding: 5px; }
   .promo-mini-card img { height: 30px; }
   .promo-main-visual { width: 72px; height: 88px; }

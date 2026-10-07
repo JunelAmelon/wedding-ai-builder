@@ -439,11 +439,6 @@ export default function LandingPage() {
 
               <div className="promo-card lavender reveal">
                 <div className="promo-visual-duo">
-                  <div className="promo-mini-card">
-                    <Image src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=140&h=90&q=85" alt="" width={140} height={90} className="w-full h-full object-cover" unoptimized />
-                    <div className="mn hidden sm:block">Bouquet frais</div>
-                    <div className="mp hidden sm:block">89,99 €</div>
-                  </div>
                   <div className="promo-main-visual">
                     <Image src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=250&h=300&q=85" alt="" width={250} height={300} className="w-full h-full object-cover" unoptimized />
                     <span className="promo-avatars">
