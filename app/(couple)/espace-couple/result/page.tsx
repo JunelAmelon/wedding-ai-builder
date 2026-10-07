@@ -2,7 +2,7 @@
 
 import LoadingScreen from "@/components/shared/LoadingScreen";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -23,6 +23,9 @@ import {
   Lightbulb,
   Users,
   MapPin,
+  ChevronLeft,
+  ChevronRight,
+  MousePointerClick,
 } from "lucide-react";
 
 function normalizeStyleAnswer(quiz: WeddingSession["quizAnswers"]) {
@@ -124,6 +127,53 @@ export default function CoupleResultPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [session, setSession] = useState<WeddingSession | null>(null);
+
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftState, setScrollLeftState] = useState(0);
+
+  const checkScrollability = () => {
+    const el = timelineRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 15);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 15);
+  };
+
+  const scrollTimeline = (direction: "left" | "right") => {
+    const el = timelineRef.current;
+    if (!el) return;
+    const scrollAmount = 340;
+    el.scrollBy({
+      left: direction === "right" ? scrollAmount : -scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const el = timelineRef.current;
+    if (!el) return;
+    setIsDragging(true);
+    setStartX(e.pageX - el.offsetLeft);
+    setScrollLeftState(el.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const el = timelineRef.current;
+    if (!el) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    el.scrollLeft = scrollLeftState - walk;
+    checkScrollability();
+  };
+
+  const handleMouseUpOrLeave = () => {
+    setIsDragging(false);
+  };
 
   useEffect(() => {
     async function load() {
@@ -340,6 +390,18 @@ export default function CoupleResultPage() {
       dialCirc: 2 * Math.PI * 70,
     };
   }, [session?.aiOutput, session?.quizAnswers]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      checkScrollability();
+    }, 150);
+    const handleResize = () => checkScrollability();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [timelineWithDates]);
 
   if (loading) return <LoadingScreen minHeight={"100dvh"} />;
   if (error) return <div className="min-h-[100dvh] bg-gradient-to-b from-[#fef2f4] to-white p-6">{error}</div>;
@@ -573,8 +635,8 @@ export default function CoupleResultPage() {
       {/* ============================== TIMELINE ============================== */}
       <section className="px-6 py-12">
         <div className="max-w-6xl mx-auto">
-          <div className="rounded-[32px] bg-white border border-line shadow-[0_4px_20px_rgba(14,14,16,0.05)] p-6 lg:p-10">
-            <div className="text-center mb-10">
+          <div className="rounded-[32px] bg-white border border-line shadow-[0_4px_20px_rgba(14,14,16,0.05)] p-6 lg:p-10 relative">
+            <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 rounded-full border border-line bg-[#fef2f4] px-4 py-2 mb-4">
                 <Clock size={16} className="text-[#db2777]" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-grey">Frise chronologique</span>
@@ -582,13 +644,99 @@ export default function CoupleResultPage() {
               <h2 className="font-allura text-3xl sm:text-4xl font-bold text-ink tracking-tight">
                 Votre parcours jusqu'au <span className="font-allura text-[#c43a4a]">Jour J</span>
               </h2>
+
+              {/* Action & indicateur interactif pour PC */}
+              <div className="hidden sm:inline-flex items-center gap-3 mt-3 px-4 py-1.5 rounded-full bg-[#fef2f4]/80 border border-[#c43a4a]/20 text-xs text-ink/80 shadow-sm">
+                <MousePointerClick size={14} className="text-[#c43a4a]" />
+                <span>Cliquez sur les flèches ou glissez pour faire défiler la frise</span>
+                <div className="flex items-center gap-1 ml-1 border-l border-[#c43a4a]/20 pl-2">
+                  <button
+                    type="button"
+                    onClick={() => scrollTimeline("left")}
+                    disabled={!canScrollLeft}
+                    className="p-1 rounded-full hover:bg-white text-grey hover:text-ink disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                    title="Défiler vers la gauche"
+                    aria-label="Défiler vers la gauche"
+                  >
+                    <ChevronLeft size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => scrollTimeline("right")}
+                    disabled={!canScrollRight}
+                    className="p-1 rounded-full hover:bg-white text-[#c43a4a] hover:text-[#c43a4a] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                    title="Défiler vers la droite"
+                    aria-label="Défiler vers la droite"
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="relative">
               {/* Ligne horizontale desktop */}
-              <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-ink/10 -translate-y-1/2 hidden sm:block" />
+              <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-ink/10 -translate-y-1/2 hidden sm:block pointer-events-none" />
 
-              <div className="flex flex-col sm:flex-row sm:overflow-x-auto sm:gap-0 sm:[&::-webkit-scrollbar]:hidden sm:[scrollbar-width:none] gap-4">
+              {/* Dégradés d'atténuation latéraux sur PC */}
+              <div
+                className={`pointer-events-none absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white via-white/80 to-transparent z-10 hidden sm:block transition-opacity duration-300 ${
+                  canScrollLeft ? "opacity-100" : "opacity-0"
+                }`}
+              />
+              <div
+                className={`pointer-events-none absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white via-white/80 to-transparent z-10 hidden sm:block transition-opacity duration-300 ${
+                  canScrollRight ? "opacity-100" : "opacity-0"
+                }`}
+              />
+
+              {/* Bouton d'action flottant Gauche sur PC */}
+              {canScrollLeft && (
+                <div className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 items-center">
+                  <button
+                    type="button"
+                    onClick={() => scrollTimeline("left")}
+                    className="flex items-center gap-2 pr-3.5 pl-2 py-2 rounded-full bg-white/95 backdrop-blur-md border border-line shadow-[0_8px_20px_rgba(14,14,16,0.12)] hover:bg-[#fef2f4] hover:border-[#c43a4a]/40 hover:scale-105 active:scale-95 transition-all text-xs font-semibold text-ink group cursor-pointer"
+                    title="Revenir en arrière"
+                    aria-label="Défiler vers la gauche"
+                  >
+                    <span className="w-7 h-7 rounded-full bg-neutral-100 text-grey group-hover:bg-[#c43a4a] group-hover:text-white flex items-center justify-center shadow-sm group-hover:-translate-x-0.5 transition-all">
+                      <ChevronLeft size={16} />
+                    </span>
+                    <span className="text-xs font-semibold text-grey group-hover:text-ink transition-colors">Précédent</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Bouton d'action flottant Droite sur PC (action visible pour défiler) */}
+              {canScrollRight && (
+                <div className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 items-center">
+                  <button
+                    type="button"
+                    onClick={() => scrollTimeline("right")}
+                    className="flex items-center gap-2 pl-3.5 pr-2 py-2 rounded-full bg-white/95 backdrop-blur-md border border-[#c43a4a]/30 shadow-[0_8px_25px_rgba(196,58,74,0.18)] hover:bg-[#fef2f4] hover:border-[#c43a4a] hover:scale-105 active:scale-95 transition-all text-xs font-semibold text-ink group cursor-pointer"
+                    title="Défiler la suite de la frise"
+                    aria-label="Défiler vers la droite"
+                  >
+                    <span className="text-xs font-semibold text-ink group-hover:text-[#c43a4a] transition-colors">Défiler</span>
+                    <span className="w-7 h-7 rounded-full bg-[#c43a4a] text-white flex items-center justify-center shadow-sm group-hover:translate-x-0.5 transition-transform">
+                      <ChevronRight size={16} />
+                    </span>
+                  </button>
+                </div>
+              )}
+
+              <div
+                ref={timelineRef}
+                onScroll={checkScrollability}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUpOrLeave}
+                onMouseLeave={handleMouseUpOrLeave}
+                className={`flex flex-col sm:flex-row sm:overflow-x-auto sm:gap-0 sm:[&::-webkit-scrollbar]:hidden sm:[scrollbar-width:none] gap-4 select-none sm:cursor-grab ${
+                  isDragging ? "sm:cursor-grabbing" : ""
+                }`}
+              >
                 {timelineWithDates.map((m, idx) => {
                   const isTop = idx % 2 === 0;
                   const accent = ["#db2777", "#8C2F39", "#e64a5d", "#8B7BD8", "#3C8552"][idx % 5];
