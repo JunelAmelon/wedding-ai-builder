@@ -137,13 +137,29 @@ export default function ProfessionalRegistrationPage() {
   function validateStep(index: number): boolean {
     switch (index) {
       case 0:
-        return !!(form.companyName && form.siret && form.contactName && form.email && form.password.length >= 8 && form.password === form.confirmPassword && form.phone && form.address && form.city && form.zipCode);
+        return !!(
+          form.companyName.trim() &&
+          form.siret.trim() &&
+          form.contactName.trim() &&
+          form.email.trim() &&
+          form.password.length >= 8 &&
+          form.password === form.confirmPassword &&
+          form.phone.trim() &&
+          form.address.trim() &&
+          form.city.trim() &&
+          form.zipCode.trim()
+        );
       case 1:
-        return !!(form.serviceCategory && form.yearsOfExperience && form.description);
+        return !!(
+          form.serviceCategory &&
+          (form.serviceCategory !== "Autre" || form.otherCategory.trim()) &&
+          form.yearsOfExperience &&
+          form.description.trim()
+        );
       case 2:
-        return true;
+        return !!(form.regions.trim() || form.city.trim());
       case 3:
-        return form.acceptedTerms;
+        return !!form.acceptedTerms;
       default:
         return false;
     }
@@ -160,12 +176,41 @@ export default function ProfessionalRegistrationPage() {
   }
 
   const completion = useMemo(() => {
-    let filled = Object.values(done).filter(Boolean).length;
-    if (form.companyName) filled += 0.4;
-    if (form.serviceCategory) filled += 0.3;
-    if (form.address) filled += 0.3;
-    return Math.min(100, Math.round((filled / 5) * 100));
-  }, [done, form]);
+    let score = 0;
+
+    // 1. Identité (30 points)
+    if (form.companyName.trim()) score += 5;
+    if (form.siret.trim()) score += 4;
+    if (form.contactName.trim()) score += 4;
+    if (form.email.trim() && form.email.includes("@")) score += 4;
+    if (form.phone.trim()) score += 4;
+    if (form.password.length >= 8 && form.password === form.confirmPassword) score += 4;
+    if (form.address.trim() && form.city.trim() && form.zipCode.trim()) score += 5;
+
+    // 2. Activité & Tarifs (35 points)
+    if (form.serviceCategory) score += 10;
+    if (form.yearsOfExperience) score += 5;
+    if (form.description.trim().length >= 5) score += 10;
+    if (form.styles.length > 0) score += 5;
+    if (form.priceMin && form.priceMax) score += 5;
+
+    // 3. Zone d'intervention (15 points)
+    if (form.regions.trim() || form.city.trim()) score += 5;
+    if (form.radius) score += 5;
+    if (form.noticePeriod) score += 5;
+
+    // 4. Gamme & Validation (20 points)
+    if (form.tier) score += 5;
+    if (form.acceptedTerms) score += 15;
+
+    // Si toutes les sections obligatoires sont validées et les infos clés renseignées, garantir 100%
+    const allRequiredValid = [0, 1, 2, 3].every((i) => validateStep(i));
+    if (allRequiredValid && form.priceMin && form.priceMax && form.radius && form.styles.length > 0) {
+      return 100;
+    }
+
+    return Math.min(100, Math.round(score));
+  }, [form]);
 
   async function handleSubmit() {
     const allDone = [0, 1, 2, 3].every((i) => validateStep(i));
@@ -641,7 +686,7 @@ export default function ProfessionalRegistrationPage() {
               <div className="accordion">
                 {sections.map((section, i) => {
                   const isOpen = openIndex === i;
-                  const isComplete = done[i] && validateStep(i);
+                  const isComplete = validateStep(i);
                   return (
                     <div key={i} className={`acc-item ${isOpen ? "open" : ""} ${isComplete ? "complete" : ""}`}>
                       <div className="acc-head" onClick={() => setOpenIndex(isOpen ? -1 : i)}>
@@ -659,9 +704,9 @@ export default function ProfessionalRegistrationPage() {
                             <button
                               className="btn btn-solid"
                               onClick={() => goNext(i)}
-                              disabled={i === 5 && !validateStep(i)}
+                              disabled={i === 3 && !validateStep(i)}
                             >
-                              {i === 5 ? "Terminer" : "Continuer"} <ArrowRight size={14} />
+                              {i === 3 ? "Terminer" : "Continuer"} <ArrowRight size={14} />
                             </button>
                           </div>
                         </div>
