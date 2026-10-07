@@ -398,21 +398,21 @@ export default function WishlistManagementPage() {
                     <Heart size={18} />
                     Offerts
                   </div>
-                  <p className="font-allura text-2xl font-bold text-[#0E0E10]">{purchases.reduce((sum, p) => sum + p.amount, 0).toLocaleString("fr-FR")} €</p>
+                  <p className="text-2xl font-bold text-[#0E0E10] font-sans">{purchases.reduce((sum, p) => sum + p.amount, 0).toLocaleString("fr-FR")} €</p>
                 </div>
                 <div className="bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-4 shadow-sm">
                   <div className="flex items-center gap-2 text-[#6B6B72] font-bold font-sans text-sm mb-1">
                     <ShoppingBag size={18} />
                     Cadeaux
                   </div>
-                  <p className="font-allura text-2xl font-bold text-[#0E0E10]">{items.length}</p>
+                  <p className="text-2xl font-bold text-[#0E0E10] font-sans">{items.length}</p>
                 </div>
                 <div className="bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-4 shadow-sm">
                   <div className="flex items-center gap-2 text-[#6B6B72] font-bold font-sans text-sm mb-1">
                     <Star size={18} />
                     Restants
                   </div>
-                  <p className="font-allura text-2xl font-bold text-[#0E0E10]">{items.reduce((sum, i) => sum + (i.remaining || 0), 0)}</p>
+                  <p className="text-2xl font-bold text-[#0E0E10] font-sans">{items.reduce((sum, i) => sum + (i.remaining || 0), 0)}</p>
                 </div>
               </div>
             </div>

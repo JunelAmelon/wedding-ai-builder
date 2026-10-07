@@ -222,8 +222,8 @@ export default function CoupleResultPage() {
         percentRows: [] as [string, number][],
         breakdown: {} as Record<string, number>,
         totalBudget: 0,
-        currency: "EUR",
-        formatAmount: (amount: number) => `${Math.round(amount).toLocaleString("fr-FR")} EUR`,
+        currency: "€",
+        formatAmount: (amount: number) => `${Math.round(amount).toLocaleString("fr-FR")} €`,
         timelineWithDates: [] as { monthsBeforeWedding: number; title: string; displayDate: string; tasks: string[] }[],
         riskEngine: { riskScore: 0, criticalErrors: [], budgetInconsistencies: [], organizationalRisks: [], scoreJustification: "", generalAdvice: "" },
         riskPct: 0,
@@ -255,7 +255,8 @@ export default function CoupleResultPage() {
     const bd = aiOutput.budgetBreakdown.breakdown;
     const tb = aiOutput.budgetBreakdown.totalBudget;
     const cur = aiOutput.budgetBreakdown.currency;
-    const fa = (amount: number) => `${Math.round(amount).toLocaleString("fr-FR")} ${cur}`;
+    const curSymbol = !cur || cur === "EUR" ? "€" : cur;
+    const fa = (amount: number) => `${Math.round(amount).toLocaleString("fr-FR")} ${curSymbol}`;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -738,7 +739,7 @@ export default function CoupleResultPage() {
                 </svg>
                 <div className="mt-4 text-center">
                   <div className="text-[11px] font-semibold uppercase tracking-wider text-grey">Total</div>
-                  <div className="font-allura text-2xl font-bold text-ink">{formatAmount(totalBudget)}</div>
+                  <div className="text-2xl font-bold text-ink font-sans">{formatAmount(totalBudget)}</div>
                 </div>
               </div>
 
@@ -761,7 +762,7 @@ export default function CoupleResultPage() {
                           <span className="text-sm font-medium text-text-primary">{BUDGET_LABELS[k] ?? k}</span>
                         </div>
                         <div className="text-right">
-                          <span className="font-allura font-bold text-ink block">{formatAmount((breakdown as Record<string, number>)[k] ?? 0)}</span>
+                          <span className="font-bold text-ink block font-sans">{formatAmount((breakdown as Record<string, number>)[k] ?? 0)}</span>
                           <span className="text-xs text-text-secondary">{Math.round(v)}%</span>
                         </div>
                       </div>
@@ -841,7 +842,7 @@ export default function CoupleResultPage() {
                     <span className="h-2 w-2 rounded-full bg-coral" />
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Traiteur</span>
                   </div>
-                  <div className="font-allura text-lg font-bold">2 300 €</div>
+                  <div className="text-lg font-bold font-sans">2 300 €</div>
                   <div className="text-[10px] text-text-secondary">Solde final</div>
                 </div>
                 <div className="absolute right-0 top-4 bg-yellow rounded-[20px] p-4 shadow-[0_14px_30px_rgba(14,14,16,0.12)] w-[140px]">
@@ -849,7 +850,7 @@ export default function CoupleResultPage() {
                     <span className="h-2 w-2 rounded-full bg-ink" />
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-grey">Photo</span>
                   </div>
-                  <div className="font-allura text-lg font-bold">890 €</div>
+                  <div className="text-lg font-bold font-sans">890 €</div>
                   <div className="text-[10px] text-text-secondary">Acompte</div>
                 </div>
               </div>
