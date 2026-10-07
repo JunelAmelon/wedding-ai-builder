@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Clock } from "lucide-react";
 
 const PRODUCTS = [
   { name: "Robe de mariée bohème", price: "695 €", reviews: "128", stars: 5, img: "https://images.pexels.com/photos/15120548/pexels-photo-15120548.jpeg?auto=compress&cs=tinysrgb&w=400", tag: "Bestseller" },
@@ -54,15 +55,6 @@ export default function BoutiquePage() {
           --wborder:#e7e5e2;
         }
         .wedding-shop{position:relative;font-family:'Poppins',sans-serif;color:var(--wtext);background:var(--wwhite);}
-        .wfrost{position:absolute;inset:0;z-index:20;background:rgba(255,255,255,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);pointer-events:none;}
-        .wtoast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:110;background:#fff;border:1px solid #e7e4df;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.15);padding:16px 20px;display:flex;align-items:center;gap:16px;max-width:520px;width:calc(100% - 40px);}
-        .wtoast-text{flex:1;}
-        .wtoast-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;}
-        .wtoast-sub{font-size:12.5px;color:#6f7177;line-height:1.5;}
-        .wtoast-btn{background:var(--wblack);color:#fff;padding:10px 18px;border-radius:10px;font-size:12.5px;font-weight:500;white-space:nowrap;cursor:pointer;}
-        .wtoast-btn:hover{opacity:.85;}
-        .wtoast-close{width:30px;height:30px;border-radius:50%;border:1px solid #e7e4df;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#555;font-size:18px;}
-        .wtoast-close:hover{background:#f5f5f5;}
         .wedding-shop h1,.wedding-shop h2,.wedding-shop h3{font-family:'Playfair Display',serif;}
         .wwrap{max-width:1180px;margin:0 auto;padding:0 32px;}
         @media(max-width:900px){.wwrap{padding:0 18px;}}
@@ -329,16 +321,17 @@ export default function BoutiquePage() {
       </footer>
 
       {/* FROSTED GLASS OVERLAY */}
-      <div className="wfrost" />
+      <div className="absolute inset-0 z-20 bg-white/45 backdrop-blur-[3px] pointer-events-none" />
 
-      {/* COMING SOON TOAST */}
-      <div className="wtoast">
-        <div className="wtoast-text">
-          <div className="wtoast-title">Boutique — Bientôt disponible</div>
-          <div className="wtoast-sub">Les robes, alliances et accessoires arrivent très bientôt.</div>
+      {/* COMING SOON TOAST (IDENTIQUE A LISTE-SOUHAITS POUR LAISSER LE MENU MOBILE VISIBLE) */}
+      <div className="fixed left-1/2 -translate-x-1/2 bottom-24 md:bottom-6 z-30 bg-white border border-[#EDEDF0] rounded-[18px] shadow-[0_20px_60px_rgba(0,0,0,.15)] px-5 py-4 flex items-center gap-4 max-w-[520px] w-[calc(100%-40px)]">
+        <div className="flex-1">
+          <div className="font-sans text-[17px] font-bold text-[#1a1a1a] mb-1">Boutique — Bientôt disponible</div>
+          <div className="text-[12.5px] text-[#6B6B72] leading-relaxed">Les robes, alliances et accessoires arrivent très bientôt.</div>
         </div>
-        <button className="wtoast-btn">Me prévenir</button>
-        <button className="wtoast-close" aria-label="Fermer">×</button>
+        <span className="inline-flex items-center gap-1.5 bg-[#0E0E10]/10 text-[#0E0E10] px-[14px] py-[8px] rounded-[10px] text-[12.5px] font-semibold whitespace-nowrap">
+          <Clock size={14} /> À venir
+        </span>
       </div>
     </div>
   );
