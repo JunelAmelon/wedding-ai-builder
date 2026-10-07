@@ -288,22 +288,12 @@ export default function ProfessionalMarketingPage() {
               Créer mon profil
             </Link>
 
-            <div className="browser-frame-wrap">
-              <div className="browser-frame reveal" ref={browserRef}>
-                <div className="browser-top">
-                  <span className="d" />
-                  <span className="d" />
-                  <span className="d" />
-                  <span className="url">app.mariagefacile.fr/tableau-de-bord</span>
-                </div>
-                <div className="browser-body !block !p-0">
-                  <img
-                    src="/dashboard-prestataire.png"
-                    alt="Tableau de bord prestataire"
-                    className="w-full h-auto block"
-                  />
-                </div>
-              </div>
+            <div ref={browserRef} className="max-w-[880px] mx-auto mt-10 px-2 sm:px-4 reveal">
+              <img
+                src="/dashboard-prestataire.png"
+                alt="Tableau de bord prestataire sur ordinateur"
+                className="w-full h-auto block drop-shadow-[0_25px_50px_rgba(0,0,0,0.6)]"
+              />
             </div>
           </div>
         </section>
