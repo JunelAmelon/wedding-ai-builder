@@ -766,7 +766,7 @@ export default function CouplePlanningPage() {
                         : "text-[#6B6B72] hover:text-[#0E0E10]"
                       }`}
                   >
-                    📅 Date précise
+                    Date précise
                   </button>
                   <button
                     type="button"
@@ -779,7 +779,7 @@ export default function CouplePlanningPage() {
                         : "text-[#6B6B72] hover:text-[#0E0E10]"
                       }`}
                   >
-                    ⏳ Mois avant le jour J
+                    Mois avant le jour J
                   </button>
                 </div>
               </div>
