@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { renderEmail } from "./template";
 
 let resendClient: Resend | null = null;
 
@@ -20,18 +21,23 @@ export async function sendResultEmail(to: string, sessionId: string): Promise<vo
     return;
   }
 
+  const html = renderEmail({
+    preheader: "Votre plan de mariage personnalisé est prêt",
+    title: "Votre plan est prêt !",
+    paragraphs: [
+      "Félicitations ! Nous avons généré votre plan de mariage personnalisé avec votre budget prévisionnel, votre rétroplanning et vos recommandations.",
+      "Cliquez sur le bouton ci-dessous pour accéder immédiatement à votre plan complet.",
+    ],
+    cta: {
+      label: "Voir mon plan complet",
+      href: resultUrl,
+    },
+  });
+
   await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL || "MariageFacile <hello@mariagefacile.fr>",
+    from: process.env.RESEND_FROM_EMAIL || "Mariage Facile <hello@mariagefacile.fr>",
     to,
     subject: "Votre plan de mariage personnalisé est prêt 💍",
-    html: `
-      <div style="font-family: Inter, sans-serif; background:#0B0F1A; color:#fff; padding:32px;">
-        <h1 style="color:#7C3AED;">Votre plan est prêt !</h1>
-        <p style="color:#A1A1AA;">Nous avons généré votre blueprint, votre budget détaillé, votre timeline et votre Wedding Risk Score.</p>
-        <a href="${resultUrl}" style="display:inline-block;margin-top:16px;padding:12px 24px;background:#7C3AED;color:#fff;border-radius:8px;text-decoration:none;">
-          Voir mon plan complet
-        </a>
-      </div>
-    `,
+    html,
   });
 }

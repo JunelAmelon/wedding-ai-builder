@@ -64,7 +64,7 @@ function getTransporter(): nodemailer.Transporter | null {
   return transporter;
 }
 
-const FROM_NAME = process.env.SMTP_FROM_NAME || "MariageFacile";
+const FROM_NAME = process.env.SMTP_FROM_NAME || "Mariage Facile";
 const FROM_EMAIL = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || "hello@mariagefacile.fr";
 
 export interface SendEmailOptions {

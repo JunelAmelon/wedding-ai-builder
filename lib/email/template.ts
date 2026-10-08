@@ -47,7 +47,7 @@ export interface RenderEmailOptions {
 }
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-const BRAND = "MariageFacile";
+const BRAND = "Mariage Facile";
 const ROSE = "#e64a5d";
 const INK = "#0E0E10";
 const MUTED = "#6B6B72";
@@ -138,9 +138,15 @@ export function renderEmail(opts: RenderEmailOptions): string {
 
           <!-- Header / Logo -->
           <tr>
-            <td style="padding:28px 40px 20px;text-align:center;background:${LIGHT_PINK};">
-              <a href="${APP_URL}" style="text-decoration:none;">
-                <span style="font-family:'Marck Script','Allura',cursive,Georgia,serif;font-size:28px;color:${INK};font-weight:400;letter-spacing:-0.02em;">${BRAND}</span>
+            <td style="padding:32px 40px 22px;text-align:center;background:#ffffff;">
+              <a href="${APP_URL}" style="text-decoration:none;display:inline-block;">
+                <img
+                  src="${APP_URL}/logo-email.png"
+                  alt="${BRAND}"
+                  width="170"
+                  height="61"
+                  style="width:170px;max-width:100%;height:auto;display:block;margin:0 auto;border:0;outline:none;text-decoration:none;"
+                />
               </a>
             </td>
           </tr>

@@ -22,13 +22,13 @@ export function welcomeCoupleEmail(opts: {
 }) {
   const name = fullName(opts.firstName, opts.lastName);
   return {
-    subject: "Bienvenue sur MariageFacile 💍",
+    subject: "Bienvenue sur Mariage Facile 💍",
     html: renderEmail({
       preheader: "Votre aventure mariage commence ici",
       title: "Bienvenue" + (name ? `, ${opts.firstName || name}` : "") + " !",
       greeting: name ? `Bonjour ${opts.firstName || name},` : "Bonjour,",
       paragraphs: [
-        "Nous sommes ravis de vous accueillir sur MariageFacile, l'assistant qui simplifie l'organisation de votre mariage.",
+        "Nous sommes ravis de vous accueillir sur Mariage Facile, l'assistant qui simplifie l'organisation de votre mariage.",
         "Désormais, vous pouvez lancer des appels d'offres, recevoir des propositions de prestataires triés sur le volet, comparer les offres et choisir en toute sérénité.",
       ],
       cta: opts.verifyUrl
@@ -103,7 +103,7 @@ export function vendorApprovedEmail(opts: {
       title: "Vous êtes validé !",
       greeting: name ? `Bonjour ${opts.firstName || name},` : "Bonjour,",
       paragraphs: [
-        "Excellente nouvelle ! Votre candidature a été acceptée. Vous faites désormais partie du réseau MariageFacile.",
+        "Excellente nouvelle ! Votre candidature a été acceptée. Vous faites désormais partie du réseau Mariage Facile.",
         opts.companyName
           ? `En tant que ${opts.companyName}, vous pouvez recevoir des appels d'offres, proposer vos services aux couples et gérer votre calendrier.`
           : "Vous pouvez recevoir des appels d'offres, proposer vos services aux couples et gérer votre calendrier.",
@@ -136,7 +136,7 @@ export function vendorRejectedEmail(opts: {
       title: "Candidature non retenue",
       greeting: name ? `Bonjour ${opts.firstName || name},` : "Bonjour,",
       paragraphs: [
-        "Nous vous remercions sincèrement pour l'intérêt que vous portez à MariageFacile et pour le temps consacré à votre candidature.",
+        "Nous vous remercions sincèrement pour l'intérêt que vous portez à Mariage Facile et pour le temps consacré à votre candidature.",
         "Après examen attentif de votre profil, nous sommes au regret de ne pas pouvoir donner suite à votre demande pour le moment. Cela ne remet pas en question la qualité de votre travail.",
         "Vous êtes invité à soumettre une nouvelle candidature à l'avenir, en enrichissant votre portfolio ou vos références.",
       ],
@@ -155,13 +155,13 @@ export function adminInviteEmail(opts: {
   role?: string;
 }) {
   return {
-    subject: "Invitation — MariageFacile Admin",
+    subject: "Invitation — Mariage Facile Admin",
     html: renderEmail({
       preheader: "Vous avez été invité en tant qu'administrateur",
       title: "Invitation reçue",
       greeting: "Bonjour,",
       paragraphs: [
-        `Vous avez été invité${opts.role ? ` en tant que ${opts.role}` : ""} à rejoindre l'espace d'administration de MariageFacile.`,
+        `Vous avez été invité${opts.role ? ` en tant que ${opts.role}` : ""} à rejoindre l'espace d'administration de Mariage Facile.`,
         "Cliquez sur le bouton ci-dessous pour créer votre compte et définir votre mot de passe.",
       ],
       cta: { label: "Créer mon compte admin", href: opts.inviteUrl },
@@ -181,7 +181,7 @@ export function adminWelcomeEmail(opts: {
 }) {
   const name = fullName(opts.firstName, opts.lastName);
   return {
-    subject: "Bienvenue dans l'espace admin MariageFacile",
+    subject: "Bienvenue dans l'espace admin Mariage Facile",
     html: renderEmail({
       preheader: "Votre compte admin est prêt",
       title: "Bienvenue" + (name ? `, ${opts.firstName || name}` : "") + " !",
@@ -206,7 +206,7 @@ export function passwordResetEmail(opts: { resetUrl: string; email?: string }) {
       title: "Mot de passe oublié ?",
       greeting: "Bonjour,",
       paragraphs: [
-        "Vous avez demandé à réinitialiser le mot de passe de votre compte MariageFacile.",
+        "Vous avez demandé à réinitialiser le mot de passe de votre compte Mariage Facile.",
         "Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe. Ce lien est valable 1 heure.",
       ],
       cta: { label: "Réinitialiser mon mot de passe", href: opts.resetUrl },
@@ -342,7 +342,7 @@ export function newMessageEmail(opts: {
       title: "Nouveau message",
       greeting: opts.recipientFirstName ? `Bonjour ${opts.recipientFirstName},` : "Bonjour,",
       paragraphs: [
-        `${opts.senderName} (${senderLabel}) vous a envoyé un message sur MariageFacile.`,
+        `${opts.senderName} (${senderLabel}) vous a envoyé un message sur Mariage Facile.`,
       ],
       sections: [
         {
@@ -516,11 +516,11 @@ export function verifyEmail(opts: { firstName?: string; verifyUrl: string }) {
       title: "Vérifiez votre email",
       greeting: opts.firstName ? `Bonjour ${opts.firstName},` : "Bonjour,",
       paragraphs: [
-        "Bienvenue sur MariageFacile ! Pour activer votre compte et accéder à toutes les fonctionnalités, veuillez confirmer votre adresse email.",
+        "Bienvenue sur Mariage Facile ! Pour activer votre compte et accéder à toutes les fonctionnalités, veuillez confirmer votre adresse email.",
         "Cliquez sur le bouton ci-dessous pour vérifier votre email. Ce lien expire dans 24 heures.",
       ],
       cta: { label: "Vérifier mon email", href: opts.verifyUrl },
-      note: "Si vous n'avez pas créé de compte sur MariageFacile, vous pouvez ignorer cet email.",
+      note: "Si vous n'avez pas créé de compte sur Mariage Facile, vous pouvez ignorer cet email.",
     }),
   };
 }
@@ -535,7 +535,7 @@ export function passwordGeneratedEmail(opts: {
   tempPassword: string;
 }) {
   return {
-    subject: "Votre mot de passe MariageFacile",
+    subject: "Votre mot de passe Mariage Facile",
     html: renderEmail({
       preheader: "Un mot de passe a été généré pour votre compte",
       title: "Votre compte est prêt",
