@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { Logo } from "@/components/layout/Logo";
 import { Bell, Menu, X, ChevronRight, User, LogOut, Briefcase, Heart } from "lucide-react";
 
 interface NavItem {
@@ -33,8 +34,8 @@ export function DashboardHeader({ role, user, notifications, navItems }: Dashboa
     <>
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 bg-white/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href={base} className="font-serif text-lg sm:text-xl font-semibold tracking-tight shrink-0">
-            Wedding<span className="text-primary">AI</span>
+          <Link href={base} className="flex items-center shrink-0" aria-label="Mariage Facile">
+            <Logo priority />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
@@ -81,15 +82,15 @@ export function DashboardHeader({ role, user, notifications, navItems }: Dashboa
           <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm lg:hidden" onClick={() => setMenuOpen(false)} />
           <div className="fixed top-0 left-0 bottom-0 z-50 w-[85%] max-w-[320px] bg-white shadow-2xl p-6 lg:hidden flex flex-col">
             <div className="flex items-center justify-between mb-8">
-              <div className="font-serif text-lg font-semibold tracking-tight">
-                Wedding<span className="text-primary">AI</span>
-              </div>
+              <Link href={base} className="flex items-center" onClick={() => setMenuOpen(false)} aria-label="Mariage Facile">
+                <Logo priority />
+              </Link>
               <button onClick={() => setMenuOpen(false)} className="p-2 rounded-xl hover:bg-black/5 transition" aria-label="Fermer">
                 <X size={24} className="text-text-primary" />
               </button>
             </div>
 
-            <nav className="flex flex-col gap-2">
+            <div role="navigation" aria-label="Menu mobile" className="flex flex-col gap-2">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -102,7 +103,7 @@ export function DashboardHeader({ role, user, notifications, navItems }: Dashboa
                   <ChevronRight size={16} className="ml-auto text-text-secondary" />
                 </Link>
               ))}
-            </nav>
+            </div>
 
             <div className="mt-auto pt-6 border-t border-black/10">
               <div className="flex items-center gap-3 mb-4">

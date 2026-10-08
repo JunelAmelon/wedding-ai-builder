@@ -38,8 +38,8 @@ const COUPLE_NAV_SECONDARY = [
 ];
 
 const MOBILE_TABS = [
-  { href: "/espace-couple/result", label: "Plan IA", icon: Sparkles, primary: true },
   { href: "/espace-couple/mariage", label: "Mariage", icon: Heart },
+  { href: "/espace-couple/result", label: "Plan IA", icon: Sparkles, primary: true },
   { href: "/espace-couple/messagerie", label: "Messages", icon: MessageSquare },
 ];
 
@@ -261,7 +261,11 @@ export default function CoupleLayoutClient({
                 <div className="text-xs text-text-secondary truncate">{safeUser.email}</div>
               </div>
             </div>
-            <nav className="space-y-0.5 mb-6">
+            <div
+              role="navigation"
+              aria-label="Menu mobile"
+              className="flex-1 overflow-y-auto space-y-1 mb-6 pr-1"
+            >
               {MOBILE_MORE.map((item) => {
                 const count = getBadgeCount(item.href);
                 return (
@@ -296,13 +300,13 @@ export default function CoupleLayoutClient({
                   {item.label}
                 </Link>
               ))}
-            </nav>
+            </div>
             <button
               onClick={() => {
                 setMoreOpen(false);
                 handleLogout();
               }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[#e64a5d] hover:bg-[#fef2f4] transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[#e64a5d] hover:bg-[#fef2f4] transition-colors shrink-0"
             >
               <LogOut size={17} strokeWidth={1.75} />
               Déconnexion
@@ -311,9 +315,13 @@ export default function CoupleLayoutClient({
         </div>
       )}
 
-      <main className="max-w-7xl mx-auto lg:pt-28 pb-24 lg:pb-10">{children}</main>
+      <main className="max-w-7xl mx-auto lg:pt-28 pb-28 lg:pb-10">{children}</main>
 
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 px-4 pb-4">
+      <div
+        role="navigation"
+        aria-label="Navigation principale mobile"
+        className="lg:hidden fixed bottom-0 inset-x-0 z-40 px-4 pb-4 pointer-events-auto"
+      >
         <div className="flex items-center justify-between bg-white/90 backdrop-blur-xl border border-black/[0.06] rounded-[28px] shadow-[0_12px_40px_rgba(11,15,26,0.14)] px-2 py-2">
           {MOBILE_TABS.map((tab) => {
             const active = isActive(tab.href);
@@ -365,7 +373,7 @@ export default function CoupleLayoutClient({
             Plus
           </button>
         </div>
-      </nav>
+      </div>
     </div>
   );
 }

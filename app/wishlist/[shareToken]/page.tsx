@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Gift, Heart, Share2, Check, Users, MessageSquare, Eye, X, Car, Globe } from "lucide-react";
+import { Logo } from "@/components/layout/Logo";
 import type { Wishlist, WishlistItem, WishlistPurchase } from "@/types/marketplace";
 
 export default function WishlistPublicPage() {
@@ -207,8 +208,8 @@ export default function WishlistPublicPage() {
     <div className="min-h-[100dvh] bg-gradient-to-b from-[#fff0f3] to-white">
       <header className="bg-white border-b border-[#e6e4dd] sticky top-0 z-30">
         <div className="max-w-[1220px] mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-display text-xl font-semibold text-[#1c1c1c]">
-            Mariage Facile
+          <Link href="/" className="flex items-center" aria-label="Mariage Facile">
+            <Logo priority={false} />
           </Link>
           <Link
             href="/"

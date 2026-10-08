@@ -106,7 +106,7 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan", whiteH
           menuOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-4 pointer-events-none"
         }`}
       >
-        <nav className="flex flex-col gap-2">
+        <div role="navigation" aria-label="Menu principal mobile" className="flex flex-col gap-2">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -132,7 +132,7 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan", whiteH
             {ctaLabel}
             <ArrowRight size={16} />
           </Link>
-        </nav>
+        </div>
       </div>
     </>
   );

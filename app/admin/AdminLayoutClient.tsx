@@ -355,7 +355,7 @@ export default function AdminLayoutClient({
               />
             </div>
 
-            <nav className="space-y-1 mb-6 flex-1 overflow-y-auto">
+            <div role="navigation" className="space-y-1 mb-6 flex-1 overflow-y-auto">
               {navItems.map((item) => {
                 const active = isActive(item.href);
                 const count = getBadgeCount(item.href);
@@ -400,7 +400,7 @@ export default function AdminLayoutClient({
                   </Link>
                 );
               })}
-            </nav>
+            </div>
 
             <div className="flex items-center gap-3 mb-4 px-1">
               {user.avatarUrl ? (

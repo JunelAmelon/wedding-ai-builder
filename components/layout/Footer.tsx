@@ -1,14 +1,15 @@
 import Link from "next/link";
+import { Logo } from "./Logo";
 
 export function Footer() {
   return (
-    <footer>
+    <footer className="site-footer">
       <div className="wrap">
         <div className="footer-grid">
           <div>
-            <div className="logo" style={{ marginBottom: 10 }}>
-              <span className="logo-mark">M</span>ariage Facile
-            </div>
+            <Link href="/" className="inline-block" style={{ marginBottom: 14 }} aria-label="Mariage Facile">
+              <Logo priority={false} />
+            </Link>
             <p>Planifiez votre mariage en 5 minutes avec l'IA. Gratuit pour les couples et les prestataires.</p>
           </div>
           <div>
