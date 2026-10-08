@@ -598,6 +598,16 @@ const noopCache: MatchAiCache = {
   },
 };
 
+function getTieBreakerHash(projectId: string, vendorId: string): number {
+  let h = 2166136261;
+  const s = `${projectId || "project"}:${vendorId}`;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -620,11 +630,25 @@ export async function findTopMatches(
     return constraint.eligible;
   });
 
+  const vendorMap = new Map<string, VendorProfile>(candidates.map((v) => [v.id, v]));
+
+  // Pre-filtrage pour l'IA : si le pool de candidats est grand, on priorise les profils
+  // avec les meilleurs scores déterministes (jusqu'à AI_BATCH_SIZE) afin d'éviter les
+  // surcoûts et la saturation des quotas OpenAI.
   let aiScores: { [vendorId: string]: MatchScore } = {};
   let usedAI = false;
   if (isAIScoringEnabled() && candidates.length > 0) {
     try {
-      aiScores = await scoreMatchesWithAI(tender, project, candidates, category);
+      let aiCandidates = candidates;
+      if (candidates.length > AI_BATCH_SIZE) {
+        const preScored = candidates.map((v) => ({
+          vendor: v,
+          score: calculateMatchScore(tender, project, v, category).score,
+        }));
+        preScored.sort((a, b) => b.score - a.score);
+        aiCandidates = preScored.slice(0, AI_BATCH_SIZE).map((p) => p.vendor);
+      }
+      aiScores = await scoreMatchesWithAI(tender, project, aiCandidates, category);
       usedAI = Object.keys(aiScores).length > 0;
     } catch {
       // fallback to rule-based scoring below
@@ -654,16 +678,50 @@ export async function findTopMatches(
     };
   });
 
-  // Only keep matches above the minimum score threshold. Empty slots are better
-  // than bad recommendations.
+  const tierOrder: Record<string, number> = { luxe: 4, premium: 3, standard: 2, economique: 1 };
+
+  // Filtrage du seuil minimal et tri multicritère robuste (gestion fine des égalités)
   return scored
     .filter((m) => m.score >= MIN_MATCH_SCORE)
     .sort((a, b) => {
+      // 1. Score de compatibilité global (priorité absolue au meilleur fit)
       if (b.score !== a.score) return b.score - a.score;
-      const tierOrder: Record<string, number> = { luxe: 4, premium: 3, standard: 2, economique: 1 };
-      const vendorA = candidates.find((v) => v.id === a.vendorId);
-      const vendorB = candidates.find((v) => v.id === b.vendorId);
-      return (tierOrder[vendorB?.tier ?? ""] ?? 0) - (tierOrder[vendorA?.tier ?? ""] ?? 0);
+
+      const vendorA = vendorMap.get(a.vendorId);
+      const vendorB = vendorMap.get(b.vendorId);
+
+      // 2. Formule d'abonnement (Luxe > Premium > Standard > Économique)
+      const tierDiff = (tierOrder[vendorB?.tier ?? ""] ?? 0) - (tierOrder[vendorA?.tier ?? ""] ?? 0);
+      if (tierDiff !== 0) return tierDiff;
+
+      // 3. Réputation : note moyenne Google Business
+      const ratingB = vendorB?.portfolio?.googleBusiness?.rating ?? 0;
+      const ratingA = vendorA?.portfolio?.googleBusiness?.rating ?? 0;
+      if (ratingB !== ratingA) return ratingB - ratingA;
+
+      // 4. Volume d'avis clients (Google ou portfolio)
+      const reviewsB = (vendorB?.portfolio?.googleBusiness?.userRatingsTotal ?? 0) + (vendorB?.portfolio?.reviews?.length ?? 0);
+      const reviewsA = (vendorA?.portfolio?.googleBusiness?.userRatingsTotal ?? 0) + (vendorA?.portfolio?.reviews?.length ?? 0);
+      if (reviewsB !== reviewsA) return reviewsB - reviewsA;
+
+      // 5. Expérience déclarée
+      const expB = vendorB?.yearsOfExperience ?? 0;
+      const expA = vendorA?.yearsOfExperience ?? 0;
+      if (expB !== expA) return expB - expA;
+
+      // 6. Complétude du profil & Statut vérifié
+      const compDiff = (vendorB?.profileCompletion ?? 0) - (vendorA?.profileCompletion ?? 0);
+      if (compDiff !== 0) return compDiff;
+
+      const verifiedB = vendorB?.verified ? 1 : 0;
+      const verifiedA = vendorA?.verified ? 1 : 0;
+      if (verifiedB !== verifiedA) return verifiedB - verifiedA;
+
+      // 7. Équité & Rotation déterministe entre profils strictement égaux
+      // Évite la famine des prestataires et assure une distribution équitable selon le couple
+      const hashB = getTieBreakerHash(project.id, b.vendorId);
+      const hashA = getTieBreakerHash(project.id, a.vendorId);
+      return hashB - hashA;
     })
     .slice(0, limit);
 }
