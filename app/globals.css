@@ -41,3 +41,33 @@ h3 {
   font-family: var(--font-poppins), sans-serif;
   font-weight: 700;
 }
+
+/* DESKTOP */
+.logo {
+  font-family: "__Marck_Script_653b33", "__Marck_Script_Fallback_653b33", cursive;
+  font-size: 28px;
+  line-height: 1;
+  color: #2F2B2C;
+}
+.logo-mark {
+  color: #C43A4A;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .logo {
+    font-size: 20px;
+  }
+}
+
+.brand-logo {
+  width: 150px;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .brand-logo {
+    width: 110px;
+  }
+}

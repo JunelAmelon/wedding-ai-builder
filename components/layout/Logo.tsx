@@ -6,21 +6,41 @@ interface LogoProps {
   height?: number;
   scale?: number;
   origin?: "left" | "center";
+  className?: string;
+  priority?: boolean;
 }
 
-export function Logo({ height = 80, scale = 1, origin = "left" }: LogoProps) {
-  const ratio = 669 / 373;
-  const width = Math.round(height * ratio);
-
+export function Logo({
+  height,
+  scale = 1,
+  origin = "left",
+  className = "",
+  priority = true,
+}: LogoProps) {
   return (
     <Image
-      src="/logo-mariage-facile.png"
-      alt="MariageFacile"
-      width={width}
-      height={height}
-      priority
-      className="w-auto h-full object-contain"
-      style={{ transform: `scale(${scale})`, transformOrigin: origin === "left" ? "left center" : "center center" }}
+      src="/Logo Mariage Facile rouge et noir.PNG"
+      alt="Mariage Facile"
+      width={2011}
+      height={782}
+      priority={priority}
+      unoptimized
+      className={`brand-logo ${className}`.trim()}
+      style={
+        height
+          ? {
+              height: `${height}px`,
+              width: "auto",
+              transform: scale !== 1 ? `scale(${scale})` : undefined,
+              transformOrigin: origin === "left" ? "left center" : "center center",
+            }
+          : scale !== 1
+          ? {
+              transform: `scale(${scale})`,
+              transformOrigin: origin === "left" ? "left center" : "center center",
+            }
+          : undefined
+      }
     />
   );
 }

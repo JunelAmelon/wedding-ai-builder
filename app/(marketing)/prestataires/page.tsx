@@ -290,8 +290,8 @@ export default function ProfessionalMarketingPage() {
 
             <div ref={browserRef} className="max-w-[880px] mx-auto mt-10 px-2 sm:px-4 reveal">
               <img
-                src="/dashboard-prestataire.png"
-                alt="Tableau de bord prestataire sur ordinateur"
+                src="/Maquette MacBook Air Mariage Facile.PNG"
+                alt="Maquette MacBook Air Mariage Facile"
                 className="w-full h-auto block drop-shadow-[0_25px_50px_rgba(0,0,0,0.6)]"
               />
             </div>

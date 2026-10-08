@@ -6,7 +6,9 @@ export function Footer() {
       <div className="wrap">
         <div className="footer-grid">
           <div>
-            <div className="logo" style={{ marginBottom: 10 }}>Mariage Facile</div>
+            <div className="logo" style={{ marginBottom: 10 }}>
+              <span className="logo-mark">M</span>ariage Facile
+            </div>
             <p>Planifiez votre mariage en 5 minutes avec l'IA. Gratuit pour les couples et les prestataires.</p>
           </div>
           <div>

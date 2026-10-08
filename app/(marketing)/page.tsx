@@ -355,8 +355,8 @@ export default function LandingPage() {
                   <div className="phone-glow" />
                   <div className="phone-mockup">
                     <Image
-                      src="/Maquette iphone doré Mariage Facile.PNG"
-                      alt="Maquette iPhone doré Mariage Facile"
+                      src="/page d'accueil mariage facile.PNG"
+                      alt="Page d'accueil Mariage Facile"
                       width={405}
                       height={720}
                       className="w-full h-auto"
@@ -632,8 +632,8 @@ export default function LandingPage() {
               <div className="sh-visual reveal">
                 <div className="sh-phone">
                   <Image
-                    src="/Planification Budgétaire de Mariage.PNG"
-                    alt="Planification de Budget de Mariage"
+                    src="/Mockup doré de planification budgétaire de mariage.PNG"
+                    alt="Mockup doré de planification budgétaire de mariage"
                     width={250}
                     height={444}
                     className="w-full h-auto"

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, ArrowRight } from "lucide-react";
+import { Logo } from "./Logo";
 
 const NAV_LINKS = [
   { href: "/#how", label: "Comment ça marche" },
@@ -42,8 +43,8 @@ export function Header({ ctaHref = "/quiz", ctaLabel = "Créer mon plan", whiteH
         }`}
       >
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-[72px] flex items-center justify-between">
-          <Link href="/" className="text-[#0E0E10] font-allura text-lg sm:text-xl font-bold whitespace-nowrap">
-            Mariage Facile
+          <Link href="/" className="flex items-center" aria-label="Mariage Facile">
+            <Logo priority />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
