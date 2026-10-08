@@ -12,6 +12,15 @@ const marckScript = Marck_Script({ subsets: ["latin"], weight: "400", variable: 
 export const metadata: Metadata = {
   title: "MariageFacile",
   description: "Générez un plan de mariage personnalisé en moins de 5 minutes.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png" },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

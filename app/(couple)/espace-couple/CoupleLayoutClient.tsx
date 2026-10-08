@@ -4,6 +4,7 @@ import { ReactNode, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { Logo } from "@/components/layout/Logo";
 import {
   Heart,
   Wallet,
@@ -129,8 +130,8 @@ export default function CoupleLayoutClient({
         }`}
       >
         <div className={`max-w-7xl mx-auto flex items-center justify-between gap-6 transition-all duration-300 ${scrolled ? "px-5 py-2 rounded-[28px] bg-white/40 border border-black/[0.04]" : ""}`}>
-          <Link href="/espace-couple/result" className="font-allura text-xl font-semibold text-[#0E0E10]">
-            Mariage Facile
+          <Link href="/espace-couple/result" className="flex items-center" aria-label="Mariage Facile">
+            <Logo priority />
           </Link>
 
           <nav className="flex items-center gap-0.5 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.08)] px-1.5 py-1.5">
@@ -223,8 +224,8 @@ export default function CoupleLayoutClient({
       </div>
 
       <header className="lg:hidden h-20 flex items-center justify-between px-5 sticky top-0 z-30 bg-white/90 backdrop-blur-xl">
-        <Link href="/espace-couple/result" className="font-allura text-xl font-semibold text-[#0E0E10]">
-          Mariage Facile
+        <Link href="/espace-couple/result" className="flex items-center" aria-label="Mariage Facile">
+          <Logo priority />
         </Link>
         <button
           onClick={() => setMoreOpen(true)}
