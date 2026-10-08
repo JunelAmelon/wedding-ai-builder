@@ -241,42 +241,81 @@ export default function CoupleMessagingPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 space-y-1">
-              {filteredProposals.map((p) => {
-                const isActive = selected?.id === p.id;
-                const lm = lastMessage(p);
-                const unread = unreadCount(p);
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => {
-                      setSelected(p);
-                      setMobileOpen(true);
-                    }}
-                    className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
-                      isActive ? "bg-white shadow-[0_2px_8px_rgba(14,14,16,0.06)] border border-[#EDEDF0]" : "hover:bg-white/60 border border-transparent"
-                    }`}
-                  >
-                    <Avatar name={p.vendor?.companyName || "P"} src={p.vendor?.logo?.url} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-text-primary truncate text-sm">{p.vendor?.companyName || "Prestataire"}</span>
-                        {lm && <span className="font-semibold text-[10px] text-text-secondary shrink-0">{formatDate(lm.createdAt)}</span>}
+            <div className="flex-1 overflow-y-auto p-2 space-y-1 flex flex-col">
+              {filteredProposals.length === 0 ? (
+                proposals.length === 0 ? (
+                  <>
+                    {/* Empty state sur mobile : grand et centré, identique à la vue desktop */}
+                    <div className="lg:hidden flex-1 flex flex-col items-center justify-center text-center p-6 py-12 text-text-secondary">
+                      <div className="h-16 w-16 rounded-[28px] bg-primary/10 flex items-center justify-center mb-4">
+                        <Inbox size={32} className="text-primary" />
                       </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className={`text-xs truncate ${unread ? "text-text-primary font-medium" : "text-text-secondary"}`}>
-                          {lm ? (lm.senderRole === "couple" ? "Vous : " : "") + lm.content : "Pas encore de message"}
-                        </span>
-                        {unread > 0 && (
-                          <span className="h-5 min-w-[20px] rounded-full bg-primary text-white text-[10px] font-semibold flex items-center justify-center px-1.5">
-                            {unread}
-                          </span>
-                        )}
-                      </div>
+                      <h2 className="font-allura text-2xl font-normal mb-2 text-text-primary">
+                        Aucune <span className="text-primary">discussion</span>
+                      </h2>
+                      <p className="text-xs sm:text-sm text-text-secondary max-w-xs mx-auto mb-6 leading-relaxed">
+                        Acceptez une proposition ou contactez un professionnel pour démarrer la conversation.
+                      </p>
+                      <Link
+                        href="/espace-couple/prestataires"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white text-xs font-semibold hover:brightness-110 transition shadow-sm"
+                      >
+                        Trouver des prestataires
+                      </Link>
                     </div>
-                  </button>
-                );
-              })}
+
+                    {/* Placeholder discret sur desktop dans la sidebar (la vue de droite affiche déjà le grand état vide) */}
+                    <div className="hidden lg:flex flex-1 flex-col items-center justify-center text-center p-6 text-text-secondary">
+                      <Inbox size={26} className="text-text-secondary/40 mb-2" />
+                      <p className="text-xs text-text-secondary font-medium">Aucune discussion pour le moment</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center p-6 py-10 text-text-secondary">
+                    <Search size={28} className="text-text-secondary/40 mb-3" />
+                    <p className="text-sm font-medium text-text-primary mb-1">Aucun résultat</p>
+                    <p className="text-xs text-text-secondary max-w-xs mx-auto">
+                      Aucune conversation ne correspond à &ldquo;{search}&rdquo;.
+                    </p>
+                  </div>
+                )
+              ) : (
+                filteredProposals.map((p) => {
+                  const isActive = selected?.id === p.id;
+                  const lm = lastMessage(p);
+                  const unread = unreadCount(p);
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        setSelected(p);
+                        setMobileOpen(true);
+                      }}
+                      className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
+                        isActive ? "bg-white shadow-[0_2px_8px_rgba(14,14,16,0.06)] border border-[#EDEDF0]" : "hover:bg-white/60 border border-transparent"
+                      }`}
+                    >
+                      <Avatar name={p.vendor?.companyName || "P"} src={p.vendor?.logo?.url} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-text-primary truncate text-sm">{p.vendor?.companyName || "Prestataire"}</span>
+                          {lm && <span className="font-semibold text-[10px] text-text-secondary shrink-0">{formatDate(lm.createdAt)}</span>}
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`text-xs truncate ${unread ? "text-text-primary font-medium" : "text-text-secondary"}`}>
+                            {lm ? (lm.senderRole === "couple" ? "Vous : " : "") + lm.content : "Pas encore de message"}
+                          </span>
+                          {unread > 0 && (
+                            <span className="h-5 min-w-[20px] rounded-full bg-primary text-white text-[10px] font-semibold flex items-center justify-center px-1.5">
+                              {unread}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -471,8 +510,14 @@ export default function CoupleMessagingPage() {
                     <div className="h-16 w-16 rounded-[28px] bg-primary/10 flex items-center justify-center mb-4">
                       <Inbox size={32} className="text-primary" />
                     </div>
-                    <h2 className="font-allura text-xl font-normal mb-2">Aucune <span className="text-primary">discussion</span></h2>
-                    <p className="text-text-secondary max-w-md mx-auto">Acceptez une proposition ou contactez un professionnel pour démarrer la conversation.</p>
+                    <h2 className="font-allura text-2xl font-normal mb-2 text-text-primary">Aucune <span className="text-primary">discussion</span></h2>
+                    <p className="text-text-secondary max-w-md mx-auto mb-6">Acceptez une proposition ou contactez un professionnel pour démarrer la conversation.</p>
+                    <Link
+                      href="/espace-couple/prestataires"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white text-sm font-semibold hover:brightness-110 transition shadow-sm"
+                    >
+                      Trouver des prestataires
+                    </Link>
                   </>
                 ) : (
                   <>

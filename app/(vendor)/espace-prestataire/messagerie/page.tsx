@@ -4,6 +4,7 @@ import LoadingScreen from "@/components/shared/LoadingScreen";
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
   Send,
   Loader2,
@@ -254,46 +255,85 @@ export default function VendorMessagingPage() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-2 space-y-1">
-              {filteredProposals.map((p) => {
-                const isActive = selected?.id === p.id;
-                const lm = lastMessage(p);
-                const unread = unreadCount(p);
-                const coupleName = `${p.couple?.firstName || ""} ${p.couple?.lastName || ""}`.trim() || "Couple";
-                const isFromVendor = lm ? lm.senderRole === "vendor" : !!p.matchId;
-                const preview = lm ? lm.content : p.message || null;
-                const previewDate = lm ? formatDate(lm.createdAt) : "";
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => {
-                      setSelected(p);
-                      setMobileOpen(true);
-                    }}
-                    className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
-                      isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
-                    }`}
-                  >
-                    <Avatar name={coupleName} src={p.couple?.avatarUrl || undefined} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-[#0E0E10] truncate text-sm">{coupleName}</span>
-                        {previewDate && <span className="font-semibold text-[10px] text-[#6B6B72] shrink-0">{previewDate}</span>}
+            <div className="flex-1 overflow-y-auto p-2 space-y-1 flex flex-col">
+              {filteredProposals.length === 0 ? (
+                proposals.length === 0 ? (
+                  <>
+                    {/* Empty state sur mobile : identique à la vue desktop */}
+                    <div className="lg:hidden flex-1 flex flex-col items-center justify-center text-center p-6 py-12 text-[#6B6B72]">
+                      <div className="h-16 w-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mb-4">
+                        <Inbox size={32} className="text-[#0E0E10]" />
                       </div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className={`text-xs truncate ${unread ? "text-[#0E0E10] font-medium" : "text-[#6B6B72]"}`}>
-                          {preview ? (isFromVendor ? "Vous : " : "") + preview : "Pas encore de message"}
-                        </span>
-                        {unread > 0 && (
-                          <span className="h-5 min-w-[20px] rounded-full bg-[#e64a5d] text-white hover:brightness-110 text-[10px] font-semibold flex items-center justify-center px-1.5">
-                            {unread}
-                          </span>
-                        )}
-                      </div>
+                      <h2 className="font-allura text-2xl font-normal mb-2 text-[#0E0E10]">
+                        Aucune discussion
+                      </h2>
+                      <p className="text-xs sm:text-sm text-[#6B6B72] max-w-xs mx-auto mb-6 leading-relaxed">
+                        Vous n&apos;avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d&apos;offres.
+                      </p>
+                      <Link
+                        href="/espace-prestataire/appels-offres"
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#e64a5d] text-white text-xs font-semibold hover:brightness-110 transition shadow-sm"
+                      >
+                        Consulter les appels d&apos;offres
+                      </Link>
                     </div>
-                  </button>
-                );
-              })}
+
+                    {/* Placeholder discret sur desktop dans la sidebar (la vue de droite affiche déjà le grand état vide) */}
+                    <div className="hidden lg:flex flex-1 flex-col items-center justify-center text-center p-6 text-[#6B6B72]">
+                      <Inbox size={26} className="text-[#6B6B72]/40 mb-2" />
+                      <p className="text-xs text-[#6B6B72] font-medium">Aucune discussion pour le moment</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center p-6 py-10 text-[#6B6B72]">
+                    <Search size={28} className="text-[#6B6B72]/40 mb-3" />
+                    <p className="text-sm font-medium text-[#0E0E10] mb-1">Aucun résultat</p>
+                    <p className="text-xs text-[#6B6B72] max-w-xs mx-auto">
+                      Aucune conversation ne correspond à &ldquo;{search}&rdquo;.
+                    </p>
+                  </div>
+                )
+              ) : (
+                filteredProposals.map((p) => {
+                  const isActive = selected?.id === p.id;
+                  const lm = lastMessage(p);
+                  const unread = unreadCount(p);
+                  const coupleName = `${p.couple?.firstName || ""} ${p.couple?.lastName || ""}`.trim() || "Couple";
+                  const isFromVendor = lm ? lm.senderRole === "vendor" : !!p.matchId;
+                  const preview = lm ? lm.content : p.message || null;
+                  const previewDate = lm ? formatDate(lm.createdAt) : "";
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        setSelected(p);
+                        setMobileOpen(true);
+                      }}
+                      className={`w-full text-left rounded-xl p-3 transition flex items-center gap-3 ${
+                        isActive ? "bg-white shadow-[0_2px_8px_rgba(11,15,26,0.06)] border border-black/[0.06]" : "hover:bg-white/60 border border-transparent"
+                      }`}
+                    >
+                      <Avatar name={coupleName} src={p.couple?.avatarUrl || undefined} className="h-12 w-12 text-sm" online={p.status === "accepted"} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-semibold text-[#0E0E10] truncate text-sm">{coupleName}</span>
+                          {previewDate && <span className="font-semibold text-[10px] text-[#6B6B72] shrink-0">{previewDate}</span>}
+                        </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`text-xs truncate ${unread ? "text-[#0E0E10] font-medium" : "text-[#6B6B72]"}`}>
+                            {preview ? (isFromVendor ? "Vous : " : "") + preview : "Pas encore de message"}
+                          </span>
+                          {unread > 0 && (
+                            <span className="h-5 min-w-[20px] rounded-full bg-[#e64a5d] text-white hover:brightness-110 text-[10px] font-semibold flex items-center justify-center px-1.5">
+                              {unread}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -496,8 +536,14 @@ export default function VendorMessagingPage() {
                     <div className="h-16 w-16 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mb-4">
                       <Inbox size={32} className="text-[#0E0E10]" />
                     </div>
-                    <h2 className="font-allura text-xl font-normal mb-2">Aucune discussion</h2>
-                    <p className="text-[#6B6B72] max-w-md mx-auto">Vous n'avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d'offres.</p>
+                    <h2 className="font-allura text-2xl font-normal mb-2 text-[#0E0E10]">Aucune discussion</h2>
+                    <p className="text-[#6B6B72] max-w-md mx-auto mb-6">Vous n&apos;avez pas encore de proposition acceptée. Les couples peuvent vous contacter via vos appels d&apos;offres.</p>
+                    <Link
+                      href="/espace-prestataire/appels-offres"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#e64a5d] text-white text-sm font-semibold hover:brightness-110 transition shadow-sm"
+                    >
+                      Consulter les appels d&apos;offres
+                    </Link>
                   </>
                 ) : (
                   <>
