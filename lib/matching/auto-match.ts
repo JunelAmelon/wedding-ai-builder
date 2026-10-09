@@ -108,7 +108,7 @@ export async function runAutoMatching(
       "officiant": "Officiant",
       "animation": "Animation",
     };
-    const desiredCats = project.desiredCategories.map(c => catMap[c]).filter(Boolean);
+    const desiredCats = project.desiredCategories.map(c => catMap[c] || c).filter(Boolean);
     // Only match categories that exist among active vendors
     const vendorCategories = new Set(activeVendors.map((v) => v.serviceCategory.toLowerCase()));
     categories = desiredCats.filter(c => vendorCategories.has(c.toLowerCase()));

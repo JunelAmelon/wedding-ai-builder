@@ -79,13 +79,12 @@ function LedgerRow({
       </span>
       <span className="flex-1 border-b border-dotted border-[#d8d0f5] translate-y-[-3px]" />
       <span
-        className={`shrink-0 ${
-          emphasis
-            ? "font-allura text-lg font-semibold text-[#0E0E10]"
-            : success
+        className={`shrink-0 ${emphasis
+          ? "font-allura text-lg font-semibold text-[#0E0E10]"
+          : success
             ? "text-sm font-medium text-[#2e7d5e]"
             : "text-sm text-[#0E0E10]"
-        }`}
+          }`}
       >
         {value}
       </span>
@@ -196,12 +195,12 @@ export default function VendorPreviewPage() {
   const reviews = vendor.portfolio?.reviews || [];
   const googleReviews = (vendor.portfolio?.googleBusiness?.verified && vendor.portfolio?.googleBusiness?.reviews)
     ? vendor.portfolio.googleBusiness.reviews.map((gr) => ({
-        author: gr.author,
-        rating: gr.rating,
-        text: gr.text,
-        date: gr.date,
-        source: "google" as const,
-      }))
+      author: gr.author,
+      rating: gr.rating,
+      text: gr.text,
+      date: gr.date,
+      source: "google" as const,
+    }))
     : [];
   const platformReviews = (reviews || []).map((r) => ({
     author: r.author,
@@ -230,8 +229,7 @@ export default function VendorPreviewPage() {
             <ArrowLeft size={14} /> Retour à mon portfolio
           </Link>
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E4DBFB] border border-[#d8d0f5] text-[11px] font-semibold text-[#0E0E10] shadow-sm">
-            <span className="h-2 w-2 rounded-full bg-[#e64a5d] animate-pulse" />
-            Aperçu public — Vue identique à celle des couples
+            Aperçu prestataire
           </span>
         </div>
 
@@ -256,9 +254,8 @@ export default function VendorPreviewPage() {
                 <button
                   type="button"
                   onClick={() => setIsFavorite(!isFavorite)}
-                  className={`absolute top-4 right-4 h-10 w-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center transition-colors ${
-                    isFavorite ? "text-rose-500" : "text-[#6B6B72] hover:text-[#0E0E10]"
-                  }`}
+                  className={`absolute top-4 right-4 h-10 w-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center transition-colors ${isFavorite ? "text-rose-500" : "text-[#6B6B72] hover:text-[#0E0E10]"
+                    }`}
                   aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
                 >
                   <Heart size={18} className={isFavorite ? "fill-current" : ""} />
@@ -272,9 +269,8 @@ export default function VendorPreviewPage() {
                   <button
                     key={img.publicId || i}
                     onClick={() => setSelectedImage(img.url)}
-                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                      selectedImage === img.url ? "border-[#E4DBFB]" : "border-transparent"
-                    }`}
+                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img.url ? "border-[#E4DBFB]" : "border-transparent"
+                      }`}
                   >
                     <Image
                       src={img.url}
@@ -441,14 +437,14 @@ export default function VendorPreviewPage() {
                   </span>
                 </div>
 
-                <Button
+                {/* <Button
                   variant="primary"
                   className="w-full mb-6 !bg-[#e64a5d] !border-[#e64a5d] !text-white hover:!brightness-110"
                   iconLeft={<MessageCircle size={18} />}
                   onClick={() => setContactOpen(true)}
                 >
                   Envoyer un message
-                </Button>
+                </Button> */}
 
                 {/* Coordonnées */}
                 <div>
@@ -524,9 +520,8 @@ export default function VendorPreviewPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 font-semibold text-[11px] uppercase tracking-[0.1em] transition-colors relative ${
-                  activeTab === tab.id ? "text-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10]"
-                }`}
+                className={`pb-3 font-semibold text-[11px] uppercase tracking-[0.1em] transition-colors relative ${activeTab === tab.id ? "text-[#0E0E10]" : "text-[#6B6B72] hover:text-[#0E0E10]"
+                  }`}
               >
                 {tab.label}
                 {activeTab === tab.id && (

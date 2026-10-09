@@ -34,7 +34,49 @@ export type DietaryNeed =
   | "allergies"
   | "autre";
 
+export const VENDOR_CATEGORIES = [
+  "Domaine mariage",
+  "Auberge mariage",
+  "Hôtel mariage",
+  "Restaurant mariage",
+  "Salle mariage",
+  "Château mariage",
+  "Bateau mariage",
+  "Mariages à la plage",
+  "Traiteur mariage",
+  "Wedding cake",
+  "Faire part mariage",
+  "Cadeaux invités mariage",
+  "Liste de mariage",
+  "Photo mariage",
+  "Vidéo mariage",
+  "Musique mariage",
+  "Voiture mariage",
+  "Bus mariage",
+  "Décoration mariage",
+  "Fleurs mariage",
+  "Chapiteau mariage",
+  "Animation mariage",
+  "Wedding Planner",
+  "Lune de miel",
+  "Officiants",
+  "Food Truck",
+  "Vin et Spiritueux",
+  "Bijoux mariage",
+  "Robe de mariée",
+  "Accessoires mariage",
+  "Robe de cocktail",
+  "Esthétique coiffure mariage",
+  "Costumes mariage",
+  "Soins beauté",
+  "Accessoires marié",
+] as const;
+
+export type VendorCategoryName = (typeof VENDOR_CATEGORIES)[number];
+
 export type DesiredCategory =
+  | VendorCategoryName
+  // Anciennes catégories conservées pour rétrocompatibilité
   | "lieu"
   | "traiteur"
   | "photographe"

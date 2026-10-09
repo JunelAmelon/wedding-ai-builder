@@ -449,8 +449,9 @@ export function computeProviderInsights(answers: QuizAnswers): ProviderInsight[]
       "coiffeuse-maquilleuse": "Coiffure & maquillage",
       "hebergement": "Hébergement invités",
     };
-    const activeLabels = new Set(answers.desiredCategories.map(c => catMap[c]).filter(Boolean));
-    return allInsights.filter(i => activeLabels.has(i.category));
+    const activeLabels = new Set(answers.desiredCategories.map(c => catMap[c] || c).filter(Boolean));
+    const matched = allInsights.filter(i => activeLabels.has(i.category));
+    if (matched.length > 0) return matched;
   }
 
   return allInsights.slice(0, 5);
