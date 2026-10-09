@@ -93,8 +93,23 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
   "Autre": Sparkles,
 };
 
-// Chips colorés pour toutes les 35 catégories (style Connectify / pastel)
+// Chips colorés pour toutes les catégories (anciennes + 35 nouvelles)
 const CHIP_CATEGORIES = [
+  // Anciennes catégories conservées
+  { category: "Lieu de réception", emoji: "🏛️", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Traiteur", emoji: "🍽️", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Photographe / Vidéaste", emoji: "📸", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Musique / DJ / Orchestre", emoji: "🎵", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Décoration / Fleuriste", emoji: "💐", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Wedding planner", emoji: "💍", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Maquilleur / Coiffeur", emoji: "💄", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Animation", emoji: "🎉", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Transport", emoji: "🚗", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Hébergement", emoji: "🏨", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Créateur de robes", emoji: "👗", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Bijoutier", emoji: "💎", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Officiant", emoji: "⛪", bg: "#FEF3C7", color: "#0E0E10" },
+  // Nouvelles catégories ajoutées
   { category: "Domaine mariage", emoji: "🏡", bg: "#ffffff", color: "#0E0E10" },
   { category: "Auberge mariage", emoji: "🏨", bg: "#E4DBFB", color: "#0E0E10" },
   { category: "Hôtel mariage", emoji: "🏩", bg: "#FEF3C7", color: "#0E0E10" },
@@ -130,6 +145,94 @@ const CHIP_CATEGORIES = [
   { category: "Costumes mariage", emoji: "🤵", bg: "#FEF3C7", color: "#0E0E10" },
   { category: "Soins beauté", emoji: "✨", bg: "#D8ECD9", color: "#0E0E10" },
   { category: "Accessoires marié", emoji: "👔", bg: "#FBE1E6", color: "#0E0E10" },
+];
+
+// Regroupement thématique pour navigation ultra-rapide (5 familles)
+const CATEGORY_FAMILY_GROUPS = [
+  { id: "all", label: "Tous", emoji: "✨" },
+  {
+    id: "lieux",
+    label: "Lieux",
+    emoji: "🏰",
+    items: [
+      "Lieu de réception",
+      "Hébergement",
+      "Domaine mariage",
+      "Auberge mariage",
+      "Hôtel mariage",
+      "Restaurant mariage",
+      "Salle mariage",
+      "Château mariage",
+      "Bateau mariage",
+      "Mariages à la plage",
+      "Chapiteau mariage",
+    ],
+  },
+  {
+    id: "traiteur",
+    label: "Traiteur & Saveurs",
+    emoji: "🍽️",
+    items: [
+      "Traiteur",
+      "Traiteur mariage",
+      "Wedding cake",
+      "Food Truck",
+      "Vin et Spiritueux",
+    ],
+  },
+  {
+    id: "beaute",
+    label: "Tenues & Beauté",
+    emoji: "👗",
+    items: [
+      "Créateur de robes",
+      "Maquilleur / Coiffeur",
+      "Bijoutier",
+      "Robe de mariée",
+      "Costumes mariage",
+      "Robe de cocktail",
+      "Esthétique coiffure mariage",
+      "Soins beauté",
+      "Bijoux mariage",
+      "Accessoires mariage",
+      "Accessoires marié",
+    ],
+  },
+  {
+    id: "animation",
+    label: "Photo, Musique & Fête",
+    emoji: "📸",
+    items: [
+      "Photographe / Vidéaste",
+      "Musique / DJ / Orchestre",
+      "Animation",
+      "Photo mariage",
+      "Vidéo mariage",
+      "Musique mariage",
+      "Animation mariage",
+    ],
+  },
+  {
+    id: "orga",
+    label: "Organisation & Déco",
+    emoji: "💍",
+    items: [
+      "Wedding planner",
+      "Décoration / Fleuriste",
+      "Transport",
+      "Officiant",
+      "Wedding Planner",
+      "Décoration mariage",
+      "Fleurs mariage",
+      "Officiants",
+      "Faire part mariage",
+      "Cadeaux invités mariage",
+      "Liste de mariage",
+      "Voiture mariage",
+      "Bus mariage",
+      "Lune de miel",
+    ],
+  },
 ];
 
 // Images par défaut pour chaque catégorie de prestataire
@@ -232,6 +335,7 @@ export default function CoupleVendorsPage() {
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
   const [pendingCategory, setPendingCategory] = useState<string | null>(null);
   const [replaceAction, setReplaceAction] = useState<"replace" | "keep">("keep");
+  const [selectedFamily, setSelectedFamily] = useState<string>("all");
 
   const chipsScrollRef = useRef<HTMLDivElement>(null);
 
@@ -241,6 +345,18 @@ export default function CoupleVendorsPage() {
       chipsScrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
+
+  const handleSelectFamily = (familyId: string) => {
+    setSelectedFamily(familyId);
+    chipsScrollRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+  };
+
+  const visibleChips = React.useMemo(() => {
+    if (selectedFamily === "all") return CHIP_CATEGORIES;
+    const group = CATEGORY_FAMILY_GROUPS.find((g) => g.id === selectedFamily);
+    if (!group || !group.items) return CHIP_CATEGORIES;
+    return CHIP_CATEGORIES.filter((c) => group.items.includes(c.category));
+  }, [selectedFamily]);
 
   useEffect(() => {
     async function load() {
@@ -356,13 +472,13 @@ export default function CoupleVendorsPage() {
           <div className="flex-1 min-w-0">
             {/* ---- SECTION 1 : Choisissez vos prestataires (Slider horizontal fluide & compact) ---- */}
             <div className="mb-7">
-              <div className="flex items-center justify-between mb-3.5">
+              <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-2.5">
                   <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
                     Choisissez vos prestataires
                   </h2>
                   <span className="text-[11px] font-semibold text-[#8E8E93] bg-[#F4F4F6] px-2 py-0.5 rounded-full">
-                    {CHIP_CATEGORIES.length}
+                    {visibleChips.length}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -397,13 +513,47 @@ export default function CoupleVendorsPage() {
                 </div>
               </div>
 
+              {/* Pilules d'univers thématiques — discrètes, fines (28px) et scrollables horizontalement */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 mb-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0">
+                {CATEGORY_FAMILY_GROUPS.map((group) => {
+                  const isSelected = selectedFamily === group.id;
+                  const count =
+                    group.id === "all"
+                      ? CHIP_CATEGORIES.length
+                      : group.items?.length || 0;
+                  return (
+                    <button
+                      key={group.id}
+                      onClick={() => handleSelectFamily(group.id)}
+                      className={`h-7 px-2.5 rounded-full text-[11.5px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+                        isSelected
+                          ? "bg-[#0E0E10] text-white shadow-xs"
+                          : "bg-white text-[#6B6B72] border border-[#EDEDF0] hover:text-[#0E0E10] hover:border-[#0E0E10]/30"
+                      }`}
+                    >
+                      <span>{group.emoji}</span>
+                      <span>{group.label}</span>
+                      <span
+                        className={`text-[9.5px] font-semibold px-1.5 py-0.2 rounded-full ${
+                          isSelected
+                            ? "bg-white/20 text-white"
+                            : "bg-[#EDEDF0] text-[#6B6B72]"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
               {/* Slider horizontal compact — prend seulement ~95px de hauteur au lieu de 700px verticaux ! */}
               <div className="relative">
                 <div
                   ref={chipsScrollRef}
                   className="flex gap-3 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0"
                 >
-                  {CHIP_CATEGORIES.map((chip) => {
+                  {visibleChips.map((chip) => {
                     const tender = tenders.find((t) => t.category === chip.category);
                     const hasTender = !!tender;
                     const isClosed = tender?.status === "closed";

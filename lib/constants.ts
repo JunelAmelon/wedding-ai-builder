@@ -76,6 +76,24 @@ export const DIETARY_OPTIONS: { value: DietaryNeed; label: string }[] = [
 export { VENDOR_CATEGORIES, type VendorCategoryName } from "@/types/domain";
 
 export const CATEGORY_OPTIONS: { value: DesiredCategory; label: string; icon: string }[] = [
+  // Anciennes catégories du quiz
+  { value: "lieu", label: "Lieu de réception", icon: "🏛️" },
+  { value: "traiteur", label: "Traiteur", icon: "🍽️" },
+  { value: "photographe", label: "Photographe", icon: "📸" },
+  { value: "videaste", label: "Vidéaste", icon: "🎥" },
+  { value: "dj", label: "DJ / Animation musicale", icon: "🎧" },
+  { value: "fleuriste", label: "Fleuriste", icon: "💐" },
+  { value: "wedding-cake", label: "Wedding cake", icon: "🎂" },
+  { value: "coiffeuse-maquilleuse", label: "Coiffeuse / Maquilleuse", icon: "💄" },
+  { value: "transport", label: "Transport / Véhicule", icon: "🚗" },
+  { value: "hebergement", label: "Hébergement invités", icon: "🏨" },
+  { value: "alliances", label: "Alliances", icon: "💍" },
+  { value: "robe", label: "Robe de mariée", icon: "👗" },
+  { value: "costume", label: "Costume", icon: "🤵" },
+  { value: "decoration", label: "Décoration", icon: "🎨" },
+  { value: "officiant", label: "Officiant de cérémonie", icon: "⛪" },
+  { value: "animation", label: "Animations", icon: "🎉" },
+  // Nouvelles catégories ajoutées
   { value: "Domaine mariage", label: "Domaine mariage", icon: "🏡" },
   { value: "Auberge mariage", label: "Auberge mariage", icon: "🏨" },
   { value: "Hôtel mariage", label: "Hôtel mariage", icon: "🏩" },

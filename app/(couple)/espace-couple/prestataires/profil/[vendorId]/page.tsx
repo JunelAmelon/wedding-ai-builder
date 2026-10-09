@@ -118,7 +118,62 @@ export default function VendorProfileForCouplePage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [togglingFavorite, setTogglingFavorite] = useState(false);
   const [coupleProject, setCoupleProject] = useState<WeddingProject | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ firstName?: string; lastName?: string } | null>(null);
   const searchParams = useSearchParams();
+
+  // État du modal d'avis
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+
+  async function handleSubmitReview(e: React.FormEvent) {
+    e.preventDefault();
+    if (!reviewText.trim()) return;
+    setSubmittingReview(true);
+    setReviewError(null);
+    try {
+      const res = await fetch(`/api/couple/vendors/${vendorId}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rating: reviewRating,
+          text: reviewText.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi de l'avis");
+
+      // Mettre à jour l'affichage en direct
+      setVendor((prev) => {
+        if (!prev) return prev;
+        const currentPortfolio = prev.portfolio || {};
+        const currentReviews = currentPortfolio.reviews || [];
+        return {
+          ...prev,
+          portfolio: {
+            ...currentPortfolio,
+            reviews: [data.review, ...currentReviews],
+          },
+        };
+      });
+
+      setReviewSuccess(true);
+      setTimeout(() => {
+        setShowReviewModal(false);
+        setReviewSuccess(false);
+        setReviewText("");
+        setReviewRating(5);
+      }, 1200);
+    } catch (err) {
+      setReviewError(err instanceof Error ? err.message : "Une erreur est survenue");
+    } finally {
+      setSubmittingReview(false);
+    }
+  }
 
   useEffect(() => {
     if (searchParams.get("contact") === "1") {
@@ -129,10 +184,11 @@ export default function VendorProfileForCouplePage() {
   useEffect(() => {
     async function load() {
       try {
-        const [vendorRes, favoritesRes, projectRes] = await Promise.all([
+        const [vendorRes, favoritesRes, projectRes, authRes] = await Promise.all([
           fetch(`/api/couple/vendors/${vendorId}`),
           fetch("/api/couple/favorites"),
           fetch("/api/couple/project"),
+          fetch("/api/auth/me"),
         ]);
         if (vendorRes.status === 401) {
           router.push("/login?role=couple");
@@ -151,6 +207,12 @@ export default function VendorProfileForCouplePage() {
         if (projectRes.ok) {
           const projectJson = await projectRes.json();
           setCoupleProject(projectJson.project);
+        }
+        if (authRes.ok) {
+          const authJson = await authRes.json();
+          if (authJson.user) {
+            setCurrentUser(authJson.user);
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur");
@@ -671,20 +733,39 @@ export default function VendorProfileForCouplePage() {
 
         {activeTab === "avis" && (
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">Avis</h2>
-              {vendor.portfolio?.googleBusiness?.placeUrl && (
-                <a
-                  href={vendor.portfolio.googleBusiness.placeUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E0E10] hover:text-[#e64a5d] transition"
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+              <div className="flex items-center gap-3">
+                <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">Avis</h2>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#fef2f4] text-[#c43a4a] border border-[#fbd0d6]">
+                  {allReviews.length} avis
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                {vendor.portfolio?.googleBusiness?.placeUrl && (
+                  <a
+                    href={vendor.portfolio.googleBusiness.placeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E0E10] hover:text-[#e64a5d] transition"
+                  >
+                    <GoogleIcon className="w-3.5 h-3.5" />
+                    <span>Voir sur Google Maps</span>
+                    <ExternalLink size={11} />
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setReviewError(null);
+                    setReviewSuccess(false);
+                    setShowReviewModal(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#0E0E10] text-white hover:bg-black text-xs font-semibold shadow-xs transition hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <GoogleIcon className="w-3.5 h-3.5" />
-                  <span>Voir sur Google Maps</span>
-                  <ExternalLink size={11} />
-                </a>
-              )}
+                  <Star size={13} className="fill-amber-400 text-amber-400" />
+                  <span>Donner mon avis</span>
+                </button>
+              </div>
             </div>
 
             {allReviews.length > 0 ? (
@@ -828,6 +909,152 @@ export default function VendorProfileForCouplePage() {
                   )}
                 </button>
               </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal donner un avis */}
+      {showReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-[#ffffff] border border-[#EDEDF0] rounded-[28px] p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => {
+                if (!submittingReview) {
+                  setShowReviewModal(false);
+                  setReviewError(null);
+                }
+              }}
+              disabled={submittingReview}
+              className="absolute top-5 right-5 h-10 w-10 rounded-full bg-[#ffffff] border border-[#EDEDF0] flex items-center justify-center text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#EDEDF0] transition disabled:opacity-40"
+              aria-label="Fermer"
+            >
+              <X size={15} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-14 h-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center">
+                <Star size={26} className="text-[#c43a4a] fill-[#c43a4a]" />
+              </div>
+              <div>
+                <p className="text-[#6B6B72] text-xs font-bold font-sans uppercase tracking-wider">Avis client</p>
+                <h2 className="font-allura text-2xl font-normal text-[#0E0E10]">
+                  Évaluer {displayName}
+                </h2>
+              </div>
+            </div>
+
+            {reviewSuccess ? (
+              <div className="text-center py-6">
+                <div className="h-14 w-14 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#2e7d5e]/10 text-[#2e7d5e]">
+                  <CheckCircle2 size={28} />
+                </div>
+                <h3 className="font-allura text-xl font-semibold text-[#0E0E10] mb-2">Merci pour votre avis !</h3>
+                <p className="text-[#6B6B72] text-sm">
+                  Votre note et votre retour d'expérience ont bien été enregistrés.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitReview} className="space-y-5">
+                {reviewError && (
+                  <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+                    {reviewError}
+                  </div>
+                )}
+
+                {/* Sélecteur d'étoiles */}
+                <div>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
+                    Votre note *
+                  </label>
+                  <div className="flex items-center gap-2 py-1">
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const active = (hoverRating || reviewRating) >= star;
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          onClick={() => setReviewRating(star)}
+                          className="p-1 transition transform hover:scale-110 focus:outline-none"
+                          aria-label={`${star} étoile${star > 1 ? "s" : ""}`}
+                        >
+                          <Star
+                            size={28}
+                            className={`transition ${
+                              active
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-gray-300 hover:text-amber-200"
+                            }`}
+                          />
+                        </button>
+                      );
+                    })}
+                    <span className="ml-2 text-sm font-semibold text-[#0E0E10]">
+                      {(hoverRating || reviewRating)} / 5
+                    </span>
+                  </div>
+                </div>
+
+                {/* Message / commentaire */}
+                <div>
+                  <label className="block font-sans font-semibold text-[11px] uppercase tracking-[0.14em] text-[#6B6B72] mb-2">
+                    Votre retour d'expérience *
+                  </label>
+                  <textarea
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    rows={4}
+                    required
+                    placeholder="Partagez votre avis, la qualité de prestation, le relationnel..."
+                    className="w-full bg-[#ffffff] border-2 border-[#EDEDF0] rounded-[24px] text-[#0E0E10] px-4 py-3.5 focus:outline-none focus:border-[#fef2f4] transition resize-none text-sm placeholder:text-[#6B6B72]/60"
+                  />
+                </div>
+
+                {/* Indication auteur automatique */}
+                <div className="p-3 rounded-2xl bg-[#fafafa] border border-[#EDEDF0] text-xs text-[#6B6B72] flex items-center justify-between">
+                  <span className="font-sans">
+                    Avis signé au nom de :{" "}
+                    <strong className="text-[#0E0E10]">
+                      {`${currentUser?.firstName || ""} ${currentUser?.lastName || ""}`.trim() ||
+                        coupleProject?.name ||
+                        "Votre compte couple"}
+                    </strong>
+                  </span>
+                  <span className="text-[10px] text-[#6B6B72]/80 bg-white px-2 py-0.5 rounded-md border border-[#EDEDF0]">
+                    Automatique
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewModal(false)}
+                    disabled={submittingReview}
+                    className="flex-1 py-3 px-4 rounded-full border border-[#EDEDF0] text-[#0E0E10] font-semibold text-sm hover:bg-[#EDEDF0] transition disabled:opacity-50"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submittingReview || !reviewText.trim()}
+                    className="flex-1 py-3 px-4 rounded-full bg-[#0E0E10] text-white font-bold font-sans text-sm hover:brightness-125 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {submittingReview ? (
+                      <>
+                        <Loader2 size={15} className="animate-spin" />
+                        Publication...
+                      </>
+                    ) : (
+                      <>
+                        <Star size={14} className="fill-white" />
+                        Publier mon avis
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             )}
           </div>
         </div>

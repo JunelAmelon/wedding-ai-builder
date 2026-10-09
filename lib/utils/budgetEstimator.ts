@@ -74,7 +74,50 @@ const PRIORITY_LABELS: Record<string, string> = {
   stress: "Zéro stress & sérénité totale",
 };
 
+const NEW_CAT_TO_BUDGET_BUCKET: Record<string, string> = {
+  // Lieux & Réception
+  "Domaine mariage": "Lieu de réception",
+  "Auberge mariage": "Lieu de réception",
+  "Hôtel mariage": "Lieu de réception",
+  "Restaurant mariage": "Lieu de réception",
+  "Salle mariage": "Lieu de réception",
+  "Château mariage": "Lieu de réception",
+  "Bateau mariage": "Lieu de réception",
+  "Mariages à la plage": "Lieu de réception",
+  "Chapiteau mariage": "Lieu de réception",
+  // Traiteur & Saveurs
+  "Traiteur mariage": "Traiteur",
+  "Wedding cake": "Traiteur",
+  "Food Truck": "Traiteur",
+  "Vin et Spiritueux": "Traiteur",
+  // Photo & Vidéo
+  "Photo mariage": "Photographe / Vidéaste",
+  "Vidéo mariage": "Photographe / Vidéaste",
+  // Musique & Animation
+  "Musique mariage": "Musique / DJ / Orchestre",
+  "Animation mariage": "Animation",
+  // Décoration & Fleurs
+  "Décoration mariage": "Décoration / Fleuriste",
+  "Fleurs mariage": "Décoration / Fleuriste",
+  // Tenues & Beauté
+  "Robe de mariée": "Conception de robe de mariée",
+  "Robe de cocktail": "Conception de robe de mariée",
+  "Costumes mariage": "Conception de robe de mariée",
+  "Accessoires mariage": "Conception de robe de mariée",
+  "Accessoires marié": "Conception de robe de mariée",
+  "Esthétique coiffure mariage": "Maquilleur / Coiffeur",
+  "Soins beauté": "Maquilleur / Coiffeur",
+  "Bijoux mariage": "Bijoutier",
+  // Transport
+  "Voiture mariage": "Transport",
+  "Bus mariage": "Transport",
+  // Organisation & Officiant
+  "Wedding Planner": "Wedding planner",
+  "Officiants": "Officiant",
+};
+
 function resolveCategoryKey(cat: string): string {
+  if (NEW_CAT_TO_BUDGET_BUCKET[cat]) return NEW_CAT_TO_BUDGET_BUCKET[cat];
   if (CATEGORY_DEFAULT_RATIOS[cat]) return cat;
   const lower = cat.toLowerCase();
   for (const known of Object.keys(CATEGORY_DEFAULT_RATIOS)) {

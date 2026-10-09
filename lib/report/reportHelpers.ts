@@ -438,6 +438,7 @@ export function computeProviderInsights(answers: QuizAnswers): ProviderInsight[]
   // Filter insights based on desired categories if specified
   if (answers.desiredCategories?.length) {
     const catMap: Record<string, string> = {
+      // Anciennes clés du quiz
       "lieu": "Lieu de réception",
       "traiteur": "Traiteur & boissons",
       "photographe": "Photo & vidéo",
@@ -448,9 +449,32 @@ export function computeProviderInsights(answers: QuizAnswers): ProviderInsight[]
       "decoration": "Fleurs & décoration",
       "coiffeuse-maquilleuse": "Coiffure & maquillage",
       "hebergement": "Hébergement invités",
+      // Nouvelles catégories
+      "Domaine mariage": "Lieu de réception",
+      "Auberge mariage": "Lieu de réception",
+      "Hôtel mariage": "Lieu de réception",
+      "Restaurant mariage": "Lieu de réception",
+      "Salle mariage": "Lieu de réception",
+      "Château mariage": "Lieu de réception",
+      "Bateau mariage": "Lieu de réception",
+      "Mariages à la plage": "Lieu de réception",
+      "Chapiteau mariage": "Lieu de réception",
+      "Traiteur mariage": "Traiteur & boissons",
+      "Wedding cake": "Traiteur & boissons",
+      "Food Truck": "Traiteur & boissons",
+      "Vin et Spiritueux": "Traiteur & boissons",
+      "Photo mariage": "Photo & vidéo",
+      "Vidéo mariage": "Photo & vidéo",
+      "Musique mariage": "Musique & DJ",
+      "Animation mariage": "Musique & DJ",
+      "Fleurs mariage": "Fleurs & décoration",
+      "Décoration mariage": "Fleurs & décoration",
+      "Esthétique coiffure mariage": "Coiffure & maquillage",
+      "Soins beauté": "Coiffure & maquillage",
     };
     const activeLabels = new Set(answers.desiredCategories.map(c => catMap[c]).filter(Boolean));
-    return allInsights.filter(i => activeLabels.has(i.category));
+    const filtered = allInsights.filter(i => activeLabels.has(i.category));
+    return filtered.length > 0 ? filtered : allInsights.slice(0, 5);
   }
 
   return allInsights.slice(0, 5);

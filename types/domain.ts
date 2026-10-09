@@ -35,6 +35,21 @@ export type DietaryNeed =
   | "autre";
 
 export const VENDOR_CATEGORIES = [
+  // Anciennes catégories existantes
+  "Photographe / Vidéaste",
+  "Musique / DJ / Orchestre",
+  "Traiteur",
+  "Lieu de réception",
+  "Décoration / Fleuriste",
+  "Wedding planner",
+  "Maquilleur / Coiffeur",
+  "Animation",
+  "Transport",
+  "Hébergement",
+  "Créateur de robes",
+  "Bijoutier",
+  "Officiant",
+  // Nouvelles catégories ajoutées
   "Domaine mariage",
   "Auberge mariage",
   "Hôtel mariage",

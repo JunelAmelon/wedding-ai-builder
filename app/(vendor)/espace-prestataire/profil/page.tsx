@@ -18,21 +18,11 @@ import { CityAutocomplete } from "@/components/geo/CityAutocomplete";
 import { RegionAutocomplete } from "@/components/geo/RegionAutocomplete";
 import { CityMultiInput } from "@/components/geo/CityMultiInput";
 
+import { VENDOR_CATEGORIES } from "@/types/domain";
+
 const STEPS = ["Identité", "Contact", "Services", "Disponibilité"];
 
-const categoryOptions = [
-  "Lieu",
-  "Traiteur",
-  "Photographe",
-  "Vidéaste",
-  "Musique / DJ",
-  "Fleurs",
-  "Maquillage / Coiffure",
-  "Wedding planner",
-  "Voiture",
-  "Animation",
-  "Autre",
-];
+const categoryOptions = [...VENDOR_CATEGORIES];
 
 const styleOptions = [
   "Chic",
@@ -517,21 +507,6 @@ export default function VendorProfilePage() {
                   ))}
                 </select>
               </div>
-
-              {form.serviceCategory === "Autre" && (
-                <div>
-                  <label className={labelClass}>Précisez la catégorie</label>
-                  <input
-                    type="text"
-                    value={form.otherCategory || ""}
-                    onChange={(e) =>
-                      updateForm("otherCategory", e.target.value || null)
-                    }
-                    className={inputClass}
-                    placeholder="Votre métier"
-                  />
-                </div>
-              )}
 
               <div>
                 <label className={labelClass}>Styles proposés</label>

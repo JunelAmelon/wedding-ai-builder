@@ -24,22 +24,9 @@ import {
   type BudgetEstimateResult,
 } from "@/lib/utils/budgetEstimator";
 
-const CATEGORIES = [
-  "Photographe / Vidéaste",
-  "Musique / DJ / Orchestre",
-  "Traiteur",
-  "Lieu de réception",
-  "Décoration / Fleuriste",
-  "Wedding planner",
-  "Maquilleur / Coiffeur",
-  "Animation",
-  "Transport",
-  "Hébergement",
-  "Conception de robe de mariée",
-  "Bijoutier",
-  "Officiant",
-  "Autre",
-];
+import { VENDOR_CATEGORIES } from "@/types/domain";
+
+const CATEGORIES = [...VENDOR_CATEGORIES];
 
 export interface TenderWithProposalsItem extends Tender {
   proposals?: Array<Proposal & { vendor?: { name?: string; businessName?: string; companyName?: string; id?: string } }>;

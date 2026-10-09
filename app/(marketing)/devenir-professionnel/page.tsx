@@ -25,22 +25,9 @@ import { CityAutocomplete } from "@/components/geo/CityAutocomplete";
 import { AddressAutocomplete } from "@/components/geo/AddressAutocomplete";
 import { RegionAutocomplete } from "@/components/geo/RegionAutocomplete";
 
-const SERVICE_CATEGORIES = [
-  "Photographe / Vidéaste",
-  "Musique / DJ / Orchestre",
-  "Traiteur",
-  "Lieu de réception",
-  "Décoration / Fleuriste",
-  "Wedding planner",
-  "Maquilleur / Coiffeur",
-  "Animation",
-  "Transport",
-  "Hébergement",
-  "Créateur de robes",
-  "Bijoutier",
-  "Officiant",
-  "Autre",
-];
+import { VENDOR_CATEGORIES } from "@/types/domain";
+
+const SERVICE_CATEGORIES = [...VENDOR_CATEGORIES];
 
 const WEDDING_STYLES = [
   "Bohème",
@@ -152,7 +139,6 @@ export default function ProfessionalRegistrationPage() {
       case 1:
         return !!(
           form.serviceCategory &&
-          (form.serviceCategory !== "Autre" || form.otherCategory.trim()) &&
           form.yearsOfExperience &&
           form.description.trim()
         );
@@ -238,7 +224,7 @@ export default function ProfessionalRegistrationPage() {
           country: "France",
         },
         serviceCategory: form.serviceCategory,
-        otherCategory: form.serviceCategory === "Autre" ? form.otherCategory : null,
+        otherCategory: null,
         yearsOfExperience: Math.max(0, Number(form.yearsOfExperience) || 0),
         trainingDate: form.trainingDate || null,
         trainingDescription: form.trainingDescription || null,
@@ -401,12 +387,6 @@ export default function ProfessionalRegistrationPage() {
               {SERVICE_CATEGORIES.map((c) => (<option key={c} value={c}>{c}</option>))}
             </select>
           </div>
-          {form.serviceCategory === "Autre" && (
-            <div className="field span2">
-              <label>Précisez *</label>
-              <input value={form.otherCategory} onChange={(e) => update("otherCategory", e.target.value)} />
-            </div>
-          )}
           <div className="field">
             <label>Années d'expérience *</label>
             <input
