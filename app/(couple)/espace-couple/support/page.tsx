@@ -188,9 +188,9 @@ export default function CoupleSupportPage() {
 
           {/* Info cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-[28px] border border-line bg-[#fef2f4] p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
+            <div className="rounded-[28px] border border-line bg-[#FEF3C7] p-5 flex items-start gap-3 shadow-[0_4px_20px_rgba(14,14,16,0.05)]">
               <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
-                <Mail size={18} className="text-[#c43a4a]" />
+                <Mail size={18} className="text-[#b45309]" />
               </div>
               <div>
                 <h3 className="text-sm font-semibold text-ink">Par email</h3>

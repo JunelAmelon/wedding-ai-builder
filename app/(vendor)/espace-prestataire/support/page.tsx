@@ -190,9 +190,9 @@ export default function VendorSupportPage() {
 
           {/* Info cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-[28px] border border-[#EDEDF0] bg-[#fef2f4] p-5 flex items-start gap-3">
+            <div className="rounded-[28px] border border-[#EDEDF0] bg-[#FEF3C7] p-5 flex items-start gap-3">
               <div className="h-10 w-10 rounded-[28px] bg-white flex items-center justify-center shrink-0">
-                <Mail size={18} className="text-[#c43a4a]" />
+                <Mail size={18} className="text-[#b45309]" />
               </div>
               <div>
                 <h3 className="text-sm font-bold text-[#0E0E10]">Par email</h3>
