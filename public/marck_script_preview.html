@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aperçu Typographique : Marck Script vs Allura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Marck+Script&family=Alex+Brush&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #faf8f9;
+      color: #0E0E10;
+      padding: 40px 20px 80px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #E4DBFB;
+      color: #0E0E10;
+      margin-bottom: 16px;
+      border: 1px solid #d8d0f5;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #0E0E10;
+    }
+    p.intro {
+      font-size: 15px;
+      color: #6B6B72;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #EDEDF0;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(14, 14, 16, 0.04);
+    }
+    .card.marck {
+      border: 2px solid #8B7BD8;
+      background: #fdfcff;
+    }
+    .card.allura {
+      border: 2px solid #e64a5d;
+      background: #fffdfd;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #EDEDF0;
+    }
+    .font-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0E0E10;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .tag.marck { background: #E4DBFB; color: #5B48B5; }
+    .tag.allura { background: #FEE2E2; color: #E64A5D; }
+    .tag.alex { background: #DCFCE7; color: #166534; }
+
+    .sample-huge {
+      font-size: 52px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .sample-medium {
+      font-size: 34px;
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+    .sample-small {
+      font-size: 24px;
+      line-height: 1.35;
+      margin-bottom: 20px;
+    }
+    .alphabet {
+      font-size: 22px;
+      line-height: 1.6;
+      color: #4A4A52;
+      background: #f9f8fa;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: 1px dashed #E0DEE6;
+    }
+
+    .marck-font { font-family: 'Marck Script', cursive; }
+    .allura-font { font-family: 'Allura', cursive; }
+    .alex-font { font-family: 'Alex Brush', cursive; }
+
+    .analysis {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #6B6B72;
+      line-height: 1.5;
+    }
+    .analysis strong { color: #0E0E10; }
+
+    .comparison-table {
+      margin-top: 40px;
+      background: white;
+      border-radius: 24px;
+      border: 1px solid #EDEDF0;
+      overflow: hidden;
+    }
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .comparison-table th {
+      background: #f7f7f9;
+      padding: 16px 20px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6B6B72;
+      border-bottom: 1px solid #EDEDF0;
+    }
+    .comparison-table td {
+      padding: 20px;
+      border-bottom: 1px solid #EDEDF0;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="badge">Démonstration Typographique Comparative</span>
+    <h1>Voici le rendu réel de la police Marck Script</h1>
+    <p class="intro">
+      Découvrez ci-dessous le rendu de <strong>Marck Script</strong> appliqué exactement aux textes de votre application, comparé côte à côte avec <strong>Allura</strong> et <strong>Alex Brush</strong>.
+    </p>
+
+    <div class="grid">
+      <!-- MARCK SCRIPT -->
+      <div class="card marck">
+        <div class="card-header">
+          <div class="font-title">
+            <span>🖋️ Marck Script</span>
+          </div>
+          <span class="tag marck">Police demandée</span>
+        </div>
+
+        <div class="sample-huge marck-font" style="color: #0E0E10;">
+          Le chemin vers votre jour J
+        </div>
+        <div class="sample-medium marck-font" style="color: #e64a5d;">
+          Votre plan de mariage personnalisé en 5 minutes
+        </div>
+        <div class="sample-small marck-font" style="color: #0E0E10;">
+          Fiche prestataire • Portfolio créatif • Témoignages & Avis mariés
+        </div>
+
+        <div class="alphabet marck-font">
+          A B C D E F G H I J K L M N O P Q R S T U V W X Y Z<br>
+          a b c d e f g h i j k l m n o p q r s t u v w x y z — 0 1 2 3 4 5 6 7 8 9 €
+        </div>
+
+        <div class="analysis">
+          <strong>Caractéristiques de Marck Script :</strong> C'est une écriture cursive informelle au style feutre/stylo à plume libre. Les minuscules sont très étirées et les liaisons sont très irrégulières, ce qui lui donne un côté « note manuscrite manuscrite rapide » plutôt qu'une calligraphie formelle de mariage.
+        </div>
+      </div>
+
+      <!-- ALLURA -->
+      <div class="card allura">
+        <div class="card-header">
+          <div class="font-title">
+            <span>✨ Allura (Votre référence de mariage)</span>
+          </div>
+          <span class="tag allura">Calligraphie originale</span>
+        </div>
+
+        <div class="sample-huge allura-font" style="color: #0E0E10;">
+          Le chemin vers votre jour J
+        </div>
+        <div class="sample-medium allura-font" style="color: #e64a5d;">
+          Votre plan de mariage personnalisé en 5 minutes
+        </div>
+        <div class="sample-small allura-font" style="color: #0E0E10;">
+          Fiche prestataire • Portfolio créatif • Témoignages & Avis mariés
+        </div>
+
+        <div class="alphabet allura-font">
+          A B C D E F G H I J K L M N O P Q R S T U V W X Y Z<br>
+          a b c d e f g h i j k l m n o p q r s t u v w x y z — 0 1 2 3 4 5 6 7 8 9 €
+        </div>
+
+        <div class="analysis">
+          <strong>Caractéristiques d'Allura :</strong> Véritable calligraphie à la plume anglaise avec grandes majuscules à volutes, déliés classiques et jambages romantiques typiques des faire-part.
+        </div>
+      </div>
+
+      <!-- ALEX BRUSH -->
+      <div class="card">
+        <div class="card-header">
+          <div class="font-title">
+            <span>🌿 Alex Brush (Alternative la plus lisible)</span>
+          </div>
+          <span class="tag alex">Alternative Allura optimisée</span>
+        </div>
+
+        <div class="sample-huge alex-font" style="color: #0E0E10;">
+          Le chemin vers votre jour J
+        </div>
+        <div class="sample-medium alex-font" style="color: #e64a5d;">
+          Votre plan de mariage personnalisé en 5 minutes
+        </div>
+        <div class="sample-small alex-font" style="color: #0E0E10;">
+          Fiche prestataire • Portfolio créatif • Témoignages & Avis mariés
+        </div>
+
+        <div class="alphabet alex-font">
+          A B C D E F G H I J K L M N O P Q R S T U V W X Y Z<br>
+          a b c d e f g h i j k l m n o p q r s t u v w x y z — 0 1 2 3 4 5 6 7 8 9 €
+        </div>
+
+        <div class="analysis">
+          <strong>Caractéristiques d'Alex Brush :</strong> Même style romantique et plume qu'Allura, mais avec un interlignage plus net et des boucles ouvertes pour une lisibilité parfaite sur mobile et grand écran.
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARATIF DIRECT -->
+    <div class="comparison-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Police</th>
+            <th>Rendu "Le chemin vers votre jour J"</th>
+            <th>Style perçu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Marck Script</strong></td>
+            <td><span class="marck-font" style="font-size: 32px; color: #0E0E10;">Le chemin vers votre jour J</span></td>
+            <td>Écriture manuscrite décontractée / stylo</td>
+          </tr>
+          <tr>
+            <td><strong>Allura</strong></td>
+            <td><span class="allura-font" style="font-size: 36px; color: #e64a5d;">Le chemin vers votre jour J</span></td>
+            <td>Calligraphie plume anglaise / Faire-part</td>
+          </tr>
+          <tr>
+            <td><strong>Alex Brush</strong></td>
+            <td><span class="alex-font" style="font-size: 36px; color: #0E0E10;">Le chemin vers votre jour J</span></td>
+            <td>Calligraphie chic & aérée haute lisibilité</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

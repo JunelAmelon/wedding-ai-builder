@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Marck+Script&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,7 +45,7 @@ h3 {
 
 /* DESKTOP */
 .logo {
-  font-family: "__Marck_Script_653b33", "__Marck_Script_Fallback_653b33", cursive;
+  font-family: var(--font-allura), 'Marck Script', cursive;
   font-size: 28px;
   line-height: 1;
   color: #2F2B2C;

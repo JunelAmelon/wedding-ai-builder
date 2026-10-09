@@ -31,7 +31,7 @@ const config: Config = {
         sans: ["var(--font-sans)", "Inter", "system-ui", "sans-serif"],
         serif: ["var(--font-serif)", "Space Grotesk", "ui-serif", "Georgia", "serif"],
         display: ["Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif"],
-        allura: ["var(--font-allura)", "cursive"],
+        allura: ["var(--font-allura)", "'Marck Script'", "cursive"],
       },
       borderRadius: {
         "r-lg": "28px",

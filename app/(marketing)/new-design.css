@@ -81,7 +81,7 @@ h3 { font-family: var(--font-poppins), sans-serif; font-weight: 700; }
 .header-inner { display: flex; align-items: center; justify-content: space-between; }
 /* DESKTOP */
 .logo {
-  font-family: "__Marck_Script_653b33", "__Marck_Script_Fallback_653b33", cursive;
+  font-family: var(--font-allura), 'Marck Script', cursive;
   font-size: 28px;
   line-height: 1;
   color: #2F2B2C;
