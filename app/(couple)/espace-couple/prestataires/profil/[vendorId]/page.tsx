@@ -228,7 +228,9 @@ export default function VendorProfileForCouplePage() {
     date: r.date,
     source: "platform" as const,
   }));
-  const allReviews = [...googleReviews, ...platformReviews];
+  const allReviews = [...googleReviews, ...platformReviews].sort(
+    (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+  );
   const reviewCount = platformReviews.length;
   const averageRating = platformReviews.length
     ? (platformReviews.reduce((sum, r) => sum + (r.rating || 0), 0) / platformReviews.length).toFixed(1)

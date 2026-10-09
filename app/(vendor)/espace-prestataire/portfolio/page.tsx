@@ -3,7 +3,7 @@
 import LoadingScreen from "@/components/shared/LoadingScreen";
 import VideoEmbed from "@/components/shared/VideoEmbed";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -28,6 +28,8 @@ import {
   Search,
   CheckCircle2,
   AlertCircle,
+  Pencil,
+  Heart,
 } from "lucide-react";
 import type { VendorProfile, GoogleBusinessData } from "@/types/marketplace";
 
@@ -402,19 +404,117 @@ export default function VendorPortfolioPage() {
     if (openFaq === index) setOpenFaq(null);
   }
 
-  function addReviewItem() {
-    setReviews([...reviews, { author: "", rating: 5, text: "", date: new Date().toISOString() }]);
+  // Modale d'ajout / modification d'avis (évite d'avoir à faire défiler vers le bas)
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [editingReviewIndex, setEditingReviewIndex] = useState<number | null>(null);
+  const [reviewFormAuthor, setReviewFormAuthor] = useState("");
+  const [reviewFormRating, setReviewFormRating] = useState(5);
+  const [reviewFormText, setReviewFormText] = useState("");
+  const [reviewFormDate, setReviewFormDate] = useState("");
+  const [reviewFormSource, setReviewFormSource] = useState<"manual" | "google">("manual");
+  const [reviewFormError, setReviewFormError] = useState<string | null>(null);
+
+  function openAddReviewModal(source: "manual" | "google" = "manual") {
+    setEditingReviewIndex(null);
+    setReviewFormAuthor("");
+    setReviewFormRating(5);
+    setReviewFormText("");
+    setReviewFormDate(new Date().toISOString().slice(0, 10));
+    setReviewFormSource(source);
+    setReviewFormError(null);
+    setIsReviewModalOpen(true);
   }
 
-  function updateReviewItem(index: number, field: "author" | "text" | "date", value: string) {
-    const updated = [...reviews];
-    updated[index] = { ...updated[index], [field]: value };
-    setReviews(updated);
+  function openEditReviewModal(index: number) {
+    const rev = reviews[index];
+    if (!rev) return;
+    setEditingReviewIndex(index);
+    setReviewFormAuthor(rev.author || "");
+    setReviewFormRating(rev.rating || 5);
+    setReviewFormText(rev.text || "");
+    setReviewFormDate(rev.date ? rev.date.slice(0, 10) : new Date().toISOString().slice(0, 10));
+    setReviewFormSource((rev as any).source === "google" ? "google" : "manual");
+    setReviewFormError(null);
+    setIsReviewModalOpen(true);
+  }
+
+  function handleSaveReviewForm() {
+    if (!reviewFormAuthor.trim()) {
+      setReviewFormError("Veuillez renseigner le nom de l'auteur ou du couple.");
+      return;
+    }
+    if (!reviewFormText.trim()) {
+      setReviewFormError("Veuillez renseigner le commentaire de l'avis.");
+      return;
+    }
+
+    const savedItem = {
+      author: reviewFormAuthor.trim(),
+      rating: reviewFormRating,
+      text: reviewFormText.trim(),
+      date: reviewFormDate ? new Date(reviewFormDate).toISOString() : new Date().toISOString(),
+      source: reviewFormSource,
+    };
+
+    if (editingReviewIndex !== null) {
+      const updated = [...reviews];
+      updated[editingReviewIndex] = savedItem;
+      setReviews(updated);
+    } else {
+      // Ajout en tête pour respecter l'ordre d'ajout immédiat
+      setReviews([savedItem, ...reviews]);
+    }
+
+    setIsReviewModalOpen(false);
   }
 
   function removeReviewItem(index: number) {
     setReviews(reviews.filter((_, i) => i !== index));
   }
+
+  // Liste unifiée des avis Google et manuels, ordonnés par date d'ajout décroissante
+  const unifiedReviews = useMemo(() => {
+    const list: Array<{
+      id: string;
+      source: "google" | "manual";
+      author: string;
+      rating: number;
+      text: string;
+      date: string;
+      relativeTimeDescription?: string;
+      manualIndex?: number;
+    }> = [];
+
+    if (googleBusiness?.verified && googleBusiness.reviews) {
+      googleBusiness.reviews.forEach((r, idx) => {
+        list.push({
+          id: `google-${idx}`,
+          source: "google",
+          author: r.author || "Client Google",
+          rating: r.rating || 5,
+          text: r.text || "",
+          date: r.date || new Date().toISOString(),
+          relativeTimeDescription: r.relativeTimeDescription,
+        });
+      });
+    }
+
+    reviews.forEach((r, idx) => {
+      const isGoogle = (r as any).source === "google";
+      list.push({
+        id: `manual-${idx}`,
+        source: isGoogle ? "google" : "manual",
+        author: r.author || "Couple",
+        rating: r.rating || 5,
+        text: r.text || "",
+        date: r.date || new Date().toISOString(),
+        manualIndex: idx,
+      });
+    });
+
+    // Tri par ordre d'ajout / date décroissante (le plus récent en tête)
+    return list.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
+  }, [googleBusiness, reviews]);
 
   if (loading) return <LoadingScreen minHeight="80dvh" />
 
@@ -827,48 +927,40 @@ export default function VendorPortfolioPage() {
           <section className={cardClass}>
             <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
               <div className="flex items-center gap-3">
-                <div className={`${sectionIcon} bg-[#fef2f4]/40`}>
-                  <Star size={18} className="text-[#0E0E10]" />
+                <div className={`${sectionIcon} bg-[#FEF3C7]`}>
+                  <Star size={18} className="fill-[#b45309] text-[#b45309]" />
                 </div>
                 <h2 className={sectionTitle}>Avis clients</h2>
               </div>
 
-              {googleBusiness?.verified ? (
-                <div className="flex items-center gap-2 flex-wrap justify-end">
-                  <div className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#EBF7EE] text-[#1E7E34] text-xs font-semibold">
-                    <GoogleIcon className="w-3.5 h-3.5" />
-                    <Star size={12} className="fill-[#C9A35C] text-[#C9A35C]" />
-                    <span>{googleBusiness.rating.toFixed(1)} ({googleBusiness.userRatingsTotal})</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleGoogleSync}
-                    disabled={googleSyncing}
-                    className="w-9 h-9 rounded-full border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition disabled:opacity-50"
-                    title="Resynchroniser les avis Google"
-                  >
-                    <RefreshCw size={14} className={googleSyncing ? "animate-spin" : ""} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleGoogleDisconnect}
-                    disabled={googleDisconnecting}
-                    className="w-9 h-9 rounded-full text-[#6B6B72] hover:text-[#e64a5d] hover:bg-[#fef2f4] transition flex items-center justify-center text-xs"
-                    title="Dissocier la fiche Google"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={addReviewItem}
-                    className="inline-flex items-center gap-1 w-9 h-9 rounded-full bg-[#E4DBFB] text-[#0E0E10] justify-center hover:brightness-95 transition shrink-0"
-                    title="Ajouter un avis manuellement"
-                  >
-                    <Plus size={18} />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap justify-end">
+                {googleBusiness?.verified ? (
+                  <>
+                    <div className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full bg-[#EBF7EE] text-[#1E7E34] text-xs font-semibold">
+                      <GoogleIcon className="w-3.5 h-3.5" />
+                      <Star size={12} className="fill-[#C9A35C] text-[#C9A35C]" />
+                      <span>{googleBusiness.rating.toFixed(1)} ({googleBusiness.userRatingsTotal})</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleGoogleSync}
+                      disabled={googleSyncing}
+                      className="w-9 h-9 rounded-full border border-[#EDEDF0] bg-white flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4] transition disabled:opacity-50"
+                      title="Resynchroniser les avis Google"
+                    >
+                      <RefreshCw size={14} className={googleSyncing ? "animate-spin" : ""} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGoogleDisconnect}
+                      disabled={googleDisconnecting}
+                      className="w-9 h-9 rounded-full text-[#6B6B72] hover:text-[#e64a5d] hover:bg-[#fef2f4] transition flex items-center justify-center text-xs"
+                      title="Dissocier la fiche Google"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </>
+                ) : (
                   <button
                     type="button"
                     onClick={openGoogleModal}
@@ -878,30 +970,36 @@ export default function VendorPortfolioPage() {
                     <GoogleIcon className="w-4 h-4" />
                     <span>Lier Google</span>
                   </button>
-                  <button
-                    type="button"
-                    onClick={addReviewItem}
-                    className="inline-flex items-center gap-1 w-9 h-9 rounded-full bg-[#E4DBFB] text-[#0E0E10] justify-center hover:brightness-95 transition shrink-0"
-                    title="Ajouter un avis manuel"
-                  >
-                    <Plus size={18} />
-                  </button>
-                </div>
-              )}
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => openAddReviewModal("manual")}
+                  className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#E4DBFB] text-[#0E0E10] text-xs font-semibold hover:brightness-95 transition shrink-0 shadow-xs"
+                  title="Ajouter un avis manuellement"
+                >
+                  <Plus size={15} />
+                  <span>Ajouter un avis</span>
+                </button>
+              </div>
             </div>
 
             <p className="text-[#6B6B72] text-sm mb-5">
-              Valorisez l'expérience des couples que vous avez accompagnés et vos avis Google Maps.
+              Tous vos avis (Google Maps et ajoutés manuellement) réunis au même endroit, ordonnés par date d'ajout.
             </p>
 
             {/* Liste unifiée des avis (Google & Manuels) */}
             <div className="space-y-3.5 max-h-[640px] overflow-y-auto pr-1">
-              {reviews.length === 0 && (!googleBusiness?.verified || (googleBusiness.reviews?.length ?? 0) === 0) && (
-                <div className="text-center py-6 px-4 bg-[#fef2f4]/40 rounded-[28px] border border-[#fef2f4] space-y-3">
-                  <p className="text-sm text-[#6B6B72]">
-                    Aucun avis pour le moment.
+              {unifiedReviews.length === 0 ? (
+                <div className="text-center py-8 px-4 bg-[#fef2f4]/40 rounded-[28px] border border-[#fef2f4] space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-[#FEF3C7] mx-auto flex items-center justify-center text-[#b45309]">
+                    <Star size={20} className="fill-[#b45309]" />
+                  </div>
+                  <h3 className="text-sm font-bold text-[#0E0E10]">Aucun avis pour le moment</h3>
+                  <p className="text-xs text-[#6B6B72] max-w-sm mx-auto">
+                    Valorisez votre expertise en liant vos avis Google ou en ajoutant des retours de couples directement.
                   </p>
-                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                  <div className="flex items-center justify-center gap-2 flex-wrap pt-2">
                     <button
                       type="button"
                       onClick={openGoogleModal}
@@ -912,96 +1010,104 @@ export default function VendorPortfolioPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={addReviewItem}
+                      onClick={() => openAddReviewModal("manual")}
                       className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#E4DBFB] text-xs font-semibold text-[#0E0E10] hover:brightness-95 transition"
                     >
-                      <Plus size={14} /> Ajouter un avis manuel
+                      <Plus size={14} /> Ajouter un avis
                     </button>
                   </div>
                 </div>
-              )}
-
-              {/* Avis officiels Google Maps */}
-              {googleBusiness?.verified &&
-                googleBusiness.reviews?.map((rev, i) => (
+              ) : (
+                unifiedReviews.map((rev) => (
                   <div
-                    key={`google-${i}`}
-                    className="rounded-[24px] bg-white border border-[#EDEDF0] p-4 text-xs space-y-2.5 shadow-2xs transition hover:border-[#E4DBFB]"
+                    key={rev.id}
+                    className="rounded-[24px] bg-white border border-[#EDEDF0] p-4 text-xs space-y-3 shadow-2xs transition hover:border-[#E4DBFB]/80 hover:shadow-xs"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="font-semibold text-xs sm:text-sm text-[#0E0E10] truncate">
-                          {rev.author}
-                        </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f8f9fa] border border-[#EDEDF0] text-[10px] font-medium text-[#5F6368] shrink-0">
-                          <GoogleIcon className="w-3 h-3" />
-                          <span>Google</span>
-                        </span>
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
+                            rev.source === "google"
+                              ? "bg-[#f8f9fa] border border-[#EDEDF0]"
+                              : "bg-[#FEF3C7] text-[#78350f]"
+                          }`}
+                        >
+                          {rev.source === "google" ? (
+                            <GoogleIcon className="w-4 h-4" />
+                          ) : (
+                            (rev.author || "C").slice(0, 1).toUpperCase()
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-semibold text-xs sm:text-sm text-[#0E0E10] truncate">
+                              {rev.author}
+                            </span>
+                            {rev.source === "google" ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f8f9fa] border border-[#EDEDF0] text-[10px] font-medium text-[#5F6368]">
+                                <GoogleIcon className="w-3 h-3" />
+                                <span>Google</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FEF3C7] border border-[#fde68a] text-[10px] font-medium text-[#78350f]">
+                                <Heart size={10} className="fill-[#78350f]" />
+                                <span>Témoignage couple</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 text-[#C9A35C] shrink-0">
-                        <Star size={12} className="fill-[#C9A35C] text-[#C9A35C]" />
-                        <span className="font-bold text-xs">{rev.rating}</span>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-1 text-[#C9A35C] bg-[#FFFBEB] px-2.5 py-1 rounded-full border border-[#FEF3C7]">
+                          <Star size={13} className="fill-[#C9A35C] text-[#C9A35C]" />
+                          <span className="font-bold text-xs text-[#0E0E10]">{rev.rating}</span>
+                        </div>
+                        {rev.manualIndex !== undefined && (
+                          <div className="flex items-center gap-1 ml-1">
+                            <button
+                              type="button"
+                              onClick={() => openEditReviewModal(rev.manualIndex!)}
+                              className="w-7 h-7 rounded-full text-[#6B6B72] hover:text-[#0E0E10] hover:bg-[#fef2f4] flex items-center justify-center transition"
+                              title="Modifier cet avis"
+                            >
+                              <Pencil size={13} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeReviewItem(rev.manualIndex!)}
+                              className="w-7 h-7 rounded-full text-[#6B6B72] hover:text-[#e64a5d] hover:bg-[#fef2f4] flex items-center justify-center transition"
+                              title="Supprimer cet avis"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <p className="text-[#6B6B72] text-xs leading-relaxed">
+
+                    <p className="text-[#3F3F46] text-xs sm:text-sm leading-relaxed pl-0.5">
                       {rev.text}
                     </p>
-                    {rev.relativeTimeDescription && (
-                      <div className="text-[10px] text-[#8C8C94] pt-0.5">
-                        {rev.relativeTimeDescription}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              {reviews.map((review, index) => {
-                const scheme = colorSchemes[index % colorSchemes.length];
-                return (
-                  <div
-                    key={index}
-                    className={`rounded-[28px] ${scheme.bg} border ${scheme.border} p-5 flex flex-col gap-4`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <StarRating
-                        value={review.rating}
-                        onChange={(r) => {
-                          const updated = [...reviews];
-                          updated[index] = { ...updated[index], rating: r };
-                          setReviews(updated);
-                        }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeReviewItem(index)}
-                        className="p-2 rounded-full hover:bg-white/50 text-[#6B6B72]"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                    <div className="space-y-3">
-                      <input
-                        type="text"
-                        value={review.author}
-                        onChange={(e) => updateReviewItem(index, "author", e.target.value)}
-                        className={`${inputClass} ${scheme.input}`}
-                        placeholder="Prénom du couple"
-                      />
-                      <textarea
-                        value={review.text}
-                        onChange={(e) => updateReviewItem(index, "text", e.target.value)}
-                        rows={3}
-                        className={`${inputClass} resize-none ${scheme.input}`}
-                        placeholder="L'avis du client"
-                      />
-                      <input
-                        type="date"
-                        value={review.date ? review.date.slice(0, 10) : ""}
-                        onChange={(e) => updateReviewItem(index, "date", e.target.value)}
-                        className={`${inputClass} ${scheme.input}`}
-                      />
+
+                    <div className="flex items-center justify-between text-[11px] text-[#8C8C94] pt-2 border-t border-[#F4F4F6]">
+                      <span>
+                        {rev.relativeTimeDescription ||
+                          (rev.date
+                            ? new Date(rev.date).toLocaleDateString("fr-FR", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })
+                            : "")}
+                      </span>
+                      {rev.manualIndex !== undefined && (
+                        <span className="text-[10px] text-[#A1A1AA]">Ajouté manuellement</span>
+                      )}
                     </div>
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
           </section>
 
@@ -1206,6 +1312,146 @@ export default function VendorPortfolioPage() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Modale d'ajout / modification d'avis (évite d'avoir à faire défiler vers le bas) */}
+        {isReviewModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-[28px] border border-[#EDEDF0] max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+              <button
+                type="button"
+                onClick={() => setIsReviewModalOpen(false)}
+                className="absolute right-5 top-5 w-9 h-9 rounded-full bg-[#fef2f4] flex items-center justify-center text-[#0E0E10] hover:bg-[#fef2f4]/80 transition"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-3 mb-2 pr-8">
+                <div className="w-10 h-10 rounded-full bg-[#FEF3C7] border border-[#fde68a] flex items-center justify-center text-[#b45309]">
+                  <Star size={18} className="fill-[#b45309]" />
+                </div>
+                <div>
+                  <h3 className="font-allura text-2xl font-normal text-[#0E0E10]">
+                    {editingReviewIndex !== null ? "Modifier l'avis" : "Ajouter un avis"}
+                  </h3>
+                </div>
+              </div>
+
+              <p className="text-xs sm:text-sm text-[#6B6B72] mb-5">
+                {editingReviewIndex !== null
+                  ? "Modifiez les informations de ce retour d'expérience."
+                  : "Cet avis apparaîtra immédiatement en tête de liste de votre portfolio."}
+              </p>
+
+              {reviewFormError && (
+                <div className="mb-4 p-3.5 rounded-[20px] bg-[#fef2f4] border border-[#e64a5d]/20 text-[#e64a5d] text-xs flex items-center gap-2">
+                  <AlertCircle size={16} className="shrink-0" />
+                  <span>{reviewFormError}</span>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                {/* Source de l'avis */}
+                <div>
+                  <label className={labelClass}>Type d'avis</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setReviewFormSource("manual")}
+                      className={`h-10 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 border transition ${
+                        reviewFormSource === "manual"
+                          ? "bg-[#FEF3C7] border-[#fde68a] text-[#78350f]"
+                          : "bg-white border-[#EDEDF0] text-[#6B6B72] hover:bg-[#f8f9fa]"
+                      }`}
+                    >
+                      <Heart size={13} className={reviewFormSource === "manual" ? "fill-[#78350f]" : ""} />
+                      <span>Témoignage couple</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setReviewFormSource("google")}
+                      className={`h-10 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 border transition ${
+                        reviewFormSource === "google"
+                          ? "bg-[#f8f9fa] border-[#0E0E10] text-[#0E0E10]"
+                          : "bg-white border-[#EDEDF0] text-[#6B6B72] hover:bg-[#f8f9fa]"
+                      }`}
+                    >
+                      <GoogleIcon className="w-3.5 h-3.5" />
+                      <span>Avis Google Maps</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Nom ou auteur */}
+                <div>
+                  <label className={labelClass}>Auteur ou couple</label>
+                  <input
+                    type="text"
+                    value={reviewFormAuthor}
+                    onChange={(e) => setReviewFormAuthor(e.target.value)}
+                    placeholder="Ex : Sarah & David, ou nom du client"
+                    className={inputClass}
+                  />
+                </div>
+
+                {/* Note et date */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
+                  <div>
+                    <label className={labelClass}>Note attribuée</label>
+                    <div className="flex items-center gap-2 h-11 px-4 rounded-[28px] border border-[#EDEDF0] bg-white">
+                      <StarRating
+                        value={reviewFormRating}
+                        onChange={(r) => setReviewFormRating(r)}
+                      />
+                      <span className="text-xs font-bold text-[#0E0E10] ml-auto">
+                        {reviewFormRating}/5
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Date de l'avis</label>
+                    <input
+                      type="date"
+                      value={reviewFormDate}
+                      onChange={(e) => setReviewFormDate(e.target.value)}
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+
+                {/* Commentaire */}
+                <div>
+                  <label className={labelClass}>Commentaire / Message</label>
+                  <textarea
+                    value={reviewFormText}
+                    onChange={(e) => setReviewFormText(e.target.value)}
+                    rows={4}
+                    placeholder="Partagez le retour d'expérience laissé par le couple..."
+                    className={`${inputClass} resize-none`}
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsReviewModalOpen(false)}
+                    className="h-11 px-5 rounded-full text-xs font-semibold text-[#6B6B72] hover:bg-[#fef2f4] transition"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveReviewForm}
+                    className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[#e64a5d] text-white text-xs sm:text-sm font-semibold hover:brightness-110 transition shadow-sm"
+                  >
+                    <Check size={15} />
+                    <span>{editingReviewIndex !== null ? "Mettre à jour" : "Ajouter l'avis"}</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}

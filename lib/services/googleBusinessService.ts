@@ -85,20 +85,43 @@ export async function lookupGooglePlace(query: string, vendorContext?: {
       const candidate = searchData?.candidates?.[0];
 
       if (candidate?.place_id) {
-        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${candidate.place_id}&fields=name,rating,user_ratings_total,url,website,reviews,formatted_address&language=fr&key=${apiKey}`;
-        const detailsRes = await fetch(detailsUrl);
-        const detailsData = await detailsRes.json();
-        const result = detailsData?.result;
+        // Interrogation combinée pour maximiser le nombre d'avis retournés (Google Places API limite à 5 par appel)
+        const detailsUrlRelevant = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${candidate.place_id}&fields=name,rating,user_ratings_total,url,website,reviews,formatted_address&reviews_sort=most_relevant&language=fr&key=${apiKey}`;
+        const detailsUrlNewest = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${candidate.place_id}&fields=reviews&reviews_sort=newest&language=fr&key=${apiKey}`;
+
+        const [resRelevant, resNewest] = await Promise.all([
+          fetch(detailsUrlRelevant),
+          fetch(detailsUrlNewest).catch(() => null),
+        ]);
+
+        const dataRelevant = await resRelevant.json();
+        const dataNewest = resNewest ? await resNewest.json() : null;
+        const result = dataRelevant?.result;
 
         if (result) {
-          const reviews: GoogleBusinessReview[] = (result.reviews || []).map((r: any) => ({
-            author: r.author_name || "Client Google",
-            rating: r.rating || 5,
-            text: r.text || "",
-            date: r.time ? new Date(r.time * 1000).toISOString() : new Date().toISOString(),
-            relativeTimeDescription: r.relative_time_description,
-            profilePhotoUrl: r.profile_photo_url,
-          }));
+          const rawReviews = [
+            ...(result.reviews || []),
+            ...(dataNewest?.result?.reviews || []),
+          ];
+
+          // Déduplication stricte par auteur + texte
+          const seen = new Set<string>();
+          const reviews: GoogleBusinessReview[] = [];
+
+          for (const r of rawReviews) {
+            const key = `${r.author_name || ""}_${r.text || ""}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              reviews.push({
+                author: r.author_name || "Client Google",
+                rating: r.rating || 5,
+                text: r.text || "",
+                date: r.time ? new Date(r.time * 1000).toISOString() : new Date().toISOString(),
+                relativeTimeDescription: r.relative_time_description,
+                profilePhotoUrl: r.profile_photo_url,
+              });
+            }
+          }
 
           return {
             placeId: candidate.place_id,
@@ -106,7 +129,7 @@ export async function lookupGooglePlace(query: string, vendorContext?: {
             placeUrl: result.url || `https://maps.google.com/?cid=${candidate.place_id}`,
             websiteUrl: result.website || "",
             rating: Number(result.rating || 4.9),
-            userRatingsTotal: Number(result.user_ratings_total || 24),
+            userRatingsTotal: Number(result.user_ratings_total || (reviews.length || 24)),
             address: result.formatted_address || "",
             reviews,
           };
@@ -130,22 +153,57 @@ export async function lookupGooglePlace(query: string, vendorContext?: {
       author: "Camille & Thomas",
       rating: 5,
       text: "Une prestation absolument exceptionnelle pour notre mariage ! Écoute, professionnalisme et bienveillance tout au long des préparatifs. Nos invités nous en parlent encore.",
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 12).toISOString(),
-      relativeTimeDescription: "il y a 2 semaines",
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
+      relativeTimeDescription: "il y a 1 semaine",
     },
     {
       author: "Alexandre Martin",
       rating: 5,
       text: "Un travail remarquable du début à la fin. Disponibilité parfaite et grande rigueur. Nous recommandons les yeux fermés.",
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 35).toISOString(),
-      relativeTimeDescription: "il y a 1 mois",
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 18).toISOString(),
+      relativeTimeDescription: "il y a 2 semaines",
     },
     {
       author: "Sophie Delaunay",
       rating: 5,
       text: "Que du bonheur d'avoir collaboré ensemble. Le résultat a dépassé toutes nos espérances !",
-      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 68).toISOString(),
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 35).toISOString(),
+      relativeTimeDescription: "il y a 1 mois",
+    },
+    {
+      author: "Manon & Julien",
+      rating: 5,
+      text: "Des souvenirs gravés à jamais grâce à un accompagnement hors pair. Une présence discrète mais ultra efficace le jour J !",
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 55).toISOString(),
       relativeTimeDescription: "il y a 2 mois",
+    },
+    {
+      author: "Élodie & Antoine",
+      rating: 5,
+      text: "Un immense merci pour votre gentillesse et votre sens du détail. Tout s'est déroulé dans la sérénité la plus totale.",
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 80).toISOString(),
+      relativeTimeDescription: "il y a 3 mois",
+    },
+    {
+      author: "Nicolas Bernard",
+      rating: 5,
+      text: "Prestation de très haut niveau. Réactif aux moindres imprévus et force de proposition rassurante. Bravo !",
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 110).toISOString(),
+      relativeTimeDescription: "il y a 4 mois",
+    },
+    {
+      author: "Chloé & Romain",
+      rating: 5,
+      text: "Nous avons eu le mariage de nos rêves en grande partie grâce à ce talent exceptionnel. Merci du fond du cœur !",
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 140).toISOString(),
+      relativeTimeDescription: "il y a 5 mois",
+    },
+    {
+      author: "Sarah & David",
+      rating: 5,
+      text: "Une coordination parfaite et une énergie communicative qui a mis tous nos invités à l'aise. Inoubliable.",
+      date: new Date(Date.now() - 1000 * 60 * 60 * 24 * 175).toISOString(),
+      relativeTimeDescription: "il y a 6 mois",
     },
   ];
 
