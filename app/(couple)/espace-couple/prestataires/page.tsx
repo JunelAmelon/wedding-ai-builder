@@ -2,7 +2,7 @@
 
 import LoadingScreen from "@/components/shared/LoadingScreen";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -30,17 +30,15 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Search,
-  LayoutGrid,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Tender, Proposal, WeddingProject } from "@/types/marketplace";
 import type { BudgetBreakdown } from "@/types/domain";
 import TenderFormModal from "@/components/couple/TenderFormModal";
 import { ExpandableText } from "@/components/couple/ExpandableText";
-import { VENDOR_CATEGORIES, VENDOR_CATEGORY_GROUPS } from "@/lib/constants";
+import { VENDOR_CATEGORIES } from "@/lib/constants";
 
-const CATEGORIES = [...VENDOR_CATEGORIES];
+// const CATEGORIES = [...VENDOR_CATEGORIES];
 
 const CATEGORY_ICON: Record<string, LucideIcon> = {
   "Domaine mariage": Home,
@@ -95,26 +93,44 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
   "Autre": Sparkles,
 };
 
-// Structure enrichie pour les 35 catégories groupées
-export interface FlattenedCategoryItem {
-  category: string;
-  emoji: string;
-  groupId: string;
-  groupLabel: string;
-  badgeBg: string;
-  badgeColor: string;
-}
-
-const ALL_CATEGORY_ITEMS: FlattenedCategoryItem[] = VENDOR_CATEGORY_GROUPS.flatMap((group) =>
-  group.categories.map((cat) => ({
-    category: cat.value,
-    emoji: cat.icon,
-    groupId: group.id,
-    groupLabel: group.label,
-    badgeBg: group.badgeBg,
-    badgeColor: group.badgeColor,
-  }))
-);
+// Chips colorés pour toutes les 35 catégories (style Connectify / pastel)
+const CHIP_CATEGORIES = [
+  { category: "Domaine mariage", emoji: "🏡", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Auberge mariage", emoji: "🏨", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Hôtel mariage", emoji: "🏩", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Restaurant mariage", emoji: "🍽️", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Salle mariage", emoji: "🏛️", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Château mariage", emoji: "🏰", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Bateau mariage", emoji: "🛥️", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Mariages à la plage", emoji: "🏖️", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Traiteur mariage", emoji: "🍲", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Wedding cake", emoji: "🎂", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Faire part mariage", emoji: "💌", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Cadeaux invités mariage", emoji: "🎁", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Liste de mariage", emoji: "📋", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Photo mariage", emoji: "📸", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Vidéo mariage", emoji: "🎥", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Musique mariage", emoji: "🎵", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Voiture mariage", emoji: "🚗", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Bus mariage", emoji: "🚌", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Décoration mariage", emoji: "🎨", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Fleurs mariage", emoji: "💐", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Chapiteau mariage", emoji: "⛺", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Animation mariage", emoji: "🎪", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Wedding Planner", emoji: "💍", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Lune de miel", emoji: "✈️", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Officiants", emoji: "⛪", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Food Truck", emoji: "🚚", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Vin et Spiritueux", emoji: "🍷", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Bijoux mariage", emoji: "💎", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Robe de mariée", emoji: "👗", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Accessoires mariage", emoji: "🎀", bg: "#FBE1E6", color: "#0E0E10" },
+  { category: "Robe de cocktail", emoji: "💃", bg: "#ffffff", color: "#0E0E10" },
+  { category: "Esthétique coiffure mariage", emoji: "💄", bg: "#E4DBFB", color: "#0E0E10" },
+  { category: "Costumes mariage", emoji: "🤵", bg: "#FEF3C7", color: "#0E0E10" },
+  { category: "Soins beauté", emoji: "✨", bg: "#D8ECD9", color: "#0E0E10" },
+  { category: "Accessoires marié", emoji: "👔", bg: "#FBE1E6", color: "#0E0E10" },
+];
 
 // Images par défaut pour chaque catégorie de prestataire
 const CATEGORY_IMAGES: Record<string, string> = {
@@ -200,87 +216,15 @@ export default function CoupleVendorsPage() {
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
   const [pendingCategory, setPendingCategory] = useState<string | null>(null);
   const [replaceAction, setReplaceAction] = useState<"replace" | "keep">("keep");
-  const [activeGroup, setActiveGroup] = useState<string>("all");
-  const [searchCategory, setSearchCategory] = useState<string>("");
-  const [viewMode, setViewMode] = useState<"carousel" | "sections">("carousel");
-  const carouselRef = React.useRef<HTMLDivElement>(null);
 
-  const scrollCarousel = (direction: "left" | "right") => {
-    if (carouselRef.current) {
+  const chipsScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollChips = (direction: "left" | "right") => {
+    if (chipsScrollRef.current) {
       const scrollAmount = direction === "left" ? -460 : 460;
-      carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      chipsScrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
-
-  const filteredCategories = React.useMemo(() => {
-    let list = ALL_CATEGORY_ITEMS;
-    if (activeGroup !== "all") {
-      list = list.filter((item) => item.groupId === activeGroup);
-    }
-    if (searchCategory.trim()) {
-      const q = searchCategory.toLowerCase().trim();
-      list = list.filter(
-        (item) =>
-          item.category.toLowerCase().includes(q) ||
-          item.groupLabel.toLowerCase().includes(q)
-      );
-    }
-    return list;
-  }, [activeGroup, searchCategory]);
-
-  const renderCategoryCard = (item: FlattenedCategoryItem) => {
-    const tender = tenders.find((t) => t.category === item.category);
-    const hasTender = !!tender;
-    const isClosed = tender?.status === "closed";
-    const isValidatedOrClosed =
-      isClosed ||
-      Boolean(tender?.selectedProposalId) ||
-      tender?.proposals?.some((p) => p.status === "accepted");
-    const matchCount = isValidatedOrClosed
-      ? 0
-      : recommendations.filter((r) => r.match.category === item.category).length;
-
-    return (
-      <button
-        key={item.category}
-        onClick={() => openCategory(item.category)}
-        className="group relative flex items-center gap-3 p-2.5 sm:p-3 rounded-[20px] bg-white border border-[#EDEDF0] hover:border-[#c43a4a]/40 hover:shadow-[0_4px_16px_rgba(196,58,74,0.06)] hover:-translate-y-0.5 transition-all text-left w-full h-[66px] shrink-0"
-      >
-        <div
-          className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl shrink-0 transition-transform group-hover:scale-105 shadow-sm"
-          style={{ background: item.badgeBg }}
-        >
-          {item.emoji}
-        </div>
-
-        <div className="flex-1 min-w-0 pr-1">
-          <div className="text-[13px] font-semibold text-[#0E0E10] truncate group-hover:text-[#c43a4a] transition-colors">
-            {item.category}
-          </div>
-          <div className="text-[11px] text-[#6B6B72] flex items-center gap-1.5 mt-0.5">
-            {isValidatedOrClosed ? (
-              <span className="text-[#3C8552] font-semibold flex items-center gap-1 text-[10.5px]">
-                <CheckCircle2 size={11} /> Validé
-              </span>
-            ) : hasTender ? (
-              <span className="text-[#3C8552] font-semibold flex items-center gap-1 text-[10.5px]">
-                <CheckCircle2 size={11} /> Appel actif
-              </span>
-            ) : matchCount > 0 ? (
-              <span className="text-[#5B4FC4] font-semibold text-[10.5px]">
-                {matchCount} suggestion{matchCount > 1 ? "s" : ""}
-              </span>
-            ) : (
-              <span className="text-[#8E8E93] group-hover:text-[#c43a4a] text-[10.5px] transition-colors flex items-center gap-0.5">
-                Explorer <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-              </span>
-            )}
-          </div>
-        </div>
-      </button>
-    );
-  };
-
 
   useEffect(() => {
     async function load() {
@@ -394,194 +338,94 @@ export default function CoupleVendorsPage() {
         <div className="flex flex-col lg:flex-row gap-8 mt-6">
           {/* ===== COLONNE PRINCIPALE ===== */}
           <div className="flex-1 min-w-0">
-            {/* ---- SECTION 1 : Choisissez vos prestataires (UI/UX compacte, thématique & fluide) ---- */}
-            <div className="mb-8">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
-                      Choisissez vos prestataires
-                    </h2>
-                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#fef2f4] text-[#c43a4a] border border-[#c43a4a]/20">
-                      35 spécialités
-                    </span>
-                  </div>
-                  <p className="text-[12px] text-[#6B6B72] mt-0.5">
-                    Explorez par thématique ou lancez un appel d'offres ciblé en 1 clic.
-                  </p>
+            {/* ---- SECTION 1 : Choisissez vos prestataires (Slider horizontal fluide & compact) ---- */}
+            <div className="mb-7">
+              <div className="flex items-center justify-between mb-3.5">
+                <div className="flex items-center gap-2.5">
+                  <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
+                    Choisissez vos prestataires
+                  </h2>
+                  <span className="text-[11px] font-semibold text-[#8E8E93] bg-[#F4F4F6] px-2 py-0.5 rounded-full">
+                    {CHIP_CATEGORIES.length}
+                  </span>
                 </div>
-
                 <div className="flex items-center gap-2">
-                  {/* Mini barre de recherche instantanée */}
-                  <div className="relative">
-                    <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93]" />
-                    <input
-                      type="text"
-                      value={searchCategory}
-                      onChange={(e) => setSearchCategory(e.target.value)}
-                      placeholder="Rechercher... ex: Château, Robe"
-                      className="h-8 pl-8 pr-7 text-[12px] rounded-full border border-[#EDEDF0] bg-white text-[#0E0E10] placeholder:text-[#8E8E93] focus:outline-none focus:border-[#0E0E10] w-[170px] sm:w-[200px] transition-all"
-                    />
-                    {searchCategory && (
-                      <button
-                        onClick={() => setSearchCategory("")}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8E8E93] hover:text-[#0E0E10]"
-                      >
-                        <X size={12} />
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Bouton bascule vue : Défilement compact / Tout voir par thème */}
-                  {!searchCategory && activeGroup === "all" && (
-                    <button
-                      onClick={() => setViewMode(viewMode === "carousel" ? "sections" : "carousel")}
-                      className="h-8 px-2.5 rounded-full border border-[#EDEDF0] bg-white hover:bg-[#EDEDF0]/60 text-[11.5px] font-medium text-[#0E0E10] flex items-center gap-1.5 transition-colors shrink-0"
-                      title={viewMode === "carousel" ? "Déplier toutes les thématiques" : "Revenir au mode compact"}
-                    >
-                      <LayoutGrid size={13} />
-                      <span className="hidden md:inline">{viewMode === "carousel" ? "Tout voir" : "Compact"}</span>
-                    </button>
-                  )}
-
-                  {/* Bouton ajouter d'autres / personnalisé */}
                   <button
                     onClick={() => {
                       setCategory("");
                       setShowForm(true);
                     }}
-                    className="h-8 px-3 rounded-full bg-[#0E0E10] text-white hover:bg-black text-[12px] font-medium flex items-center gap-1.5 transition-colors shrink-0 shadow-sm"
+                    className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1 mr-1.5"
                   >
-                    <Plus size={13} />
-                    <span className="hidden xs:inline">Autre besoin</span>
+                    <Plus size={14} />
+                    Ajouter d'autres
                   </button>
-                </div>
-              </div>
 
-              {/* Barre d'onglets (Pills thématiques) scrollable horizontalement */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-1 px-1">
-                <button
-                  onClick={() => {
-                    setActiveGroup("all");
-                    if (viewMode === "sections") setViewMode("carousel");
-                  }}
-                  className={`h-7 px-3 rounded-full text-[12px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
-                    activeGroup === "all" && !searchCategory
-                      ? "bg-[#0E0E10] text-white shadow-sm"
-                      : "bg-white text-[#6B6B72] border border-[#EDEDF0] hover:text-[#0E0E10] hover:border-[#0E0E10]/30"
-                  }`}
-                >
-                  <span>✨</span>
-                  <span>Tous</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${activeGroup === "all" ? "bg-white/20 text-white" : "bg-[#EDEDF0] text-[#6B6B72]"}`}>
-                    35
-                  </span>
-                </button>
-
-                {VENDOR_CATEGORY_GROUPS.map((group) => {
-                  const isSelected = activeGroup === group.id && !searchCategory;
-                  return (
+                  {/* Boutons de défilement horizontal */}
+                  <div className="flex items-center gap-1">
                     <button
-                      key={group.id}
-                      onClick={() => {
-                        setActiveGroup(group.id);
-                        setSearchCategory("");
-                      }}
-                      className={`h-7 px-3 rounded-full text-[12px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
-                        isSelected
-                          ? "bg-[#0E0E10] text-white shadow-sm"
-                          : "bg-white text-[#6B6B72] border border-[#EDEDF0] hover:text-[#0E0E10] hover:border-[#0E0E10]/30"
-                      }`}
+                      onClick={() => scrollChips("left")}
+                      className="w-8 h-8 rounded-full border border-[#EDEDF0] bg-white hover:bg-[#F4F4F6] text-[#0E0E10] flex items-center justify-center shadow-xs transition-all active:scale-95 hover:border-[#0E0E10]/20"
+                      aria-label="Faire défiler vers la gauche"
                     >
-                      <span>{group.icon}</span>
-                      <span>{group.label}</span>
-                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#EDEDF0] text-[#6B6B72]"}`}>
-                        {group.categories.length}
-                      </span>
+                      <ChevronLeft size={16} />
                     </button>
-                  );
-                })}
+                    <button
+                      onClick={() => scrollChips("right")}
+                      className="w-8 h-8 rounded-full border border-[#EDEDF0] bg-white hover:bg-[#F4F4F6] text-[#0E0E10] flex items-center justify-center shadow-xs transition-all active:scale-95 hover:border-[#0E0E10]/20"
+                      aria-label="Faire défiler vers la droite"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* Contenu des catégories */}
-              {filteredCategories.length === 0 ? (
-                <div className="py-8 text-center bg-white rounded-[22px] border border-[#EDEDF0]">
-                  <p className="text-sm text-[#6B6B72]">
-                    Aucune spécialité ne correspond à « {searchCategory} ».
-                  </p>
-                  <button
-                    onClick={() => setSearchCategory("")}
-                    className="mt-2 text-xs text-[#c43a4a] hover:underline font-medium"
-                  >
-                    Effacer la recherche
-                  </button>
+              {/* Slider horizontal compact — prend seulement ~95px de hauteur au lieu de 700px verticaux ! */}
+              <div className="relative">
+                <div
+                  ref={chipsScrollRef}
+                  className="flex gap-3 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0"
+                >
+                  {CHIP_CATEGORIES.map((chip) => {
+                    const tender = tenders.find((t) => t.category === chip.category);
+                    const hasTender = !!tender;
+                    const isClosed = tender?.status === "closed";
+                    const isValidatedOrClosed =
+                      isClosed ||
+                      Boolean(tender?.selectedProposalId) ||
+                      tender?.proposals?.some((p) => p.status === "accepted");
+                    const matchCount = isValidatedOrClosed
+                      ? 0
+                      : recommendations.filter((r) => r.match.category === chip.category).length;
+                    return (
+                      <button
+                        key={chip.category}
+                        onClick={() => openCategory(chip.category)}
+                        className="rounded-[24px] p-3.5 flex flex-col justify-between min-h-[92px] w-[150px] sm:w-[165px] shrink-0 text-left transition-all hover:-translate-y-0.5 hover:shadow-md snap-start border border-[#EDEDF0] shadow-sm"
+                        style={{ background: chip.bg, color: chip.color }}
+                      >
+                        <div className="flex items-start justify-between">
+                          <span className="text-[22px]">{chip.emoji}</span>
+                          {matchCount > 0 && (
+                            <span className="h-5 min-w-5 px-1.5 rounded-full bg-white/70 backdrop-blur-xs flex items-center justify-center text-[10.5px] font-bold text-[#0E0E10]">
+                              {matchCount}
+                            </span>
+                          )}
+                          {hasTender && (
+                            <span className="h-5 w-5 rounded-full bg-white/70 backdrop-blur-xs flex items-center justify-center">
+                              <CheckCircle2 size={12} className="text-[#3C8552]" />
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[12.5px] font-semibold leading-snug mt-2 line-clamp-2">
+                          {chip.category}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
-              ) : activeGroup === "all" && !searchCategory && viewMode === "carousel" ? (
-                /* Mode Carrousel horizontal à 2 rangées — compact, prend seulement ~150px de hauteur ! */
-                <div className="relative group/carousel">
-                  {/* Bouton scroll gauche */}
-                  <button
-                    onClick={() => scrollCarousel("left")}
-                    className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white/95 border border-[#EDEDF0] shadow-md flex items-center justify-center text-[#0E0E10] hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
-                    aria-label="Faire défiler vers la gauche"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-
-                  <div
-                    ref={carouselRef}
-                    className="grid grid-rows-2 grid-flow-col auto-cols-[210px] sm:auto-cols-[230px] gap-2.5 overflow-x-auto pb-2 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0"
-                  >
-                    {filteredCategories.map((item) => renderCategoryCard(item))}
-                  </div>
-
-                  {/* Bouton scroll droite */}
-                  <button
-                    onClick={() => scrollCarousel("right")}
-                    className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white/95 border border-[#EDEDF0] shadow-md flex items-center justify-center text-[#0E0E10] hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
-                    aria-label="Faire défiler vers la droite"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-
-                  {/* Indicateur mobile discret */}
-                  <div className="flex sm:hidden items-center justify-center gap-1.5 mt-2 text-[#6B6B72]">
-                    <span className="text-[11px] font-medium">Glissez horizontalement pour tout voir (35)</span>
-                    <ArrowRight size={12} className="animate-pulse" />
-                  </div>
-                </div>
-              ) : activeGroup === "all" && !searchCategory && viewMode === "sections" ? (
-                /* Mode Vue d'ensemble structurée par thématique */
-                <div className="space-y-4">
-                  {VENDOR_CATEGORY_GROUPS.map((group) => (
-                    <div key={group.id} className="bg-white/60 p-3.5 rounded-[24px] border border-[#EDEDF0]">
-                      <div className="flex items-center gap-2 mb-2.5 px-1">
-                        <span className="text-base">{group.icon}</span>
-                        <h3 className="text-[13px] font-bold text-[#0E0E10] tracking-tight">{group.label}</h3>
-                        <span className="text-[10px] text-[#6B6B72] font-semibold">({group.categories.length})</span>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {group.categories.map((c) => {
-                          const item: FlattenedCategoryItem = {
-                            category: c.value,
-                            emoji: c.icon,
-                            groupId: group.id,
-                            groupLabel: group.label,
-                            badgeBg: group.badgeBg,
-                            badgeColor: group.badgeColor,
-                          };
-                          return renderCategoryCard(item);
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                /* Grille réactive compacte pour le groupe sélectionné ou résultat de recherche (1 à 3 rangées max !) */
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                  {filteredCategories.map((item) => renderCategoryCard(item))}
-                </div>
-              )}
+              </div>
             </div>
 
             {/* ---- SECTION 2 : Cartes des appels d'offres (style events) ---- */}
@@ -596,13 +440,13 @@ export default function CoupleVendorsPage() {
                   const validatedVendor = validatedProposal?.vendor;
                   const validatedLogo = validatedVendor
                     ? (typeof validatedVendor.logo === "string"
-                        ? validatedVendor.logo
-                        : validatedVendor.logo?.url)
+                      ? validatedVendor.logo
+                      : validatedVendor.logo?.url)
                     : null;
                   const firstVendorLogo = proposals[0]
                     ? (typeof proposals[0].vendor?.logo === "string"
-                        ? proposals[0].vendor.logo
-                        : proposals[0].vendor?.logo?.url)
+                      ? proposals[0].vendor.logo
+                      : proposals[0].vendor?.logo?.url)
                     : null;
                   const bgImage =
                     tender.status === "closed" && validatedLogo
@@ -660,9 +504,8 @@ export default function CoupleVendorsPage() {
                               return (
                                 <span
                                   key={idx}
-                                  className={`h-[17px] w-[17px] rounded-full border-[1.5px] bg-gray-300 bg-cover bg-center ${
-                                    isValidated ? "border-[#3C8552] ring-1 ring-[#3C8552]" : "border-white"
-                                  }`}
+                                  className={`h-[17px] w-[17px] rounded-full border-[1.5px] bg-gray-300 bg-cover bg-center ${isValidated ? "border-[#3C8552] ring-1 ring-[#3C8552]" : "border-white"
+                                    }`}
                                   style={{
                                     backgroundImage: logoUrl ? `url(${logoUrl})` : undefined,
                                     background: !logoUrl ? CONTACT_COLORS[idx % CONTACT_COLORS.length] : undefined,
@@ -981,15 +824,15 @@ export default function CoupleVendorsPage() {
                         {catTender.status === "searching"
                           ? "Recherche de prestataires en cours"
                           : catTender.status === "responded"
-                          ? `${(catTender.proposals || []).length} proposition${(catTender.proposals || []).length > 1 ? "s" : ""} reçue${(catTender.proposals || []).length > 1 ? "s" : ""}`
-                          : "Dossier clôturé"}
+                            ? `${(catTender.proposals || []).length} proposition${(catTender.proposals || []).length > 1 ? "s" : ""} reçue${(catTender.proposals || []).length > 1 ? "s" : ""}`
+                            : "Dossier clôturé"}
                       </h2>
                       <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
                         {catTender.status === "searching"
                           ? "Votre appel d'offres a été diffusé aux prestataires qualifiés. Dès qu'un prestataire répond, sa proposition apparaîtra dans votre espace."
                           : catTender.status === "responded"
-                          ? "Des prestataires ont répondu à votre demande. Vous pouvez consulter leurs propositions dès maintenant."
-                          : "Cet appel d'offres est clôturé. Vous pouvez relancer une nouvelle demande pour cette catégorie si besoin."}
+                            ? "Des prestataires ont répondu à votre demande. Vous pouvez consulter leurs propositions dès maintenant."
+                            : "Cet appel d'offres est clôturé. Vous pouvez relancer une nouvelle demande pour cette catégorie si besoin."}
                       </p>
                       <div className="flex flex-col gap-2.5 max-w-sm mx-auto">
                         <Link

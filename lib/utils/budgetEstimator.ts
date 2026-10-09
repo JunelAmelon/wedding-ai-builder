@@ -74,47 +74,8 @@ const PRIORITY_LABELS: Record<string, string> = {
   stress: "Zéro stress & sérénité totale",
 };
 
-const NEW_CATEGORY_TO_RATIO_KEY: Record<string, string> = {
-  "Domaine mariage": "Lieu de réception",
-  "Auberge mariage": "Lieu de réception",
-  "Hôtel mariage": "Lieu de réception",
-  "Restaurant mariage": "Lieu de réception",
-  "Salle mariage": "Lieu de réception",
-  "Château mariage": "Lieu de réception",
-  "Bateau mariage": "Lieu de réception",
-  "Mariages à la plage": "Lieu de réception",
-  "Chapiteau mariage": "Lieu de réception",
-  "Traiteur mariage": "Traiteur",
-  "Food Truck": "Traiteur",
-  "Vin et Spiritueux": "Traiteur",
-  "Wedding cake": "Traiteur",
-  "Photo mariage": "Photographe / Vidéaste",
-  "Vidéo mariage": "Photographe / Vidéaste",
-  "Musique mariage": "Musique / DJ / Orchestre",
-  "Voiture mariage": "Transport",
-  "Bus mariage": "Transport",
-  "Décoration mariage": "Décoration / Fleuriste",
-  "Fleurs mariage": "Décoration / Fleuriste",
-  "Animation mariage": "Animation",
-  "Wedding Planner": "Wedding planner",
-  "Lune de miel": "Autre",
-  "Officiants": "Officiant",
-  "Bijoux mariage": "Bijoutier",
-  "Robe de mariée": "Conception de robe de mariée",
-  "Accessoires mariage": "Conception de robe de mariée",
-  "Robe de cocktail": "Conception de robe de mariée",
-  "Costumes mariage": "Conception de robe de mariée",
-  "Accessoires marié": "Conception de robe de mariée",
-  "Esthétique coiffure mariage": "Maquilleur / Coiffeur",
-  "Soins beauté": "Maquilleur / Coiffeur",
-  "Faire part mariage": "Autre",
-  "Cadeaux invités mariage": "Autre",
-  "Liste de mariage": "Autre",
-};
-
 function resolveCategoryKey(cat: string): string {
   if (CATEGORY_DEFAULT_RATIOS[cat]) return cat;
-  if (NEW_CATEGORY_TO_RATIO_KEY[cat]) return NEW_CATEGORY_TO_RATIO_KEY[cat];
   const lower = cat.toLowerCase();
   for (const known of Object.keys(CATEGORY_DEFAULT_RATIOS)) {
     if (known.toLowerCase().includes(lower) || lower.includes(known.toLowerCase())) {

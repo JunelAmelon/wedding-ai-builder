@@ -123,9 +123,8 @@ export function fallbackBlueprint(answers: QuizAnswers): WeddingBlueprint {
     concept: `${reformulated} à ${city}`,
     conceptName: reformulated,
     emotionalSummary: `Un mariage ${reformulated.toLowerCase()} pour ${answers.guestCount ?? "vos proches"}${answers.childrenCount ? ` dont ${answers.childrenCount} enfants` : ""}, entre authenticité et raffinement.`,
-    storytelling: `Un mariage ${styleLabel.toLowerCase()} pensé pour ${
-      answers.guestCount ?? "vos"
-    } invités, où chaque détail raconte votre histoire. L'ambiance générale privilégie la chaleur et l'authenticité, dans une esthétique ${styleLabel.toLowerCase()} ajustée à votre budget et au cadre de ${city}.`,
+    storytelling: `Un mariage ${styleLabel.toLowerCase()} pensé pour ${answers.guestCount ?? "vos"
+      } invités, où chaque détail raconte votre histoire. L'ambiance générale privilégie la chaleur et l'authenticité, dans une esthétique ${styleLabel.toLowerCase()} ajustée à votre budget et au cadre de ${city}.`,
     ambiance: answers.ambiance?.length ? answers.ambiance : ["chaleureux", "authentique", "raffiné", "mémorable"],
     ambianceLevel: 7,
     colorPalette: getPalette(style),
@@ -259,43 +258,6 @@ export function fallbackBudgetBreakdown(answers: QuizAnswers): BudgetBreakdown {
   // Adjust ratios based on desired categories
   if (answers.desiredCategories?.length) {
     const catMap: Record<string, string> = {
-      // Nouvelles catégories (35)
-      "Domaine mariage": "venue",
-      "Auberge mariage": "venue",
-      "Hôtel mariage": "venue",
-      "Restaurant mariage": "venue",
-      "Salle mariage": "venue",
-      "Château mariage": "venue",
-      "Bateau mariage": "venue",
-      "Mariages à la plage": "venue",
-      "Chapiteau mariage": "venue",
-      "Traiteur mariage": "catering",
-      "Food Truck": "catering",
-      "Vin et Spiritueux": "catering",
-      "Wedding cake": "cake",
-      "Photo mariage": "photography",
-      "Vidéo mariage": "videography",
-      "Musique mariage": "music",
-      "Animation mariage": "music",
-      "Voiture mariage": "transport",
-      "Bus mariage": "transport",
-      "Décoration mariage": "decoration",
-      "Fleurs mariage": "flowers",
-      "Wedding Planner": "weddingPlanner",
-      "Lune de miel": "honeymoon",
-      "Officiants": "officiant",
-      "Bijoux mariage": "rings",
-      "Robe de mariée": "attire",
-      "Robe de cocktail": "attire",
-      "Costumes mariage": "attire",
-      "Accessoires mariage": "attire",
-      "Accessoires marié": "attire",
-      "Esthétique coiffure mariage": "beauty",
-      "Soins beauté": "beauty",
-      "Faire part mariage": "stationery",
-      "Cadeaux invités mariage": "favors",
-      "Liste de mariage": "favors",
-      // Anciennes catégories
       "lieu": "venue",
       "traiteur": "catering",
       "photographe": "photography",
@@ -647,9 +609,8 @@ export function fallbackRiskEngine(
     budgetInconsistencies: inconsistencies,
     organizationalRisks: risks,
     riskScore: score,
-    scoreJustification: `Score calculé à partir du budget par invité, du niveau de stress déclaré (${
-      answers.stressLevel ?? "?"
-    }/10) et du délai disponible avant le jour J.`,
+    scoreJustification: `Score calculé à partir du budget par invité, du niveau de stress déclaré (${answers.stressLevel ?? "?"
+      }/10) et du délai disponible avant le jour J.`,
     generalAdvice,
     scoreBreakdown,
     risks: structuredRisks.length ? structuredRisks : undefined,

@@ -24,9 +24,22 @@ import {
   type BudgetEstimateResult,
 } from "@/lib/utils/budgetEstimator";
 
-import { VENDOR_CATEGORIES } from "@/lib/constants";
-
-const CATEGORIES = [...VENDOR_CATEGORIES];
+const CATEGORIES = [
+  "Photographe / Vidéaste",
+  "Musique / DJ / Orchestre",
+  "Traiteur",
+  "Lieu de réception",
+  "Décoration / Fleuriste",
+  "Wedding planner",
+  "Maquilleur / Coiffeur",
+  "Animation",
+  "Transport",
+  "Hébergement",
+  "Conception de robe de mariée",
+  "Bijoutier",
+  "Officiant",
+  "Autre",
+];
 
 export interface TenderWithProposalsItem extends Tender {
   proposals?: Array<Proposal & { vendor?: { name?: string; businessName?: string; companyName?: string; id?: string } }>;
@@ -77,7 +90,7 @@ export default function TenderFormModal({
           const breakdown = data?.session?.aiOutput?.budgetBreakdown || data?.project?.aiOutput?.budgetBreakdown;
           if (breakdown) setInternalBudgetBreakdown(breakdown);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [budgetBreakdown, open, internalBudgetBreakdown]);
 
@@ -91,7 +104,7 @@ export default function TenderFormModal({
         .then((data) => {
           if (data?.tenders) setTendersList(data.tenders);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [existingTenders, open]);
 
@@ -270,7 +283,7 @@ export default function TenderFormModal({
           .then((data) => {
             if (data?.tenders) setTendersList(data.tenders);
           })
-          .catch(() => {});
+          .catch(() => { });
         return;
       }
 
@@ -502,13 +515,12 @@ export default function TenderFormModal({
             </button>
 
             <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 ${
-                hasSignedVendor
+              className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 ${hasSignedVendor
                   ? "bg-[#fff1f2] text-[#e11d48]"
                   : hasProposals
                     ? "bg-[#fffbeb] text-[#ca8a04]"
                     : "bg-[#eef2ff] text-[#4f46e5]"
-              }`}
+                }`}
             >
               {hasSignedVendor ? (
                 <ShieldAlert size={28} />
@@ -555,9 +567,8 @@ export default function TenderFormModal({
                 type="button"
                 disabled={launching}
                 onClick={() => launchTender(true)}
-                className={`flex-1 py-3 px-4 rounded-full text-white text-sm font-bold shadow-md hover:brightness-110 transition flex items-center justify-center gap-1.5 ${
-                  hasSignedVendor ? "bg-[#e11d48]" : "bg-[#e64a5d]"
-                }`}
+                className={`flex-1 py-3 px-4 rounded-full text-white text-sm font-bold shadow-md hover:brightness-110 transition flex items-center justify-center gap-1.5 ${hasSignedVendor ? "bg-[#e11d48]" : "bg-[#e64a5d]"
+                  }`}
               >
                 {launching ? <Loader2 size={16} className="animate-spin" /> : null}
                 Supprimer et lancer

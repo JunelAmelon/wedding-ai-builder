@@ -18,11 +18,21 @@ import { CityAutocomplete } from "@/components/geo/CityAutocomplete";
 import { RegionAutocomplete } from "@/components/geo/RegionAutocomplete";
 import { CityMultiInput } from "@/components/geo/CityMultiInput";
 
-import { VENDOR_CATEGORIES } from "@/lib/constants";
-
 const STEPS = ["Identité", "Contact", "Services", "Disponibilité"];
 
-const categoryOptions = [...VENDOR_CATEGORIES];
+const categoryOptions = [
+  "Lieu",
+  "Traiteur",
+  "Photographe",
+  "Vidéaste",
+  "Musique / DJ",
+  "Fleurs",
+  "Maquillage / Coiffure",
+  "Wedding planner",
+  "Voiture",
+  "Animation",
+  "Autre",
+];
 
 const styleOptions = [
   "Chic",
@@ -253,13 +263,12 @@ export default function VendorProfilePage() {
               <button
                 key={label}
                 onClick={() => setStep(index)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                  index === step
+                className={`px-4 py-2 rounded-full text-sm font-medium transition ${index === step
                     ? "bg-[#e64a5d] text-white hover:brightness-110"
                     : index < step
-                    ? "bg-[#fef2f4] text-[#0E0E10]"
-                    : "bg-white border border-[#E4DBFB] text-[#6B6B72]"
-                }`}
+                      ? "bg-[#fef2f4] text-[#0E0E10]"
+                      : "bg-white border border-[#E4DBFB] text-[#6B6B72]"
+                  }`}
               >
                 <span className="mr-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[11px]">
                   {index < step ? <Check size={12} /> : index + 1}
@@ -509,6 +518,21 @@ export default function VendorProfilePage() {
                 </select>
               </div>
 
+              {form.serviceCategory === "Autre" && (
+                <div>
+                  <label className={labelClass}>Précisez la catégorie</label>
+                  <input
+                    type="text"
+                    value={form.otherCategory || ""}
+                    onChange={(e) =>
+                      updateForm("otherCategory", e.target.value || null)
+                    }
+                    className={inputClass}
+                    placeholder="Votre métier"
+                  />
+                </div>
+              )}
+
               <div>
                 <label className={labelClass}>Styles proposés</label>
                 <div className="flex flex-wrap gap-2">
@@ -519,11 +543,10 @@ export default function VendorProfilePage() {
                         key={style}
                         type="button"
                         onClick={() => toggleStyle(style)}
-                        className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                          active
+                        className={`px-3 py-1.5 rounded-full text-sm border transition ${active
                             ? "bg-[#e64a5d] text-white hover:brightness-110 border-[#0E0E10]"
                             : "bg-white text-[#6B6B72] border-[#E4DBFB] hover:border-[#0E0E10]"
-                        }`}
+                          }`}
                       >
                         {style}
                       </button>
@@ -684,11 +707,10 @@ export default function VendorProfilePage() {
                         key={season}
                         type="button"
                         onClick={() => togglePeakSeason(season)}
-                        className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                          active
+                        className={`px-3 py-1.5 rounded-full text-sm border transition ${active
                             ? "bg-[#e64a5d] text-white hover:brightness-110 border-[#0E0E10]"
                             : "bg-white text-[#6B6B72] border-[#E4DBFB] hover:border-[#0E0E10]"
-                        }`}
+                          }`}
                       >
                         {season}
                       </button>
