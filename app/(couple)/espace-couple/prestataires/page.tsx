@@ -134,6 +134,22 @@ const CHIP_CATEGORIES = [
 
 // Images par défaut pour chaque catégorie de prestataire
 const CATEGORY_IMAGES: Record<string, string> = {
+  // Clés historiques (pour que les anciens appels d'offres conservent exactement leurs images d'origine)
+  "Photographe / Vidéaste": "https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=400&h=400&fit=crop",
+  "Musique / DJ / Orchestre": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
+  "Traiteur": "https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=400&fit=crop",
+  "Lieu de réception": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=400&fit=crop",
+  "Décoration / Fleuriste": "https://images.unsplash.com/photo-1561128290-006dc4827214?w=400&h=400&fit=crop",
+  "Wedding planner": "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=400&fit=crop",
+  "Maquilleur / Coiffeur": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=400&fit=crop",
+  "Animation": "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=400&fit=crop",
+  "Transport": "https://images.pexels.com/photos/29624024/pexels-photo-29624024.jpeg",
+  "Hébergement": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=400&fit=crop",
+  "Conception de robe de mariée": "https://images.unsplash.com/photo-1594552072238-b8a33785b261?w=400&h=400&fit=crop",
+  "Bijoutier": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop",
+  "Officiant": "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400&h=400&fit=crop",
+
+  // Les 35 catégories exactes
   "Domaine mariage": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=400&fit=crop",
   "Auberge mariage": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=400&fit=crop",
   "Hôtel mariage": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=400&fit=crop",
