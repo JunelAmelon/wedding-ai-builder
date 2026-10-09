@@ -128,7 +128,7 @@ function GatePageInner() {
         setSubmitting(false);
         return;
       }
-      router.push("/espace-couple");
+      window.location.href = "/espace-couple";
     } catch (err) {
       const message = err instanceof Error ? err.message : "Une erreur est survenue, réessayez.";
       setError(message);

@@ -105,7 +105,35 @@ export default function CoupleLayoutClient({
     return 0;
   };
 
-  const safeUser = user ?? {};
+  const [currentUser, setCurrentUser] = useState(user ?? {});
+
+  useEffect(() => {
+    if (user) setCurrentUser(user);
+  }, [user]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function verifyAndSyncUser() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok && mounted) {
+          const data = await res.json();
+          if (data.user) {
+            setCurrentUser({
+              firstName: data.user.firstName,
+              lastName: data.user.lastName,
+              email: data.user.email,
+              avatarUrl: data.user.avatarUrl,
+            });
+          }
+        }
+      } catch {}
+    }
+    verifyAndSyncUser();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -113,13 +141,13 @@ export default function CoupleLayoutClient({
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  const initials = `${safeUser.firstName?.[0] ?? ""}${safeUser.lastName?.[0] ?? ""}`.toUpperCase();
+  const initials = `${currentUser.firstName?.[0] ?? ""}${currentUser.lastName?.[0] ?? ""}`.toUpperCase();
 
   const isActive = (href: string) => (href === "/espace-couple" ? pathname === href : pathname?.startsWith(href));
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login?role=couple");
+    window.location.href = "/login?role=couple";
   }
 
   return (
@@ -207,9 +235,9 @@ export default function CoupleLayoutClient({
             href="/espace-couple/parametres"
             className="flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] shadow-[0_8px_30px_rgba(11,15,26,0.08)] hover:border-black/15 transition-colors shrink-0"
           >
-            {safeUser.avatarUrl ? (
+            {currentUser.avatarUrl ? (
               <div className="relative h-8 w-8 shrink-0">
-                <Image src={safeUser.avatarUrl} alt={initials || "Profil"} fill sizes="32px" className="rounded-full object-cover border border-black/10" unoptimized />
+                <Image src={currentUser.avatarUrl} alt={initials || "Profil"} fill sizes="32px" className="rounded-full object-cover border border-black/10" unoptimized />
               </div>
             ) : (
               <span className="h-8 w-8 rounded-full bg-ink text-white text-xs font-semibold flex items-center justify-center">
@@ -217,7 +245,7 @@ export default function CoupleLayoutClient({
               </span>
             )}
             <span className="hidden xl:block text-sm font-medium truncate max-w-[110px]">
-              {safeUser.firstName} {safeUser.lastName}
+              {currentUser.firstName} {currentUser.lastName}
             </span>
           </Link>
         </div>
@@ -247,9 +275,9 @@ export default function CoupleLayoutClient({
               </button>
             </div>
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-black/[0.06]">
-              {safeUser.avatarUrl ? (
+              {currentUser.avatarUrl ? (
                 <div className="relative h-10 w-10 shrink-0">
-                  <Image src={safeUser.avatarUrl} alt={initials || "Profil"} fill sizes="40px" className="rounded-full object-cover border border-black/10" unoptimized />
+                  <Image src={currentUser.avatarUrl} alt={initials || "Profil"} fill sizes="40px" className="rounded-full object-cover border border-black/10" unoptimized />
                 </div>
               ) : (
                 <span className="h-10 w-10 rounded-full bg-ink text-white text-sm font-semibold flex items-center justify-center">
@@ -257,8 +285,8 @@ export default function CoupleLayoutClient({
                 </span>
               )}
               <div className="min-w-0">
-                <div className="text-sm font-medium truncate">{safeUser.firstName} {safeUser.lastName}</div>
-                <div className="text-xs text-text-secondary truncate">{safeUser.email}</div>
+                <div className="text-sm font-medium truncate">{currentUser.firstName} {currentUser.lastName}</div>
+                <div className="text-xs text-text-secondary truncate">{currentUser.email}</div>
               </div>
             </div>
             <div

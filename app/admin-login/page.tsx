@@ -58,8 +58,7 @@ export default function AdminLoginPage() {
         setError("Accès réservé aux administrateurs");
         return;
       }
-      router.push("/admin");
-      router.refresh();
+      window.location.href = "/admin";
     } catch {
       setError("Erreur de connexion");
     } finally {

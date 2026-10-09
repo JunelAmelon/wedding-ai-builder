@@ -189,7 +189,7 @@ export default function AdminLayoutClient({
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/admin-login");
+    window.location.href = "/admin-login";
   }
 
   const navItems = ADMIN_NAV.filter((item) => canAccess(user.adminRole, item.minRole as AdminRole));

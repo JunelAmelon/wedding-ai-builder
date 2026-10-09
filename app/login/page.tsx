@@ -84,7 +84,7 @@ function LoginPageInner() {
         window.localStorage.removeItem("wab_quiz_state");
       }
       const destination = data.user.role === "vendor" ? "/espace-prestataire" : "/espace-couple/result";
-      router.push(destination);
+      window.location.href = destination;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur de connexion");
     } finally {

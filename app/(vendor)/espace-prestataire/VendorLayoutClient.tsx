@@ -108,10 +108,51 @@ export default function VendorLayoutClient({
   };
 
   const totalBadges = badgeCounts.unreadMessages + badgeCounts.newOpportunities + badgeCounts.unreadNotifications;
-  const safeUser = user ?? {};
-  const displayName = safeUser.companyName || `${safeUser.firstName || ""} ${safeUser.lastName || ""}`.trim() || "Prestataire";
-  const initials = (safeUser.companyName?.[0] ?? safeUser.brandName?.[0] ?? safeUser.firstName?.[0] ?? "").toUpperCase();
-  const logoUrl = safeUser.logo?.url;
+  const [currentUser, setCurrentUser] = useState(user ?? {});
+
+  useEffect(() => {
+    if (user) setCurrentUser(user);
+  }, [user]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function verifyAndSyncUser() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok && mounted) {
+          const data = await res.json();
+          if (data.user) {
+            const p = data.profile || {};
+            setCurrentUser({
+              firstName: data.user.firstName,
+              lastName: data.user.lastName,
+              email: data.user.email,
+              companyName: p.companyName,
+              brandName: p.brandName,
+              logo: p.logo,
+            });
+          }
+        }
+      } catch {}
+    }
+    verifyAndSyncUser();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const displayName =
+    currentUser.brandName ||
+    currentUser.companyName ||
+    `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() ||
+    "Prestataire";
+  const initials = (
+    currentUser.brandName?.[0] ??
+    currentUser.companyName?.[0] ??
+    currentUser.firstName?.[0] ??
+    ""
+  ).toUpperCase();
+  const logoUrl = currentUser.logo?.url;
 
   const Avatar = () => (
     <span className="relative h-8 w-8 rounded-full bg-[#0E0E10] text-white text-xs font-semibold flex items-center justify-center overflow-hidden border border-[#EDEDF0]">
@@ -128,7 +169,7 @@ export default function VendorLayoutClient({
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login?role=vendor");
+    window.location.href = "/login?role=vendor";
   }
 
   return (
