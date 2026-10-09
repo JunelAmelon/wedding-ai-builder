@@ -411,16 +411,14 @@ export default function VendorPortfolioPage() {
   const [reviewFormRating, setReviewFormRating] = useState(5);
   const [reviewFormText, setReviewFormText] = useState("");
   const [reviewFormDate, setReviewFormDate] = useState("");
-  const [reviewFormSource, setReviewFormSource] = useState<"manual" | "google">("manual");
   const [reviewFormError, setReviewFormError] = useState<string | null>(null);
 
-  function openAddReviewModal(source: "manual" | "google" = "manual") {
+  function openAddReviewModal() {
     setEditingReviewIndex(null);
     setReviewFormAuthor("");
     setReviewFormRating(5);
     setReviewFormText("");
     setReviewFormDate(new Date().toISOString().slice(0, 10));
-    setReviewFormSource(source);
     setReviewFormError(null);
     setIsReviewModalOpen(true);
   }
@@ -433,7 +431,6 @@ export default function VendorPortfolioPage() {
     setReviewFormRating(rev.rating || 5);
     setReviewFormText(rev.text || "");
     setReviewFormDate(rev.date ? rev.date.slice(0, 10) : new Date().toISOString().slice(0, 10));
-    setReviewFormSource((rev as any).source === "google" ? "google" : "manual");
     setReviewFormError(null);
     setIsReviewModalOpen(true);
   }
@@ -453,7 +450,6 @@ export default function VendorPortfolioPage() {
       rating: reviewFormRating,
       text: reviewFormText.trim(),
       date: reviewFormDate ? new Date(reviewFormDate).toISOString() : new Date().toISOString(),
-      source: reviewFormSource,
     };
 
     if (editingReviewIndex !== null) {
@@ -500,10 +496,9 @@ export default function VendorPortfolioPage() {
     }
 
     reviews.forEach((r, idx) => {
-      const isGoogle = (r as any).source === "google";
       list.push({
         id: `manual-${idx}`,
-        source: isGoogle ? "google" : "manual",
+        source: "manual",
         author: r.author || "Couple",
         rating: r.rating || 5,
         text: r.text || "",
@@ -974,7 +969,7 @@ export default function VendorPortfolioPage() {
 
                 <button
                   type="button"
-                  onClick={() => openAddReviewModal("manual")}
+                  onClick={() => openAddReviewModal()}
                   className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#E4DBFB] text-[#0E0E10] text-xs font-semibold hover:brightness-95 transition shrink-0 shadow-xs"
                   title="Ajouter un avis manuellement"
                 >
@@ -1010,7 +1005,7 @@ export default function VendorPortfolioPage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => openAddReviewModal("manual")}
+                      onClick={() => openAddReviewModal()}
                       className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#E4DBFB] text-xs font-semibold text-[#0E0E10] hover:brightness-95 transition"
                     >
                       <Plus size={14} /> Ajouter un avis
@@ -1353,37 +1348,6 @@ export default function VendorPortfolioPage() {
               )}
 
               <div className="space-y-4">
-                {/* Source de l'avis */}
-                <div>
-                  <label className={labelClass}>Type d'avis</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setReviewFormSource("manual")}
-                      className={`h-10 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 border transition ${
-                        reviewFormSource === "manual"
-                          ? "bg-[#FEF3C7] border-[#fde68a] text-[#78350f]"
-                          : "bg-white border-[#EDEDF0] text-[#6B6B72] hover:bg-[#f8f9fa]"
-                      }`}
-                    >
-                      <Heart size={13} className={reviewFormSource === "manual" ? "fill-[#78350f]" : ""} />
-                      <span>Témoignage couple</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setReviewFormSource("google")}
-                      className={`h-10 px-3 rounded-full text-xs font-semibold flex items-center justify-center gap-2 border transition ${
-                        reviewFormSource === "google"
-                          ? "bg-[#f8f9fa] border-[#0E0E10] text-[#0E0E10]"
-                          : "bg-white border-[#EDEDF0] text-[#6B6B72] hover:bg-[#f8f9fa]"
-                      }`}
-                    >
-                      <GoogleIcon className="w-3.5 h-3.5" />
-                      <span>Avis Google Maps</span>
-                    </button>
-                  </div>
-                </div>
-
                 {/* Nom ou auteur */}
                 <div>
                   <label className={labelClass}>Auteur ou couple</label>
