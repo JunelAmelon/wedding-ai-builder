@@ -28,13 +28,17 @@ import {
   RefreshCw,
   MapPin,
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  LayoutGrid,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Tender, Proposal, WeddingProject } from "@/types/marketplace";
 import type { BudgetBreakdown } from "@/types/domain";
 import TenderFormModal from "@/components/couple/TenderFormModal";
 import { ExpandableText } from "@/components/couple/ExpandableText";
-import { VENDOR_CATEGORIES } from "@/lib/constants";
+import { VENDOR_CATEGORIES, VENDOR_CATEGORY_GROUPS } from "@/lib/constants";
 
 const CATEGORIES = [...VENDOR_CATEGORIES];
 
@@ -91,44 +95,26 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
   "Autre": Sparkles,
 };
 
-// Chips colorés pour toutes les 35 catégories (style Connectify / pastel)
-const CHIP_CATEGORIES = [
-  { category: "Domaine mariage", emoji: "🏡", bg: "#ffffff", color: "#0E0E10" },
-  { category: "Auberge mariage", emoji: "🏨", bg: "#E4DBFB", color: "#0E0E10" },
-  { category: "Hôtel mariage", emoji: "🏩", bg: "#FEF3C7", color: "#0E0E10" },
-  { category: "Restaurant mariage", emoji: "🍽️", bg: "#D8ECD9", color: "#0E0E10" },
-  { category: "Salle mariage", emoji: "🏛️", bg: "#FBE1E6", color: "#0E0E10" },
-  { category: "Château mariage", emoji: "🏰", bg: "#ffffff", color: "#0E0E10" },
-  { category: "Bateau mariage", emoji: "🛥️", bg: "#E4DBFB", color: "#0E0E10" },
-  { category: "Mariages à la plage", emoji: "🏖️", bg: "#FEF3C7", color: "#0E0E10" },
-  { category: "Traiteur mariage", emoji: "🍲", bg: "#D8ECD9", color: "#0E0E10" },
-  { category: "Wedding cake", emoji: "🎂", bg: "#FBE1E6", color: "#0E0E10" },
-  { category: "Faire part mariage", emoji: "💌", bg: "#ffffff", color: "#0E0E10" },
-  { category: "Cadeaux invités mariage", emoji: "🎁", bg: "#E4DBFB", color: "#0E0E10" },
-  { category: "Liste de mariage", emoji: "📋", bg: "#FEF3C7", color: "#0E0E10" },
-  { category: "Photo mariage", emoji: "📸", bg: "#D8ECD9", color: "#0E0E10" },
-  { category: "Vidéo mariage", emoji: "🎥", bg: "#FBE1E6", color: "#0E0E10" },
-  { category: "Musique mariage", emoji: "🎵", bg: "#ffffff", color: "#0E0E10" },
-  { category: "Voiture mariage", emoji: "🚗", bg: "#E4DBFB", color: "#0E0E10" },
-  { category: "Bus mariage", emoji: "🚌", bg: "#FEF3C7", color: "#0E0E10" },
-  { category: "Décoration mariage", emoji: "🎨", bg: "#D8ECD9", color: "#0E0E10" },
-  { category: "Fleurs mariage", emoji: "💐", bg: "#FBE1E6", color: "#0E0E10" },
-  { category: "Chapiteau mariage", emoji: "⛺", bg: "#ffffff", color: "#0E0E10" },
-  { category: "Animation mariage", emoji: "🎪", bg: "#E4DBFB", color: "#0E0E10" },
-  { category: "Wedding Planner", emoji: "💍", bg: "#FEF3C7", color: "#0E0E10" },
-  { category: "Lune de miel", emoji: "✈️", bg: "#D8ECD9", color: "#0E0E10" },
-  { category: "Officiants", emoji: "⛪", bg: "#FBE1E6", color: "#0E0E10" },
-  { category: "Food Truck", emoji: "🚚", bg: "#ffffff", color: "#0E0E10" },
-  { category: "Vin et Spiritueux", emoji: "🍷", bg: "#E4DBFB", color: "#0E0E10" },
-  { category: "Bijoux mariage", emoji: "💎", bg: "#FEF3C7", color: "#0E0E10" },
-  { category: "Robe de mariée", emoji: "👗", bg: "#D8ECD9", color: "#0E0E10" },
-  { category: "Accessoires mariage", emoji: "🎀", bg: "#FBE1E6", color: "#0E0E10" },
-  { category: "Robe de cocktail", emoji: "💃", bg: "#ffffff", color: "#0E0E10" },
-  { category: "Esthétique coiffure mariage", emoji: "💄", bg: "#E4DBFB", color: "#0E0E10" },
-  { category: "Costumes mariage", emoji: "🤵", bg: "#FEF3C7", color: "#0E0E10" },
-  { category: "Soins beauté", emoji: "✨", bg: "#D8ECD9", color: "#0E0E10" },
-  { category: "Accessoires marié", emoji: "👔", bg: "#FBE1E6", color: "#0E0E10" },
-];
+// Structure enrichie pour les 35 catégories groupées
+export interface FlattenedCategoryItem {
+  category: string;
+  emoji: string;
+  groupId: string;
+  groupLabel: string;
+  badgeBg: string;
+  badgeColor: string;
+}
+
+const ALL_CATEGORY_ITEMS: FlattenedCategoryItem[] = VENDOR_CATEGORY_GROUPS.flatMap((group) =>
+  group.categories.map((cat) => ({
+    category: cat.value,
+    emoji: cat.icon,
+    groupId: group.id,
+    groupLabel: group.label,
+    badgeBg: group.badgeBg,
+    badgeColor: group.badgeColor,
+  }))
+);
 
 // Images par défaut pour chaque catégorie de prestataire
 const CATEGORY_IMAGES: Record<string, string> = {
@@ -214,6 +200,87 @@ export default function CoupleVendorsPage() {
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
   const [pendingCategory, setPendingCategory] = useState<string | null>(null);
   const [replaceAction, setReplaceAction] = useState<"replace" | "keep">("keep");
+  const [activeGroup, setActiveGroup] = useState<string>("all");
+  const [searchCategory, setSearchCategory] = useState<string>("");
+  const [viewMode, setViewMode] = useState<"carousel" | "sections">("carousel");
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollCarousel = (direction: "left" | "right") => {
+    if (carouselRef.current) {
+      const scrollAmount = direction === "left" ? -460 : 460;
+      carouselRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+  };
+
+  const filteredCategories = React.useMemo(() => {
+    let list = ALL_CATEGORY_ITEMS;
+    if (activeGroup !== "all") {
+      list = list.filter((item) => item.groupId === activeGroup);
+    }
+    if (searchCategory.trim()) {
+      const q = searchCategory.toLowerCase().trim();
+      list = list.filter(
+        (item) =>
+          item.category.toLowerCase().includes(q) ||
+          item.groupLabel.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [activeGroup, searchCategory]);
+
+  const renderCategoryCard = (item: FlattenedCategoryItem) => {
+    const tender = tenders.find((t) => t.category === item.category);
+    const hasTender = !!tender;
+    const isClosed = tender?.status === "closed";
+    const isValidatedOrClosed =
+      isClosed ||
+      Boolean(tender?.selectedProposalId) ||
+      tender?.proposals?.some((p) => p.status === "accepted");
+    const matchCount = isValidatedOrClosed
+      ? 0
+      : recommendations.filter((r) => r.match.category === item.category).length;
+
+    return (
+      <button
+        key={item.category}
+        onClick={() => openCategory(item.category)}
+        className="group relative flex items-center gap-3 p-2.5 sm:p-3 rounded-[20px] bg-white border border-[#EDEDF0] hover:border-[#c43a4a]/40 hover:shadow-[0_4px_16px_rgba(196,58,74,0.06)] hover:-translate-y-0.5 transition-all text-left w-full h-[66px] shrink-0"
+      >
+        <div
+          className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl shrink-0 transition-transform group-hover:scale-105 shadow-sm"
+          style={{ background: item.badgeBg }}
+        >
+          {item.emoji}
+        </div>
+
+        <div className="flex-1 min-w-0 pr-1">
+          <div className="text-[13px] font-semibold text-[#0E0E10] truncate group-hover:text-[#c43a4a] transition-colors">
+            {item.category}
+          </div>
+          <div className="text-[11px] text-[#6B6B72] flex items-center gap-1.5 mt-0.5">
+            {isValidatedOrClosed ? (
+              <span className="text-[#3C8552] font-semibold flex items-center gap-1 text-[10.5px]">
+                <CheckCircle2 size={11} /> Validé
+              </span>
+            ) : hasTender ? (
+              <span className="text-[#3C8552] font-semibold flex items-center gap-1 text-[10.5px]">
+                <CheckCircle2 size={11} /> Appel actif
+              </span>
+            ) : matchCount > 0 ? (
+              <span className="text-[#5B4FC4] font-semibold text-[10.5px]">
+                {matchCount} suggestion{matchCount > 1 ? "s" : ""}
+              </span>
+            ) : (
+              <span className="text-[#8E8E93] group-hover:text-[#c43a4a] text-[10.5px] transition-colors flex items-center gap-0.5">
+                Explorer <ArrowRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </span>
+            )}
+          </div>
+        </div>
+      </button>
+    );
+  };
+
 
   useEffect(() => {
     async function load() {
@@ -327,70 +394,194 @@ export default function CoupleVendorsPage() {
         <div className="flex flex-col lg:flex-row gap-8 mt-6">
           {/* ===== COLONNE PRINCIPALE ===== */}
           <div className="flex-1 min-w-0">
-            {/* ---- SECTION 1 : Choisissez vos prestataires (chips) ---- */}
+            {/* ---- SECTION 1 : Choisissez vos prestataires (UI/UX compacte, thématique & fluide) ---- */}
             <div className="mb-8">
-              <div className="flex items-center justify-between mb-5">
-                <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
-                  Choisissez vos prestataires
-                </h2>
-                <button
-                  onClick={() => {
-                    setCategory("");
-                    setShowForm(true);
-                  }}
-                  className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1"
-                >
-                  <Plus size={14} />
-                  Ajouter d'autres
-                </button>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
+                      Choisissez vos prestataires
+                    </h2>
+                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#fef2f4] text-[#c43a4a] border border-[#c43a4a]/20">
+                      35 spécialités
+                    </span>
+                  </div>
+                  <p className="text-[12px] text-[#6B6B72] mt-0.5">
+                    Explorez par thématique ou lancez un appel d'offres ciblé en 1 clic.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Mini barre de recherche instantanée */}
+                  <div className="relative">
+                    <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93]" />
+                    <input
+                      type="text"
+                      value={searchCategory}
+                      onChange={(e) => setSearchCategory(e.target.value)}
+                      placeholder="Rechercher... ex: Château, Robe"
+                      className="h-8 pl-8 pr-7 text-[12px] rounded-full border border-[#EDEDF0] bg-white text-[#0E0E10] placeholder:text-[#8E8E93] focus:outline-none focus:border-[#0E0E10] w-[170px] sm:w-[200px] transition-all"
+                    />
+                    {searchCategory && (
+                      <button
+                        onClick={() => setSearchCategory("")}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-[#8E8E93] hover:text-[#0E0E10]"
+                      >
+                        <X size={12} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Bouton bascule vue : Défilement compact / Tout voir par thème */}
+                  {!searchCategory && activeGroup === "all" && (
+                    <button
+                      onClick={() => setViewMode(viewMode === "carousel" ? "sections" : "carousel")}
+                      className="h-8 px-2.5 rounded-full border border-[#EDEDF0] bg-white hover:bg-[#EDEDF0]/60 text-[11.5px] font-medium text-[#0E0E10] flex items-center gap-1.5 transition-colors shrink-0"
+                      title={viewMode === "carousel" ? "Déplier toutes les thématiques" : "Revenir au mode compact"}
+                    >
+                      <LayoutGrid size={13} />
+                      <span className="hidden md:inline">{viewMode === "carousel" ? "Tout voir" : "Compact"}</span>
+                    </button>
+                  )}
+
+                  {/* Bouton ajouter d'autres / personnalisé */}
+                  <button
+                    onClick={() => {
+                      setCategory("");
+                      setShowForm(true);
+                    }}
+                    className="h-8 px-3 rounded-full bg-[#0E0E10] text-white hover:bg-black text-[12px] font-medium flex items-center gap-1.5 transition-colors shrink-0 shadow-sm"
+                  >
+                    <Plus size={13} />
+                    <span className="hidden xs:inline">Autre besoin</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Grille des catégories — scrollable sur mobile avec indicateur de défilement */}
-              <div className="relative">
-                <div
-                  className="flex sm:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory sm:snap-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              {/* Barre d'onglets (Pills thématiques) scrollable horizontalement */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-1 px-1">
+                <button
+                  onClick={() => {
+                    setActiveGroup("all");
+                    if (viewMode === "sections") setViewMode("carousel");
+                  }}
+                  className={`h-7 px-3 rounded-full text-[12px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+                    activeGroup === "all" && !searchCategory
+                      ? "bg-[#0E0E10] text-white shadow-sm"
+                      : "bg-white text-[#6B6B72] border border-[#EDEDF0] hover:text-[#0E0E10] hover:border-[#0E0E10]/30"
+                  }`}
                 >
-                {CHIP_CATEGORIES.map((chip) => {
-                  const tender = tenders.find((t) => t.category === chip.category);
-                  const hasTender = !!tender;
-                  const isClosed = tender?.status === "closed";
-                  const isValidatedOrClosed = isClosed || Boolean(tender?.selectedProposalId) || tender?.proposals?.some((p) => p.status === "accepted");
-                  const matchCount = isValidatedOrClosed ? 0 : recommendations.filter((r) => r.match.category === chip.category).length;
+                  <span>✨</span>
+                  <span>Tous</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${activeGroup === "all" ? "bg-white/20 text-white" : "bg-[#EDEDF0] text-[#6B6B72]"}`}>
+                    35
+                  </span>
+                </button>
+
+                {VENDOR_CATEGORY_GROUPS.map((group) => {
+                  const isSelected = activeGroup === group.id && !searchCategory;
                   return (
                     <button
-                      key={chip.category}
-                      onClick={() => openCategory(chip.category)}
-                      className="rounded-[28px] p-4 flex flex-col justify-between min-h-[90px] text-left transition-transform hover:-translate-y-0.5 snap-start shrink-0 w-[140px] sm:w-auto border border-[#EDEDF0] shadow-sm"
-                      style={{ background: chip.bg, color: chip.color }}
+                      key={group.id}
+                      onClick={() => {
+                        setActiveGroup(group.id);
+                        setSearchCategory("");
+                      }}
+                      className={`h-7 px-3 rounded-full text-[12px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+                        isSelected
+                          ? "bg-[#0E0E10] text-white shadow-sm"
+                          : "bg-white text-[#6B6B72] border border-[#EDEDF0] hover:text-[#0E0E10] hover:border-[#0E0E10]/30"
+                      }`}
                     >
-                      <div className="flex items-start justify-between">
-                        <span className="text-[22px]">{chip.emoji}</span>
-                        {matchCount > 0 && (
-                          <span className="h-6 min-w-6 px-1.5 rounded-full bg-white/60 flex items-center justify-center text-[11px] font-bold text-[#0E0E10]">
-                            {matchCount}
-                          </span>
-                        )}
-                        {hasTender && (
-                          <span className="h-6 w-6 rounded-full bg-white/60 flex items-center justify-center">
-                            <CheckCircle2 size={12} className="text-[#0E0E10]" />
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[13px] font-semibold leading-tight mt-2">
-                        {chip.category.split(" / ")[0]}
+                      <span>{group.icon}</span>
+                      <span>{group.label}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-[#EDEDF0] text-[#6B6B72]"}`}>
+                        {group.categories.length}
                       </span>
                     </button>
                   );
                 })}
-                </div>
-                {/* Indicateur de défilement subtil — visible uniquement sur mobile */}
-                <div className="flex sm:hidden items-center justify-center gap-1.5 mt-3 text-[#6B6B72]">
-                  <span className="text-[11px] font-medium">Glissez pour voir plus</span>
-                  <svg width="16" height="10" viewBox="0 0 16 10" fill="none" className="animate-pulse">
-                    <path d="M1 5h13M9 1l5 4-5 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
               </div>
+
+              {/* Contenu des catégories */}
+              {filteredCategories.length === 0 ? (
+                <div className="py-8 text-center bg-white rounded-[22px] border border-[#EDEDF0]">
+                  <p className="text-sm text-[#6B6B72]">
+                    Aucune spécialité ne correspond à « {searchCategory} ».
+                  </p>
+                  <button
+                    onClick={() => setSearchCategory("")}
+                    className="mt-2 text-xs text-[#c43a4a] hover:underline font-medium"
+                  >
+                    Effacer la recherche
+                  </button>
+                </div>
+              ) : activeGroup === "all" && !searchCategory && viewMode === "carousel" ? (
+                /* Mode Carrousel horizontal à 2 rangées — compact, prend seulement ~150px de hauteur ! */
+                <div className="relative group/carousel">
+                  {/* Bouton scroll gauche */}
+                  <button
+                    onClick={() => scrollCarousel("left")}
+                    className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white/95 border border-[#EDEDF0] shadow-md flex items-center justify-center text-[#0E0E10] hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
+                    aria-label="Faire défiler vers la gauche"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+
+                  <div
+                    ref={carouselRef}
+                    className="grid grid-rows-2 grid-flow-col auto-cols-[210px] sm:auto-cols-[230px] gap-2.5 overflow-x-auto pb-2 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0"
+                  >
+                    {filteredCategories.map((item) => renderCategoryCard(item))}
+                  </div>
+
+                  {/* Bouton scroll droite */}
+                  <button
+                    onClick={() => scrollCarousel("right")}
+                    className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-8 w-8 rounded-full bg-white/95 border border-[#EDEDF0] shadow-md flex items-center justify-center text-[#0E0E10] hover:scale-110 active:scale-95 transition-all opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
+                    aria-label="Faire défiler vers la droite"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+
+                  {/* Indicateur mobile discret */}
+                  <div className="flex sm:hidden items-center justify-center gap-1.5 mt-2 text-[#6B6B72]">
+                    <span className="text-[11px] font-medium">Glissez horizontalement pour tout voir (35)</span>
+                    <ArrowRight size={12} className="animate-pulse" />
+                  </div>
+                </div>
+              ) : activeGroup === "all" && !searchCategory && viewMode === "sections" ? (
+                /* Mode Vue d'ensemble structurée par thématique */
+                <div className="space-y-4">
+                  {VENDOR_CATEGORY_GROUPS.map((group) => (
+                    <div key={group.id} className="bg-white/60 p-3.5 rounded-[24px] border border-[#EDEDF0]">
+                      <div className="flex items-center gap-2 mb-2.5 px-1">
+                        <span className="text-base">{group.icon}</span>
+                        <h3 className="text-[13px] font-bold text-[#0E0E10] tracking-tight">{group.label}</h3>
+                        <span className="text-[10px] text-[#6B6B72] font-semibold">({group.categories.length})</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {group.categories.map((c) => {
+                          const item: FlattenedCategoryItem = {
+                            category: c.value,
+                            emoji: c.icon,
+                            groupId: group.id,
+                            groupLabel: group.label,
+                            badgeBg: group.badgeBg,
+                            badgeColor: group.badgeColor,
+                          };
+                          return renderCategoryCard(item);
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* Grille réactive compacte pour le groupe sélectionné ou résultat de recherche (1 à 3 rangées max !) */
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                  {filteredCategories.map((item) => renderCategoryCard(item))}
+                </div>
+              )}
             </div>
 
             {/* ---- SECTION 2 : Cartes des appels d'offres (style events) ---- */}
