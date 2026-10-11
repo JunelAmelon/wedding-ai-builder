@@ -57,7 +57,7 @@ const AcceptSchema = z.object({
 
 async function enrichTender(tender: Tender) {
   const matches = await matchRepo.listByProject(tender.projectId);
-  const tenderMatches = matches.filter((m) => m.tenderId === tender.id || tender.matchIds.includes(m.id));
+  const tenderMatches = matches.filter((m) => m.tenderId === tender.id || tender.matchIds?.includes(m.id));
   const proposals = await proposalRepo.listByTender(tender.id);
   const detailedProposals = await Promise.all(
     proposals.map(async (p) => {

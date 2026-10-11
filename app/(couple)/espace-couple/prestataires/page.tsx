@@ -30,6 +30,18 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  Heart,
+  Check,
+  Video,
+  Wine,
+  Plane,
+  Gift,
+  Mail,
+  CalendarCheck,
+  Bus,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Tender, Proposal, WeddingProject } from "@/types/marketplace";
@@ -336,6 +348,7 @@ export default function CoupleVendorsPage() {
   const [pendingCategory, setPendingCategory] = useState<string | null>(null);
   const [replaceAction, setReplaceAction] = useState<"replace" | "keep">("keep");
   const [selectedFamily, setSelectedFamily] = useState<string>("all");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const chipsScrollRef = useRef<HTMLDivElement>(null);
 
@@ -470,9 +483,9 @@ export default function CoupleVendorsPage() {
         <div className="flex flex-col lg:flex-row gap-8 mt-6">
           {/* ===== COLONNE PRINCIPALE ===== */}
           <div className="flex-1 min-w-0">
-            {/* ---- SECTION 1 : Choisissez vos prestataires (Slider horizontal fluide & compact) ---- */}
-            <div className="mb-7">
-              <div className="flex items-center justify-between mb-2.5">
+            {/* ---- SECTION 1 : Vos prestataires (Grille 5 par ligne, 2 à 3 lignes max par défaut) ---- */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
                   <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
                     Choisissez vos prestataires
@@ -481,40 +494,10 @@ export default function CoupleVendorsPage() {
                     {visibleChips.length}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setCategory("");
-                      setShowForm(true);
-                    }}
-                    className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1 mr-1.5"
-                  >
-                    <Plus size={14} />
-                    Ajouter d'autres
-                  </button>
-
-                  {/* Boutons de défilement horizontal */}
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => scrollChips("left")}
-                      className="w-8 h-8 rounded-full border border-[#EDEDF0] bg-white hover:bg-[#F4F4F6] text-[#0E0E10] flex items-center justify-center shadow-xs transition-all active:scale-95 hover:border-[#0E0E10]/20"
-                      aria-label="Faire défiler vers la gauche"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button
-                      onClick={() => scrollChips("right")}
-                      className="w-8 h-8 rounded-full border border-[#EDEDF0] bg-white hover:bg-[#F4F4F6] text-[#0E0E10] flex items-center justify-center shadow-xs transition-all active:scale-95 hover:border-[#0E0E10]/20"
-                      aria-label="Faire défiler vers la droite"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
-                </div>
               </div>
 
-              {/* Pilules d'univers thématiques — discrètes, fines (28px) et scrollables horizontalement */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 mb-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0">
+              {/* Filtres par familles d'univers (Lieux, Traiteur, Tenues, Photo, Organisation) */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 mb-3.5 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0">
                 {CATEGORY_FAMILY_GROUPS.map((group) => {
                   const isSelected = selectedFamily === group.id;
                   const count =
@@ -524,7 +507,10 @@ export default function CoupleVendorsPage() {
                   return (
                     <button
                       key={group.id}
-                      onClick={() => handleSelectFamily(group.id)}
+                      onClick={() => {
+                        setSelectedFamily(group.id);
+                        setIsExpanded(false);
+                      }}
                       className={`h-7 px-2.5 rounded-full text-[11.5px] font-medium whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
                         isSelected
                           ? "bg-[#0E0E10] text-white shadow-xs"
@@ -547,51 +533,79 @@ export default function CoupleVendorsPage() {
                 })}
               </div>
 
-              {/* Slider horizontal compact — prend seulement ~95px de hauteur au lieu de 700px verticaux ! */}
-              <div className="relative">
-                <div
-                  ref={chipsScrollRef}
-                  className="flex gap-3 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-4 px-4 sm:mx-0 sm:px-0"
-                >
-                  {visibleChips.map((chip) => {
-                    const tender = tenders.find((t) => t.category === chip.category);
-                    const hasTender = !!tender;
-                    const isClosed = tender?.status === "closed";
-                    const isValidatedOrClosed =
-                      isClosed ||
-                      Boolean(tender?.selectedProposalId) ||
-                      tender?.proposals?.some((p) => p.status === "accepted");
-                    const matchCount = isValidatedOrClosed
-                      ? 0
-                      : recommendations.filter((r) => r.match.category === chip.category).length;
-                    return (
-                      <button
-                        key={chip.category}
-                        onClick={() => openCategory(chip.category)}
-                        className="rounded-[24px] p-3.5 flex flex-col justify-between min-h-[92px] w-[150px] sm:w-[165px] shrink-0 text-left transition-all hover:-translate-y-0.5 hover:shadow-md snap-start border border-[#EDEDF0] shadow-sm"
-                        style={{ background: chip.bg, color: chip.color }}
-                      >
-                        <div className="flex items-start justify-between">
-                          <span className="text-[22px]">{chip.emoji}</span>
+              {/* Grille 5 par ligne (2 ou 3 lignes max par défaut = 15 tuiles) */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {(isExpanded || selectedFamily !== "all"
+                  ? visibleChips
+                  : visibleChips.slice(0, 15)
+                ).map((chip) => {
+                  const tender = tenders.find((t) => t.category === chip.category);
+                  const hasTender = !!tender;
+                  const isClosed = tender?.status === "closed";
+                  const isValidatedOrClosed =
+                    isClosed ||
+                    Boolean(tender?.selectedProposalId) ||
+                    tender?.proposals?.some((p) => p.status === "accepted");
+                  const matchCount = isValidatedOrClosed
+                    ? 0
+                    : recommendations.filter((r) => r.match.category === chip.category).length;
+
+                  return (
+                    <button
+                      key={chip.category}
+                      onClick={() => openCategory(chip.category)}
+                      className="rounded-[24px] p-3.5 sm:p-4 flex flex-col justify-between min-h-[105px] text-left transition-all hover:-translate-y-0.5 hover:shadow-md border border-[#EDEDF0] shadow-sm relative group cursor-pointer"
+                      style={{ background: chip.bg, color: chip.color }}
+                    >
+                      <div className="flex items-start justify-between w-full">
+                        <span className="text-[22px] sm:text-[24px]">{chip.emoji}</span>
+                        <div className="flex items-center gap-1">
                           {matchCount > 0 && (
-                            <span className="h-5 min-w-5 px-1.5 rounded-full bg-white/70 backdrop-blur-xs flex items-center justify-center text-[10.5px] font-bold text-[#0E0E10]">
+                            <span className="h-5 min-w-5 px-1.5 rounded-full bg-white/80 backdrop-blur-xs flex items-center justify-center text-[10.5px] font-bold text-[#0E0E10] border border-black/5 shadow-2xs">
+                              <Sparkles size={10} className="mr-0.5 text-amber-500 fill-amber-400" />
                               {matchCount}
                             </span>
                           )}
                           {hasTender && (
-                            <span className="h-5 w-5 rounded-full bg-white/70 backdrop-blur-xs flex items-center justify-center">
+                            <span className="h-5 w-5 rounded-full bg-white/80 backdrop-blur-xs flex items-center justify-center">
                               <CheckCircle2 size={12} className="text-[#3C8552]" />
                             </span>
                           )}
                         </div>
-                        <span className="text-[12.5px] font-semibold leading-snug mt-2 line-clamp-2">
+                      </div>
+
+                      <div className="mt-2.5">
+                        <span className="text-[12.5px] sm:text-[13px] font-semibold leading-snug line-clamp-2 block">
                           {chip.category}
                         </span>
-                      </button>
-                    );
-                  })}
-                </div>
+                        {matchCount > 0 && (
+                          <span className="text-[10px] text-[#6B6B72] font-medium block mt-0.5">
+                            {matchCount} suggestion{matchCount > 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Bouton Voir plus / Réduire (si 'Tous' est sélectionné et qu'il y a plus de 15 catégories) */}
+              {selectedFamily === "all" && visibleChips.length > 15 && (
+                <div className="flex justify-center mt-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-[#F4F4F6] border border-[#EDEDF0] text-[12px] font-semibold text-[#0E0E10] shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span>
+                      {isExpanded
+                        ? "Afficher moins (15)"
+                        : `Voir toutes les catégories (${visibleChips.length})`}
+                    </span>
+                    {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* ---- SECTION 2 : Cartes des appels d'offres (style events) ---- */}
