@@ -76,13 +76,12 @@ const REAL_VENDORS_DATA = [
     city: "Chantilly",
     zipCode: "60500",
     priceRange: { min: 4500, max: 9500, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1585543805890-6051f7829f98?w=800&auto=format&fit=crop",
     description: "Écrin d'exception du XVIIIe siècle au cœur d'un parc boisé de 15 hectares. Le Château de Montmirail vous accueille pour des réceptions féeriques avec orangerie lumineuse, salons d'époque classés, suite nuptiale panoramique et hébergement de 45 couchages sur place.",
     styles: ["classique", "chic", "romantique"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1585543805890-6051f7829f98?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Camille & Maxime", rating: 5, text: "Un lieu magique qui a subjugué tous nos invités. L'équipe a été aux petits soins du début à la fin !", date: "2026-09-12" },
@@ -101,12 +100,12 @@ const REAL_VENDORS_DATA = [
     city: "Aix-en-Provence",
     zipCode: "13100",
     priceRange: { min: 3800, max: 7500, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop",
     description: "Bastide provençale authentique entourée d'oliviers centenaires et de lavandes. Vue imprenable sur la Sainte-Victoire, cour ombragée pour le cocktail et grange réhabilitée aux pierres blondes climatisée.",
     styles: ["boheme", "champetre", "nature"],
     portfolioImages: [
+      "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Sarah & Lucas", rating: 5, text: "Un cadre de rêve pour notre mariage bohème. Tous nos invités nous en parlent encore !", date: "2026-07-20" },
@@ -151,7 +150,7 @@ const REAL_VENDORS_DATA = [
     styles: ["gastronomique", "raffine", "eco-responsable"],
     portfolioImages: [
       "https://images.unsplash.com/photo-1555244162-803834f70033?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Chloé & Alexandre", rating: 5, text: "Les plats étaient non seulement magnifiques mais absolument délicieux. Un sans-faute !", date: "2026-09-28" },
@@ -192,11 +191,11 @@ const REAL_VENDORS_DATA = [
     city: "Boulogne-Billancourt",
     zipCode: "92100",
     priceRange: { min: 450, max: 1200, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=800&auto=format&fit=crop",
     description: "Créatrice de wedding cakes spectaculaires et légers, pièces montées modernes et tables de douceurs. Fleurs en sucre faites main, saveurs subtiles (framboise-litchi, pistache-fleur d'oranger, chocolat praliné croustillant).",
     styles: ["romantique", "raffine", "design"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Marie & Simon", rating: 5, text: "Le gâteau était une œuvre d'art et d'une légèreté incroyable en fin de repas.", date: "2026-08-22" },
@@ -219,7 +218,7 @@ const REAL_VENDORS_DATA = [
     styles: ["fine-art", "naturel", "lumineux", "reportage"],
     portfolioImages: [
       "https://images.unsplash.com/photo-1537633552985-df8429e8048b?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Inès & Julien", rating: 5, text: "Alexandre a su nous mettre en confiance dès la première minute. Les photos sont à couper le souffle !", date: "2026-09-05" },
@@ -238,11 +237,11 @@ const REAL_VENDORS_DATA = [
     city: "Lyon",
     zipCode: "69002",
     priceRange: { min: 1500, max: 3200, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&auto=format&fit=crop",
     description: "Films de mariage cinématographiques tournés en 4K avec prise de son haute fidélité et plans aériens au drone homologué. Un véritable film souvenir digne du grand écran pour revivre votre jour J.",
     styles: ["cinematographique", "emouvant", "moderne"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Céline & Damien", rating: 5, text: "Nous avons pleuré en redécouvrant notre film. Un travail d'artiste d'une qualité rare.", date: "2026-08-30" },
@@ -260,11 +259,11 @@ const REAL_VENDORS_DATA = [
     city: "Paris",
     zipCode: "75010",
     priceRange: { min: 1100, max: 2400, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop",
     description: "DJ généraliste professionnel avec sono haut de gamme L-Acoustics et mise en lumière architecturale sans fil de votre salle. Playlist 100% sur mesure adaptée à vos goûts, sans micro intempestif.",
     styles: ["festif", "chic", "generaliste", "dance"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Laura & Quentin", rating: 5, text: "La piste de danse n'a pas désempli jusqu'à 5h du matin ! Antoine est un pro absolu.", date: "2026-09-14" },
@@ -326,11 +325,11 @@ const REAL_VENDORS_DATA = [
     city: "Paris",
     zipCode: "75018",
     priceRange: { min: 800, max: 3500, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1561128290-006dc4827214?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=800&auto=format&fit=crop",
     description: "Fleuriste éco-engagée travaillant exclusivement des fleurs françaises de saison. Arches florales suspendues, centres de tables bucoliques, boutonnières et bouquets de mariée aériens et vibrants.",
     styles: ["champetre", "boheme", "sauvage", "eco-responsable"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1561128290-006dc4827214?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Agathe & Louis", rating: 5, text: "L'arche de cérémonie était encore plus belle que sur mes tableaux Pinterest !", date: "2026-09-21" },
@@ -370,11 +369,11 @@ const REAL_VENDORS_DATA = [
     city: "Versailles",
     zipCode: "78000",
     priceRange: { min: 400, max: 1200, currency: "EUR" },
-    logo: "https://images.pexels.com/photos/29624024/pexels-photo-29624024.jpeg",
+    logo: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&auto=format&fit=crop",
     description: "Location de voitures de collection d'époque avec chauffeur en tenue de livrée. Rolls-Royce Silver Cloud, Jaguar MK2, Combi Volkswagen rétro et décapotables mythiques.",
     styles: ["vintage", "retro", "prestige"],
     portfolioImages: [
-      "https://images.pexels.com/photos/29624024/pexels-photo-29624024.jpeg",
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Sabrina & Kevin", rating: 5, text: "L'arrivée en Rolls blanche était magique, le chauffeur d'une gentillesse absolue.", date: "2026-08-18" },
@@ -392,11 +391,12 @@ const REAL_VENDORS_DATA = [
     city: "Neuilly-sur-Seine",
     zipCode: "92200",
     priceRange: { min: 250, max: 700, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&auto=format&fit=crop",
     description: "Artiste coiffeuse et maquilleuse professionnelle diplômée d'État, spécialisée dans la mise en beauté de la mariée et de ses témoins. Déplacement sur votre lieu de préparatifs.",
     styles: ["naturel", "glamour", "lumineux"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Audrey & Florent", rating: 5, text: "Maquillage impeccable qui a tenu toute la nuit malgré les larmes de joie !", date: "2026-09-10" },
@@ -436,11 +436,11 @@ const REAL_VENDORS_DATA = [
     city: "Paris",
     zipCode: "75014",
     priceRange: { min: 700, max: 1500, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&auto=format&fit=crop",
     description: "Officiante de cérémonies laïques personnalisées, chaleureuses et vibrantes d'émotion. Écriture de votre histoire d'amour, rituels symboliques personnalisés et coordination des interventions des proches.",
     styles: ["emouvant", "authentique", "personnalise"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Virginie & Romain", rating: 5, text: "Tous nos invités ont versé leur larme et ont ri. Une cérémonie inoubliable.", date: "2026-09-08" },
@@ -458,11 +458,11 @@ const REAL_VENDORS_DATA = [
     city: "Paris",
     zipCode: "75015",
     priceRange: { min: 600, max: 1800, currency: "EUR" },
-    logo: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&auto=format&fit=crop",
+    logo: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop",
     description: "Magicien close-up de renom et mentaliste pour le cocktail, photobooth vintage en bois avec tirages illimités et animations enfants avec animateurs diplômés BAFA.",
     styles: ["ludique", "surprenant", "interactif"],
     portfolioImages: [
-      "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&auto=format&fit=crop",
     ],
     reviews: [
       { author: "Sandra & Yann", rating: 5, text: "La magie rapprochée pendant le cocktail a brisé la glace entre toutes les familles !", date: "2026-08-01" },
