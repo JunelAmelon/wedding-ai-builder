@@ -19,7 +19,18 @@ export async function GET() {
     const project = projects[0];
     if (!project) return NextResponse.json({ recommendations: [] });
 
-    const matches = await matchRepo.listByProject(project.id);
+    let matches = await matchRepo.listByProject(project.id);
+
+    // Si le couple n'a encore aucun match (1ère ouverture de sa page prestataires)
+    // On exécute le matching automatique de manière synchrone et garantie.
+    if (matches.length === 0) {
+      try {
+        const autoResult = await runAutoMatching(project, { perCategory: 3, notifyVendors: true });
+        matches = autoResult.matches;
+      } catch (matchErr) {
+        console.error("[recommendations/GET] Initial auto-matching error:", matchErr);
+      }
+    }
 
     const recommendations = await Promise.all(
       matches.map(async (m) => {
@@ -35,8 +46,15 @@ export async function GET() {
         return { match: m, vendor, proposal };
       })
     );
+    const seen = new Set<string>();
+    const uniqueRecs = recommendations.filter(Boolean).filter((rec) => {
+      const key = `${rec!.match.vendorId}:${rec!.match.category}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 
-    return NextResponse.json({ recommendations: recommendations.filter(Boolean) });
+    return NextResponse.json({ recommendations: uniqueRecs });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
@@ -77,8 +95,15 @@ export async function POST(req: Request) {
         return { match: m, vendor, proposal };
       })
     );
+    const seen = new Set<string>();
+    const uniqueRecs = recommendations.filter(Boolean).filter((rec) => {
+      const key = `${rec!.match.vendorId}:${rec!.match.category}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 
-    return NextResponse.json({ recommendations: recommendations.filter(Boolean) });
+    return NextResponse.json({ recommendations: uniqueRecs });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur";
     if (message === "Unauthorized") return NextResponse.json({ error: "Non authentifié" }, { status: 401 });

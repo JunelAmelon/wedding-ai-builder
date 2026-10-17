@@ -1,206 +1,158 @@
 {
   "blueprint": {
-    "concept": "Un Mariage Bohème Chic à Paris",
-    "conceptName": "Bohème Parisienne",
-    "emotionalSummary": "Un mariage empreint de romantisme et de créativité au cœur de Paris.",
-    "storytelling": "Imaginez une cérémonie en plein air, sous les arbres fleuris d'un jardin parisien, où chaque détail reflète l'amour et la personnalité des mariés. Les invités, enveloppés dans une ambiance festive et intimiste, savourent des mets raffinés, soigneusement préparés pour satisfaire toutes les préférences alimentaires. La musique douce d'un DJ crée une atmosphère chaleureuse, tandis que des éléments décoratifs bohèmes ajoutent une touche d'élégance. Ce mariage, bien que respectant un budget maîtrisé, promet d'être un moment inoubliable, célébrant l'amour dans la Ville Lumière.",
+    "concept": "Élégance Champêtre au Coeur de Paris",
+    "conceptName": "Élégance Naturelle",
+    "emotionalSummary": "Un mariage inoubliable alliant raffinement et nature au cœur de Paris.",
+    "storytelling": "Imaginez un jardin secret au cœur de Paris, où l'élégance rencontre la nature. Les invités sont accueillis par des fleurs délicates et des tables ornées de nappes en lin, créant une atmosphère chaleureuse et raffinée. La musique douce accompagne un repas gastronomique, préparé par un traiteur talentueux, tandis que les rires et les conversations s'élèvent sous un ciel étoilé. Ce mariage, à la fois chic et champêtre, promet des souvenirs gravés à jamais dans le cœur de chacun.",
     "ambiance": [
       "chic",
+      "nature",
       "romantique",
-      "festif",
-      "intimiste"
+      "convivial"
     ],
-    "ambianceLevel": 8,
+    "ambianceLevel": 9,
     "colorPalette": [
       {
-        "name": "Rose Poudré",
-        "hex": "#F4C2C2"
+        "name": "Blanc Cassé",
+        "hex": "#F6F1E6"
       },
       {
         "name": "Vert Sauge",
         "hex": "#B2C8B2"
       },
       {
-        "name": "Beige Sable",
-        "hex": "#D6CFC4"
+        "name": "Rose Poudré",
+        "hex": "#EAB8D1"
       },
       {
-        "name": "Or Métallique",
-        "hex": "#D4AF37"
+        "name": "Gris Pierre",
+        "hex": "#AFAFAF"
       }
     ],
-    "paletteExplanation": "Ces couleurs douces et naturelles évoquent une atmosphère bohème tout en ajoutant une touche de prestige, parfaitement adaptées à un mariage à Paris.",
-    "reformulatedStyle": "Bohème Élégant et Créatif",
+    "paletteExplanation": "Ces couleurs douces évoquent la nature tout en apportant une touche d'élégance, créant une harmonie parfaite pour un mariage champêtre à Paris.",
+    "reformulatedStyle": "Élégance et Nature en Harmonie",
     "styleLevels": {
-      "elegance": 8,
-      "conviviality": 9,
+      "elegance": 9,
+      "conviviality": 8,
       "modernity": 7,
-      "tradition": 5
+      "tradition": 6
     },
     "inspirations": [
       {
         "category": "Cérémonie",
         "ideas": [
-          "Cérémonie en plein air",
-          "Décor floral bohème",
-          "Éléments personnalisés"
+          "Arche florale en bois",
+          "Chaises en rotin",
+          "Tapis de fleurs"
         ]
       },
       {
         "category": "Décoration",
         "ideas": [
-          "Tissus légers et drapés",
-          "Luminaires suspendus",
-          "Mobilier vintage"
+          "Centres de table en verre et fleurs",
+          "Guirlandes lumineuses",
+          "Nappes en lin naturel"
         ]
       },
       {
         "category": "Repas",
         "ideas": [
-          "Menu végétarien et halal",
-          "Buffet créatif",
-          "Options sans gluten"
+          "Menu gastronomique saisonnier",
+          "Dégustation de vins locaux",
+          "Gâteau de mariage floral"
         ]
       },
       {
-        "category": "Animation",
+        "category": "Tenues",
         "ideas": [
-          "DJ avec playlist personnalisée",
-          "Atelier créatif pour enfants",
-          "Photobooth avec accessoires"
+          "Robe de mariée en dentelle",
+          "Costumes en lin léger",
+          "Accessoires floraux pour les invités"
         ]
       }
     ],
     "mistakesToAvoid": [
-      "Ne pas négliger la planification des besoins alimentaires spécifiques.",
-      "Éviter de surcharger la décoration pour conserver une ambiance aérée.",
-      "Oublier de prévoir un plan B en cas de mauvais temps pour la cérémonie en extérieur.",
-      "Ne pas communiquer clairement le budget aux prestataires pour éviter les surprises.",
-      "Sous-estimer le temps nécessaire pour la mise en place et les préparatifs."
+      "Ne pas choisir un lieu accessible pour tous les invités.",
+      "Oublier de prévoir des options végétariennes ou sans allergènes.",
+      "Négliger la coordination entre les différents prestataires.",
+      "Sous-estimer le temps nécessaire pour la mise en place de la décoration.",
+      "Choisir des couleurs qui ne s'harmonisent pas avec le lieu."
     ]
   },
   "budgetBreakdown": {
-    "totalBudget": 20000,
+    "totalBudget": 10000,
     "currency": "EUR",
     "breakdown": {
-      "venue": 6068,
-      "catering": 4709,
+      "venue": 0,
+      "catering": 0,
       "photography": 0,
-      "videography": 728,
-      "music": 1214,
-      "decoration": 1456,
+      "videography": 0,
+      "music": 0,
+      "decoration": 0,
       "flowers": 0,
-      "attire": 1214,
-      "rings": 485,
-      "beauty": 728,
+      "attire": 0,
+      "rings": 0,
+      "beauty": 0,
       "stationery": 0,
-      "transport": 485,
+      "transport": 0,
       "accommodation": 0,
-      "cake": 485,
+      "cake": 0,
       "weddingPlanner": 0,
-      "officiant": 243,
+      "officiant": 0,
       "giftsFavours": 0,
-      "contingency": 2185
+      "contingency": 10000
     },
     "percentages": {
-      "venue": 30.34,
-      "catering": 23.544999999999998,
+      "venue": 0,
+      "catering": 0,
       "photography": 0,
-      "videography": 3.64,
-      "music": 6.069999999999999,
-      "decoration": 7.28,
+      "videography": 0,
+      "music": 0,
+      "decoration": 0,
       "flowers": 0,
-      "attire": 6.069999999999999,
-      "rings": 2.4250000000000003,
-      "beauty": 3.64,
+      "attire": 0,
+      "rings": 0,
+      "beauty": 0,
       "stationery": 0,
-      "transport": 2.4250000000000003,
+      "transport": 0,
       "accommodation": 0,
-      "cake": 2.4250000000000003,
+      "cake": 0,
       "weddingPlanner": 0,
-      "officiant": 1.2149999999999999,
+      "officiant": 0,
       "giftsFavours": 0,
-      "contingency": 10.925
+      "contingency": 100
     },
     "categoryStatuses": [
       {
         "key": "venue",
-        "planned": 6068,
-        "recommended": 6000,
-        "realisticMin": 4000,
-        "realisticMax": 9000,
-        "percentage": 30.34,
-        "riskLevel": "good",
-        "margin": 68,
+        "planned": 0,
+        "recommended": 3000,
+        "realisticMin": 2000,
+        "realisticMax": 4500,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -3000,
         "savingsPotential": 0,
-        "overrunEstimate": 0
+        "overrunEstimate": 2000
       },
       {
         "key": "catering",
-        "planned": 4709,
-        "recommended": 5000,
-        "realisticMin": 4000,
-        "realisticMax": 7000,
-        "percentage": 23.544999999999998,
-        "riskLevel": "good",
-        "margin": -291,
+        "planned": 0,
+        "recommended": 2500,
+        "realisticMin": 2000,
+        "realisticMax": 3500,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -2500,
         "savingsPotential": 0,
-        "overrunEstimate": 0
+        "overrunEstimate": 2000
       },
       {
         "key": "photography",
         "planned": 0,
-        "recommended": 1200,
-        "realisticMin": 800,
-        "realisticMax": 2000,
-        "percentage": 0,
-        "riskLevel": "tight",
-        "margin": -1200,
-        "savingsPotential": 0,
-        "overrunEstimate": 800
-      },
-      {
-        "key": "videography",
-        "planned": 728,
         "recommended": 600,
         "realisticMin": 400,
-        "realisticMax": 1200,
-        "percentage": 3.64,
-        "riskLevel": "good",
-        "margin": 128,
-        "savingsPotential": 0,
-        "overrunEstimate": 0
-      },
-      {
-        "key": "music",
-        "planned": 1214,
-        "recommended": 1000,
-        "realisticMin": 600,
-        "realisticMax": 2000,
-        "percentage": 6.069999999999999,
-        "riskLevel": "good",
-        "margin": 214,
-        "savingsPotential": 0,
-        "overrunEstimate": 0
-      },
-      {
-        "key": "decoration",
-        "planned": 1456,
-        "recommended": 1000,
-        "realisticMin": 600,
-        "realisticMax": 2000,
-        "percentage": 7.28,
-        "riskLevel": "good",
-        "margin": 456,
-        "savingsPotential": 0,
-        "overrunEstimate": 0
-      },
-      {
-        "key": "flowers",
-        "planned": 0,
-        "recommended": 600,
-        "realisticMin": 400,
-        "realisticMax": 1200,
+        "realisticMax": 1000,
         "percentage": 0,
         "riskLevel": "tight",
         "margin": -600,
@@ -208,115 +160,139 @@
         "overrunEstimate": 400
       },
       {
-        "key": "attire",
-        "planned": 1214,
-        "recommended": 1000,
-        "realisticMin": 600,
-        "realisticMax": 2000,
-        "percentage": 6.069999999999999,
-        "riskLevel": "good",
-        "margin": 214,
+        "key": "videography",
+        "planned": 0,
+        "recommended": 300,
+        "realisticMin": 200,
+        "realisticMax": 600,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -300,
         "savingsPotential": 0,
-        "overrunEstimate": 0
+        "overrunEstimate": 200
+      },
+      {
+        "key": "music",
+        "planned": 0,
+        "recommended": 500,
+        "realisticMin": 300,
+        "realisticMax": 1000,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -500,
+        "savingsPotential": 0,
+        "overrunEstimate": 300
+      },
+      {
+        "key": "decoration",
+        "planned": 0,
+        "recommended": 500,
+        "realisticMin": 300,
+        "realisticMax": 1000,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -500,
+        "savingsPotential": 0,
+        "overrunEstimate": 300
+      },
+      {
+        "key": "flowers",
+        "planned": 0,
+        "recommended": 300,
+        "realisticMin": 200,
+        "realisticMax": 600,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -300,
+        "savingsPotential": 0,
+        "overrunEstimate": 200
+      },
+      {
+        "key": "attire",
+        "planned": 0,
+        "recommended": 500,
+        "realisticMin": 300,
+        "realisticMax": 1000,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -500,
+        "savingsPotential": 0,
+        "overrunEstimate": 300
       },
       {
         "key": "rings",
-        "planned": 485,
-        "recommended": 400,
-        "realisticMin": 200,
-        "realisticMax": 1000,
-        "percentage": 2.4250000000000003,
-        "riskLevel": "good",
-        "margin": 85,
+        "planned": 0,
+        "recommended": 200,
+        "realisticMin": 100,
+        "realisticMax": 500,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -200,
         "savingsPotential": 0,
-        "overrunEstimate": 0
+        "overrunEstimate": 100
       },
       {
         "key": "beauty",
-        "planned": 728,
-        "recommended": 800,
-        "realisticMin": 400,
-        "realisticMax": 1400,
-        "percentage": 3.64,
-        "riskLevel": "good",
-        "margin": -72,
+        "planned": 0,
+        "recommended": 400,
+        "realisticMin": 200,
+        "realisticMax": 700,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -400,
         "savingsPotential": 0,
-        "overrunEstimate": 0
+        "overrunEstimate": 200
       },
       {
         "key": "stationery",
         "planned": 0,
-        "recommended": 400,
-        "realisticMin": 200,
-        "realisticMax": 800,
+        "recommended": 200,
+        "realisticMin": 100,
+        "realisticMax": 400,
         "percentage": 0,
         "riskLevel": "tight",
-        "margin": -400,
+        "margin": -200,
         "savingsPotential": 0,
-        "overrunEstimate": 200
+        "overrunEstimate": 100
       },
       {
         "key": "transport",
-        "planned": 485,
-        "recommended": 400,
-        "realisticMin": 200,
-        "realisticMax": 1000,
-        "percentage": 2.4250000000000003,
-        "riskLevel": "good",
-        "margin": 85,
+        "planned": 0,
+        "recommended": 200,
+        "realisticMin": 100,
+        "realisticMax": 500,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -200,
         "savingsPotential": 0,
-        "overrunEstimate": 0
+        "overrunEstimate": 100
       },
       {
         "key": "accommodation",
         "planned": 0,
-        "recommended": 400,
-        "realisticMin": 200,
-        "realisticMax": 1000,
+        "recommended": 200,
+        "realisticMin": 100,
+        "realisticMax": 500,
         "percentage": 0,
         "riskLevel": "tight",
-        "margin": -400,
+        "margin": -200,
         "savingsPotential": 0,
-        "overrunEstimate": 200
+        "overrunEstimate": 100
       },
       {
         "key": "cake",
-        "planned": 485,
-        "recommended": 400,
-        "realisticMin": 200,
-        "realisticMax": 1000,
-        "percentage": 2.4250000000000003,
-        "riskLevel": "good",
-        "margin": 85,
+        "planned": 0,
+        "recommended": 200,
+        "realisticMin": 100,
+        "realisticMax": 500,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -200,
         "savingsPotential": 0,
-        "overrunEstimate": 0
+        "overrunEstimate": 100
       },
       {
         "key": "weddingPlanner",
-        "planned": 0,
-        "recommended": 800,
-        "realisticMin": 400,
-        "realisticMax": 1600,
-        "percentage": 0,
-        "riskLevel": "tight",
-        "margin": -800,
-        "savingsPotential": 0,
-        "overrunEstimate": 400
-      },
-      {
-        "key": "officiant",
-        "planned": 243,
-        "recommended": 200,
-        "realisticMin": 100,
-        "realisticMax": 600,
-        "percentage": 1.2149999999999999,
-        "riskLevel": "good",
-        "margin": 43,
-        "savingsPotential": 0,
-        "overrunEstimate": 0
-      },
-      {
-        "key": "giftsFavours",
         "planned": 0,
         "recommended": 400,
         "realisticMin": 200,
@@ -328,21 +304,45 @@
         "overrunEstimate": 200
       },
       {
-        "key": "contingency",
-        "planned": 2185,
-        "recommended": 2000,
-        "realisticMin": 1600,
-        "realisticMax": 2400,
-        "percentage": 10.925,
-        "riskLevel": "good",
-        "margin": 185,
+        "key": "officiant",
+        "planned": 0,
+        "recommended": 100,
+        "realisticMin": 50,
+        "realisticMax": 300,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -100,
         "savingsPotential": 0,
+        "overrunEstimate": 50
+      },
+      {
+        "key": "giftsFavours",
+        "planned": 0,
+        "recommended": 200,
+        "realisticMin": 100,
+        "realisticMax": 400,
+        "percentage": 0,
+        "riskLevel": "tight",
+        "margin": -200,
+        "savingsPotential": 0,
+        "overrunEstimate": 100
+      },
+      {
+        "key": "contingency",
+        "planned": 10000,
+        "recommended": 1000,
+        "realisticMin": 800,
+        "realisticMax": 1200,
+        "percentage": 100,
+        "riskLevel": "critical",
+        "margin": 9000,
+        "savingsPotential": 8800,
         "overrunEstimate": 0
       }
     ],
     "globalRiskLevel": "critical",
-    "totalOverrunEstimate": 2200,
-    "totalSavingsPotential": 0
+    "totalOverrunEstimate": 6750,
+    "totalSavingsPotential": 8800
   },
   "timeline": {
     "milestones": [
@@ -355,7 +355,7 @@
           "Réserver le lieu de réception."
         ],
         "priority": "critical",
-        "urgency": "late",
+        "urgency": "soon",
         "idealDeadline": "12 mois avant le jour J",
         "timeNeeded": "2-4 semaines",
         "consequences": "Sans lieu confirmé, tous les autres choix sont en suspens.",
@@ -373,14 +373,14 @@
           "Contacter les musiciens/DJ"
         ],
         "priority": "critical",
-        "urgency": "soon",
+        "urgency": "early",
         "idealDeadline": "9 mois avant le jour J",
         "timeNeeded": "3-6 semaines",
         "consequences": "Les meilleurs prestataires partent vite, surtout en haute saison.",
         "dependencies": [
           "Lieu réservé"
         ],
-        "status": "completed"
+        "status": "upcoming"
       },
       {
         "monthsBeforeWedding": 6,
@@ -487,105 +487,95 @@
         "status": "upcoming"
       }
     ],
-    "globalProgress": 25,
+    "globalProgress": 13,
     "nextCriticalStep": {
-      "title": "Construire l'expérience invités",
-      "deadline": "6 mois avant le jour J",
-      "daysLeft": 168
+      "title": "Sécuriser les prestataires clés",
+      "deadline": "9 mois avant le jour J",
+      "daysLeft": 276
     }
   },
   "riskEngine": {
     "criticalErrors": [
-      "Le budget par invité est de 133,33 EUR, ce qui est en dessous du seuil bas du marché à Paris. Cela peut entraîner des compromis sur la qualité des services et des produits. Je recommande de réévaluer certaines dépenses, notamment la décoration et la musique, pour maximiser l'impact tout en respectant le budget.",
-      "Il n'y a pas de budget prévu pour la photographie, ce qui est essentiel pour immortaliser ce jour spécial. Je conseille d'allouer au moins 800 EUR pour un photographe, afin de garantir des souvenirs de qualité. Cela pourrait nécessiter une réduction dans d'autres catégories moins essentielles."
+      "Le budget total de 10 000 EUR pour 120 invités à Paris est extrêmement bas, ce qui représente environ 83 EUR par invité, bien en dessous du seuil de marché. Il est crucial de revoir le budget et d'augmenter les fonds disponibles pour éviter des compromis sur des éléments essentiels comme le traiteur et la décoration. Considérez un budget minimum de 150 EUR par invité pour un mariage élégant et champêtre."
     ],
     "budgetInconsistencies": [
-      "Le budget alloué à la photographie est actuellement de 0 EUR alors qu'il est recommandé de prévoir au moins 800 EUR. Pour atténuer ce risque, envisagez de réduire le budget décoration ou musique, qui sont actuellement en bonne position, et réaffectez ces fonds à la photographie.",
-      "Le poste de budget pour l'hébergement est également à 0 EUR, alors qu'il est conseillé de prévoir environ 400 EUR. Pour compenser, vous pourriez envisager de diminuer le budget pour le gâteau ou les alliances, afin de garantir un confort pour les invités venant de loin."
+      "Actuellement, le budget alloué à chaque catégorie de dépenses est de 0 EUR, ce qui est irréaliste. Il est essentiel de répartir le budget de manière appropriée pour chaque poste, en tenant compte des recommandations du marché. Par exemple, prévoyez au moins 2 000 EUR pour le lieu et 2 500 EUR pour le catering. Réévaluez les priorités et ajustez le budget en conséquence."
     ],
     "organizationalRisks": [
-      "L'absence de prestataires confirmés à ce stade peut entraîner des problèmes de disponibilité à l'approche de la date. Il est crucial de commencer à contacter et à réserver les fournisseurs dès que possible pour éviter toute déception.",
-      "La gestion des besoins alimentaires spécifiques pour 150 invités peut devenir complexe. Je recommande de créer un questionnaire pour recueillir ces informations à l'avance, afin de s'assurer que le traiteur peut répondre à toutes les demandes sans stress de dernière minute.",
-      "Le choix d'un style de mariage bohème peut nécessiter des éléments décoratifs spécifiques. Assurez-vous de définir un plan clair pour la décoration afin d'éviter des dépenses imprévues et de garantir que le thème soit respecté.",
-      "Le niveau de stress déclaré est de 5, ce qui est modéré. Il serait bénéfique d'établir un calendrier de planification détaillé pour répartir les tâches et réduire le stress à l'approche de l'événement."
+      "Il est impératif de commencer à rechercher et à réserver des prestataires dès maintenant, car la date du mariage est dans 4 ans. Un retard dans la réservation peut entraîner des coûts plus élevés ou des prestataires indisponibles. Priorisez la recherche de votre lieu de réception et de votre traiteur afin de sécuriser les meilleures options.",
+      "L'absence d'une liste d'invités préliminaire peut entraîner des complications logistiques. Commencez à établir une liste d'invités pour mieux planifier la capacité du lieu, le catering et les autres services. Cela facilitera également la gestion des invitations et des confirmations.",
+      "Sans un plan de communication clair avec les invités, des malentendus peuvent survenir. Établissez un site web ou un groupe de communication pour tenir vos invités informés des détails du mariage, ce qui aidera à réduire le stress et à assurer une meilleure organisation le jour J."
     ],
-    "riskScore": 60,
-    "scoreJustification": "Le budget par invité est en dessous du seuil bas, mais le stress est modéré et la date du mariage est éloignée.",
-    "generalAdvice": "Pour garantir le succès de votre mariage, il est essentiel de prioriser les éléments clés tout en respectant le budget. Commencez par réserver les prestataires essentiels tels que le traiteur et le photographe. Établissez un calendrier de planification pour organiser les tâches et réduire le stress. Pensez à allouer des fonds pour les besoins alimentaires spécifiques et à ajuster les budgets des catégories moins prioritaires. Une communication claire avec les invités sur les détails logistiques contribuera également à une journée sans accroc.",
+    "riskScore": 75,
+    "scoreJustification": "Le budget par invité est très bas et le stress potentiel est élevé en raison du manque de préparation. Le mariage étant prévu dans un délai éloigné, il est encore temps d'ajuster le budget.",
+    "generalAdvice": "Pour garantir un mariage réussi, il est essentiel de revoir et d'augmenter le budget par invité, en visant au moins 150 EUR. Commencez par établir une liste de priorités pour chaque catégorie de dépenses afin de vous assurer que les éléments essentiels sont couverts. Engagez un wedding planner pour vous aider à naviguer dans les choix et à respecter le budget. Réservez les prestataires clés dès que possible, en particulier le lieu et le traiteur, pour éviter des augmentations de prix. Enfin, assurez-vous de maintenir une communication claire avec vos invités pour éviter tout malentendu.",
     "scoreBreakdown": [
       {
         "label": "Budget par invité bas",
         "points": 15
       },
       {
-        "label": "Absence de prestataires confirmés",
-        "points": 15
-      },
-      {
         "label": "Incohérences budgétaires",
         "points": 30
+      },
+      {
+        "label": "Risques organisationnels",
+        "points": 10
+      },
+      {
+        "label": "Stress potentiel",
+        "points": 20
       }
     ],
     "risks": [
       {
-        "id": "risk1",
+        "id": "R1",
         "category": "budget",
-        "title": "Photographie non budgétée",
-        "description": "Le budget pour la photographie est actuellement à 0 EUR, ce qui est risqué pour immortaliser ce jour spécial. Il est recommandé de prévoir au moins 800 EUR pour un photographe.",
-        "severity": 8,
-        "probability": 7,
-        "impact": 9,
-        "solution": "Réaffectez des fonds d'autres catégories comme la décoration pour garantir un photographe.",
+        "title": "Budget trop serré",
+        "description": "Le budget de 10 000 EUR pour 120 invités est très en dessous des normes du marché pour un mariage à Paris. Cela pourrait mener à des compromis sur des éléments essentiels. Il est crucial de revoir le budget et d'augmenter les fonds disponibles.",
+        "severity": 9,
+        "probability": 8,
+        "impact": 10,
+        "solution": "Augmentez le budget à au moins 150 EUR par invité.",
         "priority": 1
       },
       {
-        "id": "risk2",
-        "category": "budget",
-        "title": "Hébergement à 0 EUR",
-        "description": "L'absence de budget pour l'hébergement peut poser problème pour les invités venant de loin. Il est conseillé de prévoir au moins 400 EUR.",
+        "id": "R2",
+        "category": "organizational",
+        "title": "Retard dans la réservation",
+        "description": "Sans réservation rapide des prestataires, vous risquez de perdre des options ou de faire face à des coûts plus élevés. Cela peut également affecter la qualité des services.",
         "severity": 7,
-        "probability": 6,
+        "probability": 7,
         "impact": 8,
-        "solution": "Réduisez le budget pour le gâteau ou les alliances pour allouer des fonds à l'hébergement.",
+        "solution": "Commencez à rechercher et réserver les prestataires dès que possible.",
         "priority": 2
       },
       {
-        "id": "risk3",
+        "id": "R3",
         "category": "organizational",
-        "title": "Absence de prestataires confirmés",
-        "description": "Sans prestataires réservés, vous risquez de manquer de disponibilité à l'approche de la date. Il est crucial de commencer à contacter les fournisseurs.",
-        "severity": 9,
-        "probability": 8,
-        "impact": 9,
-        "solution": "Commencez à réserver les prestataires dès que possible.",
+        "title": "Liste d'invités manquante",
+        "description": "L'absence d'une liste d'invités préliminaire peut causer des complications logistiques et des malentendus. Cela complique également la planification du catering et du lieu.",
+        "severity": 6,
+        "probability": 6,
+        "impact": 7,
+        "solution": "Établissez une liste d'invités dès que possible.",
         "priority": 3
       },
       {
-        "id": "risk4",
+        "id": "R4",
         "category": "organizational",
-        "title": "Gestion des besoins alimentaires",
-        "description": "La diversité des besoins alimentaires pour 150 invités peut compliquer la logistique. Un questionnaire préalable peut aider à mieux gérer ces demandes.",
-        "severity": 6,
-        "probability": 7,
-        "impact": 7,
-        "solution": "Créez un questionnaire pour recueillir les besoins alimentaires spécifiques.",
-        "priority": 4
-      },
-      {
-        "id": "risk5",
-        "category": "organizational",
-        "title": "Complexité de la décoration",
-        "description": "Le style bohème peut nécessiter des éléments spécifiques qui peuvent entraîner des coûts imprévus. Un plan clair est nécessaire pour éviter cela.",
+        "title": "Communication avec les invités",
+        "description": "Sans un plan de communication clair, des malentendus peuvent survenir. Cela peut entraîner du stress pour vous et vos invités.",
         "severity": 5,
-        "probability": 6,
+        "probability": 5,
         "impact": 6,
-        "solution": "Établissez un plan de décoration détaillé dès que possible.",
-        "priority": 5
+        "solution": "Créez un site web ou un groupe de communication pour les invités.",
+        "priority": 4
       }
     ]
   },
-  "riskScore": 60,
-  "generatedAt": "2026-09-12T23:45:46.531Z",
+  "riskScore": 75,
+  "generatedAt": "2026-10-13T19:43:29.889Z",
   "model": "gpt-4o-mini",
   "cacheHit": false
 }

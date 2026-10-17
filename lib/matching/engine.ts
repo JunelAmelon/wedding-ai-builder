@@ -5,6 +5,7 @@ import { env } from "@/lib/env";
 import { matchRepo } from "@/lib/db/repositories/matchRepo";
 import { tenderRepo } from "@/lib/db/repositories/tenderRepo";
 import { projectRepo } from "@/lib/db/repositories/projectRepo";
+import { areCategoriesMatching } from "@/lib/matching/category-matcher";
 
 export interface RequirementAnalysis {
   requirement: string;
@@ -139,22 +140,28 @@ function getCategoryBudgetAmount(budget: any): number | null {
 
 function hasBudgetOverlap(tender: Partial<Tender>, project: WeddingProject, vendor: VendorProfile): boolean {
   const ctx = getNeedContext(tender, project);
-  if (!ctx.budget || !vendor.priceRange) return false;
+  if (!ctx.budget || !vendor.priceRange) return true;
   let clientBudget = 0;
   let clientCurrency = "EUR";
-  if ("amount" in ctx.budget && typeof ctx.budget.amount === "number") {
-    clientBudget = ctx.budget.amount;
-    clientCurrency = ctx.budget.currency || "EUR";
-  } else if ("min" in ctx.budget && "max" in ctx.budget) {
-    clientBudget = (ctx.budget as { min: number; max: number }).max;
-    clientCurrency = (ctx.budget as { min: number; max: number; currency?: string }).currency || "EUR";
+  if (typeof ctx.budget === "number") {
+    clientBudget = ctx.budget;
+  } else if (typeof ctx.budget === "object" && ctx.budget !== null) {
+    if ("amount" in ctx.budget && typeof ctx.budget.amount === "number") {
+      clientBudget = ctx.budget.amount;
+      clientCurrency = ctx.budget.currency || "EUR";
+    } else if ("min" in ctx.budget && "max" in ctx.budget && typeof ctx.budget.max === "number" && !isNaN(ctx.budget.max)) {
+      clientBudget = ctx.budget.max;
+      clientCurrency = (ctx.budget as { currency?: string }).currency || "EUR";
+    } else {
+      return true;
+    }
   } else {
-    return false;
+    return true;
   }
   const vendorCurrency = vendor.priceRange.currency || "EUR";
   if (clientCurrency !== vendorCurrency) return false;
   // Good match if the couple can afford the vendor: couple budget >= vendor min
-  return clientBudget >= vendor.priceRange.min * 0.8;
+  return clientBudget >= (vendor.priceRange.min || 0) * 0.8;
 }
 
 function hasLocationMatch(tender: Partial<Tender>, project: WeddingProject, vendor: VendorProfile): boolean {
@@ -208,7 +215,7 @@ function evaluateHardConstraints(
   if (!vendor.companyName?.trim() || !vendor.serviceCategory?.trim()) {
     return { eligible: false, scoreCap: 0, reasons: ["profil incomplet"] };
   }
-  if (normalizeCategory(vendor.serviceCategory) !== normalizeCategory(category)) {
+  if (!areCategoriesMatching(vendor.serviceCategory, category)) {
     return { eligible: false, scoreCap: 0, reasons: ["catégorie différente"] };
   }
   if (isExplicitlyUnavailable(tender, project, vendor)) {
@@ -247,24 +254,30 @@ export function calculateMatchScore(
 
   if (ctx.budget && vendor.priceRange && vendor.priceRange.min > 0) {
     let budgetAmount = 0;
-    if ("amount" in ctx.budget && typeof ctx.budget.amount === "number") {
-      budgetAmount = ctx.budget.amount;
-    } else if ("min" in ctx.budget && "max" in ctx.budget) {
-      budgetAmount = (ctx.budget as { min: number; max: number }).max;
+    if (typeof ctx.budget === "number") {
+      budgetAmount = ctx.budget;
+    } else if (typeof ctx.budget === "object" && ctx.budget !== null) {
+      if ("amount" in ctx.budget && typeof ctx.budget.amount === "number") {
+        budgetAmount = ctx.budget.amount;
+      } else if ("min" in ctx.budget && "max" in ctx.budget && typeof ctx.budget.max === "number" && !isNaN(ctx.budget.max)) {
+        budgetAmount = ctx.budget.max;
+      }
     }
     const min = vendor.priceRange.min;
     const max = vendor.priceRange.max;
-    if (budgetAmount >= min && budgetAmount <= max) {
-      score += 20;
-      reasons.push("votre budget correspond à sa gamme de prix");
-    } else if (budgetAmount > max) {
-      // Couple has MORE budget than the vendor's max — they can easily afford it
-      score += 18;
-      reasons.push("votre budget permet de couvrir ses prestations");
-    } else if (budgetAmount >= min * 0.8) {
-      // Couple budget is slightly below vendor min but close
-      score += 10;
-      reasons.push("votre budget est proche de sa gamme de prix");
+    if (budgetAmount > 0) {
+      if (budgetAmount >= min && budgetAmount <= max) {
+        score += 20;
+        reasons.push("votre budget correspond à sa gamme de prix");
+      } else if (budgetAmount > max) {
+        // Couple has MORE budget than the vendor's max — they can easily afford it
+        score += 18;
+        reasons.push("votre budget permet de couvrir ses prestations");
+      } else if (budgetAmount >= min * 0.8) {
+        // Couple budget is slightly below vendor min but close
+        score += 10;
+        reasons.push("votre budget est proche de sa gamme de prix");
+      }
     }
   }
 
@@ -619,9 +632,8 @@ export async function findTopMatches(
   limit = 3,
   cache: MatchAiCache = noopCache
 ): Promise<ProjectVendorMatch[]> {
-  const normalizedCategory = normalizeCategory(category);
   const approvedVendors = vendors.filter((v) => v.status === "approved");
-  const categoryVendors = approvedVendors.filter((v) => normalizeCategory(v.serviceCategory) === normalizedCategory);
+  const categoryVendors = approvedVendors.filter((v) => areCategoriesMatching(v.serviceCategory, category));
 
   const constraintByVendor = new Map<string, ConstraintResult>();
   const candidates = categoryVendors.filter((v) => {

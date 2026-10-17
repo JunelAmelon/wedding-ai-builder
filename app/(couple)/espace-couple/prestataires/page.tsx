@@ -1,6 +1,8 @@
 "use client";
 
 import LoadingScreen from "@/components/shared/LoadingScreen";
+import MatchingDiscoveryScreen from "@/components/couple/MatchingDiscoveryScreen";
+import { areCategoriesMatching } from "@/lib/matching/category-matcher";
 
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -371,8 +373,16 @@ export default function CoupleVendorsPage() {
     return CHIP_CATEGORIES.filter((c) => group.items.includes(c.category));
   }, [selectedFamily]);
 
+  const [isFirstDiscovery, setIsFirstDiscovery] = useState(false);
+
   useEffect(() => {
     async function load() {
+      // Détecter si le couple a déjà visité la page prestataires
+      const hasDiscovered = typeof window !== "undefined" && window.localStorage.getItem("wab_couple_matches_discovered");
+      if (!hasDiscovered) {
+        setIsFirstDiscovery(true);
+      }
+
       try {
         const [tendersRes, projectRes, recommendationsRes, resultRes] = await Promise.allSettled([
           fetch("/api/couple/tenders"),
@@ -412,6 +422,12 @@ export default function CoupleVendorsPage() {
         if (recommendationsRes.status === "fulfilled" && recommendationsRes.value.ok) {
           const recommendationsJson = await recommendationsRes.value.json();
           setRecommendations((recommendationsJson.recommendations || []) as Recommendation[]);
+          if (!hasDiscovered && (recommendationsJson.recommendations || []).length > 0) {
+            // Petite pause visuelle pour laisser le couple apprécier l'animation d'analyse
+            await new Promise((r) => setTimeout(r, 1800));
+            window.localStorage.setItem("wab_couple_matches_discovered", "true");
+            setIsFirstDiscovery(false);
+          }
         }
 
         // Parse AI budget breakdown
@@ -427,6 +443,7 @@ export default function CoupleVendorsPage() {
         // Don't set error — let the page render with empty state
       } finally {
         setLoading(false);
+        setIsFirstDiscovery(false);
       }
     }
     load();
@@ -441,7 +458,7 @@ export default function CoupleVendorsPage() {
   }
 
   function tryLaunchTender(cat: string) {
-    const hasExisting = recommendations.some((r) => r.match.category === cat);
+    const hasExisting = recommendations.some((r) => areCategoriesMatching(r.match.category, cat));
     if (hasExisting) {
       setPendingCategory(cat);
       setShowReplaceDialog(true);
@@ -459,8 +476,9 @@ export default function CoupleVendorsPage() {
   }
 
   // Vérifier si une catégorie a déjà un appel d'offres
-  const hasTenderForCategory = (cat: string) => tenders.some((t) => t.category === cat);
+  const hasTenderForCategory = (cat: string) => tenders.some((t) => areCategoriesMatching(t.category, cat));
 
+  if (loading && isFirstDiscovery) return <MatchingDiscoveryScreen />;
   if (loading) return <LoadingScreen minHeight={"80dvh"} />;
   if (error) return (
     <div className="min-h-[80dvh] bg-gradient-to-b from-[#fef2f4] to-white flex items-center justify-center px-6">
@@ -537,16 +555,15 @@ export default function CoupleVendorsPage() {
                   ? visibleChips
                   : visibleChips.slice(0, 15)
                 ).map((chip) => {
-                  const tender = tenders.find((t) => t.category === chip.category);
+                  const tender = tenders.find((t) => areCategoriesMatching(t.category, chip.category));
                   const hasTender = !!tender;
-                  const isClosed = tender?.status === "closed";
-                  const isValidatedOrClosed =
-                    isClosed ||
-                    Boolean(tender?.selectedProposalId) ||
-                    tender?.proposals?.some((p) => p.status === "accepted");
-                  const matchCount = isValidatedOrClosed
-                    ? 0
-                    : recommendations.filter((r) => r.match.category === chip.category).length;
+                  // Les matches s'affichent toujours pour chaque catégorie même si un appel d'offres existe (dédupliqué par prestataire unique)
+                  const matchCount = new Set(
+                    recommendations
+                      .filter((r) => areCategoriesMatching(r.match.category, chip.category))
+                      .map((r) => r.match.vendorId || r.vendor?.id)
+                      .filter(Boolean)
+                  ).size;
 
                   return (
                     <button
@@ -560,7 +577,6 @@ export default function CoupleVendorsPage() {
                         <div className="flex items-center gap-1">
                           {matchCount > 0 && (
                             <span className="h-5 min-w-5 px-1.5 rounded-full bg-white/80 backdrop-blur-xs flex items-center justify-center text-[10.5px] font-bold text-[#0E0E10] border border-black/5 shadow-2xs">
-                              <Sparkles size={10} className="mr-0.5 text-amber-500 fill-amber-400" />
                               {matchCount}
                             </span>
                           )}
@@ -578,7 +594,7 @@ export default function CoupleVendorsPage() {
                         </span>
                         {matchCount > 0 && (
                           <span className="text-[10px] text-[#6B6B72] font-medium block mt-0.5">
-                            {matchCount} suggestion{matchCount > 1 ? "s" : ""}
+                            {matchCount}
                           </span>
                         )}
                       </div>
@@ -706,111 +722,16 @@ export default function CoupleVendorsPage() {
             )}
 
             {tenders.length === 0 && (
-              <div>
-                {/* Auto-match suggestions as event-style cards */}
-                {recommendations.length > 0 ? (
-                  <>
-                    <div className="flex items-center justify-between mb-5">
-                      <h2 className="font-allura text-2xl font-normal text-[#0E0E10] tracking-tight">
-                        Suggestions automatiques
-                      </h2>
-                      <button
-                        onClick={async () => {
-                          setRefreshing(true);
-                          try {
-                            const res = await fetch("/api/couple/recommendations", { method: "POST" });
-                            const json = await res.json();
-                            if (res.ok) setRecommendations(json.recommendations || []);
-                          } catch { /* ignore */ } finally {
-                            setRefreshing(false);
-                          }
-                        }}
-                        disabled={refreshing}
-                        className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1.5 disabled:opacity-50"
-                      >
-                        <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-                        Rafraîchir
-                      </button>
-                    </div>
-
-                    {(() => {
-                      const grouped: Record<string, Recommendation[]> = {};
-                      recommendations.forEach((r) => {
-                        if (!grouped[r.match.category]) grouped[r.match.category] = [];
-                        grouped[r.match.category].push(r);
-                      });
-                      const categories = Object.keys(grouped).sort((a, b) => grouped[b][0].match.score - grouped[a][0].match.score);
-
-                      return (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                          {categories.map((cat) => {
-                            const Icon = CATEGORY_ICON[cat] || Sparkle;
-                            const catRecs = grouped[cat];
-                            const bestScore = Math.max(...catRecs.map((r) => r.match.score));
-                            return (
-                              <Link
-                                key={cat}
-                                href={`/espace-couple/prestataires/suggestions/${encodeURIComponent(cat)}`}
-                                className="relative rounded-[28px] overflow-hidden aspect-square flex flex-col justify-end p-4 text-white group text-left transition-transform hover:-translate-y-0.5"
-                              >
-                                <div
-                                  className="absolute inset-0 bg-cover bg-center"
-                                  style={{ backgroundImage: `url(${CATEGORY_IMAGES[cat] || CATEGORY_IMAGES["Autre"]})` }}
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10 z-0" />
-
-                                <div className="relative z-10">
-                                  <div className="text-[10px] opacity-90 mb-1">
-                                    {catRecs.length} suggestion{catRecs.length > 1 ? "s" : ""} • {bestScore}% match
-                                  </div>
-                                  <div className="font-bold text-[13px] mb-1 flex items-center gap-2">
-                                    <Icon size={14} />
-                                    {cat}
-                                  </div>
-
-                                  <div className="flex mt-2 -space-x-1.5">
-                                    {catRecs.slice(0, 4).map((rec, idx) => {
-                                      const logoUrl = typeof rec.vendor?.logo === "string"
-                                        ? rec.vendor.logo
-                                        : (rec.vendor?.logo as { url?: string } | undefined)?.url;
-                                      return (
-                                        <span
-                                          key={idx}
-                                          className="h-[17px] w-[17px] rounded-full border-[1.5px] border-white bg-gray-300 bg-cover bg-center"
-                                          style={{
-                                            backgroundImage: logoUrl ? `url(${logoUrl})` : undefined,
-                                            background: !logoUrl ? CONTACT_COLORS[idx % CONTACT_COLORS.length] : undefined,
-                                          }}
-                                        />
-                                      );
-                                    })}
-                                    {catRecs.length > 4 && (
-                                      <span className="h-[17px] w-[17px] rounded-full border-[1.5px] border-white bg-black/40 flex items-center justify-center text-[8px] font-bold">
-                                        +{catRecs.length - 4}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-                  </>
-                ) : (
-                  <div className="rounded-[28px] bg-white border border-[#EDEDF0] p-8 shadow-[0_4px_20px_rgba(14,14,16,0.05)] text-center">
-                    <div className="h-14 w-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
-                      <Sparkles size={22} className="text-[#0E0E10]" />
-                    </div>
-                    <h3 className="font-allura text-lg font-semibold text-[#0E0E10] mb-2">
-                      Aucun appel d'offres pour l'instant
-                    </h3>
-                    <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
-                      Cliquez sur un type de prestataire ci-dessus pour lancer votre premier appel d'offres.
-                    </p>
-                  </div>
-                )}
+              <div className="rounded-[28px] bg-white border border-[#EDEDF0] p-8 shadow-[0_4px_20px_rgba(14,14,16,0.05)] text-center">
+                <div className="h-14 w-14 rounded-[28px] bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
+                  <Sparkles size={22} className="text-[#0E0E10]" />
+                </div>
+                <h3 className="font-allura text-lg font-semibold text-[#0E0E10] mb-2">
+                  Aucun appel d'offres pour l'instant
+                </h3>
+                <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
+                  Cliquez sur un type de prestataire ci-dessus pour lancer votre premier appel d'offres.
+                </p>
               </div>
             )}
           </div>
@@ -943,227 +864,181 @@ export default function CoupleVendorsPage() {
             </div>
 
             {(() => {
-              const catRecs = recommendations.filter((r) => r.match.category === selectedCategory);
-              const activeTender = tenders.find((t) => t.category === selectedCategory && t.status !== "closed");
-              const catTender = activeTender || tenders.find((t) => t.category === selectedCategory);
+              // Dédupliquer les prestataires par vendorId pour éviter tout affichage en double
+              const rawRecs = recommendations.filter((r) => areCategoriesMatching(r.match.category, selectedCategory));
+              const seenVendorIds = new Set<string>();
+              const catRecs = rawRecs.filter((r) => {
+                const vid = r.match.vendorId || r.vendor?.id;
+                if (!vid || seenVendorIds.has(vid)) return false;
+                seenVendorIds.add(vid);
+                return true;
+              });
+              const activeTender = tenders.find((t) => areCategoriesMatching(t.category, selectedCategory) && t.status !== "closed");
+              const catTender = activeTender || tenders.find((t) => areCategoriesMatching(t.category, selectedCategory));
 
               const catValidatedProposal = (catTender?.proposals || []).find(
                 (p) => p.status === "accepted" || p.id === catTender?.selectedProposalId
               );
               const catValidatedVendor = catValidatedProposal?.vendor;
 
-              if (catTender?.status === "closed" && catValidatedVendor) {
-                return (
-                  <div className="text-center py-8">
-                    <div className="h-12 w-12 rounded-full bg-[#D8ECD9] flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle2 size={22} className="text-[#3C8552]" />
-                    </div>
-                    <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#3C8552] mb-3">Prestataire validé</p>
-                    <h2 className="text-xl font-bold text-[#0E0E10] mb-2">
-                      {catValidatedVendor.businessName || catValidatedVendor.name || catValidatedVendor.companyName || "Prestataire retenu"}
-                    </h2>
-                    <p className="text-[#6B6B72] max-w-md mx-auto text-sm leading-relaxed mb-5">
-                      Vous avez retenu ce prestataire pour votre mariage. Vous pouvez consulter son profil ou relancer un nouvel appel d'offres si besoin.
-                    </p>
-                    {catValidatedProposal && (
-                      <div className="flex flex-col sm:flex-row gap-3 max-w-sm mx-auto">
-                        <Link
-                          href={`/espace-couple/prestataires/profil/${catValidatedProposal.vendorId}`}
-                          onClick={closeCategory}
-                          className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-bold bg-[#0E0E10] text-white hover:bg-[#333] transition"
-                        >
-                          Voir le profil <ArrowRight size={14} />
-                        </Link>
-                        <Link
-                          href={`/espace-couple/prestataires/${catTender.id}`}
-                          onClick={closeCategory}
-                          className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-bold border-[1.5px] border-[#EDEDF0] text-[#0E0E10] hover:bg-[#fef2f4] transition"
-                        >
-                          Voir l'appel d'offres
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-
-              if (catRecs.length === 0) {
-                if (catTender) {
-                  const isClosed = catTender.status === "closed";
-                  return (
-                    <div className="text-center py-8">
-                      <div className="h-12 w-12 rounded-full bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
-                        <Sparkles size={22} className="text-[#0E0E10]" />
-                      </div>
-                      <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#6B6B72] mb-1">
-                        {isClosed ? "Appel d'offres clôturé" : "Appel d'offres en cours"}
-                      </p>
-                      <h2 className="text-lg font-bold text-[#0E0E10] mb-2">
-                        {catTender.status === "searching"
-                          ? "Recherche de prestataires en cours"
-                          : catTender.status === "responded"
-                            ? `${(catTender.proposals || []).length} proposition${(catTender.proposals || []).length > 1 ? "s" : ""} reçue${(catTender.proposals || []).length > 1 ? "s" : ""}`
-                            : "Dossier clôturé"}
-                      </h2>
-                      <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
-                        {catTender.status === "searching"
-                          ? "Votre appel d'offres a été diffusé aux prestataires qualifiés. Dès qu'un prestataire répond, sa proposition apparaîtra dans votre espace."
-                          : catTender.status === "responded"
-                            ? "Des prestataires ont répondu à votre demande. Vous pouvez consulter leurs propositions dès maintenant."
-                            : "Cet appel d'offres est clôturé. Vous pouvez relancer une nouvelle demande pour cette catégorie si besoin."}
-                      </p>
-                      <div className="flex flex-col gap-2.5 max-w-sm mx-auto">
-                        <Link
-                          href={`/espace-couple/prestataires/${catTender.id}`}
-                          onClick={closeCategory}
-                          className="w-full py-3.5 px-4 rounded-full bg-[#0E0E10] text-white font-bold text-sm text-center hover:bg-[#333] transition flex items-center justify-center gap-2"
-                        >
-                          Voir mon appel d'offres <ArrowRight size={14} />
-                        </Link>
-                        <Button
-                          variant="secondary"
-                          onClick={() => {
-                            closeCategory();
-                            tryLaunchTender(selectedCategory);
-                          }}
-                          className="w-full py-3 px-4 rounded-full text-sm font-semibold border border-[#EDEDF0] text-[#6B6B72] hover:bg-[#fef2f4] hover:text-[#0E0E10] transition"
-                        >
-                          Remplacer ou relancer cet appel
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                }
-
-                return (
-                  <div className="text-center py-10">
-                    <div className="h-12 w-12 rounded-full bg-[#fef2f4] flex items-center justify-center mx-auto mb-4">
-                      <Sparkles size={22} className="text-[#0E0E10]" />
-                    </div>
-                    <p className="text-[#6B6B72] text-sm mb-6 max-w-sm mx-auto">
-                      Aucune suggestion automatique pour cette catégorie pour le moment. Lancez votre propre appel d'offres pour recevoir des propositions.
-                    </p>
-                    <Button
-                      variant="primary"
-                      onClick={() => {
-                        closeCategory();
-                        setCategory(selectedCategory);
-                        setShowForm(true);
-                      }}
-                      className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition flex items-center justify-center gap-2"
-                      iconLeft={<Plus size={16} />}
-                    >
-                      Lancer mon appel d'offres
-                    </Button>
-                  </div>
-                );
-              }
-
               return (
-                <>
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm text-[#6B6B72]">
-                      {catRecs.length} prestataire{catRecs.length > 1 ? "s" : ""} correspondent à votre projet
-                    </p>
-                    <button
-                      onClick={async () => {
-                        setRefreshing(true);
-                        try {
-                          const res = await fetch("/api/couple/recommendations", { method: "POST" });
-                          const json = await res.json();
-                          if (res.ok) setRecommendations(json.recommendations || []);
-                        } catch { /* ignore */ } finally {
-                          setRefreshing(false);
-                        }
-                      }}
-                      disabled={refreshing}
-                      className="text-[12.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1.5 disabled:opacity-50"
-                    >
-                      <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-                      Rafraîchir
-                    </button>
-                  </div>
-
-                  <div className="space-y-3 mb-6">
-                    {catRecs.map((rec) => {
-                      const vendor = rec.vendor;
-                      const logoUrl = typeof vendor?.logo === "string" ? vendor.logo : (vendor?.logo as { url?: string } | undefined)?.url;
-                      return (
-                        <div key={rec.match.id} className="rounded-[28px] bg-white border border-[#EDEDF0] p-4 shadow-[0_4px_20px_rgba(14,14,16,0.05)] flex items-start gap-4">
-                          <div
-                            className="h-14 w-14 rounded-[28px] bg-cover bg-center shrink-0"
-                            style={{ backgroundImage: logoUrl ? `url(${logoUrl})` : `url(${CATEGORY_IMAGES[selectedCategory] || CATEGORY_IMAGES["Autre"]})` }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-allura text-sm font-bold text-[#0E0E10] truncate">
-                                {vendor?.companyName || vendor?.businessName || vendor?.name || "Prestataire"}
-                              </h3>
-                              <span className="text-[10px] font-bold bg-[#fef2f4] text-[#0E0E10] px-2 py-0.5 rounded-full">
-                                {rec.match.score}%
-                              </span>
-                            </div>
-                            {vendor?.serviceArea?.cities?.[0] && (
-                              <p className="text-[11px] text-[#6B6B72] flex items-center gap-1 mb-1">
-                                <MapPin size={10} /> {vendor.serviceArea.cities[0]}
-                              </p>
-                            )}
-                            {rec.match.summary && (
-                              <div className="text-[12px] text-[#6B6B72] mt-1">
-                                <ExpandableText text={rec.match.summary} lines={2} />
-                              </div>
-                            )}
-                            <div className="flex items-center gap-2 mt-3">
+                <div className="space-y-6">
+                  {/* Bloc 1 : Statut de l'appel d'offres s'il existe */}
+                  {catTender && (
+                    <div className="rounded-[24px] bg-[#fafafa] border border-[#EDEDF0] p-4">
+                      {catTender.status === "closed" && catValidatedVendor ? (
+                        <div className="text-center py-2">
+                          <div className="h-10 w-10 rounded-full bg-[#D8ECD9] flex items-center justify-center mx-auto mb-2">
+                            <CheckCircle2 size={18} className="text-[#3C8552]" />
+                          </div>
+                          <p className="font-semibold text-[10px] uppercase tracking-[0.22em] text-[#3C8552] mb-1">Prestataire retenu</p>
+                          <h3 className="text-base font-bold text-[#0E0E10] mb-1">
+                            {catValidatedVendor.businessName || catValidatedVendor.name || catValidatedVendor.companyName || "Prestataire retenu"}
+                          </h3>
+                          <div className="flex gap-2 justify-center mt-3">
+                            {catValidatedProposal && (
                               <Link
-                                href={`/espace-couple/prestataires/profil/${rec.match.vendorId}`}
+                                href={`/espace-couple/prestataires/profil/${catValidatedProposal.vendorId}`}
                                 onClick={closeCategory}
-                                className="text-[12px] font-bold text-[#0E0E10] hover:underline flex items-center gap-1"
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-[#0E0E10] text-white hover:bg-[#333] transition"
                               >
                                 Voir le profil <ArrowRight size={12} />
                               </Link>
-                            </div>
+                            )}
+                            <Link
+                              href={`/espace-couple/prestataires/${catTender.id}`}
+                              onClick={closeCategory}
+                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold border border-[#EDEDF0] text-[#0E0E10] hover:bg-white transition"
+                            >
+                              Voir l'appel d'offres
+                            </Link>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-
-                  {catTender && (
-                    <Link
-                      href={`/espace-couple/prestataires/${catTender.id}`}
-                      onClick={closeCategory}
-                      className="block rounded-[28px] bg-[#fef2f4] border border-[#EDEDF0] p-4 mb-4 hover:bg-[#ececef] transition"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-[11px] font-bold uppercase tracking-wider text-[#6B6B72]">
-                            {catTender.status === "closed" ? "Appel d'offres clôturé" : "Appel d'offres en cours"}
-                          </p>
-                          <p className="text-sm font-bold text-[#0E0E10] mt-0.5">
-                            {catTender.status === "searching" ? "En recherche" : catTender.status === "responded" ? "Réponses reçues" : "Clôturé"}
-                            {" — "}
-                            {(catTender.proposals || []).length} proposition{(catTender.proposals || []).length > 1 ? "s" : ""}
-                          </p>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-[#6B6B72]">
+                              {catTender.status === "closed" ? "Appel d'offres clôturé" : "Appel d'offres en cours"}
+                            </p>
+                            <p className="text-sm font-bold text-[#0E0E10] mt-0.5">
+                              {catTender.status === "searching" ? "En recherche de prestataires" : catTender.status === "responded" ? "Réponses reçues" : "Clôturé"}
+                              {" — "}
+                              {(catTender.proposals || []).length} proposition{(catTender.proposals || []).length > 1 ? "s" : ""}
+                            </p>
+                          </div>
+                          <Link
+                            href={`/espace-couple/prestataires/${catTender.id}`}
+                            onClick={closeCategory}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#0E0E10] text-white text-xs font-semibold hover:bg-[#333] transition"
+                          >
+                            Consulter <ArrowRight size={12} />
+                          </Link>
                         </div>
-                        <ArrowRight size={18} className="text-[#0E0E10]" />
-                      </div>
-                    </Link>
+                      )}
+                    </div>
                   )}
 
-                  <div className="flex gap-3">
+                  {/* Bloc 2 : Suggestions automatiques de la catégorie */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs font-bold uppercase tracking-wider text-[#6B6B72]">
+                        {catRecs.length > 0 ? `${catRecs.length} suggestion${catRecs.length > 1 ? "s" : ""} trouvée${catRecs.length > 1 ? "s" : ""}` : "Suggestions automatiques"}
+                      </p>
+                      {catRecs.length > 0 && (
+                        <button
+                          onClick={async () => {
+                            setRefreshing(true);
+                            try {
+                              const res = await fetch("/api/couple/recommendations", { method: "POST" });
+                              const json = await res.json();
+                              if (res.ok) setRecommendations(json.recommendations || []);
+                            } catch { /* ignore */ } finally {
+                              setRefreshing(false);
+                            }
+                          }}
+                          disabled={refreshing}
+                          className="text-[11.5px] text-[#6B6B72] hover:text-[#0E0E10] transition-colors flex items-center gap-1 disabled:opacity-50"
+                        >
+                          <RefreshCw size={12} className={refreshing ? "animate-spin" : ""} />
+                          Rafraîchir
+                        </button>
+                      )}
+                    </div>
+
+                    {catRecs.length > 0 ? (
+                      <div className="space-y-3">
+                        {catRecs.map((rec) => {
+                          const vendor = rec.vendor;
+                          const logoUrl = typeof vendor?.logo === "string" ? vendor.logo : (vendor?.logo as { url?: string } | undefined)?.url;
+                          return (
+                            <div key={rec.match.id} className="rounded-[24px] bg-white border border-[#EDEDF0] p-4 shadow-[0_2px_12px_rgba(14,14,16,0.04)] flex items-start gap-3.5">
+                              <div
+                                className="h-12 w-12 rounded-[20px] bg-cover bg-center shrink-0 border border-black/5"
+                                style={{ backgroundImage: logoUrl ? `url(${logoUrl})` : `url(${CATEGORY_IMAGES[selectedCategory] || CATEGORY_IMAGES["Autre"]})` }}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="font-semibold text-sm text-[#0E0E10] truncate">
+                                    {vendor?.companyName || vendor?.businessName || vendor?.name || "Prestataire"}
+                                  </h3>
+                                  <span className="text-[10px] font-bold bg-[#fef2f4] text-[#e64a5d] px-2 py-0.5 rounded-full shrink-0">
+                                    {rec.match.score}% match
+                                  </span>
+                                </div>
+                                {vendor?.serviceArea?.cities?.[0] && (
+                                  <p className="text-[11px] text-[#6B6B72] flex items-center gap-1 mb-1">
+                                    <MapPin size={10} /> {vendor.serviceArea.cities[0]}
+                                  </p>
+                                )}
+                                {rec.match.summary && (
+                                  <div className="text-[12px] text-[#6B6B72] mt-1">
+                                    <ExpandableText text={rec.match.summary} lines={2} />
+                                  </div>
+                                )}
+                                <div className="mt-2.5">
+                                  <Link
+                                    href={`/espace-couple/prestataires/profil/${rec.match.vendorId}`}
+                                    onClick={closeCategory}
+                                    className="text-[12px] font-bold text-[#0E0E10] hover:text-[#e64a5d] transition-colors inline-flex items-center gap-1"
+                                  >
+                                    Voir le profil <ArrowRight size={12} />
+                                  </Link>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="rounded-[24px] bg-[#fafafa] border border-[#EDEDF0] p-5 text-center">
+                        <Sparkles size={20} className="text-[#6B6B72] mx-auto mb-2 opacity-70" />
+                        <p className="text-xs text-[#6B6B72]">
+                          Aucun prestataire ne correspond actuellement pour cette catégorie spécifique.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Bouton d'action pour lancer ou relancer un appel d'offres */}
+                  <div className="pt-2">
                     <Button
                       variant="primary"
                       onClick={() => {
                         closeCategory();
-                        tryLaunchTender(selectedCategory);
+                        if (catTender) {
+                          tryLaunchTender(selectedCategory);
+                        } else {
+                          setCategory(selectedCategory);
+                          setShowForm(true);
+                        }
                       }}
                       className="w-full py-3.5 px-4 rounded-full bg-[#e64a5d] text-white font-bold font-sans hover:brightness-110 transition flex items-center justify-center gap-2"
                       iconLeft={<Plus size={16} />}
                     >
-                      {catTender ? "Remplacer ou relancer cet appel" : "Lancer mon propre appel"}
+                      {catTender ? "Relancer un appel d'offres" : "Lancer un appel d'offres"}
                     </Button>
                   </div>
-                </>
+                </div>
               );
             })()}
           </div>

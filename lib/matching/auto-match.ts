@@ -8,6 +8,7 @@ import { filterActiveVendors } from "@/lib/subscription-guard";
 import { createMatchAiCache } from "@/lib/matching/ai-cache";
 import { sendEmail } from "@/lib/email/send";
 import { newOpportunityEmail } from "@/lib/email/emails";
+import { areCategoriesMatching } from "@/lib/matching/category-matcher";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -65,9 +66,18 @@ export async function runAutoMatching(
   const perCategory = options?.perCategory ?? 3;
   const notifyVendors = options?.notifyVendors ?? true;
 
+  const budgetAmount = typeof project.budget === "number"
+    ? project.budget
+    : (project.budget && typeof project.budget === "object" && "amount" in project.budget && typeof project.budget.amount === "number")
+      ? project.budget.amount
+      : null;
+  const budgetCurrency = (project.budget && typeof project.budget === "object" && "currency" in project.budget && typeof project.budget.currency === "string")
+    ? project.budget.currency
+    : "EUR";
+
   const baseTenderData = {
-    budgetRange: project.budget
-      ? { min: project.budget.amount * 0.8, max: project.budget.amount * 1.2, currency: project.budget.currency }
+    budgetRange: budgetAmount
+      ? { min: Math.round(budgetAmount * 0.8), max: Math.round(budgetAmount * 1.2), currency: budgetCurrency }
       : null,
     guestCount: project.guestCount,
     location: project.location,
@@ -88,36 +98,22 @@ export async function runAutoMatching(
 
   // Determine which categories to match against
   let categories: string[];
+  const allVendorCategories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+
   if (project.desiredCategories?.length) {
-    // Map quiz category values to vendor serviceCategory names
-    const catMap: Record<string, string> = {
-      "lieu": "Lieu de réception",
-      "traiteur": "Traiteur",
-      "photographe": "Photographe",
-      "videaste": "Vidéaste",
-      "dj": "DJ",
-      "fleuriste": "Fleuriste",
-      "wedding-cake": "Pâtissier",
-      "coiffeuse-maquilleuse": "Coiffure & Maquillage",
-      "transport": "Transport",
-      "hebergement": "Hébergement",
-      "alliances": "Bijoutier",
-      "robe": "Robe de mariée",
-      "costume": "Costume",
-      "decoration": "Décorateur",
-      "officiant": "Officiant",
-      "animation": "Animation",
-    };
-    const desiredCats = project.desiredCategories.map(c => catMap[c] || c).filter(Boolean);
-    // Only match categories that exist among active vendors
-    const vendorCategories = new Set(activeVendors.map((v) => v.serviceCategory.toLowerCase()));
-    categories = desiredCats.filter(c => vendorCategories.has(c.toLowerCase()));
-    // If no overlap found, fall back to all vendor categories
-    if (categories.length === 0) {
-      categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+    const matchedCategories: string[] = [];
+    for (const desired of project.desiredCategories) {
+      const matches = allVendorCategories.filter((vc) => areCategoriesMatching(desired, vc));
+      for (const m of matches) {
+        if (!matchedCategories.includes(m)) {
+          matchedCategories.push(m);
+        }
+      }
     }
+    // Si correspondance trouvée, on prend les catégories matchées + complément si vide
+    categories = matchedCategories.length > 0 ? matchedCategories : allVendorCategories;
   } else {
-    categories = [...new Set(activeVendors.map((v) => v.serviceCategory))];
+    categories = allVendorCategories;
   }
 
   // Load existing non-rejected matches to avoid creating duplicates for the same project/vendor/category
@@ -134,7 +130,12 @@ export async function runAutoMatching(
     const aiCache = createMatchAiCache(project.id, category, project.updatedAt);
     const tenderData = { ...baseTenderData, requirements: buildRequirements(project, category) };
     const topMatches = await findTopMatches(tenderData, project, activeVendors, category, perCategory, aiCache);
-    const toCreate = topMatches.filter((m) => !existingKeys.has(`${m.category}:${m.vendorId}`));
+    const toCreate = topMatches.filter((m) => {
+      const key = `${m.category}:${m.vendorId}`;
+      if (existingKeys.has(key)) return false;
+      existingKeys.add(key);
+      return true;
+    });
     const saved = await Promise.all(
       toCreate.map((m) =>
         matchRepo.create({
